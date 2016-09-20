@@ -1,0 +1,339 @@
+/*
+ * input elements
+ */
+
+@inputBackground: @veryVeryLightGrey;
+
+/*
+ * input fields
+ */
+
+textarea,
+input[type="text"],
+input[type="password"],
+input[type="datetime"],
+input[type="datetime-local"],
+input[type="date"],
+input[type="month"],
+input[type="time"],
+input[type="week"],
+input[type="number"],
+input[type="email"],
+input[type="url"],
+input[type="search"],
+input[type="tel"],
+input[type="color"],
+.uneditable-input {
+	background-color: @inputBackground;
+}
+
+/*
+ * input group add ons
+ */
+
+.input-group-addon {
+	padding: 5px 10px;
+}
+
+/*
+ * radio buttons and checkboxes
+ */
+
+.radio input[type="radio"], .radio-inline input[type="radio"], .checkbox input[type="checkbox"], .checkbox-inline input[type="checkbox"] {
+	margin-left: 0;
+	margin-right: 5px;
+	position: relative;
+	float: left;
+}
+
+.well, .accordion-inner {
+	textarea,
+	input[type="text"],
+	input[type="password"],
+	input[type="datetime"],
+	input[type="datetime-local"],
+	input[type="date"],
+	input[type="month"],
+	input[type="time"],
+	input[type="week"],
+	input[type="number"],
+	input[type="email"],
+	input[type="url"],
+	input[type="search"],
+	input[type="tel"],
+	input[type="color"],
+	.uneditable-input {
+		background-color: white;
+	}
+}
+
+input:disabled {
+	background-color: @veryVeryLightGrey;
+}
+
+textarea {
+	width: 360px;
+	resize: vertical;
+}
+
+select {
+	color: @darkGrey;
+	-webkit-appearance: menulist-button;
+	border: 1px solid @lightGrey;
+	font-size: 16px;
+	height: 32px;
+	margin-right: 15px;
+	background: @veryVeryLightGrey;
+	border-radius: @input-border-radius;
+}
+
+.input-group select {
+	height: auto;
+}
+
+.panel select {
+	height: 28px;
+	background: white;
+}
+
+.unselectable {
+	pointer-events: none;
+}
+
+.options {
+	display: inline-block;
+}
+
+label {
+	input[type="checkbox"] {
+		margin-right: 5px;
+	}
+	margin-right: 25px;
+}
+
+/*
+ * form fields
+ */
+
+.required:after { 
+	content: "*"; 
+	color: @mediumRed;
+	margin-left: 5px;
+}
+input.required:after {
+	content:"";
+}
+
+.form-control {
+	height: auto;
+}
+
+/*
+ * form groups
+ */
+
+.form-group {
+	margin-bottom: 10px;
+
+	ul {
+		padding-left: 15px;
+		margin: 0;
+	}
+
+	/*
+	i {
+		color: @darkGrey;
+	}
+	*/
+}
+
+.form-horizontal .form-group {
+	margin-right: 0;
+	margin-left: 0;
+}
+
+.controls {
+	.make-xs-column(6);
+	.make-xxs-column(12);
+}
+
+@media (max-width: @screen-xs) {
+	.controls {
+		padding-left: 0;
+		padding-right: 0;
+	}
+
+	.col-sm-6 {
+		padding-left: 0;
+		padding-right: 0;
+	}
+}
+
+/*
+ * labels
+ */
+
+label.form-group {
+	margin-bottom: 0px;
+}
+
+.control-label, .form-label {
+	padding-top: 0px;
+	float: left;
+}
+
+@media (min-width: @screen-xs) {
+	.form-horizontal {
+		.control-label, .form-label {
+			width: 25%;
+		}
+	}
+}
+
+label span {
+	font-weight: normal;
+}
+
+/*
+ * readonly form elements
+ */
+
+span.form-control {
+	border: 1px solid @veryLightGrey;
+	//border: none;
+	//box-shadow: none;
+}
+
+/*
+ * user account input elements
+ */
+
+form {
+	.postal-code.input-group {
+		width: 100px;
+	}
+	.country-code.input-group {
+		width: 100px;
+	}
+	.area-code.input-group {
+		width: 100px;
+	}
+	.phone-number.input-group {
+		width: 150px;
+	}
+}
+
+form.run-requests-form {
+	select {
+		width: 100%;
+	}
+	td,th {
+		width: 33%;
+	}
+	td {
+		vertical-align: top;
+	}
+	td.last {
+		text-align: center;
+	}
+	input {
+		min-width: 0;
+	}
+	label.error {
+		margin-left: 0;
+		padding-top: 5px;
+		padding-bottom: 0;
+		margin-bottom: 0;
+	}
+	.error .add-on {
+		border-color: @mediumRed;
+	}
+	.input-append {
+		margin-bottom: 0;
+	}
+	.form-group {
+		margin-bottom: 0;
+	}
+	.day-of-the-month {
+		width: 125px;
+	}
+}
+
+form.invitations-form {
+	td {
+		vertical-align: top;
+		text-align: center;
+	}
+	label.error {
+		margin-left: 0;
+		padding-top: 5px;
+		padding-bottom: 0;
+		margin-bottom: 0;
+	}
+}
+
+/*
+ * dropdown selector
+ */
+
+.dropdown-menu {
+	padding: 0;
+
+	.inner {
+		position: relative;
+	}
+
+	ul {
+		padding: 0;
+	}
+}
+
+/*
+ * country selector
+ */
+
+#country-selector {
+	button img {
+		margin-top: -3px;
+		margin-left: 5px;
+	}
+}
+
+/*
+ * time and date input selector
+ */
+
+input[type="date"] {
+	line-height: 16px;
+}
+
+@media (min-width: @screen-sm-min) {
+	input[type="date"] {
+		width: auto;
+	}
+}
+
+.type select, .day select {
+	margin-bottom: 0;
+	padding-bottom: 0;
+}
+
+input[type="number"] {
+	width: 100px;
+}
+
+input[type="time"] {
+	width: 100px;
+}
+
+/*
+ * dropdown menus
+ */
+
+.dropdown-menu > .active > a, .dropdown-menu > .active > a:hover, .dropdown-menu > .active > a:focus {
+	background: @primaryColor;
+}
+
+.select2-drop {
+	min-width: 125px;
+}

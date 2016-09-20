@@ -1,0 +1,41 @@
+/*
+ * tag styles
+ */
+
+.tag {
+	border-radius: 5px;
+	padding: 0 5px;
+	white-space: nowrap;
+	color: @darkGrey;
+	.vertical-gradient(white, @veryLightGrey);
+	border: 1px solid @veryLightGrey;
+}
+
+.tag {
+	margin-left: 5px;
+}
+
+.tag.accordion-toggle {
+	cursor: pointer;
+}
+
+.toggle.tag, .primary.tag {
+	color: white;
+	.vertical-gradient(@primaryHighlightColor, @primaryColor);
+	border: 1px solid @primaryBorderColor;
+}
+
+.toggle.tag.collapsed {
+	color: @darkGrey;
+	.vertical-gradient(white, @veryLightGrey);
+	border: 1px solid @veryLightGrey;	
+}
+
+.primary.tag:hover {
+	color: white;
+	.vertical-gradient(@primaryHoverColor, @primaryColor);
+}
+
+.tags {
+	margin-left: 10px;
+}

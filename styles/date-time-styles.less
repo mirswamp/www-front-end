@@ -1,0 +1,68 @@
+/*
+ * date font styles
+ */
+
+ div.datetime {
+ 	/*
+	.date::after {
+		content: " ";
+	}
+	*/
+	.date {
+		margin-right: 5px;
+		float: left;
+	}
+
+	.time {
+		font-style: italic;
+		float: left;
+	}
+
+	/*
+	.time::after {
+		content: " ";
+	}
+	*/
+	.time {
+		margin-right: 5px;
+	}
+
+	.year::before {
+		content: "(";
+	}
+
+	.year {
+		font-style: italic;
+	}
+
+	.year::after {
+		content: ") ";
+	}
+ }
+
+ .time {
+	.weeks::after {
+		content: " weeks ";
+	}
+
+	.days::after {
+		content: " days ";
+	}
+
+	.hours::after {
+		content: " hours ";
+	}
+
+	.minutes::after {
+		content: " minutes ";
+	}
+
+	.seconds::after {
+		content: " seconds ";
+	}
+ }
+
+ .negative.time {
+ 	color: red;
+ }
+

@@ -1,0 +1,163 @@
+/*
+ * icon styles
+ */
+
+.primary i {
+	color: white;
+}
+
+.nav i {
+	color: @primaryColor;
+}
+
+.nav li:hover i {
+	color: white;
+}
+
+/*
+ * content header icon styles
+ */
+
+.content {
+	h1 .icon, .dashboard .icon {
+		float: left;
+		margin-top: 5px;
+		margin-left: 20px;
+		margin-right: 20px;
+		margin-bottom: 5px;
+		width: 90px;
+		height: 90px;
+		border-radius: 10px;
+		.vertical-gradient(white, @veryLightGrey);
+		border: 4px solid @primaryColor;
+		text-align: center;
+
+		i {
+			margin-left: 1px;
+			margin-top: 10px;
+			width: 100%;
+			font-size: 60px;
+			color: @veryDarkGrey;
+		}
+	}
+}
+
+/*
+ * medium content header icon styles
+ */
+
+@media (max-width: @screen-md-min) {
+	.content {
+		h1 .icon, .dashboard .icon {
+			margin-top: 5px;
+			margin-left: 10px;
+			margin-right: 15px;
+			margin-bottom: 10px;
+			width: 60px;
+			height: 60px;
+			border-radius: 10px;
+			.vertical-gradient(white, @veryLightGrey);
+			border: 4px solid @primaryColor;
+			text-align: center;
+
+			i {
+				margin-left: 0;
+				margin-top: 5px;
+				width: 100%;
+				font-size: 40px;
+				color: @veryDarkGrey;
+			}
+		}
+	}
+}
+
+/*
+ * small content header icon styles
+ */
+
+@media (max-width: @screen-sm-min) {
+	.content {
+		h1 .icon, .dashboard .icon {
+			margin-top: 5px;
+			margin-left: 10px;
+			margin-right: 15px;
+			margin-bottom: 10px;
+			width: 45px;
+			height: 45px;
+			border-radius: 10px;
+			.vertical-gradient(white, @veryLightGrey);
+			border: 4px solid @primaryColor;
+			text-align: center;
+
+			i {
+				margin-left: 0;
+				margin-top: 5px;
+				width: 100%;
+				font-size: 25px;
+				color: @veryDarkGrey;
+			}
+		}
+	}
+}
+
+/*
+ * active icons
+ */
+
+i.active:hover {
+	color: @primaryColor;
+}
+
+i.active.selected:hover {
+	color: white;
+}
+
+/*
+ * navigation icons
+ */
+
+.nav [class^="icon-"], button [class^="icon-"], h3 [class^="icon-"],
+.nav [class*=" icon-"], button [class*=" icon-"], h3 [class*=" icon-"] {
+	margin-top: -2px;
+}
+
+/*
+ * input append icons
+ */
+
+span.add-on [class^="icon-"],
+span.add-on [class*=" icon-"] {
+	margin: 0;
+}
+
+/*
+ * icon scaling
+ */
+
+ .icon2x {
+	-webkit-transform:scale(2.0);
+	-moz-transform:scale(2.0);
+	-o-transform:scale(2.0);
+	margin: 10px;
+	margin-top: 0;
+}
+
+.icon3x {
+	-webkit-transform:scale(3.0);
+	-moz-transform:scale(3.0);
+	-o-transform:scale(3.0);
+	margin: 15px;
+	margin-top: 0;
+}
+
+/*
+ * colored icons
+ */
+
+.error i {
+	color: @mediumRed;
+}
+
+.success i {
+	color: @mediumGreen;
+}

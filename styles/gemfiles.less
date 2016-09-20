@@ -1,0 +1,159 @@
+/*
+ * gemfile styles
+ */
+
+.gem-info {
+
+	.comment {
+		color: @mediumGrey;
+		font-style: italic;
+		&::before {
+			content: "#"
+		}	
+	}
+
+	.strlit {
+		display: inline;
+		&::before {
+			content: "'"
+		}
+		&::after {
+			content: "'"
+		}
+	}
+
+	.symbol {
+		color: @darkGold;
+		display: inline;
+		&::before {
+			content: ":"
+		}
+
+		/*
+		background: @paleLightGold;
+		border-radius: 5px;
+		margin-top: .5em;
+		margin-bottom: .5em;
+		padding: 3px;
+		*/
+
+		.value {
+			color: @darkGreen;
+			display: inline;
+			&::before {
+				color: @veryDarkGrey;
+				content: "=>";
+				margin-left: .25em;
+				margin-right: .25em;
+			}
+		}
+	}
+
+	ul {
+		margin: 0;
+		padding: 0;
+		display: inline;
+		li {
+			display: inline;
+			&::after {
+				content: ", ";
+			}
+		}
+		li:last-child {
+			&::after {
+				content: "";
+			}
+		}
+	}
+
+	.source {
+		display: table;
+		background: @veryVeryLightGrey;
+		border-radius: 5px;
+		margin-top: .5em;
+		margin-bottom: .5em;
+		padding: 5px;
+
+		&::before {
+			content: "source";
+			font-weight: bold;
+			margin-right: .5em;
+		}
+	}
+
+	.ruby {
+		display: table;
+		background: @veryLightRed;
+		border-radius: 5px;
+		margin-top: .5em;
+		margin-bottom: .5em;
+		padding: 5px;
+
+		&::before {
+			content: "ruby";
+			font-weight: bold;
+			margin-right: .5em;
+		}
+	}
+
+	.gem {
+		display: table;
+		background: @veryLightGrey;
+		border-radius: 5px;
+		margin-top: .5em;
+		margin-bottom: .5em;
+		padding: 5px;
+
+		&::before {
+			content: "gem";
+			font-weight: bold;
+			margin-right: .5em;
+		}
+	}
+
+	.require {
+		display: inline;
+		background: @lightGrey;
+		border-radius: 5px;
+		padding-left: 5px;
+		padding-right: 5px;
+
+		&::before {
+			content: "require =>";
+			font-weight: bold;
+			margin-right: .5em;
+		}	
+	}
+
+	.group {
+		display: table;
+		background: @veryVeryLightGrey;
+		border-radius: 5px;
+		margin-top: .5em;
+		margin-bottom: .5em;
+		padding: 5px;
+
+		.id {
+			&::before {
+				content: "group";
+				font-weight: bold;
+				margin-right: .5em;
+			}
+
+			&::after {
+				content: "do";
+				font-weight: bold;
+				margin-left: .5em;
+			}
+		}
+		
+		.gem {
+			margin-left: 4em;
+		}
+
+		&::after {
+			content: "end";
+			font-weight: bold;
+		}
+	}
+}

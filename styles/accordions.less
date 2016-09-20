@@ -1,0 +1,111 @@
+/*
+ * accordions
+ */
+
+.panel-heading {
+	// background: @ultraLightGrey;
+	background: white;
+}
+
+.panel {
+	border-color: @lightGrey;
+	.nested {
+		padding-left: 20px;
+		padding-right: 20px;
+	}
+}
+
+.panel-group {
+	margin-top: 0;
+	margin-bottom: 0; 
+
+	.panel-heading {
+		label {
+			display: inline-block;
+			padding: 5px;
+		}
+
+		i {
+			margin-top: -2px;
+			margin-right: 4px;
+		}
+
+		a {
+			text-decoration: none;
+		}
+
+		> h3 {
+			display: inline-block;
+			margin-right: 10px;
+			margin: 0;
+		}
+
+		.tag:first-child {
+			margin-left: 5px;
+		}
+
+		.tag {
+			padding: 2px;
+			padding-left: 6px;
+			display: inline-block;
+		}
+	}
+
+	.accordion-inner {
+		border: 1px solid @veryLightGrey;
+		border-radius: 10px;
+		background: @veryVeryLightGrey;
+		margin-bottom: 20px;
+		padding: 10px;
+
+		.row {
+			margin-right: 0;
+			margin-left: 0;
+
+			label {
+				padding-top: 5px;
+				padding-right: 5px;
+				float: left;
+			}
+
+			// remove outer padding
+			//
+			[class*="col-"]:first-of-type {
+				padding-left: 0 !important;
+			}
+			[class*="col-"]:last-of-type {
+				padding-right: 0 !important;
+			}
+		}
+
+		h3 {
+			margin-top: 0;
+
+			i {
+				margin-right: 5px;
+			}
+		}
+	}
+
+	.nested {
+		padding-left: 20px;
+		padding-right: 20px;
+	}
+
+	fieldset {
+		 margin-right: 20px; 
+	}
+
+	.well {
+		margin-bottom: 20px;
+	}
+}
+
+.filters .accordion-heading {
+	margin: 15px;
+}
+
+form .accordion {
+	margin-right: 20px;
+}
+

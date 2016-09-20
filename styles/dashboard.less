@@ -1,0 +1,99 @@
+/*
+ * dashboard styles
+ */
+
+.dashboard {
+	margin-top: 20px;
+
+	.column {
+		.make-md-column(4);
+		.make-xs-column(6);
+		display: table;
+		margin-bottom: 10px;
+		cursor: pointer;
+	}
+
+	@media (min-width: @screen-md-min) {
+		.column {
+			min-height: 125px;
+			margin-left: 0;
+		}
+	}
+
+	.badge {
+		float: right;
+		margin-right: -10px;
+	}
+
+	h2 {
+		margin-bottom: 0;
+	}
+
+	#last-login {
+		position: absolute;
+	}
+}
+
+/*
+ * medium dashboard styles
+ */
+
+@media (max-width: @screen-md-min) {
+	.dashboard {
+		[class*="col-"] {
+			min-height: 0;
+		}
+	}
+}
+
+/*
+ * small dashboard styles
+ */
+
+@media (max-width: @screen-sm-min) {
+	.dashboard {
+		.icon {
+			margin-top: 0;
+		}
+	}
+}
+
+/*
+ * extra small dashboard styles
+ */
+
+@media (max-width: @screen-xs-min) {
+	.content .dashboard {
+		.icon {
+			display: inline-block;
+			float: none;
+		}
+
+		.icon-group {
+			text-align: center;
+		}
+
+		.description {
+			display: none;
+		}
+
+		[class*="col-"] {
+			margin-bottom: 0;
+		}
+	}
+}
+
+/*
+ * mobile dashboard styles
+ */
+
+@media (max-width: @screen-xs-min) {
+
+	// remove padding
+	//
+	.dashboard {
+		[class*="col-"] {
+			padding: 10px;
+		}
+	}
+}

@@ -1,0 +1,230 @@
+/*
+ * table styles
+ */
+
+table {
+	width: 100%;
+
+	/*
+	 * table headers
+	 */
+
+	thead {
+		tr, tr.tablesorter {
+			.vertical-gradient(@primaryHighlightColor, @primaryColor);
+
+			th {
+				color: white;
+			}
+
+			th.headerSortDown, th.headerSortUp {
+				background-color: @primaryColor;
+			}
+		}
+	}
+
+	th {
+		color: white;
+		font-size: 14px;
+		white-space: nowrap;
+		text-align: center;
+	}
+
+	/*
+	 * table rows
+	 */
+
+	/*
+	tr.first {
+		td:not(.prepend):not(.append) {
+			border-top: 1px solid grey;
+		}
+	}
+	*/
+
+	/*
+	 * table cells
+	 */
+
+	td, th {
+		border: none;
+		padding: 5px 10px;
+	}
+
+	td {
+		vertical-align: top;	
+	}
+
+	td.unpadded {
+		padding: 0;
+	}
+
+	tr:not(.first) {
+		td.duplicate:not(.prepend) {
+			opacity: 0 !important;
+		}
+	}
+
+	/*
+	 * select group checkboxes
+	 */
+
+	tr.first.last {
+		td.select-group input {
+			display: none;
+		}
+	}
+	
+	/*
+	 * zebra
+	 */
+
+	tr:nth-child(odd) {
+		background-color: @veryLightGrey;
+	}
+
+	tr:nth-child(even) {
+		background-color: @veryVeryLightGrey;
+	}
+
+	tr.odd {
+		background-color: @veryLightGrey;
+
+		td {
+			border-bottom: 1px solid @veryVeryLightGrey;
+		}
+	}
+
+	tr.even {
+		background-color: @veryVeryLightGrey;
+
+		td {
+			border-bottom: 1px solid @veryLightGrey;
+		}
+	}
+
+	tr:last-child td, 
+	tr td.prepend, 
+	tr td.append {
+		border-bottom: none;
+	}
+
+	/*
+	 * rounded corners on first and last rows
+	 */
+
+	thead {
+		tr:first-child {
+			td:first-child, th:first-child, .first {
+				border-top-left-radius: 5px;
+			}
+			td:last-child, th:last-child, .last {
+				border-top-right-radius: 5px;
+			}
+		}
+	}
+	
+	tbody {
+		tr:last-child {
+			td:first-child, .first {
+				border-bottom-left-radius: 5px;
+			}
+			td:last-child, .last {
+				border-bottom-right-radius: 5px;
+			}
+		}
+	}
+
+	/*
+	 * prepended and appended columns
+	 */
+
+	th.prepend, th.append,
+	td.prepend, td.append {
+		width: 1px;
+		border: none;
+		background: white;
+	}
+
+	th.prepend, td.prepend {
+		padding-left: 0px;
+	}
+
+	th.append, td.append {
+		padding-right: 0;
+	}
+
+	/*
+	 * special columns
+	 */
+
+	td.results {
+		text-align: center;
+	}
+
+	td.datetime {
+		width: 1px;
+	}
+
+	th.half-width {
+		width: 50%;
+	}
+
+	td.reorder {
+		padding: 5px;
+	}
+
+	//
+	// table cell elements
+	//
+
+	td {
+		button {
+			i {
+				margin-left: 0;
+				margin-bottom: 3px;
+			}
+		}
+	}
+
+	//
+	// table contents
+	//
+
+	ul {
+		-webkit-padding-start: 10px;
+	}
+
+	//
+	// group selection
+	//
+
+	tr:not(.first) td.select-group input {
+		display: none;
+	}
+}
+
+#show-numbering {
+	margin-top: 20px;
+}
+
+/*
+ * responsive table styles
+ */
+
+.table-responsive {
+	border: none;
+	overflow: auto;
+}
+
+/*
+ * small table styles
+ */
+
+@media (max-width: @screen-sm-min) {
+	table {
+		td {
+			padding: 5px;
+		}
+	}
+}

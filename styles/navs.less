@@ -1,0 +1,338 @@
+/*
+ * link colors
+ */
+
+@linkColor: @secondaryColor;
+@linkColorHover: @primaryColor;
+@navLinkColor: @secondaryColor;
+@navLinkColorHover: white;
+
+/*
+ * dropdown colors
+ */
+
+@dropdownColor: @darkGrey;
+@dropdownBackground: white;
+@dropdownLinkColorHover: white;
+@dropdownLinkBackgroundHover: @primaryHoverColor;
+
+/*
+ * general navigation
+ */
+
+.nav {
+	h2 {
+		margin-top: 0;
+	}
+}
+
+/*
+ * nav bars 
+ */
+
+.well.nav {
+	padding: 5px;
+	margin-bottom: 0;
+
+	li {
+		a {
+			box-shadow: -2px -2px 2px -2px rgba(0, 0, 0, 0.5);
+
+			i {
+				color: @darkGrey;
+				margin-right: 5px;
+			}
+		}
+		a:hover {
+			i {
+				color: white;
+			}		
+		}
+	}
+}
+
+.nav {
+	li {
+		min-width: 35px;
+		text-align: center;
+	}
+	
+	li.selected, li.active, li a:hover {
+		a {
+			i {
+				color: white;
+			}
+		}		
+	}	
+}
+
+.nav-justified > li {
+
+	// prevent justified navs from stacking 
+	//
+	display: table-cell;
+	width: 1%;
+}
+
+/*
+ * top navigation bar 
+ */
+
+.navbar, .navbar-inverse {
+	background-image: none;
+	border: none;
+	box-shadow: 0 5px 10px rgba(0,0,0,.25), inset 0 -1px 0 rgba(0,0,0,.1);
+
+	.container {
+		padding-left: 10px;
+		padding-right: 10px;
+	}
+
+	.navbar-brand {
+		color: white;
+		margin-left: 0px;
+		text-shadow: none;
+		cursor: pointer;
+	}
+
+	.navbar-brand:hover {
+		color: @primaryHighlightColor;
+	}
+
+	.navbar-form {
+		padding: 0;
+		margin: 0;
+	}
+
+	.navbar-text {
+		padding: 0;
+		margin-left: 0;
+		margin-right: 0;
+		margin-top: 4px;
+		margin-bottom: 0;
+	}
+
+	.btn {
+		margin-top: 7px;
+		margin-bottom: 5px;
+		margin-left: 5px;
+		margin-right: 5px;
+	}
+
+	.nav > li {
+		cursor: pointer;
+		label {
+			margin: 0;
+			margin-left: 5px;
+			cursor: pointer;
+		}
+	}
+
+	.username {
+		color: white;
+	}
+	.username .visible-sm {
+		max-width: 75px;
+		height: 20px;
+		overflow: hidden;
+	}
+}
+
+.navbar-inverse .navbar-nav > a:hover,
+.navbar-inverse .navbar-nav > .active > a {
+	background-color: white;
+	.vertical-gradient(@primaryHighlightColor, @primaryColor);
+}
+
+/*
+ * mobile dropdown nav bar
+ */
+
+.navbar-fixed-top .navbar-collapse, .navbar-fixed-bottom .navbar-collapse {
+	max-height: 360px;
+}
+
+/*
+ * nav pills
+ */
+
+.nav-pills > li {
+	> a {
+		padding-right: 5px;
+		padding-left: 5px;
+	}
+}
+
+/*
+ * nav tabs
+ */
+
+ .nav-tabs > li {
+ 	margin-right: 5px;
+ 	
+ 	> a {
+		padding-right: 5px;
+		padding-left: 5px;
+	}
+}
+
+/*
+ * links
+ */
+
+a {
+	color: @linkColor;
+}
+
+a:hover, a:focus {
+	color: @linkColorHover;
+}
+
+/*
+ * navbar navigation
+ */
+
+.nav > li > a {
+	color: @navLinkColor;
+	text-shadow: none;
+
+	label {
+		margin-left: 5px;
+	}
+}
+
+.nav > li.active > a {
+	color: white;
+
+	label {
+		color: white;
+	}
+}
+
+.nav > li > a:hover,
+.nav > li > a:focus {
+	color: @navLinkColorHover;
+	.vertical-gradient(@primaryHoverColor, @primaryColor);
+
+	label {
+		color: @navLinkColorHover;
+	}
+}
+
+.nav > li > a:focus {
+	border: 1px solid @primaryBorderColor;
+}
+
+/*
+ * header navigation
+ */
+
+#header {
+	.nav > li > a {
+		color: @primaryColor;
+		text-shadow: none;
+	}
+
+	.nav > li > a:focus {
+		color: @navLinkColorHover;
+		background-color: @dropdownLinkBackgroundHover;
+	}
+}
+
+/*
+ * tiles
+ */
+
+.tile {
+	cursor: pointer;
+}
+
+.well.tile {
+	box-shadow: -2px -2px 4px -2px rgba(0, 0, 0, 0.25) inset;
+
+	li {
+		i {
+			color: @darkGrey;
+		}
+
+		a:hover {
+			.vertical-gradient(@primaryHighlightColor, @primaryColor);
+			color: white !important;
+		}
+
+		a {
+			background: @veryVeryLightGrey;
+		}
+	}
+
+	li:hover {
+		i {
+			color: white;
+		}
+	}
+}
+
+.well.tile:hover {
+	color: @primaryColor;
+}
+
+.well.tile.selected:hover {
+	color: white;
+}
+
+/*
+ * dropdowns
+ */
+
+.dropdown-menu {
+	background-color: @dropdownBackground;
+ }
+
+ .dropdown-menu > li > a {
+	color: @dropdownColor;
+ }
+
+.dropdown-menu > li > a:hover,
+.dropdown-menu > li > a:focus,
+.dropdown-submenu:hover > a,
+.dropdown-submenu:focus > a {
+	text-decoration: none;
+	color: @dropdownLinkColorHover;
+	background-color: @dropdownLinkBackgroundHover;
+	background-image: none;
+}
+
+/*
+ * dropdown carats
+ */
+
+.nav .dropdown-toggle .caret {
+	border-top-color: @linkColor;
+	border-bottom-color: @linkColor;
+}
+.nav .dropdown-toggle:hover .caret,
+.nav .dropdown-toggle:focus .caret {
+	border-top-color: @linkColorHover;
+ }
+
+/* 
+ * cause menus to show on hover rather than click
+ */
+
+ul.nav li.dropdown:hover > ul.dropdown-menu{
+	display: block;    
+}
+
+/*
+ * breadcrumbs
+ */
+
+.breadcrumb {
+	background: transparent;
+	padding: 0;
+	margin-bottom: 20px;
+
+	i {
+		margin-right: 5px;
+	}
+}

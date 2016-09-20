@@ -1,0 +1,34 @@
+<% if (showNumbering) { %>
+<td class="prepend number">
+	<%- index %>
+</td>
+<% } %>
+
+<td class="platform description first">
+	<% if (platformUrl) { %>
+	<a href="<%- platformUrl %>"><span class="name"><%= stringToHTML(platformVersionName) %></span></a>
+	<% } else { %>
+	<span class="name"><%= stringToHTML(platformVersionName) %></span>
+	<% } %>
+
+	<% if (platformVersionUrl) { %>
+	<a href="<%- platformVersionUrl %>"><span class="version"><%= stringToHTML(platformVersionString) %></span></a>
+	<% } else { %>
+	<span class="version"><%= stringToHTML(platformVersionString) %></span>
+	<% } %>
+</td>
+
+<td class="dependency-list last">
+	<div class="input-group">
+		<input type="text" class="form-control" value="<%= dependencyList %>" />
+		<div class="input-group-addon">
+			<i class="active fa fa-question-circle" data-toggle="popover" data-placement="top" data-container="body" title="Package Dependencies" data-content="This is a space separated list of packages that this package is dependent upon for a particular platform."></i>
+		</div>
+	</div>
+</td>
+
+<% if (showDelete) { %>
+<td class="append">
+	<button type="button" class="delete btn btn-sm"><i class="fa fa-times"></i></button>
+</td>
+<% } %>

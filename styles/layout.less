@@ -1,0 +1,342 @@
+body {
+	background-color: @veryVeryLightGrey;
+	margin: 0;
+}
+
+/*
+ * main layout styles
+ */
+
+#main {
+	margin-top: 50px;
+}
+
+/*
+ * banner styles
+ */
+
+.banner {
+	max-width: 500px;
+	text-align: center;
+	margin-left: auto;
+	margin-right: auto;
+	margin-bottom: 20px;
+}
+
+#icon {
+	max-width: 50%;
+}
+
+/*
+ * medium banner styles
+ */
+
+@media (max-width: @screen-md-min) {
+	.banner {
+		max-width: 400px;
+	}
+}
+
+/*
+ * small banner styles
+ */
+
+@media (max-width: @screen-sm-min) {
+	.banner {
+		max-width: 300px;
+	}
+}
+
+/*
+ * mobile banner styles
+ */
+
+@media (max-width: @screen-xs-min) {
+	#dashboard #icon {
+		width: 75px;
+	}
+
+	/*
+	.tagline {
+		display: none;
+	}
+	*/
+
+	.banner {
+		max-width: 250px;
+		margin-bottom: 10px;
+	}
+}
+
+/*
+ * main styles
+ */
+
+.tagline {
+	margin: 10px;
+}
+
+#main {
+	.container {
+		color: @darkGrey;
+		background-color: white;
+	}
+}
+
+#main.offset-top {
+	margin-top: 50px;
+}
+
+#main.offset-bottom {
+	margin-bottom: 50px;
+}
+
+.row {
+	margin-left: 0;
+	margin-right: 0;
+}
+
+.column {
+  	display: -ms-flexbox;
+  	display: -webkit-flex;
+	display: flex;
+}
+
+.variable-columns .well {
+	margin-left: 0;
+	margin-right: 10px;
+}
+
+/*
+ * content styles
+ */
+
+.content {
+	padding-left: 20px;
+	padding-right: 20px;
+	padding-bottom: 20px;
+}
+
+/*
+ * responsive styles
+ */
+
+.visible-xxs {
+	display: none;
+}
+
+@media (max-width: 480px) {
+	.hidden-xxs {
+		display: none !important;
+	}
+	.visible-xxs {
+		display: block !important;
+	}
+}
+
+/*
+ * medium content styles
+ */
+
+@media (max-width: @screen-sm-min) {
+	.content {
+		padding-left: 10px;
+		padding-right: 10px;
+		padding-bottom: 10px;
+	}
+}
+
+/*
+ * small content styles
+ */
+
+@media (max-width: @screen-xs-min) {
+	.content {
+		padding-left: 0;
+		padding-right: 0;
+	}
+}
+
+/*
+ * one column styles
+ */
+
+.one-column {
+	.bottom.content {
+		padding-top: 50px
+	}
+}
+
+/*
+ * two column styles
+ */
+
+.two-column .content {
+	width: 100%;
+}
+
+.side.column {
+	padding-top: 20px;
+}
+
+.main.column .content {
+	margin-top: 0;
+}
+
+/*
+ * left side column styles
+ */
+
+.left.side.column {
+	float: left;
+	margin-right: 15px;
+}
+
+.right.main.column {
+	margin-left: 0;
+}
+
+/*
+ * right side column styles
+ */
+
+.right.side.column {
+	float: right;
+	margin-left: 15px;
+}
+
+.left.main.column {
+	margin-right: 0;
+}
+
+/*
+ * header and footer styles
+ */
+
+#footer .container {
+	color: black;
+	border-top: 5px solid @primaryColor;
+	padding-top: 15px;
+	padding-bottom: 15px;
+}
+
+#footer .logo {
+	float: right;
+	margin-left: 20px;
+}
+
+/*
+@media (max-width: @screen-xs-min) {
+	#footer {
+		display: none;
+	}
+}
+*/
+
+/*
+ * other layout styles
+ */
+
+hr {
+	border: 0;
+	width: 100%;
+	background-color: @primaryColor;
+	height: 2px;
+}
+
+.spacing {
+	display: inline-block;
+	width: 25px
+}
+
+.well {
+	background-color: @veryVeryLightGrey;
+	border-radius: 10px;
+	padding: 10px;
+	border: none;
+
+	h3 {
+		margin-top: 0;
+	}
+}
+
+.active.well:active {
+	background-color: @ultraLightGrey;
+}
+
+.well.selected, .well.selected:hover {
+	.vertical-gradient(@primaryHighlightColor, @primaryColor);
+	color: white;
+	h3 {
+		color: white;
+	}
+}
+
+/*
+ * panel styles
+ */
+
+.panel {
+	h2 {
+		margin-top: 10px;
+		margin-bottom: 0;
+		margin-left: 20px;
+	}
+}
+
+/*
+ * scrollable styles
+ */
+
+.vertically.scrollable {
+	overflow-y: auto;
+	overflow-x: hidden;
+}
+
+/*
+ * image styles
+ */
+
+.photo {
+	padding: 2px;
+	box-shadow: 10px 10px 20px @mediumGrey;
+}
+
+a .photo {
+	border: 1px solid @primaryColor;
+}
+
+/*
+ * figure / illustration styles
+ */
+
+.figure.left {
+	float: left;
+	margin-right: 25px;
+	margin-bottom: 25px;
+}
+
+.figure.right {
+	float: right;
+	margin-left: 25px;
+	margin-bottom: 25px;
+}
+
+/*
+ * filter styles
+ */
+
+.filters .btn-group {
+	margin-right: 75px
+}
+
+/*
+ * media query styles
+ */
+
+@media (max-width: @screen-xs-min) {
+	.col-sm-6 {
+		padding-left: 0;
+		padding-right: 0;
+	}
+}

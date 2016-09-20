@@ -1,0 +1,50 @@
+/*
+ * validation styles
+ */
+
+label.error {
+	font-weight: bold;
+	color: @mediumRed;
+	padding-top: 0;
+	background: url(../images/forms/error.png) 5px 0px no-repeat;
+	padding-left: 30px;
+}
+
+label.error:empty {
+   display: none;
+}
+
+label.error.valid {
+	/*
+	width: 24px;
+	height: 24px;
+	background: url(../images/forms/valid.png) 5px 0px no-repeat;
+	text-indent: -9999px;
+	padding-bottom: 0;
+	margin-left: 0;
+	*/
+	display: none;
+}
+
+.form-group.error {
+	input, textarea {
+		border: 1px solid @mediumRed;
+	}
+}
+
+/*
+ * password validation styles
+ */
+
+.password-meter-bg {
+	background: transparent;
+}
+
+.password-meter {
+	width: 250px;
+	margin-left: 55px;
+}
+
+.password-meter-message {
+	text-align: left;
+}

@@ -1,0 +1,24 @@
+/*
+ * gemfile styles
+ */
+
+.key-value-pair {
+	display: table;
+	background: @veryVeryLightGrey;
+	border-radius: 5px;
+	margin-top: .5em;
+	margin-bottom: .5em;
+	padding: 5px;
+
+	.key {
+		display: inline;
+		font-weight: bold;
+		&::after {
+			content: ": "
+		}	
+	}
+
+	.value {
+		display: inline;
+	}
+}

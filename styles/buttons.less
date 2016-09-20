@@ -1,0 +1,185 @@
+/*
+ * button colors
+ */
+
+@buttonLabelColor: @secondaryColor;
+@buttonLabelHoverColor: @secondaryColor;
+@primaryButtonColor: @primaryColor;
+@primaryButtonHoverColor: @primaryHoverColor;
+
+/*
+ * buttons
+ */
+
+.btn {
+	font-size: 16px;
+	color: @buttonLabelColor;
+	.vertical-gradient(white, @veryLightGrey);
+	border: 1px solid @veryLightGrey;
+	border-radius: 5px;
+	min-width: 25px;
+
+	i {
+		top: 0;
+		margin-top: 4px;
+		margin-bottom: 4px;
+		margin-right: 5px;
+		color: @darkGrey;
+	}
+}
+
+.btn:hover {
+	color: @buttonLabelHoverColor;
+	.vertical-gradient(white, @veryVeryLightGrey);
+
+	i {
+		color: @primaryColor;
+	}
+}
+
+.btn.disabled, .btn[disabled] {
+	border: 1px solid @veryLightGrey;
+	color: @primaryButtonColor;
+}
+
+/*
+ * mobile buttons
+ */
+
+@media(max-width:479px) {
+	.buttons button, .modal-footer button {
+		width: 100%;
+		margin-left: 0;
+		margin-right: 0;
+	}
+
+	.navbar-right {
+		.btn {
+			width: 100%;
+			margin-left: 0;
+			margin-right: 0;
+		}
+	}
+
+	.modal-footer .btn + .btn {
+		margin-left: 0;
+		margin-top: 10px;
+	}
+}
+
+/*
+ * primary buttons
+ */
+
+.btn-primary, .btn-primary:focus, .btn-primary[disabled] {
+	background-color: @primaryButtonColor; 
+	.vertical-gradient(@primaryHighlightColor, @primaryColor);
+	border: 1px solid @primaryColor;
+	color: white !important;
+	text-shadow: none;
+
+	i {
+		color: white;
+	}
+}
+
+.btn-primary:disabled:hover {
+	border: 1px solid @primaryColor;
+}
+
+.btn-primary:not([disabled]):hover {
+	.vertical-gradient(@primaryHoverColor, @primaryColor);
+	border: 1px solid @primaryColor;
+
+	i {
+		color: white;
+	}
+}
+
+/*
+ * small and large buttons
+ */
+
+.btn-sm {
+	padding: 1px 6px;
+	-webkit-border-radius: 6px;
+	-moz-border-radius: 6px;
+	border-radius: 6px;	
+}
+
+.btn-lg {
+	padding: 10px 15px;
+	font-size: 18px;
+	border-width: 1px;
+	-webkit-border-radius: 8px;
+	-moz-border-radius: 8px;
+	border-radius: 8px;
+
+	i {
+		position: relative;
+		margin-left: -5px;
+		margin-right: 10px;
+	}	
+}
+
+/*
+ * nav bar buttons
+ */
+
+.navbar .btn, .navbar .btn:hover {
+	border: none;
+}
+
+/*
+ * close buttons
+ */
+
+button.close:hover {
+	background: transparent;
+}
+
+/*
+ * add / delete buttons
+ */
+
+button.add.btn, 
+button.delete.btn,
+button.move-up.btn,
+button.move-down.btn {
+	i {
+		margin-right: 0;
+	}
+}
+
+/*
+ * button sets
+ */
+
+.buttons {
+	button, .btn {
+		margin-bottom: 5px;
+	}
+}
+
+/*
+.panel .buttons {
+	.buttons, .btn {
+		margin-top: 0;
+	}	
+}
+*/
+
+.top.buttons {
+	margin-bottom: 15px;
+	text-align: right;
+}
+
+.middle.buttons {
+	margin-top: 15px;
+	margin-bottom: 15px;
+	text-align: right;
+}
+
+.bottom.buttons {
+	margin-top: 15px;
+}
