@@ -44,7 +44,7 @@ define([
 
 		initialize: function() {
 
-			// create colletion from key value pairs
+			// create collection from key value pairs
 			//
 			this.collection = new Backbone.Collection();
 			if (this.options.array) {

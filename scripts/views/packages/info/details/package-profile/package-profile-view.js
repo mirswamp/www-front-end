@@ -22,7 +22,8 @@ define([
 	'marionette',
 	'text!templates/packages/info/details/package-profile/package-profile.tpl',
 	'registry',
-	'models/users/user'
+	'models/users/user',
+	'utilities/time/date-utils'
 ], function($, _, Backbone, Marionette, Template, Registry, User) {
 	return Backbone.Marionette.ItemView.extend({
 

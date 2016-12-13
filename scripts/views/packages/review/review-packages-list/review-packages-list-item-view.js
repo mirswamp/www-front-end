@@ -24,7 +24,7 @@ define([
 	'dropdown',
 	'text!templates/packages/review/review-packages-list/review-packages-list-item.tpl',
 	'registry',
-	'utilities/date-format',
+	'utilities/time/date-format',
 	'views/dialogs/error-view',
 	'views/dialogs/notify-view',
 	'views/dialogs/confirm-view'

@@ -27,6 +27,10 @@ require.config({
 	baseUrl: 'scripts', 
 	paths: {
 
+		// config paths
+		//
+		config: 'config/config',
+
 		// template paths
 		//
 		templates: '../templates',
@@ -51,6 +55,14 @@ require.config({
 		tablesorter: 'library/jquery/tablesorter/jquery.tablesorter',
 		datepicker: 'library/jquery/datepicker/datepicker',
 
+		// jquery ui plugin paths
+		//
+		core: 'library/jquery/jquery-ui/plugins/core',
+		mouse: 'library/jquery/jquery-ui/plugins/mouse',
+		widget: 'library/jquery/jquery-ui/plugins/widget',
+		draggable: 'library/jquery/jquery-ui/plugins/draggable',
+		sortable: 'library/jquery/jquery-ui/plugins/sortable',
+		
 		// bootstrap paths
 		//
 		affix: 'library/bootstrap/affix',
@@ -173,13 +185,18 @@ require.config({
 
 		modernizr: {
 			exports: 'Modernizr'
-		}
-	},
+		},
 
-	/* Visual Debugging */
-	config: {
-		text: {
-			xrayTemplateDebugging: document.URL.match(/xray-goggles=on/)
+		//
+		// utility dependencies
+		//
+
+		'utilities/time/time-utils': {
+			deps: ['utilities/time/iso8601']
+		},
+		
+		'utilities/time/date-utils': {
+			deps: ['utilities/time/time-utils', 'utilities/time/date-format']
 		}
 	}
 });
@@ -194,10 +211,6 @@ require([
 	'backbone'
 ], function($, Application, Backbone) {
 
-	// Visual Debugging
-	//
-	Backbone.xrayViewDebugging = document.URL.match(/xray-goggles=on/);
-
 	// required for IE
 	//
 	$.support.cors = true;
@@ -206,9 +219,16 @@ require([
 	//
 	var application = new Application();
 
-	// go!
+	// wait for document ready
 	//
 	$(document).ready(function() {
+
+		// store page load time
+		//
+		window.timing['document ready'] = new Date().getTime();
+
+		// go!
+		//
 		application.start();
 	});
 });

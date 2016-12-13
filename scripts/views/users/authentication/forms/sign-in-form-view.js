@@ -24,10 +24,9 @@ define([
 	'text!templates/users/authentication/forms/sign-in-form.tpl',
 	'config',
 	'registry',
-	'views/dialogs/error-view',
-	'views/users/dialogs/email-verification-error-view',
-	'views/users/authentication/forms/federated-sign-in-form-view'
-], function($, _, Backbone, Marionette, Popover, Template, Config, Registry, ErrorView, EmailVerificationErrorView, FederatedSignInFormView) {
+	'views/users/authentication/selectors/auth-provider-selector-view',
+	'views/dialogs/error-view'
+], function($, _, Backbone, Marionette, Popover, Template, Config, Registry, AuthProviderSelectorView, ErrorView) {
 	return Backbone.Marionette.LayoutView.extend({
 
 		//
@@ -36,80 +35,32 @@ define([
 
 		className: 'form-horizontal',
 
+		regions: {
+			linkedAccountSignIn: '#linked-account-sign-in'
+		},
+
 		events: {
 			'click .alert-warning .close': 'onClickAlertWarningClose',
 			'click .alert-info .close': 'onClickAlertInfoClose',
 			'click #reset-password': 'onClickResetPassword',
 			'click #request-username': 'onClickRequestUsername',
+			'click #username-password button': 'onClickUsernamePassword'
 		},
 
 		//
-		// rendering methods
+		// constructor
 		//
 
-		template: function(){
-			return _.template(Template, {
-				config: Registry.application.config
-			});
-		},
-
-		onRender: function() {
-
-			// add federated sign in
-			//
-			if (Registry.application.config['federated_authentication_enabled'] || 
-				Registry.application.config['github_authentication_enabled']) {
-
-				// add regions
-				//
-				this.addRegions({
-					federatedSignInForm: '#federated-sign-in-form'
-				});
-
-				// show subviews
-				//
-				this.federatedSignInForm.show(
-					new FederatedSignInFormView()
-				);
-			}
-
-			// display popovers on hover
-			//
-			this.$el.find('[data-toggle="popover"]').popover({
-				trigger: 'hover'
-			});
-
-		},
-
-		showWarning: function(message) {
-			this.$el.find('.alert-warning .message').html(message);
-			this.$el.find('.alert-warning').show();
-		},
-
-		hideWarning: function() {
-			this.$el.find('.alert-warning').hide();
-		},
-
-		showInfo: function(message) {
-			this.$el.find('.alert-info .message').html(message);
-			this.$el.find('.alert-info').show();
-		},
-
-		hideInfo: function() {
-			this.$el.find('.alert-info').hide();
+		initialize: function() {
+			this.useLinkedAccount = false;
 		},
 
 		//
 		// methods
 		//
 
-		submit: function(options) {
+		login: function(username, password, options) {
 			var self = this;
-
-			// get parameters
-			//
-			var username = this.$el.find('#username').val();
-			var password = this.$el.find('#password').val();
 
 			// send login request
 			//
@@ -132,12 +83,7 @@ define([
 					// check for unverified email
 					//
 					if (response.responseText == "User email has not been verified.") {
-						Registry.application.modal.show(
-							new EmailVerificationErrorView({
-								username: username,
-								password: password
-							})
-						);
+						self.showEmailVerificationError(username, password);
 
 					// check for unauthorized request
 					//
@@ -183,6 +129,121 @@ define([
 					}
 				}
 			});
+		},
+
+		//
+		// rendering methods
+		//
+
+		template: function() {
+			return _.template(Template, {
+				config: Registry.application.config
+			});
+		},
+
+		onRender: function() {
+			var self = this;
+
+			// show linked account sign in
+			//
+			if (Registry.application.config['linked_accounts_enabled']) {
+				this.showLinkedAccountForm();
+			}
+
+			// display popovers on hover
+			//
+			this.$el.find('[data-toggle="popover"]').popover({
+				trigger: 'hover'
+			});
+		},
+
+		showLinkedAccountForm: function() {
+			var self = this;
+			require([
+				'views/users/authentication/forms/linked-account-sign-in-form-view',
+			], function (LinkedAccountSignInFormView) {
+				self.linkedAccountSignIn.show(
+					new LinkedAccountSignInFormView({
+						parent: self,
+
+						// callbacks
+						//
+						onSelect: function() {
+							self.$el.find('.local-account').hide();
+							self.$el.find('.linked-account').show();
+						},
+						onDeselect: function() {
+							self.options.parent.$el.find('.local-account').show();
+							self.options.parent.$el.find('.linked-account').hide();
+						}
+					})
+				);
+			});
+		},
+
+		showEmailVerificationError: function(username, password) {
+			require([
+				'views/users/dialogs/email-verification-error-view',
+			], function (EmailVerificationErrorView) {
+				Registry.application.modal.show(
+					new EmailVerificationErrorView({
+						username: username,
+						password: password
+					})
+				);
+			});
+		},
+
+		showWarning: function(message) {
+			this.$el.find('.alert-warning .message').html(message);
+			this.$el.find('.alert-warning').show();
+		},
+
+		hideWarning: function() {
+			this.$el.find('.alert-warning').hide();
+		},
+
+		showInfo: function(message) {
+			this.$el.find('.alert-info .message').html(message);
+			this.$el.find('.alert-info').show();
+		},
+
+		hideInfo: function() {
+			this.$el.find('.alert-info').hide();
+		},
+
+		showUsernamePassword: function() {
+			this.$el.find('#username').show();
+			this.$el.find('#password').show();
+		},
+
+		hideUsernamePassword: function() {
+			this.$el.find('#username').hide();
+			this.$el.find('#password').hide();
+		},
+
+		//
+		// form methods
+		//
+
+		submit: function(options) {
+			if (Registry.application.config['linked_accounts_enabled'] &&
+				this.linkedAccountSignIn.currentView.useLinkedAccount) {
+
+				// sign in using linked account
+				//
+				this.linkedAccountSignIn.currentView.submit();
+			} else {
+				
+				// get parameters
+				//
+				var username = this.$el.find('#username input').val();
+				var password = this.$el.find('#password input').val();
+
+				// make request
+				//
+				this.login(username, password, options);
+			}
 		},
 
 		//

@@ -18,74 +18,81 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'config',
-	'models/projects/project',
-	'collections/api/routes',
-	'collections/projects/projects'
-], function($, _, Backbone, Config, Project, Routes, Projects) {
+	'backbone'
+], function($, _, Backbone) {
 
 	//
 	// query string methods
 	//
 
 	function fetchRouteByMethod(method, name, options) {
-		var collection = new Routes();
-		collection.fetch({
+		var self = this;
+		require([
+			'collections/api/routes'
+		], function (Routes) {
+			var collection = new Routes();
+			collection.fetch({
 
-			// callbacks
-			//
-			success: function() {
-				var model = collection.getRoute(method, name);
-				if (model) {
-					if (options && options.success) {
-						options.success(model);
+				// callbacks
+				//
+				success: function() {
+					var model = collection.getRoute(method, name);
+					if (model) {
+						if (options && options.success) {
+							options.success(model);
+						}
+					} else {
+						if (options && options.error) {
+							options.error();
+						}
 					}
-				} else {
+				},
+
+				error: function() {
 					if (options && options.error) {
 						options.error();
 					}
 				}
-			},
-
-			error: function() {
-				if (options && options.error) {
-					options.error();
-				}
-			}
-		});	
+			});
+		});
 	}
 
 	function fetchActualRouteByMethod(method, name, servers, options) {
-		var collection = new Routes();
-		collection.fetchActual(Config.servers['rws'] + '/routes', servers[0], {
+		var self = this;
+		require([
+			'config',
+			'collections/api/routes'
+		], function (Config, Routes) {
+			var collection = new Routes();
+			collection.fetchActual(Config.servers['rws'] + '/routes', servers[0], {
 
-			// callbacks
-			//
-			success: function() {
-
-				// check for route in returned collection
+				// callbacks
 				//
-				var route = collection.getRoute(method, name);
-				if (route) {
-					options.success(route);
-				} else {
+				success: function() {
 
-					// look in other servers
+					// check for route in returned collection
 					//
-					if (servers.length > 1) {
-						fetchActualRouteByMethod(method, name, servers.slice(1), options);
+					var route = collection.getRoute(method, name);
+					if (route) {
+						options.success(route);
 					} else {
-						options.success(null);
+
+						// look in other servers
+						//
+						if (servers.length > 1) {
+							fetchActualRouteByMethod(method, name, servers.slice(1), options);
+						} else {
+							options.success(null);
+						}
+					}
+				},
+
+				error: function() {
+					if (options && options.error) {
+						options.error();
 					}
 				}
-			},
-
-			error: function() {
-				if (options && options.error) {
-					options.error();
-				}
-			}
+			});
 		});
 	}
 

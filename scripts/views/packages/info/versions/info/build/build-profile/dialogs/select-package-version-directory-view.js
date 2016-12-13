@@ -23,7 +23,7 @@ define([
 	'marionette',
 	'text!templates/packages/info/versions/info/build/build-profile/dialogs/select-package-version-directory.tpl',
 	'registry',
-	'utilities/file-utils',
+	'utilities/scripting/file-utils',
 	'models/files/file',
 	'models/files/directory',
 	'views/dialogs/error-view',

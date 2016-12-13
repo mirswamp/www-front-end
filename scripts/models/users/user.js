@@ -343,30 +343,30 @@ define([
 		// static methods
 		//
 
-		requestGithubLink: function(username, password, githubId, confirmed, options) {
+		requestLinkedAccountLink: function(username, password, githubId, confirmed, options) {
 			$.ajax(_.extend(options, {
 				type: 'POST',
-				url: Config.servers.rws + '/github/link',
+				url: Config.servers.rws + '/oauth2/link',
 				data: {
 					username: username,
 					password: password,
 					confirmed: confirmed,
-					github_id: githubId
+					oauth2_id: githubId
 				}
 			}));
 		},
 
-		registerWithGithub: function(options) {
+		registerWithLinkedAccount: function(options) {
 			$.ajax(_.extend(options, {
 				type: 'GET',
-				url: Config.servers.rws + '/github/register'
+				url: Config.servers.rws + '/oauth2/register'
 			}));
 		},
 
-		fetchFromGithub: function(options) {
+		fetchFromLinkedAccount: function(options) {
 			$.ajax(_.extend(options, {
 				type: 'GET',
-				url: Config.servers.rws + '/github/user'
+				url: Config.servers.rws + '/oauth2/user'
 			}));
 		}
 	});

@@ -61,6 +61,13 @@ define([
 				// callbacks
 				//
 				success: function() {
+
+					// save original list of providers
+					//
+					self.providers = self.collection.clone();
+
+					// divide providers into groups
+					//
 					var commonProviders = new Backbone.Collection(self.collection.filter(function(model) {
 						return commonProviderNames.indexOf(model.get('name')) != -1; 
 					}));

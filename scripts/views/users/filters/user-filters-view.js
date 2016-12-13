@@ -25,8 +25,8 @@ define([
 	'modernizr',
 	'text!templates/users/filters/user-filters.tpl',
 	'registry',
-	'utilities/query-strings',
-	'utilities/url-strings',
+	'utilities/browser/query-strings',
+	'utilities/browser/url-strings',
 	'views/users/filters/user-type-filter-view',
 	'views/widgets/filters/date-filter-view',
 	'views/widgets/filters/limit-filter-view'

@@ -23,7 +23,7 @@ define([
 	'collapse',
 	'modernizr',
 	'text!templates/api/routes/filters/category-filter.tpl',
-	'utilities/url-strings',
+	'utilities/browser/url-strings',
 	'views/api/routes/selectors/category-selector-view',
 ], function($, _, Backbone, Marionette, Collapse, Modernizr, Template, UrlStrings, CategorySelectorView) {
 	return Backbone.Marionette.LayoutView.extend({

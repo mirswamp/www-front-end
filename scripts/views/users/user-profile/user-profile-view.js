@@ -23,8 +23,9 @@ define([
   'text!templates/users/user-profile/user-profile.tpl',
   'config',
   'registry',
-   'utilities/time-utils'
-], function($, _, Backbone, Marionette, Template, Config, Registry, TimeUtils) {
+  'utilities/time/time-utils',
+  'utilities/time/date-utils'
+], function($, _, Backbone, Marionette, Template, Config, Registry) {
 	return Backbone.Marionette.ItemView.extend({
 
 		//

@@ -42,7 +42,7 @@
 
 			<% if (showLinkedAccount) { %>
 			<th class="has-linked-account hidden-xs">
-				<i class="fa fa-github" data-toggle="popover" data-placement="top" data-content="Has Linked (GitHub) Account" data-container="body"></i>
+				<i class="fa fa-link" data-toggle="popover" data-placement="top" data-content="Has Linked Account" data-container="body"></i>
 			</th>
 			<% } %>
 

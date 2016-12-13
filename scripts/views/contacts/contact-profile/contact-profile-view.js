@@ -20,7 +20,8 @@ define([
 	'underscore',
 	'backbone',
 	'marionette',
-	'text!templates/contacts/contact-profile/contact-profile.tpl'
+	'text!templates/contacts/contact-profile/contact-profile.tpl',
+	'utilities/time/date-utils'
 ], function($, _, Backbone, Marionette, Template) {
 	return Backbone.Marionette.ItemView.extend({
 

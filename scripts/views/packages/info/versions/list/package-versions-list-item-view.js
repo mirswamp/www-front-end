@@ -25,6 +25,7 @@ define([
 	'views/dialogs/confirm-view',
 	'views/dialogs/notify-view',
 	'views/dialogs/error-view',
+	'utilities/time/date-utils'
 ], function($, _, Backbone, Marionette, Template, Registry, ConfirmView, NotifyView, ErrorView) {
 	return Backbone.Marionette.ItemView.extend({
 

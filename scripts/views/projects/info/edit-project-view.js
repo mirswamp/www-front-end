@@ -22,7 +22,7 @@ define([
 	'marionette',
 	'text!templates/projects/info/edit-project.tpl',
 	'registry',
-	'utilities/date-format',
+	'utilities/time/date-format',
 	'views/dialogs/error-view',
 	'views/projects/info/project-profile/project-profile-form-view',
 	'models/viewers/viewer'

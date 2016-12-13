@@ -28,7 +28,7 @@ define([
 	'popover',
 	'text!templates/packages/info/source/source-profile/package-source-profile-form.tpl',
 	'registry',
-	'utilities/file-utils',
+	'utilities/scripting/file-utils',
 	'models/packages/package',
 	'collections/packages/packages',
 	'views/dialogs/error-view'

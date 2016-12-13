@@ -18,7 +18,7 @@ define([
 	'underscore',
 	'backbone',
 	'models/base-model',
-	'utilities/iso8601'
+	'utilities/time/iso8601'
 ], function($, _, Backbone, BaseModel, Iso8601) {
 	return BaseModel.extend({
 

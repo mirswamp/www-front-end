@@ -22,8 +22,9 @@ define([
 	'marionette',
 	'tooltip',
 	'popover',
-	'text!templates/policies/policy-view.tpl'
-], function($, _, Backbone, Marionette, Tooltip, Popover, Template) {
+	'text!templates/policies/policy-view.tpl',
+	'utilities/security/password-policy',
+], function($, _, Backbone, Marionette, Tooltip, Popover, Template, PasswordPolicy) {
 	return Backbone.Marionette.LayoutView.extend({
 
 		//
@@ -45,10 +46,21 @@ define([
 				// get policy from file
 				//
 				require([this.options.template_file], function(policyText) {
-					self.$el.find('#policy').html(policyText);
 
+					// evaluate template
+					//
+					var text = _.template(policyText, {
+						passwordPolicy: passwordPolicy
+					});
+
+					// show evaluated template
+					//
+					self.$el.find('#policy').html(text);
+
+					// show popovers on hover
+					//
 					self.$el.find('a[data-toggle]').popover({
-						trigger: 'click'
+						trigger: 'hover'
 					});
 				}, function(err) {
 					Backbone.history.navigate('#home', {

@@ -22,7 +22,8 @@ define([
 	'marionette',
 	'text!templates/projects/info/project-profile/project-profile.tpl',
 	'registry',
-	'models/viewers/viewer'
+	'models/viewers/viewer',
+	'utilities/time/date-utils'
 ], function($, _, Backbone, Marionette, Template, Registry, Viewer) {
 	return Backbone.Marionette.ItemView.extend({
 

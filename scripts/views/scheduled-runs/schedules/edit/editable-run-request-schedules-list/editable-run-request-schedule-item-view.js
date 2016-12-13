@@ -25,13 +25,13 @@ define([
 	'timepicker',
 	'text!templates/scheduled-runs/schedules/edit/editable-run-request-schedules-list/editable-run-request-schedule-item.tpl',
 	'registry',
-	'utilities/date-utils',
-	'utilities/date-format',
+	'utilities/time/date-format',
+	'utilities/time/date-utils',
 	'models/run-requests/run-request-schedule',
 	'views/dialogs/confirm-view',
 	'views/dialogs/notify-view',
 	'views/dialogs/error-view'
-], function($, _, Backbone, Marionette, Modernizr, Timepicker, Template, Registry, DateUtils, DateFormat, RunRequestSchedule, ConfirmView, NotifyView, ErrorView) {
+], function($, _, Backbone, Marionette, Modernizr, Timepicker, Template, Registry, DateFormat, DateUtils, RunRequestSchedule, ConfirmView, NotifyView, ErrorView) {
 	return Backbone.Marionette.ItemView.extend({
 
 		//

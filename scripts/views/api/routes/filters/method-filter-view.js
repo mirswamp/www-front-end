@@ -23,7 +23,7 @@ define([
 	'collapse',
 	'modernizr',
 	'text!templates/api/routes/filters/method-filter.tpl',
-	'utilities/url-strings',
+	'utilities/browser/url-strings',
 	'views/api/routes/selectors/method-selector-view',
 ], function($, _, Backbone, Marionette, Collapse, Modernizr, Template, UrlStrings, MethodSelectorView) {
 	return Backbone.Marionette.LayoutView.extend({

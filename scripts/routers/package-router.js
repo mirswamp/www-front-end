@@ -18,82 +18,8 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'models/projects/project',
-	'collections/projects/projects'
-], function($, _, Backbone, Project, Projects) {
-
-	//
-	// query string methods
-	//
-	
-	function parseProjectQueryString(queryString, project) {
-
-		// parse query string
-		//
-		var data = queryStringToData(queryString);
-
-		// create project from query string data
-		//
-		if (data['project'] == 'none') {
-
-			// use the default 'trial' project
-			//
-			data['project']	= project;	
-		} else if (data['project'] == 'any' || !data['project']) {
-
-			// use all projects
-			//
-			data['project'] = undefined;
-		} else {
-
-			// use a particular specified package
-			//
-			data['project'] = new Project({
-				project_uid: data['project']
-			});
-		}
-
-		// fetch data for all projects
-		//
-		data['projects'] = new Projects();
-
-		return data;
-	}
-
-	function parseQueryString(queryString, project) {
-
-		// parse query string
-		//
-		var data = parseProjectQueryString(queryString, project);
-
-		// parse limit
-		//
-		if (data['limit']) {
-			if (data['limit'] != 'none') {
-				data['limit'] = parseInt(data['limit']);
-			} else {
-				data['limit'] = null;
-			}
-		}
-
-		return data;
-	}
-
-	function fetchQueryStringData(data, done) {
-
-		// fetch models
-		//
-		$.when(
-			data['project']? data['project'].fetch() : true,
-			data['projects']? data['projects'].fetch() : true
-		).then(function() {
-
-			// perform callback
-			//
-			done(data);	
-		});
-	}
+	'backbone'
+], function($, _, Backbone) {
 
 	// create router
 	//
@@ -139,10 +65,9 @@ define([
 		showPackages: function(queryString) {
 			require([
 				'registry',
-				'utilities/query-strings',
-				'utilities/url-strings',
+				'routers/query-string-parser',
 				'views/packages/packages-view'
-			], function (Registry, QueryStrings, UrlStrings, PackagesView) {
+			], function (Registry, QueryStringParser, PackagesView) {
 
 				// show content view
 				//
@@ -156,7 +81,7 @@ define([
 
 						// parse and fetch query string data
 						//
-						fetchQueryStringData(parseQueryString(queryString, view.model), function(data) {
+						QueryStringParser.fetch(QueryStringParser.parse(queryString, view.model), function(data) {
 							
 							// show packages view
 							//
@@ -175,16 +100,15 @@ define([
 		showPublicPackages: function(queryString) {
 			require([
 				'registry',
-				'utilities/query-strings',
-				'utilities/url-strings',
+				'routers/query-string-parser',
 				'views/packages/public-packages-view'
-			], function (Registry, QueryStrings, UrlStrings, PublicPackagesView) {
+			], function (Registry, QueryStringParser, PublicPackagesView) {
 
 				// show public packages view
 				//
 				Registry.application.showMain(
 					new PublicPackagesView({
-						data: parseQueryString(queryString)
+						data: QueryStringParser.parse(queryString)
 					}), {
 						nav: 'resources'
 					}
@@ -225,10 +149,9 @@ define([
 		showReviewPackages: function(queryString) {
 			require([
 				'registry',
-				'utilities/query-strings',
-				'utilities/url-strings',
+				'routers/query-string-parser',
 				'views/packages/review/review-packages-view',
-			], function (Registry, QueryStrings, UrlStrings, ReviewPackagesView) {
+			], function (Registry, QueryStringParser, ReviewPackagesView) {
 
 				// show content view
 				//
@@ -244,7 +167,7 @@ define([
 						//
 						view.content.show(
 							new ReviewPackagesView({
-								data: parseQueryString(queryString, view.model)
+								data: QueryStringParser.parse(queryString, view.model)
 							})
 						);
 					}

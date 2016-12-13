@@ -18,81 +18,8 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'models/projects/project',
-	'collections/projects/projects'
-], function($, _, Backbone, Project, Projects) {
-
-	//
-	// query string methods
-	//
-	
-	function parseProjectQueryString(queryString, project) {
-
-		// parse query string
-		//
-		var data = queryStringToData(queryString);
-
-		// create project from query string data
-		//
-		if (data['project'] == 'none') {
-
-			// use the default 'trial' project
-			//
-			data['project']	= project;	
-		} else if (data['project'] == 'any' || !data['project']) {
-
-			// use all projects
-			//
-			data['project'] = undefined;
-		} else {
-
-			// use a particular specified project
-			//
-			data['project'] = new Project({
-				project_uid: data['project']
-			});
-		}
-
-		// fetch data for all projects
-		//
-		data['projects'] = new Projects();
-
-		return data;
-	}
-
-	function parseQueryString(queryString, project) {
-
-		// parse query string
-		//
-		var data = parseProjectQueryString(queryString, project);
-
-		// parse limit
-		//
-		if (data['limit']) {
-			if (data['limit'] != 'none') {
-				data['limit'] = parseInt(data['limit']);
-			} else {
-				data['limit'] = null;
-			}
-		}
-
-		return data;
-	}
-
-	function fetchQueryStringData(data, done) {
-
-		// fetch models
-		//
-		$.when(
-			data['project']? data['project'].fetch() : true
-		).then(function() {
-
-			// perform callback
-			//
-			done(data);	
-		});
-	}
+	'backbone'
+], function($, _, Backbone) {
 
 	// create router
 	//
@@ -155,11 +82,11 @@ define([
 			//
 			'events(?*query_string)': 'showEvents',
 
-			// github integration routes
+			// linked account integration routes
 			//
-			'github/prompt': 'showGitHubPrompt',
-			'github/login': 'showGitHubLogin',
-			'github/error/:type': 'showGitHubError',
+			'linked-account/prompt': 'showLinkedAccountPrompt',
+			'linked-account/login': 'showLinkedAccountLogin',
+			'linked-account/error/:type': 'showLinkedAccountError',
 
 			// system settings routes
 			//
@@ -178,8 +105,6 @@ define([
 				'registry',
 				'views/welcome-view'
 			], function (Registry, WelcomeView) {
-				//self.show(new WelcomeView());
-
 				var user = Registry.application.session.user;
 
 				// check if user is logged in
@@ -592,10 +517,9 @@ define([
 		showReviewAccounts: function(queryString) {
 			require([
 				'registry',
-				'utilities/query-strings',
-				'utilities/url-strings',
+				'routers/query-string-parser',
 				'views/users/review/review-accounts-view',
-			], function (Registry, QueryStrings, UrlStrings, ReviewAccountsView) {
+			], function (Registry, QueryStringParser, ReviewAccountsView) {
 
 				// show content view
 				//
@@ -611,7 +535,7 @@ define([
 						//
 						view.content.show(
 							new ReviewAccountsView({
-								data: parseQueryString(queryString, view.model)
+								data: QueryStringParser.parse(queryString, view.model)
 							})
 						);
 					}
@@ -791,11 +715,9 @@ define([
 			var self = this;
 			require([
 				'registry',
-				'models/projects/project',
-				'views/events/events-view',
-				'utilities/query-strings',
-				'utilities/url-strings',
-			], function (Registry, Project, EventsView, QueryStrings, UrlStrings) {
+				'routers/query-string-parser',
+				'views/events/events-view'
+			], function (Registry, QueryStringParser, EventsView) {
 
 				// show content view
 				//
@@ -809,7 +731,7 @@ define([
 
 						// parse and fetch query string data
 						//
-						fetchQueryStringData(parseQueryString(queryString, view.model), function(data) {
+						QueryStringParser.fetch(QueryStringParser.parse(queryString, view.model), function(data) {
 		
 							// show project events view
 							//
@@ -826,47 +748,47 @@ define([
 		},
 
 		//
-		// github login route handlers
+		// linked account login route handlers
 		//
 
-		showGitHubPrompt: function() {
+		showLinkedAccountPrompt: function() {
 			require([
 				'registry',
-				'views/users/prompts/github-prompt-view'
-			], function (Registry, GitHubPromptView) {
+				'views/users/prompts/linked-account-prompt-view'
+			], function (Registry, LinkedAccountPromptView) {
 
-				// show github prompt view
+				// show linked account prompt view
 				//
 				Registry.application.showMain( 
-					new GitHubPromptView({})
+					new LinkedAccountPromptView({})
 				);
 			});
 		},
 
-		showGitHubLogin: function() {
+		showLinkedAccountLogin: function() {
 			require([
 				'registry',
-				'views/users/prompts/github-login-prompt-view'
-			], function (Registry, LoginGitHubPromptView) {
+				'views/users/prompts/linked-account-login-prompt-view'
+			], function (Registry, LinkedAccountLoginPromptView) {
 
-				// show login github prompt view
+				// show linked account login prompt view
 				//
 				Registry.application.showMain( 
-					new LoginGitHubPromptView({})
+					new LinkedAccountLoginPromptView({})
 				);
 			});
 		},
 
-		showGitHubError: function(type) {
+		showLinkedAccountError: function(type) {
 			require([
 				'registry',
-				'views/users/prompts/github-error-prompt-view'
-			], function (Registry, GitHubErrorPromptView) {
+				'views/users/prompts/linked-account-error-prompt-view'
+			], function (Registry, LinkedAccountErrorPromptView) {
 
-				// show github error prompt view
+				// show linked account error prompt view
 				//
 				Registry.application.showMain( 
-					new GitHubErrorPromptView({
+					new LinkedAccountErrorPromptView({
 						'type': type
 					})
 				);

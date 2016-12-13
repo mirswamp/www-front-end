@@ -432,7 +432,7 @@ define([
 
 									// update list of assessment runs
 									//
-									self.showAssessmentRunsList();
+									self.showList();
 								},
 
 								error: function() {

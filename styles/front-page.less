@@ -66,12 +66,22 @@
 		}
 	}
 
-	.row:nth-child(even) {
-		background-color: @veryLightGrey;
-		.well {
-			background-color: white;
+	//
+	// zebra striping
+	//
+
+	.rows {
+		.row:nth-child(odd) {
+			background-color: @veryLightGrey;
+			.well {
+				background-color: white;
+			}
 		}
 	}
+
+	//
+	// horizontal wells
+	//
 
 	.row:nth-child(odd) {
 		background-color: veryVeryLightGrey;

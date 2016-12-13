@@ -23,7 +23,7 @@ define([
 	'collapse',
 	'modernizr',
 	'text!templates/users/filters/user-type-filter.tpl',
-	'utilities/url-strings',
+	'utilities/browser/url-strings',
 	'views/users/selectors/user-type-selector-view',
 ], function($, _, Backbone, Marionette, Collapse, Modernizr, Template, UrlStrings, UserTypeSelectorView) {
 	return Backbone.Marionette.LayoutView.extend({

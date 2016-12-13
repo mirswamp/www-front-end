@@ -27,7 +27,7 @@ define([
 	'config',
 	'text!templates/users/user-profile/new-user-profile-form.tpl',
 	'registry',
-	'utilities/password-policy',
+	'utilities/security/password-policy',
 	'views/dialogs/notify-view',
 	'views/widgets/selectors/country-selector-view'
 ], function($, _, Backbone, Marionette, Validate, Tooltip, Popover, Config, Template, Registry, PasswordPolicy, NotifyView, CountrySelectorView) {

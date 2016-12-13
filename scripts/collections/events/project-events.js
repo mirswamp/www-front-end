@@ -21,7 +21,7 @@ define([
 	'backbone',
 	'config',
 	'registry',
-	'utilities/iso8601',
+	'utilities/time/iso8601',
 	'models/events/project-event',
 	'collections/events/events'
 ], function($, _, Backbone, Config, Registry, Iso8601, ProjectEvent, Events) {

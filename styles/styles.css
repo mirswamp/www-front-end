@@ -76,7 +76,8 @@ button,
 textarea,
 p,
 .popover,
-.form-control {
+.form-control,
+.tooltip {
   font-family: "Gill Sans MT", "Gill Sans", Calibri, sans-serif;
   font-size: 16px;
 }
@@ -311,12 +312,15 @@ div.datetime .year::after {
 .separator {
   text-align: center;
   font-weight: bold;
-}
-.separator::before {
-  content: "- ";
-}
-.separator::after {
-  content: " -";
+  /*
+	&::before { 
+		content: "- ";
+	}
+
+	&::after { 
+		content: " -";
+	}
+	*/
 }
 .email .domain::before {
   content: "@";
@@ -390,6 +394,20 @@ div.datetime .year::after {
 body {
   background-color: #f7f7f7;
   margin: 0;
+}
+.full-screen {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+.horizontally-centered {
+  text-align: center;
+}
+.vertically-centered {
+  position: relative;
+  top: 50%;
 }
 /*
  * main layout styles
@@ -1838,14 +1856,9 @@ input[type="color"],
 /*
  * radio buttons and checkboxes
  */
-.radio input[type="radio"],
-.radio-inline input[type="radio"],
-.checkbox input[type="checkbox"],
-.checkbox-inline input[type="checkbox"] {
-  margin-left: 0;
-  margin-right: 5px;
-  position: relative;
-  float: left;
+input[type="radio"],
+input[type="checkbox"] {
+  margin: 5px;
 }
 .well textarea,
 .accordion-inner textarea,
@@ -2761,10 +2774,10 @@ form .accordion {
     width: 100%;
   }
 }
-.welcome .row:nth-child(even) {
+.welcome .rows .row:nth-child(odd) {
   background-color: #e7e7e7;
 }
-.welcome .row:nth-child(even) .well {
+.welcome .rows .row:nth-child(odd) .well {
   background-color: white;
 }
 .welcome .row:nth-child(odd) {

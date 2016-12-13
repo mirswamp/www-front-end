@@ -26,10 +26,10 @@ define([
 	'datepicker',
 	'text!templates/widgets/filters/date-filter.tpl',
 	'registry',
-	'utilities/date-format',
-	'utilities/url-strings',
-	'utilities/query-strings'
-], function($, _, Backbone, Marionette, Validate, Collapse, Modernizr, DatePicker, Template, Registry, DateFormat, UrlStrings, QueryStrings) {
+	'utilities/time/date-format',
+	'utilities/browser/query-strings',
+	'utilities/browser/url-strings'
+], function($, _, Backbone, Marionette, Validate, Collapse, Modernizr, DatePicker, Template, Registry, DateFormat, QueryStrings, UrlStrings) {
 	
 	//
 	// date conversion methods

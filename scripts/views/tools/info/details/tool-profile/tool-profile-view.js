@@ -23,7 +23,8 @@ define([
 	'text!templates/tools/info/details/tool-profile/tool-profile.tpl',
 	'registry',
 	'models/users/user',
-	'views/dialogs/error-view'
+	'views/dialogs/error-view',
+	'utilities/time/date-utils'
 ], function($, _, Backbone, Marionette, Template, Registry, User, ErrorView) {
 	return Backbone.Marionette.ItemView.extend({
 

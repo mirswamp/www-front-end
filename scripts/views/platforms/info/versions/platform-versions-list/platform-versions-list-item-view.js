@@ -21,7 +21,8 @@ define([
 	'backbone',
 	'marionette',
 	'text!templates/platforms/info/versions/platform-versions-list/platform-versions-list-item.tpl',
-	'registry'
+	'registry',
+	'utilities/time/date-utils'
 ], function($, _, Backbone, Marionette, Template, Registry) {
 	return Backbone.Marionette.ItemView.extend({
 

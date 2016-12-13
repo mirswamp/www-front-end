@@ -25,8 +25,8 @@ define([
 	'modernizr',
 	'text!templates/projects/filters/project-filters.tpl',
 	'registry',
-	'utilities/query-strings',
-	'utilities/url-strings',
+	'utilities/browser/query-strings',
+	'utilities/browser/url-strings',
 	'views/widgets/filters/date-filter-view',
 	'views/widgets/filters/limit-filter-view'
 ], function($, _, Backbone, Marionette, Validate, Collapse, Modernizr, Template, Registry, QueryStrings, UrlStrings, DateFilterView, LimitFilterView) {

@@ -23,7 +23,7 @@ define([
 	'collapse',
 	'modernizr',
 	'text!templates/events/filters/event-type-filter.tpl',
-	'utilities/url-strings',
+	'utilities/browser/url-strings',
 	'views/widgets/selectors/named-selector-view',
 ], function($, _, Backbone, Marionette, Collapse, Modernizr, Template, UrlStrings, NamedSelectorView) {
 	return Backbone.Marionette.LayoutView.extend({

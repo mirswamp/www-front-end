@@ -18,11 +18,10 @@
 define([
 	'jquery',
 	'underscore',
-	'jquery-ui',
 	'backbone',
 	'marionette',
 	'text!templates/dialogs/modal.tpl'
-], function($, _, JQueryUI, Backbone, Marionette, Template) {
+], function($, _, Backbone, Marionette, Template) {
 	return Backbone.Marionette.Region.extend({
 
 		//
@@ -86,12 +85,6 @@ define([
 			//
 			this.$el.modal('show');
 
-			// make modal draggable
-			//
-			this.$el.draggable({
-				handle: '.modal-header'
-			});
-
 			// set up callbacks
 			//
 			var self = this;
@@ -104,6 +97,25 @@ define([
 				if (self.onHidden) {
 					self.onHidden(options);
 				}
+			});
+		},
+
+		onShow: function() {
+			this.enableDrag();
+		},
+		
+		enableDrag: function() {
+			var self = this;
+			require([
+				//'jquery-ui'
+				'draggable'
+			], function () {
+
+				// make modal draggable
+				//
+				self.$el.draggable({
+					handle: '.modal-header'
+				});
 			});
 		},
 

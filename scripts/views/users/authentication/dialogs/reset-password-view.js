@@ -23,7 +23,7 @@ define([
 	'popover',
 	'text!templates/users/authentication/dialogs/reset-password.tpl',
 	'registry',
-	'utilities/password-policy',
+	'utilities/security/password-policy',
 	'models/users/password-reset',
 	'views/dialogs/notify-view'
 ], function($, _, Backbone, Marionette, Popover, Template, Registry, PasswordPolicy, PasswordReset, NotifyView) {

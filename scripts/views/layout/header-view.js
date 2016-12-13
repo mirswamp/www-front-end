@@ -22,14 +22,10 @@ define([
 	'marionette',
 	'button',
 	'collapse',
-	'popover',
 	'text!templates/layout/header.tpl',
 	'config',
-	'registry',
-	'collections/projects/project-invitations',
-	'collections/admin/admin-invitations',
-	'collections/permissions/user-permissions'
-], function($, _, Backbone, Marionette, Button, Collapse, Popover, Template, Config, Registry, ProjectInvitations, AdminInvitations, UserPermissions) {
+	'registry'
+], function($, _, Backbone, Marionette, Button, Collapse, Template, Config, Registry) {
 	return Backbone.Marionette.ItemView.extend({
 
 		//
@@ -54,50 +50,56 @@ define([
 		//
 
 		fetchNumNotifications: function(done) {
+			require([
+				'collections/projects/project-invitations',
+				'collections/admin/admin-invitations',
+				'collections/permissions/user-permissions'
+			], function (ProjectInvitations, AdminInvitations, UserPermissions) {
 
-			// fetch number of project invitations
-			//
-			ProjectInvitations.fetchNumPendingByUser(Registry.application.session.user, {
-				
-				// callback
+				// fetch number of project invitations
 				//
-				success: function(numProjectInvitations) {
-					numProjectInvitations = parseInt(numProjectInvitations);
-
-					// fetch number of admin invitations
+				ProjectInvitations.fetchNumPendingByUser(Registry.application.session.user, {
+					
+					// callback
 					//
-					AdminInvitations.fetchNumPendingByUser(Registry.application.session.user, {
-						
-						// callback
+					success: function(numProjectInvitations) {
+						numProjectInvitations = parseInt(numProjectInvitations);
+
+						// fetch number of admin invitations
 						//
-						success: function(numAdminInvitations) {
-							numAdminInvitations = parseInt(numAdminInvitations);
+						AdminInvitations.fetchNumPendingByUser(Registry.application.session.user, {
+							
+							// callback
+							//
+							success: function(numAdminInvitations) {
+								numAdminInvitations = parseInt(numAdminInvitations);
 
-							if (Registry.application.session.user.isAdmin()) {
+								if (Registry.application.session.user.isAdmin()) {
 
-								// fetch number of pending permissions
-								//
-								UserPermissions.fetchNumPending({
-
-									// callback
+									// fetch number of pending permissions
 									//
-									success: function(numPendingPermissions) {
-										numPendingPermissions = parseInt(numPendingPermissions);
+									UserPermissions.fetchNumPending({
 
-										// return sum of notifications
+										// callback
 										//
-										done(numProjectInvitations + numAdminInvitations + numPendingPermissions);
-									}
-								});
-							} else {
+										success: function(numPendingPermissions) {
+											numPendingPermissions = parseInt(numPendingPermissions);
 
-								// return sum of notifications
-								//
-								done(numProjectInvitations + numAdminInvitations);
+											// return sum of notifications
+											//
+											done(numProjectInvitations + numAdminInvitations + numPendingPermissions);
+										}
+									});
+								} else {
+
+									// return sum of notifications
+									//
+									done(numProjectInvitations + numAdminInvitations);
+								}
 							}
-						}
-					});
-				}
+						});
+					}
+				});
 			});
 		},
 
@@ -114,17 +116,12 @@ define([
 		},
 
 		onRender: function() {
-			var self = this;
+			this.showPopovers();
 
-			// display popovers on hover
-			//
-			this.$el.find('[data-toggle="popover"]').popover({
-				trigger: 'hover'
-			});
-			
 			// display badge with number of notifications
 			//
 			if (Registry.application.session.user) {
+				var self = this;
 				this.fetchNumNotifications(function(number) {
 					if (number > 0) {
 						// self.addBadge('i.fa-user', number);
@@ -133,6 +130,20 @@ define([
 					}
 				});
 			}
+		},
+
+		showPopovers: function() {
+			var self = this;
+			require([
+				'popover',
+			], function () {
+
+				// display popovers on hover
+				//
+				self.$el.find('[data-toggle="popover"]').popover({
+					trigger: 'hover'
+				});
+			});
 		},
 
 		addBadge: function(selector, number) {

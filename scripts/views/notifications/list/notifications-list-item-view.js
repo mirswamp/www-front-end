@@ -23,10 +23,11 @@ define([
 	'marionette',
 	'text!templates/notifications/list/notifications-list-item.tpl',
 	'registry',
-	'utilities/date-format',
+	'utilities/time/date-format',
 	'models/projects/project-invitation',
 	'models/admin/admin-invitation',
-	'models/permissions/user-permission'
+	'models/permissions/user-permission',
+	'utilities/time/date-utils'
 ], function($, _, Backbone, Marionette, Template, Registry, DateFormat, ProjectInvitation, AdminInvitation, UserPermission) {
 	return Backbone.Marionette.ItemView.extend({
 

@@ -34,14 +34,16 @@ define([
 		//
 
 		regions: {
-			aupText: '#aup-text'
+			aupText: '#aup-text',
+			linkedAccountSignUpForm: "#linked-account-sign-up-form"
 		},
 
 		template: _.template(Template),
 
 		events: {
 			'click .alert .close': 'onClickAlertClose',
-			'click #submit': 'onClickSubmit',
+			'click #aup-form input': 'onClickCheckbox',
+			'click #register': 'onClickRegister',
 			'click #cancel': 'onClickCancel'
 		},
 
@@ -51,10 +53,6 @@ define([
 
 		onRender: function() {
 
-			// show subview
-			//
-			this.$el.find('#aup-text').html(_.template(AupTemplate));
-
 			// validate form
 			//
 			this.validator = this.validate();
@@ -63,6 +61,25 @@ define([
 			//
 			var el = this.$el.find('h1');
 			el[0].scrollIntoView(true);
+
+			// show subviews
+			//
+			this.$el.find('#aup-text').html(_.template(AupTemplate));
+			this.showSignUpView();
+		},
+
+		showSignUpView: function() {
+			var self = this;
+			require([
+				'views/users/registration/forms/linked-account-sign-up-form-view'
+			], function (LinkedAccountSignUpFormView) {
+
+				// show sign up form
+				//
+				self.linkedAccountSignUpForm.show(
+					new LinkedAccountSignUpFormView()
+				);
+			});
 		},
 
 		showWarning: function() {
@@ -107,7 +124,33 @@ define([
 			this.hideWarning();
 		},
 
-		onClickSubmit: function() {
+		onClickCheckbox: function(event) {
+			if ($(event.target).is(':checked')) {
+
+				// enable registration
+				//
+				this.$el.find('#register').show();
+				this.$el.find('#cancel').hide();
+
+				//if (Registry.application.config['linked_accounts_enabled']) {
+				if (false) {
+					this.$el.find('#linked-account-sign-in').show();
+				}
+			} else {
+
+				// disable registration
+				//
+				this.$el.find('#register').hide();
+				this.$el.find('#cancel').show();
+				
+				//if (Registry.application.config['linked_accounts_enabled']) {
+				if (false) {
+					this.$el.find('#linked-account-sign-in').hide();
+				}
+			}
+		},
+
+		onClickRegister: function() {
 			var self = this;
 
 			// check validation
@@ -115,7 +158,7 @@ define([
 			if (this.isValid()) {
 				self.undelegateEvents();
 
-				if( self.options && self.options.accept ){
+				if (self.options && self.options.accept) {
 					self.options.accept();
 				} else {
 

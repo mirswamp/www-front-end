@@ -23,7 +23,8 @@ define([
 	'config',
 	'registry',
 	'models/users/user',
-	'views/dialogs/error-view'
+	'views/dialogs/error-view',
+	'utilities/browser/url-strings'
 ], function($, _, Backbone, Cookie, Config, Registry, User, ErrorView) {
 	return Backbone.Model.extend({
 
@@ -132,12 +133,13 @@ define([
 		// static methods
 		//
 
-		githubRedirect: function(options) {
-			window.location = Config.servers.rws + '/github/redirect';
+		linkedAccountRedirect: function(provider) {
+			window.location = Config.servers.rws + '/oauth2/redirect' +
+				((provider === undefined) ? '' : ('?entityid=' + urlEncode(provider.get('entityid'))));
 		},
 
-		githubLogin: function(options) {
-			window.location = Config.servers.csa + '/github/redirect';
+		linkedAccountLogin: function(options) {
+			window.location = Config.servers.csa + '/oauth2/redirect';
 		}
 	});
 });

@@ -25,8 +25,8 @@ define([
 	'modernizr',
 	'text!templates/api/routes/filters/route-filters.tpl',
 	'registry',
-	'utilities/query-strings',
-	'utilities/url-strings',
+	'utilities/browser/query-strings',
+	'utilities/browser/url-strings',
 	'views/api/routes/filters/category-filter-view',
 	'views/api/routes/filters/method-filter-view'
 ], function($, _, Backbone, Marionette, Validate, Collapse, Modernizr, Template, Registry, QueryStrings, UrlStrings, CategoryFilterView, MethodFilterView) {

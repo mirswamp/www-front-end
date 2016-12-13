@@ -25,7 +25,7 @@ define([
 	'popover',
 	'text!templates/users/accounts/dialogs/change-password/change-user-password.tpl',
 	'registry',
-	'utilities/password-policy',
+	'utilities/security/password-policy',
 	'views/dialogs/notify-view'
 ], function($, _, Backbone, Marionette, Validate, Tooltip, Popover, Template, Registry, PasswordPolicy, NotifyView) {
 	return Backbone.Marionette.ItemView.extend({

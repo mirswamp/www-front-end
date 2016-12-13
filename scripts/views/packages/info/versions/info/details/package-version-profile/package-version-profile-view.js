@@ -22,7 +22,8 @@ define([
 	'marionette',
 	'tooltip',
 	'popover',
-	'text!templates/packages/info/versions/info/details/package-version-profile/package-version-profile.tpl'
+	'text!templates/packages/info/versions/info/details/package-version-profile/package-version-profile.tpl',
+	'utilities/time/date-utils'
 ], function($, _, Backbone, Marionette, Tooltip, Popover, Template) {
 	return Backbone.Marionette.ItemView.extend({
 

@@ -7,16 +7,16 @@
 
 <ul class="nav nav-tabs">
 	<li id="profile" class="active">
-		<a>My Profile</a>
+		<a><i class="fa fa-user"></i>My Profile</a>
 	</li>
 
 	<li id="permissions">
-		<a>Permissions</a>
+		<a><i class="fa fa-check"></i>Permissions</a>
 	</li>
 
-	<% if (config['github_authentication_enabled']) { %>
+	<% if (config['linked_accounts_enabled']) { %>
 	<li id="accounts">
-		<a>Linked Accounts</a>
+		<a><i class="fa fa-link"></i>Linked Accounts</a>
 	</li>
 	<% } %>
 </ul>

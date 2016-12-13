@@ -22,7 +22,7 @@ define([
 	'marionette',
 	'text!templates/admin/settings/settings.tpl',
 	'registry',
-	'utilities/file-utils',
+	'utilities/scripting/file-utils',
 	'views/admin/settings/restricted-domains/restricted-domains-view',
 	'views/admin/settings/system-admins/system-admins-view',
 	'views/admin/settings/system-email/system-email-view'

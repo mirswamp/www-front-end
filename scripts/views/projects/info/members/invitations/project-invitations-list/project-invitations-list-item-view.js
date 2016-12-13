@@ -22,7 +22,7 @@ define([
 	'marionette',
 	'text!templates/projects/info/members/invitations/project-invitations-list/project-invitations-list-item.tpl',
 	'registry',
-	'utilities/date-format',
+	'utilities/time/date-format',
 	'models/users/user',
 	'models/projects/project-invitation',
 	'views/dialogs/confirm-view',

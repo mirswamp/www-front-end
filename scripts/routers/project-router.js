@@ -135,8 +135,8 @@ define([
 		showReviewProjects: function(queryString) {
 			require([
 				'registry',
-				'utilities/query-strings',
-				'utilities/url-strings',
+				'utilities/browser/query-strings',
+				'utilities/browser/url-strings',
 				'views/projects/review/review-projects-view',
 			], function (Registry, QueryStrings, UrlStrings, ReviewProjectsView) {
 

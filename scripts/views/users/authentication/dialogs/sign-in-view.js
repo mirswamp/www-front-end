@@ -45,8 +45,11 @@ define([
 		// rendering methods
 		//
 
-		template: function() {
-			return _.template(Template);
+		template: function(data) {
+			return _.template(Template, _.extend(data, {
+				config: Registry.application.config,
+				showHelpButtons: true
+			}));
 		},
 
 		onRender: function() {
@@ -54,7 +57,9 @@ define([
 			// show subviews
 			//
 			this.signInForm.show(
-				new SignInFormView()
+				new SignInFormView({
+					parent: this
+				})
 			);
 
 			// display popovers on hover

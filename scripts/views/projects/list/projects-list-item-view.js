@@ -23,9 +23,10 @@ define([
 	'marionette',
 	'text!templates/projects/list/projects-list-item.tpl',
 	'registry',
-	'utilities/date-format',
+	'utilities/time/date-format',
 	'views/dialogs/confirm-view',
-	'views/dialogs/error-view'
+	'views/dialogs/error-view',
+	'utilities/time/date-utils'
 ], function($, _, Backbone, Marionette, Template, Registry, DateFormat, ConfirmView, ErrorView) {
 	return Backbone.Marionette.ItemView.extend({
 

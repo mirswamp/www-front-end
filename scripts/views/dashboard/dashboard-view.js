@@ -24,7 +24,8 @@ define([
 	'registry',
 	'collections/projects/projects',
 	'collections/tools/tools',
-	'views/dialogs/notify-view'
+	'views/dialogs/notify-view',
+	'utilities/time/date-utils'
 ], function($, _, Backbone, Marionette, Template, Registry, Projects, Tools, NotifyView) {
 	return Backbone.Marionette.ItemView.extend({
 

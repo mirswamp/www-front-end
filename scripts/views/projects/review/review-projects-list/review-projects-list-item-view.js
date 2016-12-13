@@ -24,10 +24,11 @@ define([
 	'dropdown',
 	'text!templates/projects/review/review-projects-list/review-projects-list-item.tpl',
 	'registry',
-	'utilities/date-format',
+	'utilities/time/date-format',
 	'views/dialogs/error-view',
 	'views/dialogs/notify-view',
-	'views/dialogs/confirm-view'
+	'views/dialogs/confirm-view',
+	'utilities/time/date-utils'
 ], function($, _, Backbone, Marionette, Dropdown, Template, Registry, DateFormat, ErrorView, NotifyView, ConfirmView) {
 	return Backbone.Marionette.ItemView.extend({
 

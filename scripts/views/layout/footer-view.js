@@ -20,14 +20,52 @@ define([
 	'underscore',
 	'backbone',
 	'marionette',
+	'tooltip',
 	'text!templates/layout/footer.tpl'
-], function($, _, Backbone, Marionette, Template) {
+], function($, _, Backbone, Marionette, Tooltip, Template) {
 	return Backbone.Marionette.ItemView.extend({
 
 		//
 		// attributes
 		//
 
-		template: _.template(Template)
+		template: _.template(Template),
+
+		events: {
+			'click #performance': 'onClickPerformance'
+		},
+
+		//
+		// rendering methods
+		//
+
+		onShow: function() {
+			
+			// show tooltips
+			//
+			this.$el.find("[data-toggle='tooltip']").tooltip({
+				trigger: 'hover'
+			});
+		},
+
+		showPerformanceDialog: function() {
+			var self = this;
+			require([
+				'registry',
+				'views/dialogs/performance-view'
+			], function (Registry, PerformanceView) {
+				Registry.application.modal.show(
+					new PerformanceView()
+				);
+			});
+		},
+
+		//
+		// event handling methods
+		//
+
+		onClickPerformance: function() {
+			this.showPerformanceDialog();
+		}
 	});
 });

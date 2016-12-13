@@ -23,7 +23,7 @@ define([
 	'marionette',
 	'text!templates/tools/list/tools-list-item.tpl',
 	'registry',
-	'utilities/date-format'
+	'utilities/time/date-format'
 ], function($, _, Backbone, Marionette, Template, Registry, DateFormat) {
 	return Backbone.Marionette.ItemView.extend({
 

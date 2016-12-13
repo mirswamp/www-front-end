@@ -20,7 +20,8 @@ define([
 	'underscore',
 	'backbone',
 	'marionette',
-	'text!templates/platforms/info/versions/platform-version/platform-version-profile/platform-version-profile.tpl'
+	'text!templates/platforms/info/versions/platform-version/platform-version-profile/platform-version-profile.tpl',
+	'utilities/time/date-utils'
 ], function($, _, Backbone, Marionette, Template) {
 	return Backbone.Marionette.ItemView.extend({
 

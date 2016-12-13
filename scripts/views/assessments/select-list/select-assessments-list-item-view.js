@@ -24,7 +24,7 @@ define([
 	'popover',
 	'text!templates/assessments/select-list/select-assessments-list-item.tpl',
 	'registry',
-	'utilities/query-strings',
+	'utilities/browser/query-strings',
 	'views/assessments/list/assessments-list-item-view'
 ], function($, _, Backbone, Marionette, Popover, Template, Registry, QueryStrings, AssessmentsListItemView) {
 	return AssessmentsListItemView.extend({

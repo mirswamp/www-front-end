@@ -179,8 +179,8 @@ define([
 		showReviewTools: function(queryString) {
 			require([
 				'registry',
-				'utilities/query-strings',
-				'utilities/url-strings',
+				'utilities/browser/query-strings',
+				'utilities/browser/url-strings',
 				'views/tools/review/review-tools-view',
 			], function (Registry, QueryStrings, UrlStrings, ReviewToolsView) {
 

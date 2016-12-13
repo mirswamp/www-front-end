@@ -911,8 +911,8 @@ define([
 
 			require([
 				'registry',
-				'utilities/query-strings',
-				'utilities/url-strings',
+				'utilities/browser/query-strings',
+				'utilities/browser/url-strings',
 				'views/dialogs/error-view',
 				'views/assessment-results/delete/delete-assessments-results-view'
 			], function (Registry, QueryStrings, UrlStrings, ErrorView, DeleteAssessmentsResultsView) {

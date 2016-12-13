@@ -28,7 +28,8 @@ define([
 	'models/run-requests/run-request',
 	'views/dialogs/confirm-view',
 	'views/dialogs/notify-view',
-	'views/dialogs/error-view'
+	'views/dialogs/error-view',
+	'utilities/time/date-utils'
 ], function($, _, Backbone, Marionette, Tooltip, Popover, Template, Config, Registry, RunRequest, ConfirmView, NotifyView, ErrorView) {
 	return Backbone.Marionette.ItemView.extend({
 

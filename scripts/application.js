@@ -24,6 +24,10 @@ define([
 	'marionette',
 	'text!templates/layout/application.tpl',
 	'registry',
+	'utilities/scripting/string-utils',
+	'utilities/scripting/array-utils',
+	'utilities/browser/html-utils',
+	'utilities/browser/browser-support',
 	'routers/main-router',
 	'routers/package-router',
 	'routers/tool-router',
@@ -33,17 +37,10 @@ define([
 	'routers/results-router',
 	'routers/run-requests-router',
 	'routers/api-router',
-	'utilities/date-format',
-	'utilities/time-utils',
-	'utilities/date-utils',
-	'utilities/string-utils',
-	'utilities/array-utils',
-	'utilities/html-utils',
-	'utilities/browser-support',
 	'models/users/session',
 	'views/dialogs/modal-region',
-	'views/dialogs/error-view'
-], function($, _, Backbone, Cookie, Config, Marionette, Template, Registry, MainRouter, PackageRouter, ToolRouter, PlatformRouter, ProjectRouter, AssessmentRouter, ResultsRouter, RunRequestsRouter, ApiRouter, DateFormat, TimeUtils, DateUtils, StringUtils, ArrayUtils, HTMLUtils, BrowserSupport, Session, ModalRegion, ErrorView) {
+	'views/dialogs/error-view',
+], function($, _, Backbone, Cookie, Config, Marionette, Template, Registry, StringUtils, ArrayUtils, HTMLUtils, BrowserSupport, MainRouter, PackageRouter, ToolRouter, PlatformRouter, ProjectRouter, AssessmentRouter, ResultsRouter, RunRequestsRouter, ApiRouter, Session, ModalRegion, ErrorView) {
 	return Marionette.Application.extend({
 
 		// attributes
@@ -152,8 +149,24 @@ define([
 			//
 			Registry.addKey("application", this);
 
-			// create routers
+			// set resize handler to look for changes in number of columns
 			//
+			this.onResizeHandler = $(window).resize(function() {
+				if (self.numColumns != undefined && self.numColumns != self.getNumColumns()) {
+
+					// redraw
+					//
+					Backbone.history.stop();
+					Backbone.history.start();
+				};				
+			});
+
+			// create regions
+			//
+			this.addRegions(this.regions);
+		},
+
+		createRouters: function() {
 			this.mainRouter = new MainRouter();
 			this.packageRouter = new PackageRouter();
 			this.toolRouter = new ToolRouter();
@@ -175,6 +188,10 @@ define([
 				this.runRequestsRouter,
 				this.apiRouter
 			];
+		},
+
+		startRouters: function() {
+			this.createRouters();
 
 			// after any route change, clear modal dialogs
 			//
@@ -186,21 +203,7 @@ define([
 				});
 			}
 
-			// set resize handler to look for changes in number of columns
-			//
-			this.onResizeHandler = $(window).resize(function() {
-				if (self.numColumns != undefined && self.numColumns != self.getNumColumns()) {
-
-					// redraw
-					//
-					Backbone.history.stop();
-					Backbone.history.start();
-				};				
-			});
-
-			// create regions
-			//
-			this.addRegions(this.regions);
+			Backbone.history.start();
 		},
 
 		checkBrowserSupport: function() {
@@ -466,7 +469,7 @@ define([
 
 					// start application
 					//
-					Backbone.history.start();
+					self.startRouters();
 				},
 
 				// session has expired
@@ -488,7 +491,7 @@ define([
 
 					// start application
 					//
-					Backbone.history.start();
+					self.startRouters();
 				}
 			});
 		},
@@ -619,7 +622,11 @@ define([
 								options.done(view);
 							}
 						}
-					})
+					});
+
+					// store page shown time
+					//
+					window.timing['page shown'] = new Date().getTime();
 				}
 			});
 		},

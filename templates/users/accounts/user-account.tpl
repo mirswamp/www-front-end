@@ -18,7 +18,7 @@
 		<a>Permissions</a>
 	</li>
 
-	<% if (config['github_authentication_enabled']) { %>
+	<% if (config['linked_accounts_enabled']) { %>
 	<li id="accounts">
 		<a>Linked Accounts</a>
 	</li>

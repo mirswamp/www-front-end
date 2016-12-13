@@ -20,7 +20,8 @@ define([
 	'underscore',
 	'backbone',
 	'marionette',
-	'text!templates/events/list/events-list-item.tpl'
+	'text!templates/events/list/events-list-item.tpl',
+	'utilities/time/date-utils'
 ], function($, _, Backbone, Marionette, Template) {
 	return Backbone.Marionette.LayoutView.extend({
 

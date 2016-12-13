@@ -16,8 +16,8 @@
 <p><a href="https://continuousassurance.org/swamp/SWAMP-WP004-Privacy.pdf" target="_blank">SWAMP Confidentiality and Privacy for User Data WP004 (PDF)</a>
 </p>
 
-<h2><i class="fa fa-github"></i>GitHub Use</h2>
-<p><a href="#policies/github-policy">SWAMP terms and conditions for github connection.</a></p>
+<h2><i class="fa fa-link"></i>Linked Account Use</h2>
+<p><a href="#policies/linked-account-policy">SWAMP terms and conditions for using linked accounts.</a></p>
 
 <h2><i class="fa fa-check-square"></i>Permissions</h2>
 <p><a href="#policies/project-ownership-policy">Project Ownership Use</a></p>

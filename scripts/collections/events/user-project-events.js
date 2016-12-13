@@ -21,7 +21,7 @@ define([
 	'backbone',
 	'config',
 	'registry',
-	'utilities/iso8601',
+	'utilities/time/iso8601',
 	'models/users/user',
 	'models/events/user-project-event',
 	'collections/events/events'

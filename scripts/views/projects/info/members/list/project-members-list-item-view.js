@@ -23,10 +23,11 @@ define([
 	'text!templates/projects/info/members/list/project-members-list-item.tpl',
 	'config',
 	'registry',
-	'utilities/date-format',
+	'utilities/time/date-format',
 	'models/users/user',
 	'views/dialogs/error-view',
-	'views/dialogs/confirm-view'
+	'views/dialogs/confirm-view',
+	'utilities/time/date-utils'
 ], function($, _, Backbone, Marionette, Template, Config, Registry, DateFormat, User, ErrorView, ConfirmView) {
 	return Backbone.Marionette.ItemView.extend({
 

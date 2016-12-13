@@ -113,6 +113,12 @@ Some indications that a compromise has occurred include:
 </form>
 
 <div class="bottom buttons">
-	<button id="submit" class="btn btn-primary btn-lg"><i class="fa fa-arrow-right"></i>Next</button>
+	<button id="register" class="btn btn-primary btn-lg" style="float:left; margin-bottom:25px; margin-right:10px; display:none"><i class="fa fa-pencil"></i>Register</button>
+
+	<span id="linked-account-sign-in" style="float:left; margin-right:15px; display:none">
+		<span class="separator" style="float:left; margin-top:12px; margin-right:10px">Or</span>
+		<div id="linked-account-sign-up-form" style="float:left"></div>
+	</span>
+
 	<button id="cancel" class="btn btn-lg"><i class="fa fa-times"></i>Cancel</button>
 </div>

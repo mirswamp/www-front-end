@@ -26,7 +26,7 @@ define([
 	'popover',
 	'text!templates/packages/info/versions/info/source/source-profile/package-version-source-profile-form.tpl',
 	'registry',
-	'utilities/file-utils',
+	'utilities/scripting/file-utils',
 	'models/packages/package',
 	'views/dialogs/error-view',
 ], function($, _, Backbone, Marionette, Validate, Tooltip, Popover, Template, Registry, FileUtils, Package, ErrorView, PackageVersionGemInfoView) {

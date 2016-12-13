@@ -26,7 +26,8 @@ define([
 	'config',
 	'registry',
 	'models/tools/tool',
-	'views/assessment-results/assessment-runs/list/assessment-runs-list-item-view'
+	'views/assessment-results/assessment-runs/list/assessment-runs-list-item-view',
+	'utilities/time/date-utils'
 ], function($, _, Backbone, Marionette, Popover, Template, Config, Registry, Tool, AssessmentRunsListItemView) {
 	return AssessmentRunsListItemView.extend({
 

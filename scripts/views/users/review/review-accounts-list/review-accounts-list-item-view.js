@@ -25,10 +25,11 @@ define([
 	'text!templates/users/review/review-accounts-list/review-accounts-list-item.tpl',
 	'config',
 	'registry',
-	'utilities/date-format',
+	'utilities/time/date-format',
 	'views/dialogs/error-view',
 	'views/dialogs/notify-view',
-	'views/dialogs/confirm-view'
+	'views/dialogs/confirm-view',
+	'utilities/time/date-utils'
 ], function($, _, Backbone, Marionette, Dropdown, Template, Config, Registry, DateFormat, ErrorView, NotifyView, ConfirmView) {
 	return Backbone.Marionette.ItemView.extend({
 

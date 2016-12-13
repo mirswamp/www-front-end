@@ -23,7 +23,7 @@ define([
 	'collapse',
 	'modernizr',
 	'text!templates/packages/filters/package-type-filter.tpl',
-	'utilities/url-strings',
+	'utilities/browser/url-strings',
 	'views/packages/selectors/package-type-selector-view',
 ], function($, _, Backbone, Marionette, Collapse, Modernizr, Template, UrlStrings, PackageTypeSelectorView) {
 	return Backbone.Marionette.LayoutView.extend({
