@@ -1,8 +1,19 @@
 <% if (config['linked_accounts_enabled']) { %>
+
 <div class="form-group local-account" id="sign-in-with">
-	<label class="control-label">Or</label>
+	<label class="control-label">Or Sign In With</label>
 	<div class="controls">
-		<button class="btn"><i class="fa fa-chevron-right"></i>Sign In With...</button>
+		<div class="buttons">
+			<% if (config['github_authentication_enabled']) { %>
+			<button class="btn" type="button" id="github-sign-in" tabindex="3"><i class="fa fa-github"></i>GitHub</button>
+			<% } %>
+			<% if (config['google_authentication_enabled']) { %>
+			<button class="btn" type="button" id="google-sign-in" tabindex="4"><i class="fa fa-google"></i>Google</button>
+			<% } %>
+			<% if (config['ci_logon_authentication_enabled']) { %>
+			<button class="btn" type="button" id="select-sign-in" tabindex="5"><i class="fa fa-chevron-right"></i>Select...</button>
+			<% } %>
+		</div>
 	</div>
 </div>
 
@@ -18,7 +29,7 @@
 	<div class="form-group" id="username-password">
 		<label class="control-label">Or</label>
 		<div class="controls">
-			<button class="btn"><i class="fa fa-chevron-right"></i>Username / Password</button>
+			<button class="btn"><i class="fa fa-chevron-left"></i>Username / Password</button>
 		</div>
 	</div>
 </div>

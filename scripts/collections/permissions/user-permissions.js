@@ -36,13 +36,13 @@ define([
 
 		fetchByUser: function(user, options) {
 			return this.fetch(_.extend(options, {
-				url: Config.servers.rws + '/users/' + user.get('user_uid') + '/permissions'
+				url: Config.servers.web + '/users/' + user.get('user_uid') + '/permissions'
 			}));
 		},
 
 		fetchPending: function(options) {
 			return this.fetch(_.extend(options, {
-				url: Config.servers.rws + '/admin/permissions'
+				url: Config.servers.web + '/admin/permissions'
 			}));		
 		}
 	}, {
@@ -52,7 +52,7 @@ define([
 		//
 
 		fetchNumPending: function(options) {
-			return $.ajax(Config.servers.rws + '/admin/permissions/num', options);
+			return $.ajax(Config.servers.web + '/admin/permissions/num', options);
 		},
 	});
 });

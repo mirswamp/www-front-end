@@ -138,10 +138,10 @@ define([
 				platform: this.options.data['platform'],
 				platformVersion: this.options.data['platform-version'],
 				showNavigation: Object.keys(this.options.data).length > 0,
-				showNumbering: Registry.application.getShowNumbering(),
-				showGrouping: Registry.application.getShowGrouping(),
-				viewers: this.options.viewers,
-				autoRefresh: Registry.application.getAutoRefresh()
+				showNumbering: Registry.application.showNumbering,
+				showGrouping: Registry.application.showGrouping,
+				autoRefresh: Registry.application.autoRefresh,
+				viewers: this.options.viewers
 			}));
 		},
 
@@ -204,8 +204,8 @@ define([
 					checked: this.checked,
 					sortList: this.options.sortList,
 					queryString: this.getQueryString(),
-					showNumbering: Registry.application.getShowNumbering(),
-					showGrouping: Registry.application.getShowGrouping(),
+					showNumbering: Registry.application.options.showNumbering,
+					showGrouping: Registry.application.options.showGrouping,
 					showStatus: true,
 					showErrors: false,
 					showDelete: false,
@@ -399,7 +399,7 @@ define([
 
 			// enable / disable refresh
 			//
-			if (Registry.application.getAutoRefresh()) {
+			if (Registry.application.options.autoRefresh) {
 				this.enableAutoRefresh();
 			} else {
 				this.disableAutoRefresh();

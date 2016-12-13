@@ -1,0 +1,44 @@
+/******************************************************************************\
+|                                                                              |
+|                                  scrollbars.less                             |
+|                                                                              |
+|******************************************************************************|
+|                                                                              |
+|        This defines various CSS styles used in this application.             |
+|                                                                              |
+|        Author(s): Abe Megahed                                                |
+|                                                                              |
+|        This file is subject to the terms and conditions defined in           |
+|        'LICENSE.txt', which is part of this source code distribution.        |
+|                                                                              |
+|******************************************************************************|
+|        Copyright (C) 2012-2016 Software Assurance Marketplace (SWAMP)        |
+\******************************************************************************/
+
+//
+// scrollbar styles
+//
+
+::-webkit-scrollbar {
+	width: 14px;
+}
+
+::-webkit-scrollbar-thumb {
+	border-radius: 10px;
+	background: @mediumGrey;
+	border: 3px solid @veryLightGrey;
+}
+
+::-webkit-scrollbar-thumb:hover {
+	background: @darkGrey;
+}
+
+::-webkit-scrollbar-thumb:active {
+	background: @primaryColor;
+}
+
+::-webkit-scrollbar-track {
+	background: @veryLightGrey;
+	// -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3); 
+	// border-radius: 10px;
+}

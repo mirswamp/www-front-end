@@ -156,7 +156,7 @@ define([
 
 		template: function(data) {
 			return _.template(Template, _.extend(data, {
-				showNumbering: Registry.application.getShowNumbering()
+				showNumbering: Registry.application.options.showNumbering
 			}));
 		},
 
@@ -177,7 +177,7 @@ define([
 			this.ownedProjectsList.show(
 				new ProjectsListView({
 					collection: this.collection.getNonTrialProjects().getProjectsOwnedBy(Registry.application.session.user),
-					showNumbering: Registry.application.getShowNumbering(),
+					showNumbering: Registry.application.options.showNumbering,
 					showDelete: true
 				})
 			);
@@ -187,7 +187,7 @@ define([
 			this.joinedProjectsList.show(
 				new ProjectsListView({
 					collection: this.collection.getNonTrialProjects().getProjectsNotOwnedBy(Registry.application.session.user),
-					showNumbering: Registry.application.getShowNumbering(),
+					showNumbering: Registry.application.options.showNumbering,
 					showDelete: true
 				})
 			);

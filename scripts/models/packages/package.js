@@ -37,7 +37,7 @@ define([
 		//
 
 		idAttribute: 'package_uuid',
-		urlRoot: Config.servers.csa + '/packages',
+		urlRoot: Config.servers.web + '/packages',
 
 		//
 		// querying methods
@@ -157,7 +157,7 @@ define([
 
 		applySharing: function(options) {
 			$.ajax(_.extend(options, {
-				url: Config.servers.csa + '/packages/' + this.get('package_uuid') + '/sharing/apply-all',
+				url: Config.servers.web + '/packages/' + this.get('package_uuid') + '/sharing/apply-all',
 				type: 'POST'
 			}));
 		},

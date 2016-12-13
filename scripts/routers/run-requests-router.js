@@ -182,10 +182,11 @@ define([
 			var self = this;
 			require([
 				'registry',
+				'models/projects/project',
 				'models/run-requests/run-request',
 				'views/scheduled-runs/schedules/schedule/schedule-view',
 				'views/dialogs/error-view'
-			], function (Registry, RunRequest, ScheduleView, ErrorView) {
+			], function (Registry, Project, RunRequest, ScheduleView, ErrorView) {
 
 				// show content view
 				//
@@ -264,10 +265,11 @@ define([
 			var self = this;
 			require([
 				'registry',
+				'models/projects/project',
 				'models/run-requests/run-request',
 				'views/scheduled-runs/schedules/edit/edit-schedule-view',
 				'views/dialogs/error-view'
-			], function (Registry, RunRequest, EditScheduleView, ErrorView) {
+			], function (Registry, Project, RunRequest, EditScheduleView, ErrorView) {
 
 				// show content view
 				//

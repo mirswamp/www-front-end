@@ -48,6 +48,7 @@ define([
 			if (options && options.sorting) {
 				this.sorting = options.sorting;
 			}
+			this.options = options;
 			
 			// call superclass method
 			//
@@ -125,10 +126,12 @@ define([
 
 			// return sort list array
 			//
-			if (this.options.showNumbering) {
-				return [[column - 1, direction]];
-			} else {
-				return [[column, direction]];
+			if (column != undefined && direction != undefined) {
+				if (this.options.showNumbering) {
+					return [[column - 1, direction]];
+				} else {
+					return [[column, direction]];
+				}
 			}
 		},
 
@@ -294,7 +297,7 @@ define([
 		// rendering methods
 		//
 
-		onRender: function() {
+		onShow: function() {
 
 			// call superclass items
 			//

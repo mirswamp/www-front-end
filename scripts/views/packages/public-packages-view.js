@@ -100,7 +100,7 @@ define([
 		template: function(data) {
 			return _.template(Template, _.extend(data, {
 				loggedIn: Registry.application.session.user != null,
-				showNumbering: Registry.application.getShowNumbering()
+				showNumbering: Registry.application.options.showNumbering
 			}));
 		},
 
@@ -165,7 +165,7 @@ define([
 			this.packagesList.show(
 				new PackagesListView({
 					collection: this.collection,
-					showNumbering: Registry.application.getShowNumbering(),
+					showNumbering: Registry.application.options.showNumbering,
 					showDelete: false
 				})
 			);

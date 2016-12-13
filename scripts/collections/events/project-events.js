@@ -32,7 +32,7 @@ define([
 		//
 
 		model: ProjectEvent,
-		url: Config.servers.rws + '/events/projects',
+		url: Config.servers.web + '/events/projects',
 
 		//
 		// ajax methods
@@ -86,7 +86,7 @@ define([
 		//
 
 		fetchNumByUser: function(project, user, options) {
-			return $.ajax(Config.servers.rws + '/users/' + user.get('user_uid') + '/projects/events', {
+			return $.ajax(Config.servers.web + '/users/' + user.get('user_uid') + '/projects/events', {
 				success: function(data) {
 
 					// count events belonging to specific project

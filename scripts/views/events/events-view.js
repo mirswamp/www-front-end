@@ -149,7 +149,7 @@ define([
 		template: function(data) {
 			return _.template(Template, _.extend(data, {
 				model: this.getProject(),
-				showNumbering: Registry.application.getShowNumbering()
+				showNumbering: Registry.application.options.showNumbering
 			}));
 		},
 
@@ -220,7 +220,7 @@ define([
 				self.eventsList.show(
 					new EventsListView({
 						collection: self.collection,
-						showNumbering: Registry.application.getShowNumbering()
+						showNumbering: Registry.application.options.showNumbering
 					})
 				);
 			});

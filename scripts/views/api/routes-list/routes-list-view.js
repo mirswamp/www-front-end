@@ -83,11 +83,11 @@ define([
 		// constructor
 		//
 
-		initialize: function() {
+		initialize: function(options) {
 
 			// call superclass method
 			//
-			SortableTableListView.prototype.initialize.call(this, null, _.extend(this.options, {
+			SortableTableListView.prototype.initialize.call(this, _.extend(options, {
 				showGrouping: false,
 				//groupExcept: ['api-method', 'api-server', 'api-route', 'unfinished', 'private']
 			}));

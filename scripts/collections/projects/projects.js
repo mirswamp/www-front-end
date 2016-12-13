@@ -31,7 +31,7 @@ define([
 		//
 
 		model: Project,
-		url: Config.servers.rws + '/projects',
+		url: Config.servers.web + '/projects',
 
 		//
 		// querying methods
@@ -142,13 +142,13 @@ define([
 
 		fetchByUser: function(user, options) {
 			return Backbone.Collection.prototype.fetch.call(this, _.extend(options, {
-				url: Config.servers.rws + '/users/' + user.get('user_uid') + '/projects'
+				url: Config.servers.web + '/users/' + user.get('user_uid') + '/projects'
 			}));
 		},
 
 		fetchAll: function(options) {
 			return Backbone.Collection.prototype.fetch.call(this, _.extend(options, {
-				url: Config.servers.rws + '/admins/' + Registry.application.session.user.get('user_uid') + '/projects'
+				url: Config.servers.web + '/admins/' + Registry.application.session.user.get('user_uid') + '/projects'
 			}));
 		}
 	}, {
@@ -162,7 +162,7 @@ define([
 		},
 
 		fetchNumByUser: function(user, options) {
-			return $.ajax(Config.servers.rws + '/users/' + user.get('user_uid') + '/projects/num', options);
+			return $.ajax(Config.servers.web + '/users/' + user.get('user_uid') + '/projects/num', options);
 		}
 	});
 

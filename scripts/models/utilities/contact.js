@@ -42,7 +42,7 @@ define([
 		//
 
 		idAttribute: 'contact_id',
-		urlRoot: Config.servers.rws + '/contacts',
+		urlRoot: Config.servers.web + '/contacts',
 
 		//
 		// overridden Backbone methods

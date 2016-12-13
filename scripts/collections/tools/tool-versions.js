@@ -37,13 +37,13 @@ define([
 
 		fetchByTool: function(tool, options) {
 			return this.fetch(_.extend(options, {
-				url: Config.servers.csa + '/tools/' + tool.get('tool_uuid') + '/versions'
+				url: Config.servers.web + '/tools/' + tool.get('tool_uuid') + '/versions'
 			}));
 		},
 
 		fetchByToolAndPackageType: function(tool, packageType, options) {
 			return this.fetch(_.extend(options, {
-				url: Config.servers.csa + '/tools/' + tool.get('tool_uuid') + '/versions',
+				url: Config.servers.web + '/tools/' + tool.get('tool_uuid') + '/versions',
 				data: {
 					'package-type': packageType
 				}

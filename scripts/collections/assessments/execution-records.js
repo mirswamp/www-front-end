@@ -37,19 +37,19 @@ define([
 
 		fetchAll: function(options) {
 			return this.fetch(_.extend(options, {
-				url: Config.servers.csa + '/execution_records/all'
+				url: Config.servers.web + '/execution_records/all'
 			}));
 		},
 
 		fetchByProject: function(project, options) {
 			return this.fetch(_.extend(options, {
-				url: Config.servers.csa + '/projects/' + project.get('project_uid') + '/execution_records'
+				url: Config.servers.web + '/projects/' + project.get('project_uid') + '/execution_records'
 			}));
 		},
 
 		fetchByProjects: function(projects, options) {
 			return Backbone.Collection.prototype.fetch.call(this, _.extend(options, {
-				url: Config.servers.csa + '/projects/' + projects.getUuidsStr() + '/execution_records'
+				url: Config.servers.web + '/projects/' + projects.getUuidsStr() + '/execution_records'
 			}));
 		},
 	}, {
@@ -59,11 +59,11 @@ define([
 		//
 
 		fetchNumByProject: function(project, options) {
-			return $.ajax(Config.servers.csa + '/projects/' + project.get('project_uid') + '/execution_records/num', options);
+			return $.ajax(Config.servers.web + '/projects/' + project.get('project_uid') + '/execution_records/num', options);
 		},
 
 		fetchNumByProjects: function(projects, options) {
-			return $.ajax(Config.servers.csa + '/projects/' +  projects.getUuidsStr() + '/execution_records/num', options);
+			return $.ajax(Config.servers.web + '/projects/' +  projects.getUuidsStr() + '/execution_records/num', options);
 		},		
 	});
 });

@@ -36,7 +36,7 @@ define([
 		tagName: 'tr',
 
 		events: {
-			'click button.delete': 'onClickDelete',
+			'click .delete button': 'onClickDelete',
 			'blur .name': 'onBlurName',
 			'blur .email': 'onBlurEmail',
 			'blur .username': 'onBlurUsername'

@@ -22,7 +22,7 @@
 			</th>
 
 			<th class="results last">
-				<i class="fa fa-bug"></i>
+				<i class="fa fa-check"></i>
 				<span>Results</span>
 			</th>
 

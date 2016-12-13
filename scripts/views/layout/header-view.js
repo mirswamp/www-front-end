@@ -132,6 +132,15 @@ define([
 			}
 		},
 
+		onShow: function() {
+
+			// focus sign in button
+			//
+			if (this.options.nav == 'home') {
+				this.$el.find('#sign-in').focus();
+			}		
+		},
+
 		showPopovers: function() {
 			var self = this;
 			require([
@@ -241,7 +250,9 @@ define([
 				// show sign in dialog
 				//
 				Registry.application.modal.show(
-					new SignInView()
+					new SignInView(), {
+						focus: '#ok'
+					}
 				);
 			});
 		},

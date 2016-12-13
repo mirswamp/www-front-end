@@ -49,7 +49,7 @@ define([
 		//
 
 		idAttribute: 'project_uid',
-		urlRoot: Config.servers.rws + '/projects',
+		urlRoot: Config.servers.web + '/projects',
 
 		//
 		// methods
@@ -159,7 +159,7 @@ define([
 
 		deleteMember: function(member, options) {
 			$.ajax(_.extend(options, {
-				url: Config.servers.rws + '/memberships/projects/' + this.get('project_uid') + '/users/' + member.get('user_uid'),
+				url: Config.servers.web + '/memberships/projects/' + this.get('project_uid') + '/users/' + member.get('user_uid'),
 				type: 'DELETE'
 			}));
 		},
@@ -171,7 +171,7 @@ define([
 
 		fetchTrialByUser: function(user, options) {
 			return $.ajax(_.extend(options, {
-				url: Config.servers.rws + '/users/' + user.get('user_uid') + '/projects/trial',
+				url: Config.servers.web + '/users/' + user.get('user_uid') + '/projects/trial',
 				type: 'GET',
 				dataType: 'json'
 			}));

@@ -1,24 +1,41 @@
-/*
- * link colors
- */
+/******************************************************************************\
+|                                                                              |
+|                                    navs.less                                 |
+|                                                                              |
+|******************************************************************************|
+|                                                                              |
+|        This defines various CSS styles used in this application.             |
+|                                                                              |
+|        Author(s): Abe Megahed                                                |
+|                                                                              |
+|        This file is subject to the terms and conditions defined in           |
+|        'LICENSE.txt', which is part of this source code distribution.        |
+|                                                                              |
+|******************************************************************************|
+|        Copyright (C) 2012-2016 Software Assurance Marketplace (SWAMP)        |
+\******************************************************************************/
+
+//
+// link colors
+//
 
 @linkColor: @secondaryColor;
 @linkColorHover: @primaryColor;
 @navLinkColor: @secondaryColor;
 @navLinkColorHover: white;
 
-/*
- * dropdown colors
- */
+//
+// dropdown colors
+//
 
 @dropdownColor: @darkGrey;
 @dropdownBackground: white;
 @dropdownLinkColorHover: white;
 @dropdownLinkBackgroundHover: @primaryHoverColor;
 
-/*
- * general navigation
- */
+//
+// general navigation
+//
 
 .nav {
 	h2 {
@@ -26,9 +43,13 @@
 	}
 }
 
-/*
- * nav bars 
- */
+.active {
+	cursor: pointer;
+}
+
+//
+// nav bars 
+//
 
 .well.nav {
 	padding: 5px;
@@ -55,6 +76,10 @@
 	li {
 		min-width: 35px;
 		text-align: center;
+
+		i {
+			color: @primaryColor;
+		}
 	}
 	
 	li.selected, li.active, li a:hover {
@@ -63,7 +88,7 @@
 				color: white;
 			}
 		}		
-	}	
+	}
 }
 
 .nav-justified > li {
@@ -74,9 +99,9 @@
 	width: 1%;
 }
 
-/*
- * top navigation bar 
- */
+//
+// top navigation bar 
+//
 
 .navbar, .navbar-inverse {
 	background-image: none;
@@ -144,17 +169,17 @@
 	.vertical-gradient(@primaryHighlightColor, @primaryColor);
 }
 
-/*
- * mobile dropdown nav bar
- */
+//
+// mobile dropdown nav bar
+//
 
 .navbar-fixed-top .navbar-collapse, .navbar-fixed-bottom .navbar-collapse {
 	max-height: 360px;
 }
 
-/*
- * nav pills
- */
+//
+// nav pills
+//
 
 .nav-pills > li {
 	> a {
@@ -163,9 +188,9 @@
 	}
 }
 
-/*
- * nav tabs
- */
+//
+// nav tabs
+//
 
  .nav-tabs > li {
  	margin-right: 5px;
@@ -176,9 +201,9 @@
 	}
 }
 
-/*
- * links
- */
+//
+// links
+//
 
 a {
 	color: @linkColor;
@@ -188,9 +213,9 @@ a:hover, a:focus {
 	color: @linkColorHover;
 }
 
-/*
- * navbar navigation
- */
+//
+// navbar navigation
+//
 
 .nav > li > a {
 	color: @navLinkColor;
@@ -223,9 +248,9 @@ a:hover, a:focus {
 	border: 1px solid @primaryBorderColor;
 }
 
-/*
- * header navigation
- */
+//
+// header navigation
+//
 
 #header {
 	.nav > li > a {
@@ -239,9 +264,9 @@ a:hover, a:focus {
 	}
 }
 
-/*
- * tiles
- */
+//
+// tiles
+//
 
 .tile {
 	cursor: pointer;
@@ -280,9 +305,9 @@ a:hover, a:focus {
 	color: white;
 }
 
-/*
- * dropdowns
- */
+//
+// dropdowns
+//
 
 .dropdown-menu {
 	background-color: @dropdownBackground;
@@ -302,9 +327,9 @@ a:hover, a:focus {
 	background-image: none;
 }
 
-/*
- * dropdown carats
- */
+//
+// dropdown carats
+//
 
 .nav .dropdown-toggle .caret {
 	border-top-color: @linkColor;
@@ -315,17 +340,17 @@ a:hover, a:focus {
 	border-top-color: @linkColorHover;
  }
 
-/* 
- * cause menus to show on hover rather than click
- */
+// 
+// cause menus to show on hover rather than click
+//
 
 ul.nav li.dropdown:hover > ul.dropdown-menu{
 	display: block;    
 }
 
-/*
- * breadcrumbs
- */
+//
+// breadcrumbs
+//
 
 .breadcrumb {
 	background: transparent;

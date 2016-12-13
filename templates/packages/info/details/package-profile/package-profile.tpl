@@ -1,4 +1,7 @@
 <div id="package-profile" class="form-horizontal">
+	<% if (isOwned) { %>
+	<button id="edit-package" class="btn" style="float:right"><i class="fa fa-pencil"></i>Edit</button>
+	<% } %>
 
 	<div class="form-group">
 		<label class="form-label">Name</label>

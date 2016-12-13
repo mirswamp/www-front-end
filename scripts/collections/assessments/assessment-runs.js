@@ -37,13 +37,13 @@ define([
 
 		fetchByProject: function(project, options) {
 			return Backbone.Collection.prototype.fetch.call(this, _.extend(options, {
-				url: Config.servers.csa + '/projects/' + project.get('project_uid') + '/assessment_runs'
+				url: Config.servers.web + '/projects/' + project.get('project_uid') + '/assessment_runs'
 			}));
 		},
 
 		fetchByProjects: function(projects, options) {
 			return Backbone.Collection.prototype.fetch.call(this, _.extend(options, {
-				url: Config.servers.csa + '/projects/' + projects.getUuidsStr() + '/assessment_runs'
+				url: Config.servers.web + '/projects/' + projects.getUuidsStr() + '/assessment_runs'
 			}));
 		},
 
@@ -85,11 +85,11 @@ define([
 		//
 
 		fetchNumByProject: function(project, options) {
-			return $.ajax(Config.servers.csa + '/projects/' + project.get('project_uid') + '/assessment_runs/num', options);
+			return $.ajax(Config.servers.web + '/projects/' + project.get('project_uid') + '/assessment_runs/num', options);
 		},
 
 		fetchNumByProjects: function(projects, options) {
-			return $.ajax(Config.servers.csa + '/projects/' + projects.getUuidsStr() + '/assessment_runs/num', options);
+			return $.ajax(Config.servers.web + '/projects/' + projects.getUuidsStr() + '/assessment_runs/num', options);
 		}
 	});
 });

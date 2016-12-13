@@ -21,12 +21,12 @@ define([
 	'underscore',
 	'backbone',
 	'marionette',
-	'popover',
+	'tooltip',
 	'text!templates/assessments/select-list/select-assessments-list-item.tpl',
 	'registry',
 	'utilities/browser/query-strings',
 	'views/assessments/list/assessments-list-item-view'
-], function($, _, Backbone, Marionette, Popover, Template, Registry, QueryStrings, AssessmentsListItemView) {
+], function($, _, Backbone, Marionette, Tooltip, Template, Registry, QueryStrings, AssessmentsListItemView) {
 	return AssessmentsListItemView.extend({
 
 		//
@@ -38,8 +38,7 @@ define([
 		events: _.extend(AssessmentsListItemView.prototype.events, {
 			'click .select input': 'onClickSelectInput',
 			// 'dblclick .select input': 'onDoubleClickSelectInput',
-			'click .select-group input': 'onClickSelectGroupInput',
-			'click .results button': 'onClickResultsButton'
+			'click .select-group input': 'onClickSelectGroupInput'
 		}),
 
 		//
@@ -50,12 +49,12 @@ define([
 			return _.template(Template, _.extend(data, {
 				index: this.options.index + 1,
 				showNumbering: this.options.showNumbering,
-				packageUrl: Registry.application.getURL() + '#packages/' + data.package_uuid,
-				packageVersionUrl: data.package_version_uuid? Registry.application.getURL() + '#packages/versions/' + data.package_version_uuid : undefined,
-				toolUrl: Registry.application.getURL() + '#tools/' + data.tool_uuid,
-				toolVersionUrl: data.tool_version_uuid? Registry.application.getURL() + '#tools/versions/' + data.tool_version_uuid : undefined,
-				platformUrl: Registry.application.getURL() + '#platforms/' + data.platform_uuid,
-				platformVersionUrl: data.platform_version_uuid? Registry.application.getURL() + '#platforms/versions/' + data.platform_version_uuid : undefined,
+				packageUrl: data.package_uuid && data.package_uuid != 'undefined'? Registry.application.getURL() + '#packages/' + data.package_uuid : undefined,
+				packageVersionUrl: data.package_version_uuid && data.package_version_uuid != 'undefined'? Registry.application.getURL() + '#packages/versions/' + data.package_version_uuid : undefined,
+				toolUrl: data.tool_uuid && data.tool_uuid != 'undefined'? Registry.application.getURL() + '#tools/' + data.tool_uuid : undefined,
+				toolVersionUrl: data.tool_version_uuid && data.tool_version_uuid != 'undefined'? Registry.application.getURL() + '#tools/versions/' + data.tool_version_uuid : undefined,
+				platformUrl: data.platform_uuid && data.platform_uuid != 'undefined'? Registry.application.getURL() + '#platforms/' + data.platform_uuid : undefined,
+				platformVersionUrl: data.platform_version_uuid && data.platform_version_uuid != 'undefined'? Registry.application.getURL() + '#platforms/versions/' + data.platform_version_uuid : undefined,
 				showDelete: this.options.showDelete
 			}));
 		},
@@ -64,7 +63,7 @@ define([
 
 			// display popovers on hover
 			//
-			this.$el.find('[data-toggle="popover"]').popover({
+			this.$el.find('[data-toggle="tooltip"]').popover({
 				trigger: 'hover'
 			});
 		},
@@ -83,36 +82,6 @@ define([
 			} else {
 				this.$el.find('input[name="select"]').removeAttr('checked');
 			}
-		},
-
-		//
-		// querying methods
-		//
-
-		getQueryString: function() {
-			var data = {};
-
-			data['project'] = this.model.get('project_uuid');
-
-			if (this.model.get('package_version_uuid')) {
-				data['package-version'] = this.model.get('package_version_uuid');
-			} else {
-				data['package'] = this.model.get('package_uuid');
-			}
-
-			if (this.model.get('tool_version_uuid')) {
-				data['tool-version'] = this.model.get('tool_version_uuid');
-			} else {
-				data['tool'] = this.model.get('tool_uuid');
-			}
-
-			if (this.model.get('platform_version_uuid')) {
-				data['platform-version'] = this.model.get('platform_version_uuid');
-			} else {
-				data['platform'] = this.model.get('platform_uuid');
-			}
-
-			return toQueryString(data);
 		},
 
 		//
@@ -155,15 +124,5 @@ define([
 			this.options.parent.setSelectedContiguous(index, checked);
 		},
 		*/
-		
-		onClickResultsButton: function() {
-			var queryString = this.getQueryString();
-
-			// go to assessment results view
-			//
-			Backbone.history.navigate('#results' + (queryString != ''? '?' + queryString : ''), {
-				trigger: true
-			});
-		}
 	});
 });

@@ -43,7 +43,7 @@
 </ul>
 
 <h2>The SWAMP Team</h2>
-<p>The SWAMP project is led by a <a href="https://continuousassurance.org/about-us/bios/" target="_blank">team</a> at the <a href="http://discovery.wisc.edu/morgridge/" target="_blank">Morgridge Institutes for Research</a> at the <a href="http://www.wisc.edu/" target="_blank">University of Wisconsin, Madison</a>.  The leaders and scientific team members of the Software Assurance Marketplace have a long and accomplished history of working together. Some of the joint work has taken place in the context of large collaborations that span a wide range of institutions, involve diverse groups of stakeholders and serve a broad range of needs and expectations. Over more than 10 years, team members have developed the interpersonal relationships and skills needed to lead the Software Assurance Marketplace to success. Team members recognize the challenges of working in complex environments and intend to translate the concept of the Software Assurance Marketplace into a force that advances the state of the art and promotes the adoption of technologies to improve our nation's cybersecurity.</p>
+<p>The SWAMP project is led by a <a href="https://continuousassurance.org/about-us/bios" target="_blank">team</a> at the <a href="http://www.morgridge.org" target="_blank">Morgridge Institute for Research</a> at the <a href="http://www.wisc.edu" target="_blank">University of Wisconsin, Madison</a>.  The leaders and scientific team members of the Software Assurance Marketplace have a long and accomplished history of working together. Some of the joint work has taken place in the context of large collaborations that span a wide range of institutions, involve diverse groups of stakeholders and serve a broad range of needs and expectations. Over more than 10 years, team members have developed the interpersonal relationships and skills needed to lead the Software Assurance Marketplace to success. Team members recognize the challenges of working in complex environments and intend to translate the concept of the Software Assurance Marketplace into a force that advances the state of the art and promotes the adoption of technologies to improve our nation's cybersecurity.</p>
 
 <h2>Join the SWAMP Community</h2>
 <p style="padding-bottom:10px"><a target="_blank" class="subscribe" href2="https://lists.discovery.wisc.edu/mailman/listinfo/swampmail">Subscribe</a> to our mailing list. We'll notify you of events interesting to the SWAMP User Communities.</p>
@@ -51,4 +51,7 @@
 <h2>SWAMP Funding and Support</h2>
 <p>The SWAMP is funded by the Department of Homeland Security (DHS) Science and Technology Directorate, Homeland Security Advanced Research Projects Agency, Cyber Security Division (DHS S&T/HSARPA/CSD)</p>
 
-<p><strong>SWAMP Version:</strong> <%- Version.build %></p>
+<p>
+	<label>Build Version:</label><span id="version"><%= Version.build %></span><br />
+	<label>API Base URL:</label><span id="server"><%= Config.servers.web %></span>
+</p>

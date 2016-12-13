@@ -32,7 +32,7 @@ define([
 		//
 
 		idAttribute: 'user_permission_uid',
-		urlRoot: Config.servers.rws + '/user_permissions',
+		urlRoot: Config.servers.web + '/user_permissions',
 
 		//
 		// notification methods
@@ -57,7 +57,34 @@ define([
 			} else if (this.has('user_uid') && this.has('permission_code')) {
 				return this.urlRoot + '/' + this.get('user_uid') + '/' + this.get('permission_code');
 			}
-		}
+		},
+
+		parse: function(response) {
+
+			// call superclass method
+			//
+			var json = Timestamped.prototype.parse.call(this, response);
+
+			// parse subfields
+			//
+			if (json.meta_information) {
+				json.meta_information = JSON.parse(json.meta_information);
+			}
+
+			return json;
+		},
+	}, {
+
+		//
+		// static attributes
+		//
+
+		restrictedPermissions: [
+			'parasoft-user-c-test',
+			'parasoft-user-j-test',
+			'parasoft-user-j-test',
+			'red-lizard-user',
+			'codesonar'
+		]
 	});
 });
-

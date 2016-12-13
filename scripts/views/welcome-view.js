@@ -36,17 +36,7 @@ define([
 			'click #sign-up': 'onClickSignUp',
 			'click .alert .close': 'onClickAlertClose',
 			'click #forgot-password': 'onClickForgotPassword',
-			'click #request-username': 'onClickRequestUsername',
-			'keydown': 'onKeyPress'
-		},
-
-		//
-		// methods
-		//
-
-		initialize: function() {
-			this.$el.attr('tabindex', 1);
-			this.$el.focus();
+			'click #request-username': 'onClickRequestUsername'
 		},
 
 		//
@@ -67,6 +57,24 @@ define([
 			this.showOpenToolsList();
 			this.showCommercialToolsList();
 			this.showPlatformsList();
+		},
+
+
+		onShow: function() {
+			var self = this;
+
+			/*
+			// capture all key events
+			//
+			$('main').on('keypress', function(event) {
+
+				// if no modal is open
+				//
+				if ($('modal-backdrop').length == 0) {
+					self.onKeyPress(event);
+				}
+			});
+			*/
 		},
 
 		showLightBox: function() {
@@ -216,7 +224,9 @@ define([
 				// show sign in dialog
 				//
 				Registry.application.modal.show(
-					new SignInView()
+					new SignInView(), {
+						focus: '#ok'
+					}
 				)
 			});
 		},
@@ -247,37 +257,6 @@ define([
 			this.hideWarning();
 		},
 
-		onKeyPress: function(event) {
-
-			// respond to enter key press
-			//
-			if (event.keyCode === 13) {
-				require([
-					'views/users/authentication/dialogs/sign-in-view'
-				], function (SignInView) {
-
-					// show sign in dialog
-					//
-					Registry.application.modal.show(
-						new SignInView()
-					);
-				});
-			} else if (event.keyCode === 67) {
-				require([
-					'views/dialogs/credits-view'
-				], function (CreditsView) {
-
-					// show credits view
-					//
-					Registry.application.modal.show(
-						new CreditsView(), {
-							size: 'large'
-						}
-					);
-				});
-			}
-		},
-
 		onClickForgotPassword: function() {
 			require([
 				'views/users/authentication/dialogs/reset-password-view'
@@ -306,6 +285,31 @@ define([
 					})
 				);
 			});
+		},
+
+		onKeyPress: function(event) {
+
+			// respond to return key
+			//
+			if (event.keyCode == 13) {
+				this.onClickSignIn();
+
+			// respond to 'c' key press
+			//
+			} else if (event.keyCode === 67) {
+				require([
+					'views/dialogs/credits-view'
+				], function (CreditsView) {
+
+					// show credits view
+					//
+					Registry.application.modal.show(
+						new CreditsView(), {
+							size: 'large'
+						}
+					);
+				});
+			}
 		}
 	});
 });

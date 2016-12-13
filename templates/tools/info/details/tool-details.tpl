@@ -10,7 +10,6 @@
 </div>
 
 <div class="bottom buttons">
-	<button id="run-new-assessment" class="btn btn-primary btn-lg"><i class="fa fa-play"></i>Run New Assessment</button>
 	<% if (isOwned) { %>
 	<button id="edit-tool" class="btn btn-lg"><i class="fa fa-pencil"></i>Edit Tool</button>
 	<button id="delete-tool" class="btn btn-lg"><i class="fa fa-trash"></i>Delete Tool</button>

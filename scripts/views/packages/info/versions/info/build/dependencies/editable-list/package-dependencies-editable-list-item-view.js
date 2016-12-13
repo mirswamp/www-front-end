@@ -35,7 +35,7 @@ define([
 
 		events: {
 			'blur .dependency-list input': 'onBlurDependencyListInput',
-			'click button.delete': 'onClickDelete'
+			'click .delete button': 'onClickDelete'
 		},
 
 		//

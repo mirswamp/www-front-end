@@ -137,7 +137,7 @@ define([
 		template: function(data) {
 			return _.template(Template, _.extend(data, {
 				data: this.options.data,
-				showNumbering: Registry.application.getShowNumbering()
+				showNumbering: Registry.application.options.showNumbering
 			}));
 		},
 
@@ -196,7 +196,7 @@ define([
 				new ReviewToolsListView({
 					collection: this.collection,
 					showDeactivatedTools: this.$el.find('#show-deactivated-tools').is(':checked'),
-					showNumbering: Registry.application.getShowNumbering(),
+					showNumbering: Registry.application.options.showNumbering,
 					showDelete: true
 				})
 			);

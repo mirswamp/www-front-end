@@ -267,9 +267,9 @@ define([
 				shortTitle: this.getShortTitle(),
 				showNavigation: Object.keys(this.options.data).length > 0,
 				viewers: this.options.viewers,
-				autoRefresh: Registry.application.getAutoRefresh(),
-				showNumbering: Registry.application.getShowNumbering(),
-				showGrouping: Registry.application.getShowGrouping()
+				showNumbering: Registry.application.options.showNumbering,
+				showGrouping: Registry.application.options.showGrouping,
+				autoRefresh: Registry.application.options.autoRefresh
 			}));
 		},
 
@@ -342,6 +342,12 @@ define([
 		showList: function() {
 			var selected = this.getSelected();
 
+			// preserve existing sorting order
+			//
+			if (this.assessmentRunsList.currentView && this.collection.length > 0) {
+				this.options.sortList = this.assessmentRunsList.currentView.getSortList();
+			}
+			
 			// show assessment runs list view
 			//
 			this.assessmentRunsList.show(
@@ -356,20 +362,14 @@ define([
 					sortList: this.options.sortList,
 					queryString: this.getQueryString(),
 					editable: true,
-					showNumbering: Registry.application.getShowNumbering(),
-					showGrouping: Registry.application.getShowGrouping(),
+					showNumbering: Registry.application.options.showNumbering,
+					showGrouping: Registry.application.options.showGrouping,
 					showStatus: true,
 					showErrors: true,
 					showDelete: true,
 					showSsh: true
 				})
 			);
-
-			// save sort list
-			//
-			if (this.collection.length > 0) {
-				this.options.sortList = this.assessmentRunsList.currentView.getSortList();
-			}
 		},
 
 		//

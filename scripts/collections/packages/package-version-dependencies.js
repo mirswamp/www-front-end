@@ -37,7 +37,7 @@ define([
 		//
 
 		url: function() {
-			return Config.servers.csa + '/packages/versions/dependencies';
+			return Config.servers.web + '/packages/versions/dependencies';
 		},
 
 		//
@@ -71,13 +71,13 @@ define([
 
 		fetchByPackageVersion: function(packageVersionUuid, options) {
 			return Backbone.Collection.prototype.fetch.call(this, _.extend(options, {
-				url: Config.servers.csa + '/packages/versions/' + packageVersionUuid + '/dependencies'
+				url: Config.servers.web + '/packages/versions/' + packageVersionUuid + '/dependencies'
 			}));
 		},
 		
 		fetchMostRecent: function(packageUuid, options) {
 			return Backbone.Collection.prototype.fetch.call(this, _.extend(options, {
-				url: Config.servers.csa + '/packages/' + packageUuid + '/versions/dependencies/recent'
+				url: Config.servers.web + '/packages/' + packageUuid + '/versions/dependencies/recent'
 			}));
 		},
 

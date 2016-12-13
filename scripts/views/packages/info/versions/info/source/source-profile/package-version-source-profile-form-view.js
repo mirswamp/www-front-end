@@ -69,22 +69,26 @@ define([
 		onRender: function() {
 			var self = this;
 			
-			if (this.options.package.isNew()) {
+			// set default package path
+			//
+			if (!this.model.has('source_path')) {
+				if (this.options.package.isNew()) {
 
-				// set default package path and type 
-				//
-				if (this.getPackagePath() == '') {
-					this.setDefaultPackagePath(function() {
-						self.setDefaultPackageType();
-					});
+					// set default package path and type 
+					//
+					if (this.getPackagePath() == '') {
+						this.setDefaultPackagePath(function() {
+							self.setDefaultPackageType();
+						});
+					} else {
+						this.setDefaultPackageType();
+					}
 				} else {
-					this.setDefaultPackageType();
-				}
-			} else {
 
-				// existing packages
-				//
-				this.setDefaultPackagePath();
+					// existing packages
+					//
+					this.setDefaultPackagePath();
+				}
 			}
 
 			// display popovers on hover
@@ -107,19 +111,13 @@ define([
 
 			// fetch package version directory tree
 			//
-			this.model.fetchFileTree({
-				data: {
-					'dirname': '.'
-				},
+			this.model.fetchRoot({
 
 				// callbacks
 				//
 				success: function(data) {
-					if (_.isArray(data) || !isDirectoryName(data.name)) {
-						self.$el.find('#package-path').val('.');
-					} else {
-						self.$el.find('#package-path').val(data.name);
-					}
+					self.model.root = data;
+					self.$el.find('#package-path').val(data);
 
 					// perform done callback
 					//

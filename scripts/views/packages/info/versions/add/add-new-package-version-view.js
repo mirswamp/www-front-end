@@ -71,7 +71,10 @@ define([
 					// get latest package version
 					//
 					self.options.package.fetchLatestVersion(function(packageVersion) {
-						var nextVersionString = Version.getNextVersionString(packageVersion.get('version_string'));
+						
+						// find next package version string
+						//
+						var nextVersionString = Version.getNextVersionString(packageVersion? packageVersion.get('version_string') : null);
 
 						// create next version
 						//

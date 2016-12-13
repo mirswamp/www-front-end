@@ -15,9 +15,9 @@
 </td>
 
 <% if (showDelete) { %>
-<td class="append">
+<td class="delete append">
 	<% if (url) { %>
-	<button type="button" class="delete btn btn-sm"><i class="fa fa-times"></i></button>
+	<button type="button" class="btn btn-sm"><i class="fa fa-times"></i></button>
 	<% } %>
 </td>
 <% } %>

@@ -28,12 +28,21 @@ define([
 	return Backbone.Marionette.ItemView.extend({
 
 		//
+		// attributes
+		//
+
+		events: {
+			'click #edit-package': 'onClickEditPackage',
+		},
+
+		//
 		// rendering methods
 		//
 
 		template: function(data) {
 			return _.template(Template, _.extend(data, {
-				model: this.model
+				model: this.model,
+				isOwned: this.model.isOwned()
 			}));
 		},
 
@@ -49,6 +58,19 @@ define([
 					href: 'mailto:' + owner.get('email')
 				})
 			);
+		},
+
+		//
+		// event handling methods
+		//
+
+		onClickEditPackage: function() {
+
+			// go to edit package view
+			//
+			Backbone.history.navigate('#packages/' + this.model.get('package_uuid') + '/edit', {
+				trigger: true
+			});
 		}
 	});
 });

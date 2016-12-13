@@ -30,7 +30,7 @@ define([
 		//
 
 		idAttribute: 'tool_uuid',
-		urlRoot: Config.servers.csa + '/tools',
+		urlRoot: Config.servers.web + '/tools',
 
 		//
 		// querying methods
@@ -211,7 +211,7 @@ define([
 						//
 						accept: function(){
 							$.ajax({
-								url: Config.servers.rws + '/user_policies/' + config.policy_code + '/user/' + Registry.application.session.user.get('user_uid'),
+								url: Config.servers.web + '/user_policies/' + config.policy_code + '/user/' + Registry.application.session.user.get('user_uid'),
 								data: {
 									accept_flag: 1
 								},
@@ -257,7 +257,7 @@ define([
 						//
 						accept: function() {
 							$.ajax({
-								url: Config.servers.rws + '/user_permissions/' + config.user_permission_uid + '/project/' + config.project_uid,
+								url: Config.servers.web + '/user_permissions/' + config.user_permission_uid + '/project/' + config.project_uid,
 								type: 'POST',
 								dataType: 'JSON',
 

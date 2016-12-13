@@ -14,7 +14,7 @@
 	<i class="alert-icon fa fa-3x fa-info-circle" style="float:left; margin-left:10px; margin-right:20px"></i>
 	<p><%- message %></p>
 
-	<div class="well vertically scrollable" style="height:200px">
+	<div class="well vertically scrollable" style="max-height:200px">
 	<%= policy %>
 	</div>
 
@@ -29,5 +29,6 @@
 </div>
 
 <div class="modal-footer">
-	<button id="ok" class="btn btn-primary" data-dismiss="modal"><i class="fa fa-check"></i>OK</button> 
+	<button id="ok" class="btn btn-primary" data-dismiss="modal" disabled><i class="fa fa-check"></i>OK</button>
+	<button id="cancel" class="btn" data-dismiss="modal"><i class="fa fa-times"></i>Cancel</button> 
 </div>

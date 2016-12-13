@@ -33,7 +33,7 @@ define([
 		//
 
 		model: UserPersonalEvent,
-		url: Config.servers.rws + '/events/personal/users',
+		url: Config.servers.web + '/events/personal/users',
 
 		//
 		// ajax methods

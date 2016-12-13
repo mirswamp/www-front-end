@@ -244,7 +244,7 @@ define([
 						// fetch user's project membership
 						//
 						projectMembership.fetch({
-							url: Config.servers.rws + '/memberships/projects/' + view.model.get('project_uid') + '/users/' + user.get('user_uid'),
+							url: Config.servers.web + '/memberships/projects/' + view.model.get('project_uid') + '/users/' + user.get('user_uid'),
 
 							// callbacks
 							//

@@ -1,13 +1,26 @@
-/*
- * table styles
- */
+/******************************************************************************\
+|                                                                              |
+|                                   tables.less                                |
+|                                                                              |
+|******************************************************************************|
+|                                                                              |
+|        This defines various CSS styles used in this application.             |
+|                                                                              |
+|        Author(s): Abe Megahed                                                |
+|                                                                              |
+|        This file is subject to the terms and conditions defined in           |
+|        'LICENSE.txt', which is part of this source code distribution.        |
+|                                                                              |
+|******************************************************************************|
+|        Copyright (C) 2012-2016 Software Assurance Marketplace (SWAMP)        |
+\******************************************************************************/
 
 table {
 	width: 100%;
 
-	/*
-	 * table headers
-	 */
+	//
+	// table headers
+	//
 
 	thead {
 		tr, tr.tablesorter {
@@ -30,9 +43,9 @@ table {
 		text-align: center;
 	}
 
-	/*
-	 * table rows
-	 */
+	//
+	// table rows
+	//
 
 	/*
 	tr.first {
@@ -42,13 +55,21 @@ table {
 	}
 	*/
 
-	/*
-	 * table cells
-	 */
+	//
+	// table cells
+	//
 
-	td, th {
+	th, td {
 		border: none;
 		padding: 5px 10px;
+	}
+
+	th.prepend, td.prepend {
+		padding-left: 0;
+	}
+
+	th.append, td.append {
+		padding-right: 0;
 	}
 
 	td {
@@ -60,14 +81,18 @@ table {
 	}
 
 	tr:not(.first) {
-		td.duplicate:not(.prepend) {
+		td.duplicate:not(.prepend):not(.append) {
 			opacity: 0 !important;
+
+			div {
+				display: none;
+			}
 		}
 	}
 
-	/*
-	 * select group checkboxes
-	 */
+	//
+	// select group checkboxes
+	//
 
 	tr.first.last {
 		td.select-group input {
@@ -75,9 +100,9 @@ table {
 		}
 	}
 	
-	/*
-	 * zebra
-	 */
+	//
+	// zebra striping
+	//
 
 	tr:nth-child(odd) {
 		background-color: @veryLightGrey;
@@ -109,9 +134,9 @@ table {
 		border-bottom: none;
 	}
 
-	/*
-	 * rounded corners on first and last rows
-	 */
+	//
+	// rounded corners on first and last rows
+	//
 
 	thead {
 		tr:first-child {
@@ -135,9 +160,9 @@ table {
 		}
 	}
 
-	/*
-	 * prepended and appended columns
-	 */
+	//
+	// prepended and appended columns
+	//
 
 	th.prepend, th.append,
 	td.prepend, td.append {
@@ -146,17 +171,9 @@ table {
 		background: white;
 	}
 
-	th.prepend, td.prepend {
-		padding-left: 0px;
-	}
-
-	th.append, td.append {
-		padding-right: 0;
-	}
-
-	/*
-	 * special columns
-	 */
+	//
+	// special columns
+	//
 
 	td.results {
 		text-align: center;
@@ -208,18 +225,19 @@ table {
 	margin-top: 20px;
 }
 
-/*
- * responsive table styles
- */
+//
+// responsive table styles
+//
 
 .table-responsive {
 	border: none;
-	overflow: auto;
+	overflow-x: auto;
+	overflow-y: hidden;
 }
 
-/*
- * small table styles
- */
+//
+// small table styles
+//
 
 @media (max-width: @screen-sm-min) {
 	table {

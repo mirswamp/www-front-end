@@ -36,7 +36,7 @@ define([
 
 		fetchByUser: function(user, options) {
 			return this.fetch(_.extend(options, {
-				url: Config.servers.rws + '/linked-accounts/user/' + user.get('user_uid')
+				url: Config.servers.web + '/linked-accounts/user/' + user.get('user_uid')
 			}));
 		}
 	});

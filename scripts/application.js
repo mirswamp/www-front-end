@@ -38,9 +38,10 @@ define([
 	'routers/run-requests-router',
 	'routers/api-router',
 	'models/users/session',
+	'views/layout/page-view',
 	'views/dialogs/modal-region',
 	'views/dialogs/error-view',
-], function($, _, Backbone, Cookie, Config, Marionette, Template, Registry, StringUtils, ArrayUtils, HTMLUtils, BrowserSupport, MainRouter, PackageRouter, ToolRouter, PlatformRouter, ProjectRouter, AssessmentRouter, ResultsRouter, RunRequestsRouter, ApiRouter, Session, ModalRegion, ErrorView) {
+], function($, _, Backbone, Cookie, Config, Marionette, Template, Registry, StringUtils, ArrayUtils, HTMLUtils, BrowserSupport, MainRouter, PackageRouter, ToolRouter, PlatformRouter, ProjectRouter, AssessmentRouter, ResultsRouter, RunRequestsRouter, ApiRouter, Session, PageView, ModalRegion, ErrorView) {
 	return Marionette.Application.extend({
 
 		// attributes
@@ -49,8 +50,6 @@ define([
 
 		regions: {
 			main: "#main",
-			header: "#header",
-			footer: "#footer",
 			modal: ModalRegion
 		},
 
@@ -58,22 +57,35 @@ define([
 		// constructor
 		//
 
-		initialize: function() {
+		initialize: function(options) {
 			var self = this;
+
+			// set optional parameter defaults
+			//
+			if (!options) {
+				options = {};
+			}
+			if (options.showNumbering == undefined) {
+				options.showNumbering = false;
+			}
+			if (options.showGrouping == undefined) {
+				options.showGrouping = true;
+			}
+			if (options.autoRefresh == undefined) {
+				options.autoRefresh = true;
+			}
+
+			// set attributes
+			//	
+			this.options = options;
+
+			// load options from cookie
+			//
+			this.loadOptions();
 
 			// create new session
 			//
 			this.session = new Session();
-
-			// get preferred layout
-			//
-			this.layout = this.getLayout();
-
-			// list formatting
-			//
-			this.showNumbering = false;
-			this.showGrouping = true;
-			this.autoRefresh = false;
 
 			// in the event of a javascript error, reset the pending ajax spinner
 			//
@@ -241,6 +253,39 @@ define([
 		},
 
 		//
+		// options / cookie methods
+		//
+
+		saveOptions: function() {
+
+			// save options for later use
+			//
+			$.cookie('swamp', JSON.stringify({
+				layout: this.options.layout,
+				showNumbering: this.options.showNumbering,
+				showGrouping: this.options.showGrouping,
+				autoRefresh: this.options.autoRefresh,
+				authProvider: this.options.authProvider
+			}), { 
+				expires: 7, 
+				domain: Config.cookie.domain, 
+				path: Config.cookie.path, 
+				secure: Config.cookie.secure 
+			});
+		},
+
+		loadOptions: function() {
+
+			// load options from cookie
+			//
+			var cookie = $.cookie('swamp');
+			if (cookie) {
+				var options = JSON.parse(cookie);
+				this.options = _.extend(this.options, options);
+			}
+		},
+
+		//
 		// querying methods
 		//
 
@@ -271,34 +316,15 @@ define([
 		//
 
 		setLayout: function(layout) {
-			this.layout = layout;
-
-			// store layout for later use
-			//
-			if (this.isLoggedIn()) {
-				$.cookie('swamp-layout', layout, { 
-					expires: 7, 
-					domain: Config.cookie.domain, 
-					path: Config.cookie.path, 
-					secure: Config.cookie.secure 
-				});
-			}
-		},
-
-		getLayout: function() {
-			var layout = $.cookie('swamp-layout');
-			if (!layout) {
-				layout = 'two-columns-left-sidebar';
-				this.setLayout(layout);
-			}
-			return layout;
+			this.options.layout = layout;
+			this.saveOptions();
 		},
 
 		getNavbarOrientation: function() {
 			if (this.isMobile()) {
 				return 'bottom';
 			} else {
-				switch (this.layout) {
+				switch (this.options.layout) {
 					case 'one-column-top-navbar':
 						return 'top';
 						break;
@@ -321,7 +347,7 @@ define([
 			if (this.isMobile()) {
 				return 'small';
 			} else {
-				switch (this.layout) {
+				switch (this.options.layout) {
 					case 'two-columns-left-sidebar':
 					case 'two-columns-right-sidebar':
 						return 'small';
@@ -341,7 +367,7 @@ define([
 		},
 
 		getNumColumns: function() {
-			if (this.layout && this.layout.indexOf('one') != -1 || this.getDocumentWidth() < 480) {
+			if (this.options.layout && this.options.layout.indexOf('one') != -1 || this.getDocumentWidth() < 480) {
 				return 1;
 			} else {
 				return 2;
@@ -353,69 +379,18 @@ define([
 		//
 
 		setShowNumbering: function(showNumbering) {
-			this.showNumbering = showNumbering;
-
-			// store show numbering preferences for later use
-			//
-			$.cookie('swamp-show-list-numbering', showNumbering, {
-				expires: 7, 
-				domain: Config.cookie.domain, 
-				path: Config.cookie.path, 
-				secure: Config.cookie.secure
-			});
+			this.options.showNumbering = showNumbering;
+			this.saveOptions();
 		},
 
 		setShowGrouping: function(showGrouping) {
-			this.showGrouping = showGrouping;
-
-			// store show grouping preferences for later use
-			//
-			$.cookie('swamp-show-list-grouping', showGrouping, {
-				expires: 7, 
-				domain: Config.cookie.domain, 
-				path: Config.cookie.path, 
-				secure: Config.cookie.secure
-			});
+			this.options.showGrouping = showGrouping;
+			this.saveOptions();
 		},
 
 		setAutoRefresh: function(autoRefresh) {
-			this.autoRefresh = autoRefresh;
-
-			// store auto refresh preferences for later use
-			//
-			$.cookie('swamp-list-auto-refresh', autoRefresh, {
-				expires: 7, 
-				domain: Config.cookie.domain, 
-				path: Config.cookie.path, 
-				secure: Config.cookie.secure
-			});
-		},
-
-		getShowNumbering: function() {
-			var showNumbering = $.cookie('swamp-show-list-numbering');
-			if (showNumbering == undefined) {
-				showNumbering = false;
-				this.setShowNumbering(showNumbering);
-			}
-			return showNumbering == 'true';
-		},
-
-		getShowGrouping: function() {
-			var showGrouping = $.cookie('swamp-show-list-grouping');
-			if (showGrouping == undefined) {
-				showGrouping = true;
-				this.setShowGrouping(showGrouping);
-			}
-			return showGrouping == 'true';
-		},
-
-		getAutoRefresh: function() {
-			var autoRefresh = $.cookie('swamp-list-auto-refresh');
-			if (autoRefresh == undefined) {
-				autoRefresh = true;
-				this.setAutoRefresh(autoRefresh);
-			}
-			return autoRefresh == 'true';
+			this.options.autoRefresh = autoRefresh;
+			this.saveOptions();
 		},
 
 		//
@@ -508,13 +483,7 @@ define([
 
 					// callbacks
 					//
-					success: function(){
-
-						// update header
-						//
-						if (self.header.currentView) {
-							self.header.currentView.render();
-						}
+					success: function() {
 
 						// go to welcome view
 						//
@@ -550,85 +519,30 @@ define([
 			// render the template
 			//
 			$("body").html(this.template({}));
+
+			this.onRender();
 		},
 
-		showHeader: function(options) {
+		onRender: function() {
 			var self = this;
-			require([
-				'views/layout/header-view'
-			], function (HeaderView) {
-
-				// show header
-				//
-				self.header.show(
-					new HeaderView({
-						nav: options && options.nav? options.nav : "home"
-					})
-				);
-
-				// perform callback
-				//
-				if (options && options.done) {
-					options.done();
-				}
+			$(window).on('keydown', function(event) {
+				self.onKeyPress(event);
 			});
 		},
 
-		showFooter: function(options) {
-			var self = this;
-			require([
-				'views/layout/footer-view'
-			], function (FooterView) {
+		showPage: function(view, options) {
+			this.main.show(
+				new PageView({
+					contentView: view,
+					nav: options && options.nav? options.nav : undefined
+				})
+			);
 
-				// show footer
-				//
-				self.footer.show(
-					new FooterView()
-				);
-
-				// perform callback
-				//
-				if (options && options.done) {
-					options.done();
-				}
-			});
-		},
-
-		show: function(view, options) {
-			var self = this;
-
-			// show header
+			// store page content shown time
 			//
-			self.showHeader({
-				nav: options? options.nav : undefined,
-				done: function() {
-
-					// show main
-					//
-					if (view) {
-						self.main.show(
-							view
-						);
-					}
-
-					// show footer
-					//
-					self.showFooter({
-						done: function() {
-
-							// perform callback
-							//
-							if (options && options.done) {
-								options.done(view);
-							}
-						}
-					});
-
-					// store page shown time
-					//
-					window.timing['page shown'] = new Date().getTime();
-				}
-			});
+			if (window.timing['page content shown'] == undefined) {
+				window.timing['page content shown'] = new Date().getTime();
+			}
 		},
 
 		showContent: function(options) {
@@ -643,7 +557,7 @@ define([
 
 					// show one column view
 					//
-					self.show(
+					self.showPage(
 						new OneColumnView({
 							nav: options? options.nav2: 'home',
 							model: options? options.model: undefined,
@@ -659,7 +573,7 @@ define([
 
 					// show two columns view
 					//
-					self.show(
+					self.showPage(
 						new TwoColumnsView({
 							nav: options? options.nav2: 'home',
 							model: options? options.model: undefined,
@@ -698,7 +612,7 @@ define([
 
 					// user is not logged in, show content only
 					//
-					self.show(
+					self.showPage(
 						new MainView({
 							contentView: view
 						}),
@@ -706,6 +620,24 @@ define([
 					);
 				}
 			});
+		},
+
+		//
+		// event handlers
+		//
+
+		onKeyPress: function(event) {
+
+			// let modal handle key event
+			//
+			if (this.modal.isShowing()) {
+				this.modal.onKeyPress(event);
+
+			// let page handle key event
+			//
+			} else if (this.main.currentView && this.main.currentView.onKeyPress) {
+				this.main.currentView.onKeyPress(event);
+			}
 		}
 	});
 });

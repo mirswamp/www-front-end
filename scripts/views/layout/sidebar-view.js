@@ -67,7 +67,7 @@ define([
 		},
 
 		getOrientation: function() {
-			var layout = Registry.application.layout;
+			var layout = Registry.application.options.layout;
 			if (layout && layout.indexOf("right") > -1) {
 				return 'right';
 			} else {
@@ -267,7 +267,7 @@ define([
 
 			// set layout
 			//
-			if (Registry.application.layout == 'two-columns-right-sidebar') {
+			if (Registry.application.options.layout == 'two-columns-right-sidebar') {
 				this.setLayout('two-columns-right-sidebar-large');
 			} else {
 				this.setLayout('two-columns-left-sidebar-large');
@@ -282,7 +282,7 @@ define([
 
 			// set layout
 			//
-			if (Registry.application.layout == 'two-columns-right-sidebar-large') {
+			if (Registry.application.options.layout == 'two-columns-right-sidebar-large') {
 				this.setLayout('two-columns-right-sidebar');
 			} else {
 				this.setLayout('two-columns-left-sidebar');

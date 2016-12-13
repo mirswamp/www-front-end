@@ -1,6 +1,9 @@
 <div id="package-version-source-profile" class="form-horizontal">
 
 	<div class="well">
+		<% if (package.isOwned()) { %>
+		<button id="edit-source-info" class="btn" style="float:right"><i class="fa fa-pencil"></i>Edit</button>
+		<% } %>
 
 		<% if (!model.isAtomic()) { %>
 		<div class="form-group">

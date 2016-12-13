@@ -39,7 +39,6 @@ define([
 		},
 
 		events: {
-			'click #run-new-assessment': 'onClickRunNewAssessment',
 			'click #assessments': 'onClickAssessments',
 			'click #results': 'onClickResults',
 			'click #runs': 'onClickRuns',
@@ -143,15 +142,6 @@ define([
 		//
 		// event handling methods
 		//
-
-		onClickRunNewAssessment: function() {
-
-			// go to run new assessment view
-			//
-			Backbone.history.navigate('#assessments/run?platform-version=' + this.model.get('platform_version_uuid'), {
-				trigger: true
-			});
-		},
 
 		onClickAssessments: function() {
 

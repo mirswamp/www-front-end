@@ -36,7 +36,7 @@ define([
 
 		fetchByProject: function(project, options) {
 			return this.fetch(_.extend(options, {
-				url: Config.servers.csa + '/projects/' + project.get('project_uid') + '/assessment_results'
+				url: Config.servers.web + '/projects/' + project.get('project_uid') + '/assessment_results'
 			}));
 		}
 	});

@@ -30,7 +30,7 @@ define([
 		//
 
 		idAttribute: 'tool_version_uuid',
-		urlRoot: Config.servers.csa + '/tools/versions',
+		urlRoot: Config.servers.web + '/tools/versions',
 
 		//
 		// querying methods

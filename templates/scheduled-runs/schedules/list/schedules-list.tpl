@@ -8,12 +8,12 @@
 			
 			<th class="schedule first">
 				<i class="fa fa-calendar"></i>
-				<span>Schedule</span>
+				<span class="hidden-xxs">Schedule</span>
 			</th>
 
 			<th class="description last">
 				<i class="fa fa-quote-left"></i>
-				<span>Description</span>
+				<span class="hidden-xxs">Description</span>
 			</th>
 
 			<% if (showDelete) { %>

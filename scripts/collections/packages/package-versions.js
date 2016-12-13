@@ -37,25 +37,25 @@ define([
 
 		fetchByPackage: function(package, options) {
 			return this.fetch(_.extend(options, {
-				url: Config.servers.csa + '/packages/' + package.get('package_uuid') + '/versions'
+				url: Config.servers.web + '/packages/' + package.get('package_uuid') + '/versions'
 			}));
 		},
 
 		fetchAvailableByPackage: function(package, options) {
 			return this.fetch(_.extend(options, {
-				url: Config.servers.csa + '/packages/' + package.get('package_uuid') + '/versions/available'
+				url: Config.servers.web + '/packages/' + package.get('package_uuid') + '/versions/available'
 			}));
 		},
 
 		fetchByPackageProject: function(package, project, options) {
 			return this.fetch(_.extend(options, {
-				url: Config.servers.csa + '/packages/' + package.get('package_uuid') + '/' + project.get('project_uid') + '/versions'
+				url: Config.servers.web + '/packages/' + package.get('package_uuid') + '/' + project.get('project_uid') + '/versions'
 			}));
 		},
 
 		fetchByPackageProjects: function(package, projects, options) {
 			return this.fetch(_.extend(options, {
-				url: Config.servers.csa + '/packages/' + package.get('package_uuid') + '/' + projects.getUuidsStr() + '/versions'
+				url: Config.servers.web + '/packages/' + package.get('package_uuid') + '/' + projects.getUuidsStr() + '/versions'
 			}));
 		},
 

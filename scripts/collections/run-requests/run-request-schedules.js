@@ -29,7 +29,7 @@ define([
 		//
 
 		model: RunRequestSchedule,
-		url: Config.servers.csa + '/run_request_schedules',
+		url: Config.servers.web + '/run_request_schedules',
 
 		//
 		// ajax methods

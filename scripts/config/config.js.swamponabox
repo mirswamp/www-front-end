@@ -22,8 +22,7 @@ define([
 		// web services
 		//
 		servers: {
-			rws: 'https://SED_HOSTNAME/swamp-web-server/public',
-			csa: 'https://SED_HOSTNAME/swamp-web-server/public',
+			web: 'https://SED_HOSTNAME/swamp-web-server/public'
 		},
 
 		// cookie for storing user session

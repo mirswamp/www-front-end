@@ -387,7 +387,7 @@ define([
 
 			// remove android bytecode option
 			//
-			if (!packageTypeNames.contains('Android Java Bytecode')) {
+			if (!packageTypeNames.contains('Android .apk')) {
 				this.$el.find('#android-bytecode').remove();
 			}
 		},
@@ -447,19 +447,13 @@ define([
 
 			// fetch package version directory tree
 			//
-			this.model.fetchFileTree({
-				data: {
-					'dirname': '.'
-				},
+			this.model.fetchRoot({
 
 				// callbacks
 				//
 				success: function(data) {
-					if (_.isArray(data) || !isDirectoryName(data.name)) {
-						self.$el.find('#package-path').val('.');
-					} else {
-						self.$el.find('#package-path').val(data.name);
-					}
+					self.model.root = data;
+					self.$el.find('#package-path').val(data);
 
 					// perform done callback
 					//
@@ -807,7 +801,8 @@ define([
 
 			// check specified package type against list of inferred package types
 			//
-			if (this.defaultPackageTypes.indexOf(Package.getTypeAlias(packageType)) == -1) {
+			if ((this.defaultPackageTypes.indexOf(packageType) == -1) &&
+				(this.defaultPackageTypes.indexOf(Package.getTypeAlias(packageType)) == -1)) {
 				this.options.parent.showWarning("This package does not appear to contain the right type of files for a " + Package.packageTypeToName(packageType) + " package.");
 				return false;
 			} else {

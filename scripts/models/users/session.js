@@ -36,7 +36,7 @@ define([
 
 			// initialize the rws server session
 			//
-			$.ajax(Config.servers.rws + '/login', _.extend(options, {
+			$.ajax(Config.servers.web + '/login', _.extend(options, {
 				type:'POST',
 				dataType:'json',
 				data: { 
@@ -87,7 +87,7 @@ define([
 
 			// close rws server session
 			//
-			$.ajax(Config.servers.rws + '/logout', {
+			$.ajax(Config.servers.web + '/logout', {
 				type: 'POST',
 
 				/*
@@ -102,7 +102,7 @@ define([
 
 					// close csa server session
 					//
-					$.ajax(Config.servers.csa + '/logout', _.extend( options, {
+					$.ajax(Config.servers.web + '/logout', _.extend( options, {
 						type: 'POST'
 					}));
 				},
@@ -134,12 +134,22 @@ define([
 		//
 
 		linkedAccountRedirect: function(provider) {
-			window.location = Config.servers.rws + '/oauth2/redirect' +
+
+			// save auth provider
+			//
+			if (provider) {
+				Registry.application.options.authProvider = provider.get('name');
+				Registry.application.saveOptions();
+			}
+
+			// redirect
+			//
+			window.location = Config.servers.web + '/oauth2/redirect' +
 				((provider === undefined) ? '' : ('?entityid=' + urlEncode(provider.get('entityid'))));
 		},
 
 		linkedAccountLogin: function(options) {
-			window.location = Config.servers.csa + '/oauth2/redirect';
+			window.location = Config.servers.web + '/oauth2/redirect';
 		}
 	});
 });

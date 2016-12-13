@@ -65,8 +65,9 @@
 </div>
 
 <div class="bottom buttons">
-	<button id="back" class="btn btn-primary btn-lg"><i class="fa fa-arrow-left"></i>Back</button>
-	<button id="try-me" class="btn btn-lg"><i class="fa fa-play"></i>Try Me!</button>
+	<button id="try-me" class="btn btn-primary btn-lg"><i class="fa fa-play"></i>Try Me!</button>
+	<button id="back" class="btn btn-lg"><i class="fa fa-arrow-left"></i>Back</button>
+	
 	<% if (editable) { %>
 	<button id="edit" class="btn btn-lg"><i class="fa fa-pencil"></i>Edit Route</button>
 	<button id="delete" class="btn btn-lg"><i class="fa fa-trash"></i>Delete Route</button>

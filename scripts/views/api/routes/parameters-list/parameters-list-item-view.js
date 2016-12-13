@@ -36,9 +36,9 @@ define([
 			'input .type': 'onInputType',
 			'input .description': 'onInputDescription',
 			'click input.optional': 'onClickOptional',
-			'click button.move-down': 'onClickMoveDown',
-			'click button.move-up': 'onClickMoveUp',
-			'click button.delete': 'onClickDelete'
+			'click .reorder button.move-down': 'onClickMoveDown',
+			'click .reorder button.move-up': 'onClickMoveUp',
+			'click .delete button': 'onClickDelete'
 		},
 
 		//

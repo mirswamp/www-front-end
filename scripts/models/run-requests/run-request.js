@@ -42,7 +42,7 @@ define([
 		//
 
 		idAttribute: 'run_request_uuid',
-		urlRoot: Config.servers.csa + '/run_requests',
+		urlRoot: Config.servers.web + '/run_requests',
 		
 		//
 		// ajax methods
@@ -58,8 +58,11 @@ define([
 					'notify-when-complete': notifyWhenComplete,
 					'assessment-run-uuids': assessmentRunUuids
 				},
-				error: function( res ){
-					self.handleError( res );
+
+				// callbacks
+				//
+				error: function(res) {
+					self.handleError(res);
 				}
 			}));
 		},
@@ -74,8 +77,11 @@ define([
 					'notify-when-complete': notifyWhenComplete,
 					'assessment-run-uuids': assessmentRunUuids
 				},
-				error: function( res ){
-					self.handleError( res );
+
+				// callbacks
+				//
+				error: function(res) {
+					self.handleError(res);
 				}
 			}));
 		},

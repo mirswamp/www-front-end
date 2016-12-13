@@ -1,5 +1,5 @@
 <h1>
-	<div class="icon"><i class="fa fa-check"></i></div>
+	<div class="icon"><i class="fa fa-bug"></i></div>
 	<span id="title"><%= title %></span>
 </h1>
 

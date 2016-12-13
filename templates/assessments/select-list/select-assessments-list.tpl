@@ -17,22 +17,22 @@
 
 			<th class="package first">
 				<i class="fa fa-gift"></i>
-				<span>Package</span>
+				<span class="hidden-xxs">Package</span>
 			</th>
 
 			<th class="tool">
 				<i class="fa fa-wrench"></i>
-				<span>Tool</span>
+				<span class="hidden-xxs">Tool</span>
 			</th>
 
 			<th class="platform">
 				<i class="fa fa-bars"></i>
-				<span>Platform</span>
+				<span class="hidden-xxs">Platform</span>
 			</th> 
 
 			<th class="results last">
-				<i class="fa fa-bug"></i>
-				<span>Results</span>
+				<i class="fa fa-check"></i>
+				<span class="hidden-xxs">Results</span>
 			</th>
 
 			<% if (showDelete) { %>

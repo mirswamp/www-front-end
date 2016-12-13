@@ -33,7 +33,7 @@ define([
 		//
 
 		model: UserProjectEvent,
-		url: Config.servers.rws + '/events/projects/users',
+		url: Config.servers.web + '/events/projects/users',
 
 		//
 		// ajax methods

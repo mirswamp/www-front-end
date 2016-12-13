@@ -28,7 +28,7 @@ define([
 		//
 
 		idAttribute: 'execution_record_uuid',
-		urlRoot: Config.servers.csa + '/execution_records',
+		urlRoot: Config.servers.web + '/execution_records',
 		
 		//
 		// querying methods
@@ -55,7 +55,7 @@ define([
 		},
 
 		getProjectExecutionRecordsUrl: function(project) {
-			return Config.servers.csa + '/projects/' + project.get('project_uuid') + '/execution_records';
+			return Config.servers.web + '/projects/' + project.get('project_uuid') + '/execution_records';
 		},
 
 		//
@@ -83,7 +83,7 @@ define([
 		getSshAccess: function( config ){
 			$.ajax( _.extend( config, {
 				type: 'GET',
-				url: Config.servers.csa + '/execution_records/' + this.get('execution_record_uuid') + '/ssh_access'
+				url: Config.servers.web + '/execution_records/' + this.get('execution_record_uuid') + '/ssh_access'
 			}));
 		}
 	});

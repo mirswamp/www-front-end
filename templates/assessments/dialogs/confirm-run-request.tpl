@@ -12,16 +12,18 @@
 
 	<% if (config['email_enabled']) { %>
 	<br />
-	<div class="well">
-		<label class="checkbox">
-			<input type="checkbox" name="notify" id="notify" />
-			Notify me via email when these assessment runs are completed.
-		</label>
-	</div>
+	<form>
+		<div class="checkbox well">
+			<label>
+				<input type="checkbox" name="notify" id="notify" />
+				Notify me via email when these assessment runs are completed.
+			</label>
+		</div>
+	</form>
 	<% } %>
 </div>
 
 <div class="modal-footer">
-	<button id="run-now" class="btn btn-primary" data-dismiss="modal"><i class="fa fa-play"></i>Run Now</button>
+	<button id="run-now" class="btn btn-primary" type="button" data-dismiss="modal"><i class="fa fa-play"></i>Run Now</button>
 	<button id="cancel" class="btn" data-dismiss="modal"><i class="fa fa-times"></i>Cancel</button>
 </div>

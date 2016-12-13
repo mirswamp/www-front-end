@@ -47,7 +47,7 @@ define([
 		//
 
 		idAttribute: 'user_uid',
-		urlRoot: Config.servers.rws + '/users',
+		urlRoot: Config.servers.web + '/users',
 
 		//
 		// querying methods
@@ -207,7 +207,7 @@ define([
 			var self = this;
 			$.ajax(
 				_.extend({
-					url: Config.servers.rws + '/users/email/request-username',
+					url: Config.servers.web + '/users/email/request-username',
 					type: 'POST',
 					dataType: 'JSON',
 					data: {
@@ -225,7 +225,7 @@ define([
 
 		checkValidation: function(data, options) {
 			return $.ajax(_.extend(options, {
-				url: Config.servers.rws + '/users/validate',
+				url: Config.servers.web + '/users/validate',
 				type: 'POST',
 				dataType: 'json',
 				data: data
@@ -234,7 +234,7 @@ define([
 
 		changePassword: function(oldPassword, newPassword, options) {
 			$.ajax(_.extend(options, {
-				url: Config.servers.rws + '/users/' + this.get('user_uid') + '/change-password',
+				url: Config.servers.web + '/users/' + this.get('user_uid') + '/change-password',
 				type: 'PUT',
 				data: {
 					'old_password': oldPassword,
@@ -247,7 +247,7 @@ define([
 
 		resetPassword: function(password, options) {
 			$.ajax(_.extend(options, {
-				url: Config.servers.rws + '/password_resets/' + options.password_reset_id + '/reset',
+				url: Config.servers.web + '/password_resets/' + options.password_reset_id + '/reset',
 				type: 'PUT',
 				data: {
 					'password': password,
@@ -259,21 +259,21 @@ define([
 
 		deleteAdminPriviledges: function(options) {
 			$.ajax(_.extend(options, {
-				url: Config.servers.rws + '/admins/' + this.get('user_uid'),
+				url: Config.servers.web + '/admins/' + this.get('user_uid'),
 				type: 'DELETE'
 			}));
 		},
 
 		requestPermission: function(options) {
 			$.ajax(_.extend(options, {
-				url: Config.servers.rws + '/users/' + this.get('user_uid') + '/permissions',
+				url: Config.servers.web + '/users/' + this.get('user_uid') + '/permissions',
 				type: 'POST'
 			}));
 		},
 
 		setPermission: function(options) {
 			$.ajax(_.extend(options, {
-				url: Config.servers.rws + '/users/' + this.get('user_uid') + '/permissions',
+				url: Config.servers.web + '/users/' + this.get('user_uid') + '/permissions',
 				type: 'PUT'
 			}));
 		},
@@ -346,7 +346,7 @@ define([
 		requestLinkedAccountLink: function(username, password, githubId, confirmed, options) {
 			$.ajax(_.extend(options, {
 				type: 'POST',
-				url: Config.servers.rws + '/oauth2/link',
+				url: Config.servers.web + '/oauth2/link',
 				data: {
 					username: username,
 					password: password,
@@ -359,14 +359,14 @@ define([
 		registerWithLinkedAccount: function(options) {
 			$.ajax(_.extend(options, {
 				type: 'GET',
-				url: Config.servers.rws + '/oauth2/register'
+				url: Config.servers.web + '/oauth2/register'
 			}));
 		},
 
 		fetchFromLinkedAccount: function(options) {
 			$.ajax(_.extend(options, {
 				type: 'GET',
-				url: Config.servers.rws + '/oauth2/user'
+				url: Config.servers.web + '/oauth2/user'
 			}));
 		}
 	});

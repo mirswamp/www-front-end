@@ -29,7 +29,7 @@ define([
 		//
 
 		idAttribute: 'platform_version_uuid',
-		urlRoot: Config.servers.csa + '/platforms/versions'
+		urlRoot: Config.servers.web + '/platforms/versions'
 	}, {
 
 		//

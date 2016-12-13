@@ -21,8 +21,8 @@
 </td>
 
 <% if (showDelete) { %>
-<td class="append">
-	<button type="button" class="delete btn btn-sm"><i class="fa fa-times"></i></button>
+<td class="delete append">
+	<button type="button" class="btn btn-sm"><i class="fa fa-times"></i></button>
 </td>
 <% } %>
 <% } %>

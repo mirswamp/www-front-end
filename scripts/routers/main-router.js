@@ -122,7 +122,7 @@ define([
 
 				// show welcome view
 				//
-				Registry.application.show(
+				Registry.application.showPage(
 					new WelcomeView()
 				);
 			});
@@ -566,7 +566,7 @@ define([
 
 				// show home view
 				//
-				Registry.application.show(
+				Registry.application.showPage(
 					new HomeView({
 						nav: options? options.nav : 'home'
 					}),

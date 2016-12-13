@@ -36,7 +36,7 @@ define([
 
 		fetch: function(options) {
 			return Backbone.Collection.prototype.fetch.call(this, _.extend(options, {
-				url: Config.servers.rws + '/idps'
+				url: Config.servers.web + '/idps'
 			}));
 		}
 	});

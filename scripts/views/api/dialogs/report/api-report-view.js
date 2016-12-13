@@ -117,7 +117,7 @@ define([
 
 		template: function(data) {
 			return _.template(Template, _.extend(data, {
-				showNumbering: Registry.application.getShowNumbering()
+				showNumbering: Registry.application.options.showNumbering
 			}));
 		},
 
@@ -170,7 +170,7 @@ define([
 			this.actualRoutesList.show(
 				new RoutesListView({
 					collection: this.actualRoutes,
-					showNumbering: Registry.application.getShowNumbering()
+					showNumbering: Registry.application.options.showNumbering
 				})
 			);
 		},
@@ -179,7 +179,7 @@ define([
 			this.undocumentedRoutesList.show(
 				new RoutesListView({
 					collection: this.undocumentedRoutes,
-					showNumbering: Registry.application.getShowNumbering()
+					showNumbering: Registry.application.options.showNumbering
 				})
 			);
 		},
@@ -188,7 +188,7 @@ define([
 			this.obsoleteDocumentedRoutesList.show(
 				new RoutesListView({
 					collection: this.obsoleteDocumentedRoutes,
-					showNumbering: Registry.application.getShowNumbering()
+					showNumbering: Registry.application.options.showNumbering
 				})
 			);
 		},

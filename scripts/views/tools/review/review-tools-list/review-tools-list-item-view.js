@@ -44,7 +44,7 @@ define([
 			'click a.revoked': 'onClickRevoked',
 			'click a.unrevoked': 'onClickUnrevoked',
 			'click a.pending': 'onClickPending',
-			'click button.delete': 'onClickDelete'
+			'click .delete button': 'onClickDelete'
 		},
 
 		//

@@ -8,7 +8,3 @@
 <div id="platform-versions-list">
 	<div align="center"><i class="fa fa-spinner fa-spin fa-2x"></i><br/>Loading platform versions...</div>
 </div>
-
-<div class="bottom buttons">
-	<button id="run-new-assessment" class="btn btn-primary btn-lg"><i class="fa fa-play"></i>Run New Assessment</button>
-</div>

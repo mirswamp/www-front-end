@@ -38,17 +38,37 @@ define([
 		},
 
 		events: {
-			'click #sign-in-with button': 'onClickSignInWith',
+			'click #github-sign-in': 'onClickGitHubSignIn',
+			'click #google-sign-in': 'onClickGoogleSignIn',
+			'click #select-sign-in': 'onClickSelectSignIn',
 			'click #username-password button': 'onClickUsernamePassword',
 		},
 
-		submit: function() {
+		//
+		// constructor
+		//
 
-			// get provider
-			//
-			var provider = this.authProviderSelector.currentView.providers.findWhere({
+		initialize: function() {
+			this.useLinkedAccount = Registry.application.options.authProvider != undefined;
+		},
+
+		//
+		// form methods
+		//
+
+		getProvider: function() {
+			return this.authProviderSelector.currentView.providers.findWhere({
 				name: this.$el.find('#auth-provider-selector select').val()
 			});
+		},
+
+		submit: function() {
+			var provider = this.getProvider();
+
+			// save name of auth provider for later
+			//
+			Registry.application.options.authProvider = provider.get('name');
+			Registry.application.saveOptions();
 			
 			require([
 				'models/users/session'
@@ -93,39 +113,115 @@ define([
 					// callback
 					//
 					onChange: function() {
-						var selected = self.linkedAccountSelector.currentView.selected;
-						if (selected) {
-
-							// use linked account login
-							//
-							self.hideUsernamePassword();
-						} else {
-
-							// use username / password
-							//
-							self.showUsernamePassword();
-						}
+						self.selectedProvider = self.authProviderSelector.currentView.selected;
+						self.onSelect();
 					}
 				})
 			);
+		},
+
+		showProviders: function() {
+			this.useLinkedAccount = true;
+
+			// perform callback
+			//
+			if (this.options.onShowProviders) {
+				this.showingProviders = true;
+				this.options.onShowProviders();
+			}
+		},
+
+		showUsernamePassword: function() {
+			this.useLinkedAccount = false;
+
+			// perform callback
+			//
+			if (this.options.onHideProviders) {
+				this.showingProviders = false;
+				this.options.onHideProviders();
+			}
+		},
+
+		//
+		// form validation methods
+		//
+
+		isValid: function() {
+			return this.showingProviders;
 		},
 
 		//
 		// event handling methods
 		//
 
-		onClickSignInWith: function() {
-			this.useLinkedAccount = true;
+		onSelect: function() {
 			if (this.options.onSelect) {
 				this.options.onSelect();
 			}
 		},
+		
+		onClickGitHubSignIn: function(event) {
+
+			// get provider
+			//
+			var provider = this.authProviderSelector.currentView.providers.findWhere({
+				name: 'GitHub'
+			});
+
+			require([
+				'models/users/session'
+			], function (Session) {
+
+				// redirect to linked account
+				//
+				Session.linkedAccountRedirect(provider);
+			});
+
+			// prevent default event handling
+			//
+			event.stopPropagation();
+			event.preventDefault();
+		},
+
+		onClickGoogleSignIn: function(event) {
+
+			// get provider
+			//
+			var provider = this.authProviderSelector.currentView.providers.findWhere({
+				name: 'Google'
+			});
+
+			require([
+				'models/users/session'
+			], function (Session) {
+
+				// redirect to linked account
+				//
+				Session.linkedAccountRedirect(provider);
+			});
+
+			// prevent default event handling
+			//
+			event.stopPropagation();
+			event.preventDefault();
+		},
+
+		onClickSelectSignIn: function(event) {
+			this.showProviders();
+
+			// prevent default event handling
+			//
+			event.stopPropagation();
+			event.preventDefault();
+		},
 
 		onClickUsernamePassword: function() {
-			this.useLinkedAccount = false;
-			if (this.options.onDeselect) {
-				this.options.onDeselect();
-			}
+			this.showUsernamePassword();
+
+			// prevent default event handling
+			//
+			event.stopPropagation();
+			event.preventDefault();
 		}
 	});
 });

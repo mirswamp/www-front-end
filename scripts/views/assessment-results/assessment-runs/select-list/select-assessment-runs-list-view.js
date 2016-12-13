@@ -50,7 +50,10 @@ define([
 				1: { 
 					sorter: false 
 				},
-				7: {
+				8: {
+					sorter: false
+				},
+				9: {
 					sorter: false
 				}
 			},
@@ -64,13 +67,13 @@ define([
 		// methods
 		//
 
-		initialize: function() {
+		initialize: function(options) {
 			var self = this;
 
 			// use specified sort order 
 			//
-			if (this.options.sortList) {
-				this.sorting.sortList = this.options.sortList;
+			if (options.sortList) {
+				this.sorting.sortList = options.sortList;
 			}
 
 			// set attributes
@@ -88,10 +91,9 @@ define([
 
 			// call superclass method
 			//
-			SortableTableListView.prototype.initialize.call(this, null, _.extend(this.options, {
-				showGrouping: this.options.showGrouping,
+			SortableTableListView.prototype.initialize.call(this, _.extend(options, {
 				showSortingColumn: true,
-				groupExcept: ['select', 'delete', 'ssh']
+				groupExcept: ['select', 'delete', 'results', 'ssh']
 			}));
 		},
 

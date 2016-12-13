@@ -1,12 +1,29 @@
-/*
- * input elements
- */
+/******************************************************************************\
+|                                                                              |
+|                                  forms.less                                  |
+|                                                                              |
+|******************************************************************************|
+|                                                                              |
+|        This defines various CSS styles used in this application.             |
+|                                                                              |
+|        Author(s): Abe Megahed                                                |
+|                                                                              |
+|        This file is subject to the terms and conditions defined in           |
+|        'LICENSE.txt', which is part of this source code distribution.        |
+|                                                                              |
+|******************************************************************************|
+|        Copyright (C) 2012-2016 Software Assurance Marketplace (SWAMP)        |
+\******************************************************************************/
+
+//
+// form colors
+//
 
 @inputBackground: @veryVeryLightGrey;
 
-/*
- * input fields
- */
+//
+// input fields
+//
 
 textarea,
 input[type="text"],
@@ -27,21 +44,17 @@ input[type="color"],
 	background-color: @inputBackground;
 }
 
-/*
- * input group add ons
- */
+//
+// input group add ons
+//
 
 .input-group-addon {
 	padding: 5px 10px;
 }
 
-/*
- * radio buttons and checkboxes
- */
-
-input[type="radio"], input[type="checkbox"] {
-	margin: 5px;
-}
+//
+// radio buttons and checkboxes
+//
 
 .well, .accordion-inner {
 	textarea,
@@ -108,9 +121,9 @@ label {
 	margin-right: 25px;
 }
 
-/*
- * form fields
- */
+//
+// form fields
+//
 
 .required:after { 
 	content: "*"; 
@@ -125,9 +138,9 @@ input.required:after {
 	height: auto;
 }
 
-/*
- * form groups
- */
+//
+// form groups
+//
 
 .form-group {
 	margin-bottom: 10px;
@@ -166,9 +179,9 @@ input.required:after {
 	}
 }
 
-/*
- * labels
- */
+//
+// labels
+//
 
 label.form-group {
 	margin-bottom: 0px;
@@ -191,9 +204,9 @@ label span {
 	font-weight: normal;
 }
 
-/*
- * readonly form elements
- */
+//
+// readonly form elements
+//
 
 span.form-control {
 	border: 1px solid @veryLightGrey;
@@ -201,9 +214,9 @@ span.form-control {
 	//box-shadow: none;
 }
 
-/*
- * user account input elements
- */
+//
+// user account input elements
+//
 
 form {
 	.postal-code.input-group {
@@ -269,9 +282,9 @@ form.invitations-form {
 	}
 }
 
-/*
- * dropdown selector
- */
+//
+// dropdown selector
+//
 
 .dropdown-menu {
 	padding: 0;
@@ -285,9 +298,9 @@ form.invitations-form {
 	}
 }
 
-/*
- * country selector
- */
+//
+// country selector
+//
 
 #country-selector {
 	button img {
@@ -296,9 +309,9 @@ form.invitations-form {
 	}
 }
 
-/*
- * time and date input selector
- */
+//
+// time and date input selector
+//
 
 input[type="date"] {
 	line-height: 16px;
@@ -323,9 +336,9 @@ input[type="time"] {
 	width: 100px;
 }
 
-/*
- * dropdown menus
- */
+//
+// dropdown menus
+//
 
 .dropdown-menu > .active > a, .dropdown-menu > .active > a:hover, .dropdown-menu > .active > a:focus {
 	background: @primaryColor;

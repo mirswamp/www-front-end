@@ -29,7 +29,7 @@ define([
 		//
 
 		model: Viewer,
-		url: Config.servers.csa + '/viewers',
+		url: Config.servers.web + '/viewers',
 
 		//
 		// query methods
@@ -51,7 +51,7 @@ define([
 		fetchAll: function(options) {
 			options = options ? options : {};
 			this.fetch( _.extend( options, {
-				url: Config.servers.csa + '/viewers/all'
+				url: Config.servers.web + '/viewers/all'
 			}));
 		}
 	});

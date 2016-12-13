@@ -35,7 +35,7 @@ define([
 
 		events: {
 			'click #add': 'onClickAdd',
-			'click button.delete': 'onClickDelete',
+			'click .delete button': 'onClickDelete',
 			'blur .name input': 'onBlurName',
 			'blur .email input': 'onBlurEmail',
 			'blur .username input': 'onBlurUsername'

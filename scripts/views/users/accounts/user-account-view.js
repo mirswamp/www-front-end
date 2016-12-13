@@ -27,8 +27,8 @@ define([
 	'views/dialogs/notify-view',
 	'views/dialogs/error-view',
 	'views/users/user-profile/user-profile-view',
-	'views/users/accounts/change-permissions/change-user-permissions-view',
-	'views/users/accounts/change-linked-accounts/change-user-linked-accounts-view'
+	'views/users/permissions/change/change-user-permissions-view',
+	'views/users/linked-accounts/change/change-user-linked-accounts-view'
 ], function($, _, Backbone, Marionette, Template, Config, Registry, ConfirmView, NotifyView, ErrorView, UserProfileView, ChangeUserPermissionsView, ChangeUserLinkedAccountsView) {
 	return Backbone.Marionette.LayoutView.extend({
 

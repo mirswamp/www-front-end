@@ -19,42 +19,57 @@
 </td>
 
 <td class="package first">
-	<% if (packageUrl) { %>
-	<a href="<%- packageUrl %>"><span class="name"><%= stringToHTML(package.name) %></span></a>
-	<% } else { %>
-	<span class="name"><%= stringToHTML(package.name) %></span>
-	<% } %>
-	<% if (packageVersionUrl) { %>
-	<a href="<%- packageVersionUrl %>"><span class="version label"><%= stringToHTML(package.version_string) %></span></a>
-	<% } else { %>
-	<span class="version label"><%= stringToHTML(package.version_string) %></span>
-	<% } %>
+	<div class="name">
+		<% if (packageUrl) { %>
+		<a href="<%- packageUrl %>"><%= stringToHTML(package.name) %></a>
+		<% } else { %>
+		<%= stringToHTML(package.name) %>
+		<% } %>
+	</div>
+
+	<div class="version">
+		<% if (packageVersionUrl) { %>
+		<a href="<%- packageVersionUrl %>"><%= stringToHTML(package.version_string) %></a>
+		<% } else { %>
+		<%= stringToHTML(package.version_string) %>
+		<% } %>
+	</div>
 </td>
 
 <td class="tool">
-	<% if (toolUrl) { %>
-	<a href="<%- toolUrl %>"><span class="name"><%= stringToHTML(tool.name) %></span></a>
-	<% } else { %>
-	<span class="name"><%= stringToHTML(tool.name) %></span>
-	<% } %>
-	<% if (toolVersionUrl) { %>
-	<a href="<%- toolVersionUrl %>"><span class="version label"><%= stringToHTML(tool.version_string) %></span></a>
-	<% } else { %>
-	<span class="version label"><%= stringToHTML(tool.version_string) %></span>
-	<% } %>
+	<div class="name">
+		<% if (toolUrl) { %>
+		<a href="<%- toolUrl %>"><%= stringToHTML(tool.name) %></a>
+		<% } else { %>
+		<%= stringToHTML(tool.name) %>
+		<% } %>
+	</div>
+
+	<div class="version">
+		<% if (toolVersionUrl) { %>
+		<a href="<%- toolVersionUrl %>"><%= stringToHTML(tool.version_string) %></a>
+		<% } else { %>
+		<%= stringToHTML(tool.version_string) %>
+		<% } %>
+	</div>
 </td>
 
 <td class="platform">
-	<% if (platformUrl) { %>
-	<a href="<%- platformUrl %>"><span class="name"><%= stringToHTML(platform.name) %></span></a>
-	<% } else { %>
-	<span class="name"><%= stringToHTML(platform.name) %></span>
-	<% } %>
-	<% if (platformVersionUrl) { %>
-	<a href="<%- platformVersionUrl %>"><span class="version label"><%= stringToHTML(platform.version_string) %></span></a>
-	<% } else { %>
-	<span class="version label"><%= stringToHTML(platform.version_string) %></span>
-	<% } %>
+	<div class="name">
+		<% if (platformUrl) { %>
+		<a href="<%- platformUrl %>"><%= stringToHTML(platform.name) %></a>
+		<% } else { %>
+		<%= stringToHTML(platform.name) %>
+		<% } %>
+	</div>
+
+	<div class="version">
+		<% if (platformVersionUrl) { %>
+		<a href="<%- platformVersionUrl %>"><%= stringToHTML(platform.version_string) %></a>
+		<% } else { %>
+		<%= stringToHTML(platform.version_string) %>
+		<% } %>
+	</div>
 </td>
 
 <td class="datetime hidden-xs<% if (!showStatus) { %> last<% } %>">
@@ -62,43 +77,54 @@
 </td>
 
 <% if (showStatus) { %>
-<td class="status last">
+<td class="status">
 	<a href="<%- runUrl %>"><%- model.get('status').toLowerCase() %></a>
+</td>
+<% } %>
+
+<td class="results last">
 
 	<% if (showErrors) { %>
 	<% if (model.hasErrors() && errorUrl) { %>
-	<a id="errors" class="btn btn-sm" target="_blank" data-content="View errors" data-container="body" href="<%- errorUrl %>">
-		<i class="fa fa-exclamation" style="margin:4px"></i>
+	<a id="errors" class="warning btn btn-sm" target="_blank" data-toggle="tooltip" data-content="Click to view error report" data-placement="top" href="<%- errorUrl %>">
+		<i class="warning fa fa-exclamation" style="margin:4px"></i>Error
 	</a>
 	<% } %>
 	<% } %>
 
 	<% if (!model.hasErrors() && model.hasResults()) { %>
-	<br />
 
 	<div class="badge-group">
-	<% if (weakness_cnt > 0) { %>
-	<i class="fa fa-bug"></i> <span class="badge"><%- weakness_cnt %></span>
-	<% } else { %>
-	<% if (weakness_cnt == 0) { %>
-	<i class="fa fa-bug"></i> <span class="badge badge-important">0</span>
-	<% } %>
-	<% } %>
+		<% if (resultsUrl) { %>
+		<a href="<%= resultsUrl %>" target="_blank" data-toggle="tooltip" data-content="Click to download results in SCARF format." data-placement="top">
+		<% } %>
+
+		<% if (weakness_cnt > 0) { %>
+		<div class="icon"><i class="fa fa-bug"></i></div>
+		<div class="badge"><%- weakness_cnt %></div>
+		<% } else { %>
+		<% if (weakness_cnt == 0) { %>
+		<div class="icon"><i class="fa fa-bug"></i></div>
+		<div class="badge badge-important">0</div>
+		<% } %>
+		<% } %>
+
+		<% if (resultsUrl) { %>
+		</a>
+		<% } %>
 	</div>
 	
 	<% } %>
 </td>
-<% } %>
 
 <% if (showDelete) { %>
 <td class="append delete hidden-xs">
-	<button type="button" class="delete btn btn-sm"><i class="fa fa-times"></i></button>
+	<button type="button" class="btn btn-sm"><i class="fa fa-times"></i></button>
 </td>
 <% } %>
 
-<td class="append ssh hidden-xs"<% if (!showSsh) { %> display: none; <% } %>">
-	<% if (showSsh) { %>
-		<button class="btn ssh">SSH</button>
-	<% } %>
+<% if (showSsh) { %>
+<td class="append ssh hidden-xs">
+	<button class="btn"<% if (!sshEnabled) {%> style="display:none"<% } %>>SSH</button>
 </td>
-
+<% } %>

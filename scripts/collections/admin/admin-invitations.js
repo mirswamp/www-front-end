@@ -30,7 +30,7 @@ define([
 		//
 
 		model: AdminInvitation,
-		url: Config.servers.rws + '/admin_invitations',
+		url: Config.servers.web + '/admin_invitations',
 
 		//
 		// ajax methods
@@ -107,7 +107,7 @@ define([
 		//
 
 		fetchNumPendingByUser: function(user, options) {
-			return $.ajax(Config.servers.rws + '/admin_invitations/users/' + user.get('user_uid') + '/num', options);
+			return $.ajax(Config.servers.web + '/admin_invitations/users/' + user.get('user_uid') + '/num', options);
 		},
 	});
 });

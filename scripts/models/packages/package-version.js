@@ -50,7 +50,7 @@ define([
 		//
 
 		idAttribute: 'package_version_uuid',
-		urlRoot: Config.servers.csa + '/packages/versions',
+		urlRoot: Config.servers.web + '/packages/versions',
 
 		//
 		// methods
@@ -275,6 +275,17 @@ define([
 		// archive inspection methods
 		//
 
+		fetchRoot: function(options) {
+			$.ajax(_.extend(options, {
+				url: this.urlRoot + '/' + (this.isNew()? 'new': this.get('package_version_uuid')) + '/root',
+				type: 'GET',
+				data: {
+					package_path: this.isNew()? this.get('package_path') : undefined,
+					source_path: this.isNew()? this.get('source_path') : undefined
+				}
+			}));
+		},
+
 		fetchContents: function(filename, dirname, options) {
 			$.ajax(_.extend(options, {
 				url: this.urlRoot + '/' + (this.isNew()? 'new': this.get('package_version_uuid')) + '/contains',
@@ -291,6 +302,9 @@ define([
 
 		fetchFileTypes: function(options) {
 			if (this.isNew()) {
+				if (!options.data) {
+					options.data = {};
+				}
 				options.data['package_path'] = this.get('package_path')
 			}
 			$.ajax(_.extend(options, {
@@ -301,6 +315,9 @@ define([
 
 		fetchFileList: function(options) {
 			if (this.isNew()) {
+				if (!options.data) {
+					options.data = {};
+				}
 				options.data['package_path'] = this.get('package_path')
 			}
 			$.ajax(_.extend(options, {
@@ -311,6 +328,9 @@ define([
 
 		fetchFileTree: function(options) {
 			if (this.isNew()) {
+				if (!options.data) {
+					options.data = {};
+				}
 				options.data['package_path'] = this.get('package_path')
 			}
 			$.ajax(_.extend(options, {
@@ -321,6 +341,9 @@ define([
 
 		fetchDirectoryList: function(options) {
 			if (this.isNew()) {
+				if (!options.data) {
+					options.data = {};
+				}
 				options.data['package_path'] = this.get('package_path')
 			}
 			$.ajax(_.extend(options, {
@@ -331,6 +354,9 @@ define([
 
 		fetchDirectoryTree: function(options) {
 			if (this.isNew()) {
+				if (!options.data) {
+					options.data = {};
+				}
 				options.data['package_path'] = this.get('package_path')
 			}
 			$.ajax(_.extend(options, {
@@ -359,6 +385,9 @@ define([
 
 		fetchRubyGemInfo: function(options) {
 			if (this.isNew()) {
+				if (!options.data) {
+					options.data = {};
+				}
 				options.data['package_path'] = this.get('package_path')
 			}
 			$.ajax(_.extend(options, {
@@ -369,6 +398,9 @@ define([
 
 		fetchPythonWheelInfo: function(options) {
 			if (this.isNew()) {
+				if (!options.data) {
+					options.data = {};
+				}
 				options.data['package_path'] = this.get('package_path')
 			}
 			$.ajax(_.extend(options, {
@@ -489,6 +521,7 @@ define([
 						success(['ruby']);
 					}
 				}));
+
 				return;
 			}
 
@@ -530,6 +563,7 @@ define([
 						success(['python']);
 					}
 				}));
+				
 				return;
 			}
 

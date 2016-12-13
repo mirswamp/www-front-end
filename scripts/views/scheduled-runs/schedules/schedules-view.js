@@ -158,7 +158,7 @@ define([
 		template: function(data) {
 			return _.template(Template, _.extend(data, {
 				project: this.options.data['project'],
-				showNumbering: Registry.application.getShowNumbering()
+				showNumbering: Registry.application.options.showNumbering
 			}));
 		},
 
@@ -219,7 +219,7 @@ define([
 					project: this.options.data['project'],
 					collection: this.collection,
 					selectedAssessmentRunUuids: this.options.selectedAssessmentRunUuids,
-					showNumbering: Registry.application.getShowNumbering(),
+					showNumbering: Registry.application.options.showNumbering,
 					showDelete: true
 				})
 			);

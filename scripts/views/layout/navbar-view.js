@@ -56,7 +56,7 @@ define([
 		},
 
 		getOrientation: function() {
-			var layout = Registry.application.layout;
+			var layout = Registry.application.options.layout;
 			if (layout && layout.indexOf("bottom") > -1) {
 				return 'bottom';
 			} else {

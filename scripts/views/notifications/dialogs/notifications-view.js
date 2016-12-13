@@ -39,8 +39,7 @@ define([
 		},
 
 		events: {
-			'click #ok': 'onClickOk',
-			'keypress': 'onKeyPress'
+			'click #ok': 'onClickOk'
 		},
 
 		//
@@ -212,7 +211,7 @@ define([
 			this.notifications.show(
 				new NotificationsListView({
 					collection: notifications,
-					showNumbering: Registry.application.getShowNumbering()
+					showNumbering: Registry.application.options.showNumbering
 				})
 			)
 		},
@@ -231,15 +230,6 @@ define([
 			//
 			if (this.options.accept) {
 				this.options.accept();
-			}
-		},
-
-		onKeyPress: function(event) {
-
-			// respond to enter key press
-			//
-			if (event.keyCode === 13) {
-				this.onClickOk();
 			}
 		}
 	});

@@ -8,7 +8,6 @@
 	<button id="download-version" class="btn btn-lg"><i class="fa fa-download"></i>Download Version</button>
 	<% } %>
 	<% if (isOwned) { %>
-	<button id="edit-version" class="btn btn-lg"><i class="fa fa-pencil"></i>Edit Version</button>
 	<button id="delete-version" class="btn btn-lg"><i class="fa fa-trash"></i>Delete Version</button>
 	<% } %>
 

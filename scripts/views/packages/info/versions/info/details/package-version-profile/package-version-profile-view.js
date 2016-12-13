@@ -28,14 +28,36 @@ define([
 	return Backbone.Marionette.ItemView.extend({
 
 		//
+		// attributes
+		//
+
+		events: {
+			'click #edit-version': 'onClickEditVersion',
+		},
+
+		//
 		// rendering methods
 		//
 
 		template: function(data) {
 			return _.template(Template, _.extend(data, {
 				model: this.model,
-				package: this.options.package
+				package: this.options.package,
+				isOwned: this.options.package.isOwned()
 			}));
+		},
+
+		//
+		// event handing methods
+		//
+
+		onClickEditVersion: function() {
+
+			// go to edit package version details view
+			//
+			Backbone.history.navigate('#packages/versions/' + this.model.get('package_version_uuid') + '/edit', {
+				trigger: true
+			});
 		}
 	});
 });

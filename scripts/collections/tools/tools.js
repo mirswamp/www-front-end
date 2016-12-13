@@ -31,7 +31,7 @@ define([
 		//
 
 		model: Tool,
-		url: Config.servers.csa + '/tools',
+		url: Config.servers.web + '/tools',
 
 		//
 		// filtering methods
@@ -89,37 +89,37 @@ define([
 
 		fetchByUser: function(user, options) {
 			return NamedItems.prototype.fetch.call(this, _.extend(options, {
-				url: Config.servers.csa + '/tools/users/' + user.get('user_uid')
+				url: Config.servers.web + '/tools/users/' + user.get('user_uid')
 			}));
 		},
 
 		fetchAll: function(options) {
 			return NamedItems.prototype.fetch.call(this, _.extend(options, {
-				url: Config.servers.csa + '/tools/all'
+				url: Config.servers.web + '/tools/all'
 			}));
 		},
 
 		fetchPublic: function(options) {
 			return NamedItems.prototype.fetch.call(this, _.extend(options, {
-				url: Config.servers.csa + '/tools/public'
+				url: Config.servers.web + '/tools/public'
 			}));
 		},
 
 		fetchRestricted: function(options) {
 			return NamedItems.prototype.fetch.call(this, _.extend(options, {
-				url: Config.servers.csa + '/tools/restricted'
+				url: Config.servers.web + '/tools/restricted'
 			}));
 		},
 
 		fetchProtected: function(project, options) {
 			return NamedItems.prototype.fetch.call(this, _.extend(options, {
-				url: Config.servers.csa + '/tools/protected/' + project.get('project_uid')
+				url: Config.servers.web + '/tools/protected/' + project.get('project_uid')
 			}));
 		},
 
 		fetchByProject: function(project, options) {
 			return NamedItems.prototype.fetch.call(this, _.extend(options, {
-				url: Config.servers.csa + '/tools/projects/' + project.get('project_uid')
+				url: Config.servers.web + '/tools/projects/' + project.get('project_uid')
 			}));
 		}
 	}, {
@@ -129,7 +129,7 @@ define([
 		//
 
 		fetchNumByUser: function(user, options) {
-			return $.ajax(Config.servers.csa + '/tools/users/' + user.get('user_uid') + '/num', options);
+			return $.ajax(Config.servers.web + '/tools/users/' + user.get('user_uid') + '/num', options);
 		},
 	});
 

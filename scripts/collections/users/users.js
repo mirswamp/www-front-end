@@ -31,7 +31,7 @@ define([
 		//
 
 		model: User,
-		url: Config.servers.rws + '/users',
+		url: Config.servers.web + '/users',
 
 		//
 		// filtering methods
@@ -69,31 +69,31 @@ define([
 
 		fetchByProject: function(project, options) {
 			return this.fetch(_.extend(options, {
-				url: Config.servers.rws + '/projects/' + project.get('project_uid') + '/users'
+				url: Config.servers.web + '/projects/' + project.get('project_uid') + '/users'
 			}));
 		},
 
 		fetchAdmins: function(admin, options) {
 			return this.fetch(_.extend(options, {
-				url: Config.servers.rws + '/admins/' + admin.get('user_uid') + '/admins'
+				url: Config.servers.web + '/admins/' + admin.get('user_uid') + '/admins'
 			}));
 		},
 
 		fetchByInvitees: function(options) {
 			return this.fetch(_.extend(options, {
-				url: Config.servers.rws + '/admin_invitations/invitees'
+				url: Config.servers.web + '/admin_invitations/invitees'
 			}));
 		},
 
 		fetchByInviters: function(options) {
 			return this.fetch(_.extend(options, {
-				url: Config.servers.rws + '/admin_invitations/inviters'
+				url: Config.servers.web + '/admin_invitations/inviters'
 			}));
 		},
 
 		fetchAll: function(options) {
 			return this.fetch(_.extend(options, {
-				url: Config.servers.rws + '/admins/' + Registry.application.session.user.get('user_uid') + '/users'
+				url: Config.servers.web + '/admins/' + Registry.application.session.user.get('user_uid') + '/users'
 			}));
 		},
 
@@ -103,7 +103,7 @@ define([
 			});
 			$.ajax(_.extend(options, {
 				type: 'POST',
-				url: Config.servers.rws + '/admins_email',
+				url: Config.servers.web + '/admins_email',
 				data: {
 					subject: subject,
 					body: body,

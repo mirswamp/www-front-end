@@ -181,21 +181,15 @@ define([
 						},
 
 						error: function(response) {
+							require([
+								'models/run-requests/run-request'
+							], function (RunRequest) {
 
-							// allow user to sign the EULA
-							//
-							var runRequest = new RunRequest({});
-							runRequest.handleError(response);
-
-							/*
-							// show error dialog
-							//
-							Registry.application.modal.show(
-								new ErrorView({
-									message: "Could not fetch assessment results content."
-								})
-							);
-							*/
+								// allow user to sign the EULA
+								//
+								var runRequest = new RunRequest({});
+								runRequest.handleError(response);
+							});
 						}
 					};
 
@@ -493,7 +487,7 @@ define([
 
 								// show assessment results view
 								//
-								Registry.application.show(
+								Registry.application.showPage(
 									new AssessmentResultsView({
 										model: assessmentResults,
 										project: project
@@ -505,7 +499,7 @@ define([
 
 								// show error dialog
 								//
-								Registry.application.modal.show(
+								Registry.application.modal.showPage(
 									new ErrorView({
 										message: "Could not fetch project."
 									})

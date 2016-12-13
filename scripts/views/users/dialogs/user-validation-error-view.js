@@ -31,8 +31,7 @@ define([
 		//
 
 		events: {
-			'submit': 'onSubmit',
-			'keypress': 'onKeyPress'
+			'submit': 'onSubmit'
 		},
 
 		//
@@ -59,16 +58,6 @@ define([
 			// disable default form submission
 			//
 			return false;
-		},
-
-		onKeyPress: function(event) {
-
-			// respond to enter key press
-			//
-			if (event.keyCode === 13) {
-				this.onSubmit();
-				Registry.application.modal.hide();
-			}
 		}
 	});
 });

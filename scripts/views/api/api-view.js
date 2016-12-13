@@ -20,6 +20,7 @@ define([
 	'underscore',
 	'backbone',
 	'marionette',
+	'config',
 	'registry',
 	'text!templates/api/api.tpl',
 	'collections/api/routes',
@@ -27,7 +28,7 @@ define([
 	'views/api/routes-list/routes-list-view',
 	'views/api/dialogs/report/api-report-view',
 	'views/dialogs/error-view'
-], function($, _, Backbone, Marionette, Registry, Template, Routes, RouteFiltersView, RoutesListView, APIReportView, ErrorView) {
+], function($, _, Backbone, Marionette, Config, Registry, Template, Routes, RouteFiltersView, RoutesListView, APIReportView, ErrorView) {
 	return Backbone.Marionette.LayoutView.extend({
 
 		//
@@ -92,9 +93,10 @@ define([
 
 		template: function(data) {
 			return _.template(Template, _.extend(data, {
+				Config: Config,
 				editable: this.options.editable,
 				showPrivate: this.options.showPrivate,
-				showNumbering: Registry.application.getShowNumbering()
+				showNumbering: Registry.application.options.showNumbering
 			}));
 		},
 
@@ -176,7 +178,7 @@ define([
 					showCategory: this.options.showCategory,
 					showUnfinished: this.options.showUnfinished,
 					showPrivate: this.options.showPrivate,
-					showNumbering: Registry.application.getShowNumbering()
+					showNumbering: Registry.application.options.showNumbering
 				})
 			)
 		},

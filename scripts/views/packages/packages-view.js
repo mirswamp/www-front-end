@@ -176,7 +176,7 @@ define([
 				project: this.options.data['project'],
 				packageType: this.options.data['type'],
 				loggedIn: Registry.application.session.user != null,
-				showNumbering: Registry.application.getShowNumbering()
+				showNumbering: Registry.application.options.showNumbering
 			}));
 		},
 
@@ -231,7 +231,7 @@ define([
 			this.packagesList.show(
 				new PackagesListView({
 					collection: this.collection,
-					showNumbering: Registry.application.getShowNumbering(),
+					showNumbering: Registry.application.options.showNumbering,
 					showDelete: true,
 				})
 			);

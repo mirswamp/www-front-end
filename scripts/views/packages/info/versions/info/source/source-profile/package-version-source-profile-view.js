@@ -41,6 +41,10 @@ define([
 			contents: '#contents'
 		},
 
+		events: {
+			'click #edit-source-info': 'onClickEditSourceInfo',
+		},
+
 		//
 		// rendering methods
 		//
@@ -170,6 +174,19 @@ define([
 					);	
 				}
 			});
-		}
+		},
+
+		//
+		// event handling methods
+		//
+
+		onClickEditSourceInfo: function() {
+
+			// go to edit package version view
+			//
+			Backbone.history.navigate('#packages/versions/' + this.model.get('package_version_uuid') + '/source/edit', {
+				trigger: true
+			});
+		},
 	});
 });

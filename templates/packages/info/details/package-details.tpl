@@ -21,7 +21,6 @@
 	<button id="run-new-assessment" class="btn btn-primary btn-lg"><i class="fa fa-play"></i>Run New Assessment</button>
 	<% } %>
 	<% if (isOwned) { %>
-	<button id="edit-package" class="btn btn-lg"><i class="fa fa-pencil"></i>Edit Package</button>
 	<button id="delete-package" class="btn btn-lg"><i class="fa fa-trash"></i>Delete Package</button>
 	<% } %>
 </div>

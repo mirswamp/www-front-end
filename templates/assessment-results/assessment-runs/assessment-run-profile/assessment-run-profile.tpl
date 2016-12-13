@@ -108,16 +108,5 @@
 				<% } %>
 			</div>
 		</div>
-
-		<div class="form-group">
-			<label class="form-label">Lines of code</label>
-			<div class="controls">
-				<% if (typeof lines_of_code !== 'undefined' && lines_of_code != null) { %>
-				<%- lines_of_code %>
-				<% } else { %>
-				unknown
-				<% } %>
-			</div>
-		</div>
 	</fieldset>
 </div>

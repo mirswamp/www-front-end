@@ -97,6 +97,14 @@ define([
 						'name': 'Other Providers',
 						'group': self.collection
 					}]);
+
+					// set initial selected
+					//
+					if (Registry.application.options.authProvider) {
+						self.selected = self.providers.findWhere({
+							name: Registry.application.options.authProvider
+						});
+					}
 					
 					// render
 					//

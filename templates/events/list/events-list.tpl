@@ -8,12 +8,12 @@
 			
 			<th class="event first">
 				<i class="fa fa-bullhorn"></i>
-				<span>Event</span>
+				<span class="hidden-xxs">Event</span>
 			</th>
 
 			<th class="date last">
 				<i class="fa fa-calendar"></i>
-				<span>Date / Time</span>
+				<span class="hidden-xxs">Date</span>
 			</th>
 		</tr>
 	</thead>

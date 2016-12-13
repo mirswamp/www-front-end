@@ -21,18 +21,20 @@ define([
 	'backbone',
 	'marionette',
 	'popover',
+	'validate',
 	'text!templates/users/authentication/forms/sign-in-form.tpl',
 	'config',
 	'registry',
 	'views/users/authentication/selectors/auth-provider-selector-view',
 	'views/dialogs/error-view'
-], function($, _, Backbone, Marionette, Popover, Template, Config, Registry, AuthProviderSelectorView, ErrorView) {
+], function($, _, Backbone, Marionette, Popover, Validate, Template, Config, Registry, AuthProviderSelectorView, ErrorView) {
 	return Backbone.Marionette.LayoutView.extend({
 
 		//
 		// attributes
 		//
 
+		tagName: 'form',
 		className: 'form-horizontal',
 
 		regions: {
@@ -42,17 +44,9 @@ define([
 		events: {
 			'click .alert-warning .close': 'onClickAlertWarningClose',
 			'click .alert-info .close': 'onClickAlertInfoClose',
+			'input input': 'onChange',
 			'click #reset-password': 'onClickResetPassword',
 			'click #request-username': 'onClickRequestUsername',
-			'click #username-password button': 'onClickUsernamePassword'
-		},
-
-		//
-		// constructor
-		//
-
-		initialize: function() {
-			this.useLinkedAccount = false;
 		},
 
 		//
@@ -62,6 +56,11 @@ define([
 		login: function(username, password, options) {
 			var self = this;
 
+			// remove auth provider from saved options
+			//
+			Registry.application.options.authProvider = null;
+			Registry.application.saveOptions();
+
 			// send login request
 			//
 			Registry.application.session.login(username, password, {
@@ -70,7 +69,7 @@ define([
 				// callbacks
 				//
 				success: function() {
-					
+
 					// sign in user
 					//
 					if (options.success) {
@@ -155,6 +154,10 @@ define([
 			this.$el.find('[data-toggle="popover"]').popover({
 				trigger: 'hover'
 			});
+
+			// perform initial validation
+			//
+			//this.validate();
 		},
 
 		showLinkedAccountForm: function() {
@@ -168,16 +171,22 @@ define([
 
 						// callbacks
 						//
-						onSelect: function() {
-							self.$el.find('.local-account').hide();
-							self.$el.find('.linked-account').show();
+						onShowProviders: function() {
+							self.showProviders();
+							self.onChange();
 						},
-						onDeselect: function() {
-							self.options.parent.$el.find('.local-account').show();
-							self.options.parent.$el.find('.linked-account').hide();
+						onHideProviders: function() {
+							self.hideProviders();
+							self.onChange();
 						}
 					})
 				);
+
+				// configure form view
+				//
+				if (Registry.application.options.authProvider) {
+					self.showProviders();
+				}
 			});
 		},
 
@@ -192,6 +201,16 @@ define([
 					})
 				);
 			});
+		},
+
+		showProviders: function() {
+			this.$el.find('.local-account').hide();
+			this.$el.find('.linked-account').show();
+		},
+
+		hideProviders: function() {
+			this.options.parent.$el.find('.local-account').show();
+			this.options.parent.$el.find('.linked-account').hide();
 		},
 
 		showWarning: function(message) {
@@ -234,7 +253,7 @@ define([
 				//
 				this.linkedAccountSignIn.currentView.submit();
 			} else {
-				
+
 				// get parameters
 				//
 				var username = this.$el.find('#username input').val();
@@ -247,8 +266,48 @@ define([
 		},
 
 		//
+		// form validation methods
+		//
+
+		validate: function() {
+			this.validator = this.$el.validate();
+		},
+
+		isValid: function() {
+			/*
+			if (Registry.application.config['linked_accounts_enabled']) {
+				return this.validator.form() || this.linkedAccountSignIn.currentView.isValid();
+			} else {
+				return this.validator.form();
+			}
+			*/
+
+			// check if using linked accounts form
+			//
+			if (Registry.application.config['linked_accounts_enabled']) {
+				if (this.linkedAccountSignIn.currentView && this.linkedAccountSignIn.currentView.useLinkedAccount) {
+					return true;
+				}
+			}
+			
+			// check if username and password are filled in
+			//
+			return (this.$el.find('#username input').val() != '') && 
+				(this.$el.find('#password input').val() != '');
+		},
+
+		//
 		// event handling methods
 		//
+
+		onChange: function() {
+
+			// perform callback
+			//
+			if (this.options.onChange) {
+				this.options.onChange();
+			}
+		},
 
 		onClickAlertWarningClose: function() {
 			this.hideWarning();

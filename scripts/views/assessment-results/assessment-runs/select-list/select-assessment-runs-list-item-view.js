@@ -21,14 +21,14 @@ define([
 	'underscore',
 	'backbone',
 	'marionette',
-	'popover',
+	'tooltip',
 	'text!templates/assessment-results/assessment-runs/select-list/select-assessment-runs-list-item.tpl',
 	'config',
 	'registry',
 	'models/tools/tool',
 	'views/assessment-results/assessment-runs/list/assessment-runs-list-item-view',
 	'utilities/time/date-utils'
-], function($, _, Backbone, Marionette, Popover, Template, Config, Registry, Tool, AssessmentRunsListItemView) {
+], function($, _, Backbone, Marionette, Tooltip, Template, Config, Registry, Tool, AssessmentRunsListItemView) {
 	return AssessmentRunsListItemView.extend({
 
 		//
@@ -80,6 +80,12 @@ define([
 			}
 		},
 
+		getResultsUrl: function() {
+			if (this.model.has('assessment_result_uuid')) {
+				return Config.servers.web + '/v1/assessment_results/' + this.model.get('assessment_result_uuid') + '/scarf';
+			}
+		},
+
 		//
 		// rendering methods
 		//
@@ -95,6 +101,7 @@ define([
 				toolVersionUrl: data.tool.tool_version_uuid? Registry.application.getURL() + '#tools/versions/' + data.tool.tool_version_uuid : undefined,
 				platformUrl: data.platform.platform_uuid? Registry.application.getURL() + '#platforms/' + data.platform.platform_uuid : undefined,
 				platformVersionUrl: data.platform.platform_version_uuid? Registry.application.getURL() + '#platforms/versions/' + data.platform.platform_version_uuid : undefined,
+				resultsUrl: data.tool && !data.tool.is_restricted? this.getResultsUrl() : null,
 				errorUrl: this.options.showErrors? this.getErrorUrl() : undefined,
 				isChecked: this.options.selected? this.options.selected.contains(this.model) : false,
 				showSelect: this.options.editable || this.isViewable(),
@@ -103,15 +110,16 @@ define([
 				showStatus: this.options.showStatus,
 				showErrors: this.options.showErrors,
 				showDelete: this.options.showDelete,
-				showSsh: this.model.isVmReady() && Registry.application.session.user.hasSshAccess() && this.options.showSsh
+				showSsh: this.options.showSsh,
+				sshEnabled: this.model.isVmReady() && Registry.application.session.user.hasSshAccess()
 			}));
 		},
 
 		onRender: function() {
 
-			// display popovers on hover
+			// show tooltips on hover
 			//
-			this.$el.find('[data-toggle="popover"]').popover({
+			this.$el.find("[data-toggle='tooltip']").popover({
 				trigger: 'hover'
 			});
 		},

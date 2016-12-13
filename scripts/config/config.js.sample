@@ -22,8 +22,7 @@ define([
 		// web services
 		//
 		servers: {
-			rws: <Your registry server web services root URL>,
-			csa: <Your csa web services root URL>,
+			web: <Your web services root URL>,
 			api: <Your api documentation web services root URL>,
 		},
 

@@ -29,7 +29,7 @@ define([
 		//
 
 		model: ProjectInvitation,
-		url: Config.servers.rws + '/invitations',
+		url: Config.servers.web + '/invitations',
 
 		//
 		// ajax methods
@@ -109,7 +109,7 @@ define([
 		//
 
 		fetchNumPendingByUser: function(user, options) {
-			return $.ajax(Config.servers.rws + '/invitations/users/' + user.get('user_uid') + '/num', options);
+			return $.ajax(Config.servers.web + '/invitations/users/' + user.get('user_uid') + '/num', options);
 		},
 	});
 });

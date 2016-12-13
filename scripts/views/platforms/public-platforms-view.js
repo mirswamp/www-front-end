@@ -56,7 +56,7 @@ define([
 		template: function(data) {
 			return _.template(Template, _.extend(data, {
 				loggedIn: Registry.application.session.user != null,
-				showNumbering: Registry.application.getShowNumbering()
+				showNumbering: Registry.application.options.showNumbering
 			}));
 		},
 
@@ -80,7 +80,7 @@ define([
 					self.platformsList.show(
 						new PlatformsListView({
 							collection: self.collection,
-							showNumbering: Registry.application.getShowNumbering(),
+							showNumbering: Registry.application.options.showNumbering,
 							showDelete: false
 						})
 					);

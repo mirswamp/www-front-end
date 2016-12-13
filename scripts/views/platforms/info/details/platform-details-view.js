@@ -40,10 +40,6 @@ define([
 			platformVersionsList: '#platform-versions-list'
 		},
 
-		events: {
-			'click #run-new-assessment': 'onClickRunNewAssessment'
-		},
-
 		//
 		// methods
 		//
@@ -115,19 +111,6 @@ define([
 					collection: this.collection
 				})
 			);
-		},
-
-		//
-		// event handling methods
-		//
-
-		onClickRunNewAssessment: function() {
-
-			// go to run new assessment view
-			//
-			Backbone.history.navigate('#assessments/run?platform=' + this.model.get('platform_uuid'), {
-				trigger: true
-			});
-		},
+		}
 	});
 });

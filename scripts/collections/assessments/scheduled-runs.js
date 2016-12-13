@@ -78,13 +78,13 @@ define([
 
 		fetchByProject: function(project, options) {
 			return this.fetch(_.extend(options, {
-				url: Config.servers.csa + '/projects/' + project.get('project_uid') + '/assessment_runs/scheduled'
+				url: Config.servers.web + '/projects/' + project.get('project_uid') + '/assessment_runs/scheduled'
 			}));
 		},
 
 		fetchByProjects: function(projects, options) {
 			return this.fetch(_.extend(options, {
-				url: Config.servers.csa + '/projects/' + projects.getUuidsStr() + '/assessment_runs/scheduled'
+				url: Config.servers.web + '/projects/' + projects.getUuidsStr() + '/assessment_runs/scheduled'
 			}));
 		},
 	}, {
@@ -94,11 +94,11 @@ define([
 		//
 
 		fetchNumByProject: function(project, options) {
-			return $.ajax(Config.servers.csa + '/projects/' + project.get('project_uid') + '/assessment_runs/scheduled/num', options);
+			return $.ajax(Config.servers.web + '/projects/' + project.get('project_uid') + '/assessment_runs/scheduled/num', options);
 		},
 
 		fetchNumByProjects: function(projects, options) {
-			return $.ajax(Config.servers.csa + '/projects/' + projects.getUuidsStr() + '/assessment_runs/scheduled/num', options);
+			return $.ajax(Config.servers.web + '/projects/' + projects.getUuidsStr() + '/assessment_runs/scheduled/num', options);
 		},
 	});
 

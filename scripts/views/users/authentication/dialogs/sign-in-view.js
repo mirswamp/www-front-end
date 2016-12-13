@@ -37,8 +37,7 @@ define([
 		},
 
 		events: {
-			'click #ok': 'onClickOk',
-			'keypress': 'onKeyPress'
+			'click #ok': 'onClickOk'
 		},
 
 		//
@@ -48,17 +47,25 @@ define([
 		template: function(data) {
 			return _.template(Template, _.extend(data, {
 				config: Registry.application.config,
-				showHelpButtons: true
+				showHelpButtons: true,
+				disabled: Registry.application.authProvider == undefined
 			}));
 		},
 
 		onRender: function() {
+			var self = this;
 
 			// show subviews
 			//
 			this.signInForm.show(
 				new SignInFormView({
-					parent: this
+					parent: this,
+
+					// callback
+					//
+					onChange: function() {
+						self.update();
+					}
 				})
 			);
 
@@ -67,6 +74,41 @@ define([
 			this.$el.find('[data-toggle="popover"]').popover({
 				trigger: 'hover'
 			});
+		},
+
+		onShown: function() {
+
+			// perform initial validation
+			//
+			this.update();
+
+			// set focus
+			//
+			if (this.signInForm.currentView.isValid()) {
+
+				// set focus to ok button
+				//
+				this.$el.find('#ok').focus();
+			} else {
+
+				// set focus to first input field
+				//
+				this.$el.find('#username input').focus();
+			}
+		},
+
+		update: function() {
+			if (this.signInForm.currentView.isValid()) {
+
+				// enable ok button
+				//
+				this.$el.find('#ok').prop('disabled', false);			
+			} else {
+
+				// disable ok button
+				//
+				this.$el.find('#ok').prop('disabled', true);
+			}
 		},
 
 		//
@@ -120,15 +162,6 @@ define([
 					self.signIn();
 				}
 			});
-		},
-
-		onKeyPress: function(event) {
-
-			// respond to enter key press
-			//
-			if (event.keyCode === 13) {
-				this.onClickOk();
-			}
-		},
+		}
 	});
 });

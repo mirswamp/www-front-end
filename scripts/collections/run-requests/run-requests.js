@@ -29,7 +29,7 @@ define([
 		//
 
 		model: RunRequest,
-		url: Config.servers.csa + '/run_requests',
+		url: Config.servers.web + '/run_requests',
 
 		//
 		// querying methods
@@ -60,19 +60,19 @@ define([
 
 		fetchByAssessmentRun: function(assessmentRun, options) {
 			return this.fetch(_.extend(options, {
-				url: Config.servers.csa + '/assessment_runs/' + assessmentRun.get('assessment_run_uuid') + '/run_requests'
+				url: Config.servers.web + '/assessment_runs/' + assessmentRun.get('assessment_run_uuid') + '/run_requests'
 			}));
 		},
 
 		fetchByProject: function(project, options) {
 			return this.fetch(_.extend(options, {
-				url: Config.servers.csa + '/projects/' + project.get('project_uid') + '/run_requests/schedules'
+				url: Config.servers.web + '/projects/' + project.get('project_uid') + '/run_requests/schedules'
 			}));
 		},
 
 		fetchByProjects: function(projects, options) {
 			return this.fetch(_.extend(options, {
-				url: Config.servers.csa + '/projects/' + projects.getUuidsStr() + '/run_requests/schedules'
+				url: Config.servers.web + '/projects/' + projects.getUuidsStr() + '/run_requests/schedules'
 			}));
 		},
 	}, {
@@ -82,11 +82,11 @@ define([
 		//
 
 		fetchNumSchedulesByProject: function(project, options) {
-			return $.ajax(Config.servers.csa + '/projects/' + project.get('project_uid') + '/run_requests/schedules/num', options);
+			return $.ajax(Config.servers.web + '/projects/' + project.get('project_uid') + '/run_requests/schedules/num', options);
 		},
 
 		fetchNumSchedulesByProjects: function(projects, options) {
-			return $.ajax(Config.servers.csa + '/projects/' + projects.getUuidsStr() + '/run_requests/schedules/num', options);
+			return $.ajax(Config.servers.web + '/projects/' + projects.getUuidsStr() + '/run_requests/schedules/num', options);
 		}
 	});
 });

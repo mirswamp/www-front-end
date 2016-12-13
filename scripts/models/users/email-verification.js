@@ -28,7 +28,7 @@ define([
 		//
 
 		idAttribute: 'verification_key',
-		urlRoot: Config.servers.rws + '/verifications',
+		urlRoot: Config.servers.web + '/verifications',
 
 		//
 		// ajax methods
@@ -43,7 +43,7 @@ define([
 
 		resend: function(username, password, options) {
 			$.ajax(_.extend(options, {
-				url: Config.servers.rws + '/verifications/resend',
+				url: Config.servers.web + '/verifications/resend',
 				type: 'POST',
 				data: {
 					'username': username,

@@ -89,6 +89,12 @@ define([
 		
 		getNextVersionString: function(versionString) {
 
+			// get initial version string
+			//
+			if (!versionString) {
+				return '1.0';
+			}
+
 			// split string by dots
 			//
 			var substrings = versionString.split('.');

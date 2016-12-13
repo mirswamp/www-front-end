@@ -30,19 +30,16 @@ define([
 	'models/platforms/platform',
 	'models/platforms/platform-version',
 	'models/run-requests/run-request',
-	'collections/projects/projects'
-], function($, _, Backbone, Registry, QueryStrings, UrlStrings, Project, Package, PackageVersion, Tool, ToolVersion, Platform, PlatformVersion, RunRequest, Projects) {
+	'collections/projects/projects',
+	'views/dialogs/error-view'
+], function($, _, Backbone, Registry, QueryStrings, UrlStrings, Project, Package, PackageVersion, Tool, ToolVersion, Platform, PlatformVersion, RunRequest, Projects, ErrorView) {
 	return {
 
+		// whether or not to report errors
 		//
-		// query string methods
-		//
-		
-		parseProject: function(queryString, project) {
+		verbose: false,
 
-			// parse query string
-			//
-			var data = queryStringToData(queryString);
+		createProject: function(data, project) {
 
 			// create project from query string data
 			//
@@ -72,11 +69,7 @@ define([
 			return data;
 		},
 
-		parse: function(queryString, project) {
-
-			// parse query string
-			//
-			var data = this.parseProject(queryString, project);
+		create: function(data) {
 
 			// create models from query string data
 			//
@@ -124,51 +117,106 @@ define([
 			return data;
 		},
 
+		createVersions: function(data) {
+
+			// create models from version data
+			//
+			if (data['package-version'] && data['package-version'] != 'latest') {
+				data['package'] = new Package({
+					package_uuid: data['package-version'].get('package_uuid')
+				});
+			}
+			if (data['tool-version'] && data['tool-version'] != 'latest') {
+				data['tool'] = new Tool({
+					tool_uuid: data['tool-version'].get('tool_uuid')
+				});
+			}
+			if (data['platform-version'] && data['platform-version'] != 'latest') {
+				data['platform'] = new Platform({
+					platform_uuid: data['platform-version'].get('platform_uuid')
+				});
+			}
+
+			return data;
+		},
+
+		//
+		// query string methods
+		//
+		
+		parseProject: function(queryString, project) {
+
+			// parse query string
+			//
+			return this.createProject(queryStringToData(queryString), project);
+		},
+
+		parse: function(queryString, project) {
+
+			// parse query string
+			//
+			return this.create(this.parseProject(queryString, project));
+		},
+
 		fetch: function(data, done) {
+			var self = this;
 
 			// fetch models
 			//
 			$.when(
-				data['project']? data['project'].fetch() : true,
-				data['projects']? data['projects'].fetch() : true,
-				data['package']? data['package'].fetch() : true,
-				data['package-version'] && data['package-version'] != 'latest'? data['package-version'].fetch() : true,
-				data['tool']? data['tool'].fetch() : true,
-				data['tool-version'] && data['tool-version'] != 'latest'? data['tool-version'].fetch() : true,
-				data['platform']? data['platform'].fetch() : true,
-				data['platform-version'] && data['platform-version'] != 'latest'? data['platform-version'].fetch() : true
-			).then(function() {
-
-				// create models from version data
-				//
-				if (data['package-version'] && data['package-version'] != 'latest') {
-					data['package'] = new Package({
-						package_uuid: data['package-version'].get('package_uuid')
-					});
-				}
-				if (data['tool-version'] && data['tool-version'] != 'latest') {
-					data['tool'] = new Tool({
-						tool_uuid: data['tool-version'].get('tool_uuid')
-					});
-				}
-				if (data['platform-version'] && data['platform-version'] != 'latest') {
-					data['platform'] = new Platform({
-						platform_uuid: data['platform-version'].get('platform_uuid')
-					});
-				}
+				data['project']? data['project'].fetch() : null,
+				data['projects']? data['projects'].fetch() : null,
+				data['package']? data['package'].fetch() : null,
+				data['package-version'] && data['package-version'] != 'latest'? data['package-version'].fetch() : null,
+				data['tool']? data['tool'].fetch() : null,
+				data['tool-version'] && data['tool-version'] != 'latest'? data['tool-version'].fetch() : null,
+				data['platform']? data['platform'].fetch() : null,
+				data['platform-version'] && data['platform-version'] != 'latest'? data['platform-version'].fetch() : null
+			).done(function(project, projects, package, packageVersion, tool, toolVersion, platform, platformVersion) {
+				self.createVersions(data);
 
 				// fetch models
 				//
 				$.when(
-					data['package-version'] && data['package-version'] != 'latest'? data['package'].fetch() : true,
-					data['tool-version'] && data['tool-version'] != 'latest'? data['tool'].fetch() : true,
-					data['platform-version'] && data['platform-version'] != 'latest'? data['platform'].fetch() : true
-				).then(function() {
+					data['package-version'] && data['package-version'] != 'latest'? data['package'].fetch() : null,
+					data['tool-version'] && data['tool-version'] != 'latest'? data['tool'].fetch() : null,
+					data['platform-version'] && data['platform-version'] != 'latest'? data['platform'].fetch() : null
+				).done(function(packageVersion, toolVersion, platformVersion) {
 
 					// perform callback
 					//
 					done(data);				
 				});
+			}).fail(function() {
+				if (self.verbose) {
+
+					// show error dialog
+					//
+					Registry.application.modal.show(
+						new ErrorView({
+							message: "The URL address contains an invalid query string."
+						})
+					);
+
+				} else {
+
+					// perform same action as success
+					//
+					self.createVersions(data);
+
+					// fetch models
+					//
+					$.when(
+						data['package-version'] && data['package-version'] != 'latest'? data['package'].fetch() : null,
+						data['tool-version'] && data['tool-version'] != 'latest'? data['tool'].fetch() : null,
+						data['platform-version'] && data['platform-version'] != 'latest'? data['platform'].fetch() : null
+					).done(function(packageVersion, toolVersion, platformVersion) {
+
+						// perform callback
+						//
+						done(data);				
+					});
+				}
 			});
 		}
 	}

@@ -1,10 +1,10 @@
 /******************************************************************************\
 |                                                                              |
-|                                file-tree-view.js                             |
+|                            file-tree-item-view.js                            |
 |                                                                              |
 |******************************************************************************|
 |                                                                              |
-|        This defines a view for a tree of file items.                         |
+|        This defines a view for a single item in a file tree.                 |
 |                                                                              |
 |        Author(s): Abe Megahed                                                |
 |                                                                              |

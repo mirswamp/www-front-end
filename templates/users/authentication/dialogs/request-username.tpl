@@ -25,7 +25,7 @@
 </div>
 
 <div class="modal-footer">
-	<button id="request-username" class="btn btn-primary" data-dismiss="modal"><i class="fa fa-plus"></i>Request Username</button>
+	<button id="request-username" class="btn btn-primary" data-dismiss="modal"><i class="fa fa-envelope"></i>Request Username</button>
 	<button id="cancel" class="btn" data-dismiss="modal"><i class="fa fa-times"></i>Cancel</button> 
 </div>
 

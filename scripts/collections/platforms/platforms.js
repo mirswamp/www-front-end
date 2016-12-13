@@ -30,7 +30,7 @@ define([
 		//
 
 		model: Platform,
-		url: Config.servers.csa + '/platforms',
+		url: Config.servers.web + '/platforms',
 
 		//
 		// ajax methods
@@ -42,31 +42,31 @@ define([
 
 		fetchByUser: function(user, options) {
 			return NamedItems.prototype.fetch.call(this, _.extend(options, {
-				url: Config.servers.csa + '/platforms/users/' + user.get('user_uid')
+				url: Config.servers.web + '/platforms/users/' + user.get('user_uid')
 			}));
 		},
 
 		fetchAll: function(options) {
 			return NamedItems.prototype.fetch.call(this, _.extend(options, {
-				url: Config.servers.csa + '/platforms/all/'
+				url: Config.servers.web + '/platforms/all/'
 			}));
 		},
 
 		fetchPublic: function(options) {
 			return NamedItems.prototype.fetch.call(this, _.extend(options, {
-				url: Config.servers.csa + '/platforms/public'
+				url: Config.servers.web + '/platforms/public'
 			}));
 		},
 
 		fetchProtected: function(project, options) {
 			return NamedItems.prototype.fetch.call(this, _.extend(options, {
-				url: Config.servers.csa + '/platforms/protected/' + project.get('project_uid')
+				url: Config.servers.web + '/platforms/protected/' + project.get('project_uid')
 			}));
 		},
 
 		fetchByProject: function(project, options) {
 			return NamedItems.prototype.fetch.call(this, _.extend(options, {
-				url: Config.servers.csa + '/platforms/projects/' + project.get('project_uid')
+				url: Config.servers.web + '/platforms/projects/' + project.get('project_uid')
 			}));
 		}
 	});

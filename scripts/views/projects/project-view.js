@@ -139,7 +139,7 @@ define([
 				isProjectAdmin: Registry.application.session.isAdmin() ||
 					this.options.projectMembership && this.options.projectMembership.isAdmin(),
 				allowPublicTools: true,
-				showNumbering: Registry.application.getShowNumbering()
+				showNumbering: Registry.application.options.showNumbering
 			}));
 		},
 
@@ -220,7 +220,7 @@ define([
 					showEmail: Registry.application.config['email_enabled'],
 					showUsername: true,
 					showDelete: this.options.projectMembership && this.options.projectMembership.isAdmin(),
-					showNumbering: Registry.application.getShowNumbering(),
+					showNumbering: Registry.application.options.showNumbering,
 					readOnly: !(Registry.application.session.isAdmin() ||
 						this.options.projectMembership && this.options.projectMembership.isAdmin())
 				})

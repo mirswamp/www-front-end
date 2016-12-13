@@ -32,8 +32,8 @@ define([
 
 		events: {
 			'click .alert .close': 'onClickAlertClose',
-			'click #ok': 'onClickOk',
-			'keypress': 'onKeyPress'
+			'click input': 'onClickInput',
+			'click #ok': 'onClickOk'
 		},
 
 		//
@@ -97,6 +97,21 @@ define([
 		// event handling methods
 		//
 
+
+		onClickInput: function(event) {
+			if ($(event.target).prop('checked')) {
+
+				// enable save button
+				//
+				this.$el.find('#ok').prop('disabled', false);
+			} else {
+
+				// disable save button
+				//
+				this.$el.find('#ok').prop('disabled', true);
+			}
+		},
+
 		onClickOk: function(event) {
 			if (this.isValid()) {
 				if (this.options.accept) {
@@ -105,16 +120,6 @@ define([
 			} else {
 				event.stopPropagation();
 			}
-		},
-
-		onKeyPress: function(event) {
-
-			// respond to enter key press
-			//
-	        if (event.keyCode === 13) {
-	            this.onClickOk();
-	            Registry.application.modal.hide();
-	        }
 		}
 	});
 });

@@ -292,7 +292,11 @@ define([
 		//
 
 		getQueryString: function() {
-			var queryString = this.assessmentFilters.currentView.getQueryString();
+			return this.assessmentFilters.currentView.getQueryString();
+		},
+
+		getSelectedQueryString: function() {
+			var queryString = this.getQueryString();
 			var selectedAssessments = this.selectAssessmentsList.currentView.getSelected();
 
 			if (selectedAssessments.length > 0) {
@@ -319,8 +323,8 @@ define([
 				title: this.getTitle(),
 				shortTitle: this.getShortTitle(),
 				showNavigation: Object.keys(this.options.data).length > 0,
-				showNumbering: Registry.application.getShowNumbering(),
-				showGrouping: Registry.application.getShowGrouping()
+				showNumbering: Registry.application.options.showNumbering,
+				showGrouping: Registry.application.options.showGrouping
 			}));
 		},
 
@@ -392,6 +396,12 @@ define([
 		showList: function() {
 			var self = this;
 
+			// preserve existing sorting order
+			//
+			if (this.selectAssessmentsList.currentView && this.collection.length > 0) {
+				this.options.sortList = this.selectAssessmentsList.currentView.getSortList();
+			}
+
 			// show select assessments list view
 			//
 			this.selectAssessmentsList.show(
@@ -400,8 +410,8 @@ define([
 					collection: this.collection,
 					sortList: this.options.sortList,
 					selectedAssessments: this.options.selectedAssessments,
-					showNumbering: Registry.application.getShowNumbering(),
-					showGrouping: Registry.application.getShowGrouping(),
+					showNumbering: Registry.application.options.showNumbering,
+					showGrouping: Registry.application.options.showGrouping,
 					showDelete: false,
 
 					// callbacks
@@ -411,12 +421,6 @@ define([
 					}
 				})
 			);
-
-			// save sort list
-			//
-			if (this.collection.length > 0) {
-				this.options.sortList = this.selectAssessmentsList.currentView.getSortList();
-			}
 		},
 
 		addBadge: function(selector, num) {
@@ -614,7 +618,7 @@ define([
 				var self = this;
 				var selectedAssessments = this.selectAssessmentsList.currentView.getSelected();
 				if (selectedAssessments.length > 0) {
-					var queryString = this.getQueryString();
+					var queryString = this.getSelectedQueryString();
 
 					// go to run requests schedule view
 					//

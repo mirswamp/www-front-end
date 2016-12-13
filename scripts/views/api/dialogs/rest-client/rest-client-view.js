@@ -26,7 +26,7 @@ define([
 	'config',
 	'registry',
 	'text!templates/api/dialogs/rest-client/rest-client.tpl',
-	'views/api/dialogs/rest-client/key-value-list/key-value-list-view'
+	'views/widgets/lists/key-value-list/key-value-list-view'
 ], function($, _, Backbone, Marionette, Tab, Popover, Config, Registry, Template, KeyValueListView) {
 	return Backbone.Marionette.LayoutView.extend({
 
@@ -156,7 +156,7 @@ define([
 		template: function(data) {
 			return _.template(Template, _.extend(data, {
 				method: this.model.get('method') || 'post',
-				route: Config.servers[this.model.get('server')] + '/' + this.model.get('route'),
+				route: Config.servers['web'] + '/' + this.model.get('route'),
 				command: ''
 			}));
 		},

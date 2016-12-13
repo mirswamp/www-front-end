@@ -29,7 +29,7 @@ define([
 		//
 
 		idAttribute: 'package_version_dependency_id',
-		urlRoot: Config.servers.csa + '/packages/versions/dependencies',
+		urlRoot: Config.servers.web + '/packages/versions/dependencies',
 
 		//
 		// ajax methods
@@ -37,7 +37,7 @@ define([
 
 		destroy: function(options) {
 			return Timestamped.prototype.destroy.call(this, _.extend(options, {
-				url: Config.servers.csa + '/packages/versions/' + this.get('package_version_uuid') + '/dependencies/' + this.get('platform_version_uuid')
+				url: Config.servers.web + '/packages/versions/' + this.get('package_version_uuid') + '/dependencies/' + this.get('platform_version_uuid')
 			}));
 		},
 	}));

@@ -127,9 +127,11 @@ define([
 		// attributes
 		//
 
+		/*
 		defaults: {
 			'name': './'
 		},
+		*/
 
 		//
 		// path manipulation methods

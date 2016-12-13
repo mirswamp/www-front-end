@@ -19,7 +19,6 @@
 </div>
 
 <div class="bottom buttons">
-	<button id="run-new-assessment" class="btn btn-primary btn-lg"><i class="fa fa-play"></i>Run New Assessment</button>
 	<% if (showNavigation) { %>
 	<button id="cancel" class="btn btn-lg"><i class="fa fa-times"></i>Cancel</button>
 	<% } %>

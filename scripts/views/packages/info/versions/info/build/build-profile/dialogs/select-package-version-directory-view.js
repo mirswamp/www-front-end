@@ -43,8 +43,7 @@ define([
 
 		events: {
 			'click #show-all-files input': 'onClickShowAllFiles',
-			'click #ok': 'onClickOk',
-			'keypress': 'onKeyPress'
+			'click #ok': 'onClickOk'
 		},
 
 		//
@@ -80,158 +79,102 @@ define([
 			});
 		},
 
-		showIncrementalFileTree: function(data) {
+		showContents: function(data) {
 			var self = this;
-			if (_.isArray(data)) {
 
-				// top level is directory listing
-				//
-				this.contents.show(
-					new PackageVersionDirectoryTreeView({
-						model: new Directory({
-							contents: data
-						}),
-						packageVersion: this.model,
-						selectable: this.selectable,
-						selectedDirectoryName: this.options.selectedDirectoryName,
+			this.contents.show(
+				new PackageVersionDirectoryTreeView({
+					model: new Directory({
+						name: data.name,
+						contents: data.contents
+					}),
+					packageVersion: this.model,
+					selectable: this.selectable,
+					selectedDirectoryName: this.options.selectedDirectoryName,
 
-						// callbacks
-						//
-						onrender: function() {
-							self.showSelectedFiles();
-						}
-					})
-				);
-			} else if (isDirectoryName(data.name)) {
-
-				// top level is a directory
-				//
-				this.contents.show(
-					new PackageVersionDirectoryTreeView({
-						model: new Directory({
-							name: data.name
-						}),
-						packageVersion: this.model,
-						selectable: this.selectable,
-						selectedDirectoryName: this.options.selectedDirectoryName,
-
-						// callbacks
-						//
-						onrender: function() {
-							self.showSelectedFiles();
-						}
-					})
-				);
-			} else {
-
-				// top level is a file
-				//
-				this.contents.show(
-					new PackageVersionDirectoryTreeView({
-						model: new Directory({
-							contents: new File({
-								name: data.name
-							})
-						}),
-						packageVersion: this.model,
-						selectable: this.selectable,
-						selectedDirectoryName: this.options.selectedDirectoryName,
-
-						// callbacks
-						//
-						onrender: function() {
-							self.showSelectedFiles();
-						}
-					})
-				);
-			}
+					// callbacks
+					//
+					onrender: function() {
+						self.showSelectedFiles();
+					}
+				})
+			);
 		},
 
-		showCompleteFileTree: function(data) {
-			if (_.isArray(data)) {
+		showAllContents: function(data) {
 
-				// top level is a directory listing
-				//
-				this.contents.show(
-					new DirectoryTreeView({
-						model: new Directory({
-							contents: data
-						}),
-						packageVersion: this.model,
-						selectable: this.selectable,
-						selectedDirectoryName: this.options.selectedDirectoryName
-					})
-				);
-			} else if (isDirectoryName(data.name)) {
-
-				// top level is a directory
-				//
-				this.contents.show(
-					new DirectoryTreeView({
-						model: new Directory({
-							name: data.name
-						}),
-						packageVersion: this.model,
-						selectable: this.selectable,
-						selectedDirectoryName: this.options.selectedDirectoryName
-					})
-				);
-			} else {
-
-				// top level is a file
-				//
-				this.contents.show(
-					new DirectoryTreeView({
-						model: new Directory({
-							contents: new File({
-								name: data.name
-							})
-						}),
-						packageVersion: this.model,
-						selectable: this.selectable,
-						selectedDirectoryName: this.options.selectedDirectoryName
-					})
-				);
-			}
+			// top level is a directory
+			//
+			this.contents.show(
+				new DirectoryTreeView({
+					model: new Directory({
+						name: data.name,
+						contents: data.contents
+					}),
+					packageVersion: this.model,
+					selectable: this.selectable,
+					selectedDirectoryName: this.options.selectedDirectoryName
+				})
+			);
 
 			// show / hide selected files
 			//
 			this.showSelectedFiles();
 		},
 
-		showFileTree: function(data) {
-			if (this.incremental) {
-				this.showIncrementalFileTree(data);
-			} else {
-				this.showCompleteFileTree(data);
-			}
-		},
-
-		onRender: function() {
+		fetchAndShowContents: function(dirname) {
 			var self = this;
-			
-			// fetch package version directory tree
-			//
-			this.model.fetchFileTree({
+			this.model.fetchFileList({
+
 				data: {
-					'dirname': self.incremental? '.' : null
+					'dirname': dirname
 				},
 
 				// callbacks
 				//
 				success: function(data) {
 
-					// save data
+					// render data
 					//
-					self.data = data;
+					self.showContents({
+						name: dirname, 
+						contents: data
+					});
+
+					self.showSelectedFiles();
+				},
+
+				error: function() {
+
+					// show error dialog
+					//
+					Registry.application.modal.show(
+						new ErrorView({
+							message: "Could not get a file list for this package version."
+						})
+					);	
+				}
+			});
+		},
+
+		fetchAndShowAllContents: function(dirname) {
+			var self = this;
+			this.model.fetchFileTree({
+
+				data: {
+					'dirname': null
+				},
+
+				// callbacks
+				//
+				success: function(data) {
 
 					// render data
 					//
-					self.showFileTree(data);
-
-					// show / hide selected files
-					//
-					self.showSelectedFiles();
+					self.showAllContents({
+						name: dirname, 
+						contents: data
+					});
 				},
 
 				error: function() {
@@ -243,6 +186,25 @@ define([
 							message: "Could not get a file tree for this package version."
 						})
 					);	
+				}
+			});
+		},
+
+		onRender: function() {
+			var self = this;
+
+			// get root name
+			//
+			this.model.fetchRoot({
+				success: function(root) {
+
+					// fetch and show package version root contents
+					//
+					if (self.incremental) {
+						self.fetchAndShowContents(root);
+					} else {
+						self.fetchAndShowAllContents(root);
+					}
 				}
 			});
 		},
@@ -285,16 +247,6 @@ define([
 			if (this.options.accept) {
 				this.options.accept(selectedItemName);
 			}
-		},
-
-		onKeyPress: function(event) {
-
-			// respond to enter key press
-			//
-	        if (event.keyCode === 13) {
-	            this.onClickOk();
-	            Registry.application.modal.hide();
-	        }
 		}
 	});
 });

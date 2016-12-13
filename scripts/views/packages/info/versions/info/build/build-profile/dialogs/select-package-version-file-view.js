@@ -42,8 +42,7 @@ define([
 		},
 
 		events: {
-			'click #ok': 'onClickOk',
-			'keypress': 'onKeyPress'
+			'click #ok': 'onClickOk'
 		},
 
 		//
@@ -71,118 +70,80 @@ define([
 			});
 		},
 
-		onRender: function() {
-			var self = this;
+		showContents: function(data) {
 
-			// fetch package version directory tree
+			// top level is a directory
 			//
-			this.model.fetchFileTree({
+			this.contents.show(
+				new PackageVersionDirectoryTreeView({
+					model: new Directory({
+						name: data.name,
+						contents: data.contents
+					}),
+					packageVersion: this.model,
+					selectable: this.selectable,
+					selectedFileName: this.options.selectedFileName
+				})
+			);
+		},
+
+		showAllContents: function(data) {
+			this.contents.show(
+				new DirectoryTreeView({
+					model: new Directory({
+						name: data.name,
+						contents: data.contents
+					}),
+					packageVersion: this.model,
+					selectable: this.selectable,
+					selectedFileName: this.options.selectedFileName
+				})
+			);
+		},
+
+		fetchAndShowContents: function(dirname) {
+			var self = this;
+			this.model.fetchFileList({
 				data: {
-					'dirname': self.incremental? '.' : null
+					'dirname': dirname
 				},
 
 				// callbacks
 				//
 				success: function(data) {
-					if (self.incremental) {
+					self.showContents({
+						name: dirname,
+						contents: data
+					});
+				},
 
-						// show incremental directory tree
-						//
-						if (_.isArray(data)) {
+				error: function() {
 
-							// top level is a directory listing
-							//
-							self.contents.show(
-								new PackageVersionDirectoryTreeView({
-									model: new Directory({
-										contents: data
-									}),
-									packageVersion: self.model,
-									selectable: self.selectable,
-									selectedFileName: self.options.selectedFileName
-								})
-							);
-						} else if (isDirectoryName(data.name)) {
+					// show error dialog
+					//
+					Registry.application.modal.show(
+						new ErrorView({
+							message: "Could not get a file list for this package version."
+						})
+					);	
+				}
+			});
+		},
 
-							// top level is a directory
-							//
-							self.contents.show(
-								new PackageVersionDirectoryTreeView({
-									model: new Directory({
-										name: data.name
-									}),
-									packageVersion: self.model,
-									selectable: self.selectable,
-									selectedFileName: self.options.selectedFileName
-								})
-							);
-						} else {
+		fetchAndShowAllContents: function(dirname) {
+			var self = this;
+			this.model.fetchFileTree({
+				data: {
+					'dirname': null
+				},
 
-							// top level is a file
-							//
-							self.contents.show(
-								new PackageVersionDirectoryTreeView({
-									model: new Directory({
-										contents: new File({
-											name: data.name
-										})
-									}),
-									packageVersion: self.model,
-									selectable: self.selectable,
-									selectedFileName: self.options.selectedFileName
-								})
-							);
-						}
-					} else {
-
-						// show complete directory tree
-						//
-						if (_.isArray(data)) {
-
-							// top level is a directory listing
-							//
-							self.contents.show(
-								new DirectoryTreeView({
-									model: new Directory({
-										contents: data
-									}),
-									packageVersion: self.model,
-									selectable: self.selectable,
-									selectedFileName: self.options.selectedFileName
-								})
-							);
-						} else if (isDirectoryName(data.name)) {
-
-							// top level is a directory
-							//
-							self.contents.show(
-								new DirectoryTreeView({
-									model: new Directory({
-										name: data.name
-									}),
-									packageVersion: self.model,
-									selectable: self.selectable,
-									selectedFileName: self.options.selectedFileName
-								})
-							);
-						} else {
-
-							// top level is a file
-							//
-							self.contents.show(
-								new DirectoryTreeView({
-									model: new Directory({
-										contents: new File({
-											name: data.name
-										})
-									}),
-									packageVersion: self.model,
-									selectable: self.selectable,
-									selectedFileName: self.options.selectedFileName
-								})
-							);		
-						}
-					}
+				// callbacks
+				//
+				success: function(data) {
+					self.showAllContents({
+						name: dirname,
+						contents: data
+					});
 				},
 
 				error: function() {
@@ -194,6 +155,25 @@ define([
 							message: "Could not get a file tree for this package version."
 						})
 					);	
+				}
+			});
+		},
+
+		onRender: function() {
+			var self = this;
+
+			// get root name
+			//
+			this.model.fetchRoot({
+				success: function(root) {
+
+					// fetch and show package version root contents
+					//
+					if (self.incremental) {
+						self.fetchAndShowContents(root);
+					} else {
+						self.fetchAndShowAllContents(root);
+					}
 				}
 			});
 		},
@@ -213,16 +193,6 @@ define([
 			if (this.options.accept) {
 				this.options.accept(selectedItemName);
 			}
-		},
-
-		onKeyPress: function(event) {
-
-			// respond to enter key press
-			//
-	        if (event.keyCode === 13) {
-	            this.onClickOk();
-	            Registry.application.modal.hide();
-	        }
 		}
 	});
 });

@@ -37,13 +37,13 @@ define([
 
 		fetchAll: function(options) {
 			return this.fetch(_.extend(options, {
-				url: Config.servers.csa + '/platforms/versions/all'
+				url: Config.servers.web + '/platforms/versions/all'
 			}));
 		},
 
 		fetchByPlatform: function(platform, options) {
 			return this.fetch(_.extend(options, {
-				url: Config.servers.csa + '/platforms/' + platform.get('platform_uuid') + '/versions'
+				url: Config.servers.web + '/platforms/' + platform.get('platform_uuid') + '/versions'
 			}));
 		}
 	});

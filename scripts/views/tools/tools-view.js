@@ -124,7 +124,7 @@ define([
 		template: function(data) {
 			return _.template(Template, _.extend(data, {
 				loggedIn: Registry.application.session.user != null,
-				showNumbering: Registry.application.getShowNumbering()
+				showNumbering: Registry.application.options.showNumbering
 			}));
 		},
 
@@ -157,7 +157,7 @@ define([
 			this.toolsList.show(
 				new ToolsListView({
 					collection: this.collection,
-					showNumbering: Registry.application.getShowNumbering()
+					showNumbering: Registry.application.options.showNumbering
 				})
 			);
 		},

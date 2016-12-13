@@ -39,8 +39,7 @@ define([
 			'click #email-address': 'onClickEmailAddress',
 			'blur #email-address': 'onBlurEmailAddress',
 			'click #reset-password': 'onClickResetPassword',
-			'click #cancel': 'onClickCancel',
-			'keypress': 'onKeyPress'
+			'click #cancel': 'onClickCancel'
 		},
 
 		//
@@ -245,15 +244,6 @@ define([
 		onClickCancel: function() {
 			if (this.options.reject) {
 				this.options.reject();
-			}
-		},
-
-		onKeyPress: function(event) {
-
-			// respond to enter key press
-			//
-			if (event.keyCode === 13) {
-				this.onClickResetPassword();
 			}
 		}
 	});

@@ -32,7 +32,7 @@ define([
 		//
 
 		model: UserEvent,
-		url: Config.servers.rws + '/events/users'
+		url: Config.servers.web + '/events/users'
 	}, {
 
 		//
@@ -44,7 +44,7 @@ define([
 		},
 
 		fetchNumAllByUser: function(user, options) {
-			return $.ajax(Config.servers.rws + '/events/users/' + user.get('user_uid') + '/num', options);
+			return $.ajax(Config.servers.web + '/events/users/' + user.get('user_uid') + '/num', options);
 		}
 	});
 });

@@ -39,8 +39,8 @@ define([
 			return _.template(Template, _.extend(data, {
 				index: this.options.index,
 				showNumbering: this.options.showNumbering,
-				platformVersionName: this.options.platformVersion.get('full_name'),
-				platformVersionString: this.options.platformVersion.get('version_string'),
+				platformVersionName: this.options.platformVersion? this.options.platformVersion.get('full_name') : '?',
+				platformVersionString: this.options.platformVersion? this.options.platformVersion.get('version_string') : '?',
 				platformUrl: undefined,
 				platformVersionUrl: data.platform_version_uuid? Registry.application.getURL() + '#platforms/versions/' + data.platform_version_uuid : undefined,
 				dependencyList: this.model.get('dependency_list')

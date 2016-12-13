@@ -42,7 +42,6 @@ define([
 
 		events: {
 			'click #add-new-version': 'onClickAddNewVersion',
-			'click #run-new-assessment': 'onClickRunNewAssessment',
 			'click #edit-tool': 'onClickEditTool',
 			'click #delete-tool': 'onClickDeleteTool',
 			'click #show-policy': 'onClickShowPolicy'
@@ -144,15 +143,6 @@ define([
 					message: "This feature is no longer supported."
 				})
 			);
-		},
-
-		onClickRunNewAssessment: function() {
-
-			// go to run new assessment view
-			//
-			Backbone.history.navigate('#assessments/run?tool=' + this.model.get('tool_uuid'), {
-				trigger: true
-			});
 		},
 
 		onClickEditTool: function() {

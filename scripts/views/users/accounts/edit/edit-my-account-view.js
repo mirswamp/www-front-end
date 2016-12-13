@@ -127,10 +127,6 @@ define([
 							//
 							success: function() {
 
-								// update user name in header (if changed)
-								//
-								Registry.application.header.currentView.render();
-
 								// notify user
 								//
 								if (self.model.changed.email) {

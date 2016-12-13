@@ -20,6 +20,7 @@ define([
 	'underscore',
 	'backbone',
 	'marionette',
+	'tooltip',
 	'text!templates/assessments/list/assessments-list-item.tpl',
 	'registry',
 	'models/assessments/assessment-run',
@@ -32,7 +33,7 @@ define([
 	'views/dialogs/confirm-view',
 	'views/dialogs/notify-view',
 	'views/dialogs/error-view',
-], function($, _, Backbone, Marionette, Template, Registry, AssessmentRun, Package, PackageVersion, Tool, ToolVersion, Platform, PlatformVersion, ConfirmView, NotifyView, ErrorView) {
+], function($, _, Backbone, Marionette, Tooltip, Template, Registry, AssessmentRun, Package, PackageVersion, Tool, ToolVersion, Platform, PlatformVersion, ConfirmView, NotifyView, ErrorView) {
 	return Backbone.Marionette.ItemView.extend({
 
 		//
@@ -42,7 +43,38 @@ define([
 		tagName: 'tr',
 
 		events: {
-			'click button.delete': 'onClickDelete'
+			'click .results .badge-group': 'onClickResults',
+			'click .delete button': 'onClickDelete'
+		},
+
+		//
+		// querying methods
+		//
+
+		getQueryString: function() {
+			var data = {};
+
+			data['project'] = this.model.get('project_uuid');
+
+			if (this.model.has('package_version_uuid')) {
+				data['package-version'] = this.model.get('package_version_uuid');
+			} else if (this.model.has('package_uuid')) {
+				data['package'] = this.model.get('package_uuid');
+			}
+
+			if (this.model.get('tool_version_uuid')) {
+				data['tool-version'] = this.model.get('tool_version_uuid');
+			} else if (this.model.get('tool_uuid')) {
+				data['tool'] = this.model.get('tool_uuid');
+			}
+
+			if (this.model.get('platform_version_uuid')) {
+				data['platform-version'] = this.model.get('platform_version_uuid');
+			} else if (this.model.get('platform_uuid')) {
+				data['platform'] = this.model.get('platform_uuid');
+			}
+
+			return toQueryString(data);
 		},
 
 		//
@@ -53,19 +85,38 @@ define([
 			return _.template(Template, _.extend(data, {
 				index: this.options.index,
 				showNumbering: this.options.showNumbering,
-				packageUrl: Registry.application.getURL() + '#packages/' + data.package_uuid,
+				packageUrl:  data.package_uuid? Registry.application.getURL() + '#packages/' + data.package_uuid : undefined,
 				packageVersionUrl: data.package_version_uuid? Registry.application.getURL() + '#packages/versions/' + data.package_version_uuid : undefined,
-				toolUrl: Registry.application.getURL() + '#tools/' + data.tool_uuid,
+				toolUrl: data.tool_uuid? Registry.application.getURL() + '#tools/' + data.tool_uuid : undefined,
 				toolVersionUrl: data.tool_version_uuid? Registry.application.getURL() + '#tools/versions/' + data.tool_version_uuid : undefined,
-				platformUrl: Registry.application.getURL() + '#platforms/' + data.platform_uuid,
+				platformUrl: data.platform_uuid? Registry.application.getURL() + '#platforms/' + data.platform_uuid : undefined,
 				platformVersionUrl: data.platform_version_uuid? Registry.application.getURL() + '#platforms/versions/' + data.platform_version_uuid : undefined
 			}));
+		},
+
+		onRender: function() {
+
+			// display popovers on hover
+			//
+			this.$el.find('[data-toggle="tooltip"]').popover({
+				trigger: 'hover'
+			});
 		},
 
 		//
 		// event handling methods
 		//
 
+		onClickResults: function() {
+			var queryString = this.getQueryString();
+
+			// go to assessment results view
+			//
+			Backbone.history.navigate('#results' + (queryString != ''? '?' + queryString : ''), {
+				trigger: true
+			});
+		},
+		
 		onClickDelete: function() {
 			var self = this;
 

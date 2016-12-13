@@ -22,8 +22,9 @@ define([
 	'backbone',
 	'marionette',
 	'text!templates/dialogs/performance.tpl',
-	'registry'
-], function($, _, Backbone, Marionette, Template, Registry) {
+	'registry',
+	'widgets/accordions',
+], function($, _, Backbone, Marionette, Template, Registry, Accordions) {
 	return Backbone.Marionette.ItemView.extend({
 
 		//
@@ -31,8 +32,7 @@ define([
 		//
 
 		events: {
-			'click #ok': 'onClickOk',
-			'keypress': 'onKeyPress'
+			'click #ok': 'onClickOk'
 		},
 
 		//
@@ -41,7 +41,17 @@ define([
 
 		template: function() {
 			return _.template(Template, {
+				config: Registry.application.config,
+				timing: window.timing,
+				collapsed: true
 			});
+		},
+
+		onRender: function() {
+
+			// change accordion icon
+			//
+			new Accordions(this.$el.find('.panel'));
 		},
 
 		//
@@ -59,16 +69,6 @@ define([
 			if (this.options.accept) {
 				this.options.accept();
 			}
-		},
-
-		onKeyPress: function(event) {
-
-			// respond to enter key press
-			//
-	        if (event.keyCode === 13) {
-	            this.onClickOk();
-	            Registry.application.modal.hide();
-	        }
 		}
 	});
 });

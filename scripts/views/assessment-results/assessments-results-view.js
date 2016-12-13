@@ -219,7 +219,7 @@ define([
 
 				// show info message
 				//
-				if (executionRecords.length == 0) {
+				if (!executionRecords || executionRecords.length == 0) {
 					this.showInfo("No results have been selected - viewing results will display previously viewed results.")
 				} else {
 					this.showInfo("Click the view assessment results button to view the selected results using the selected viewer.");
@@ -233,10 +233,11 @@ define([
 			var executionRecords = this.getSelected();
 			var useNativeViewer = (viewer && viewer.get('name').toLowerCase().indexOf('native') != -1);
 			var useJavascript = useNativeViewer && executionRecords.length > 1;
+			var noResults = !executionRecords || executionRecords.length == 0;
 
 			// set results link
 			//
-			if (useNativeViewer && executionRecords.length == 0) {
+			if (useNativeViewer && noResults) {
 				this.setViewNoResults();
 			} else if (useJavascript) {
 				this.setViewMultipleNativeResults();
@@ -273,7 +274,7 @@ define([
 
 		checkViewerPermission: function(viewer, options) {
 			var executionRecords = this.getSelected();
-			var assessmentResultUuids = executionRecords.length > 0? executionRecords.getAttributes('assessment_result_uuid').join(',') : '';
+			var assessmentResultUuids = executionRecords && executionRecords.length > 0? executionRecords.getAttributes('assessment_result_uuid').join(',') : '';
 
 			// check viewer permissions
 			//
@@ -295,7 +296,7 @@ define([
 
 			// check if some assessment runs are selected
 			//
-			if (executionRecords.length > 0) {
+			if (executionRecords && executionRecords.length > 0) {
 
 				// use project from first checked run
 				//
@@ -316,21 +317,24 @@ define([
 		},
 
 		consistentPackagesSelected: function() {
-			var firstItem;
+			var selected = this.getSelected();
 
-			var executionRecords = this.getSelected().toArray();
-			for (var i = 0; i < executionRecords.length; i++) {
-				var item = executionRecords[i];
-				if (!firstItem) {
-					firstItem = item;
-				} else {
-					var firstPackage = firstItem.get('package');
-					var nextPackage = item.get('package');
-					if (firstPackage.name != nextPackage.name || 
-						firstPackage.version_string != nextPackage.version_string) {
-						return false;
-					}				
-				}
+			if (selected) {
+				var firstItem;
+				var executionRecords = this.getSelected().toArray();
+				for (var i = 0; i < executionRecords.length; i++) {
+					var item = executionRecords[i];
+					if (!firstItem) {
+						firstItem = item;
+					} else {
+						var firstPackage = firstItem.get('package');
+						var nextPackage = item.get('package');
+						if (firstPackage.name != nextPackage.name || 
+							firstPackage.version_string != nextPackage.version_string) {
+							return false;
+						}				
+					}
+				}		
 			}
 
 			return true;
@@ -343,7 +347,7 @@ define([
 
 		getResultsUrl: function() {
 			var executionRecords = this.getSelected();
-			var assessmentResultUuids = executionRecords.length > 0? executionRecords.getAttributes('assessment_result_uuid').join(',') : 'none';
+			var assessmentResultUuids = executionRecords && executionRecords.length > 0? executionRecords.getAttributes('assessment_result_uuid').join(',') : 'none';
 			var viewer = this.getSelectedViewer();
 			var projectUuid = this.getAssesmentRunProjectUuid();
 			return Registry.application.getURL() + '#results/' + assessmentResultUuids + '/viewer/' + (viewer? viewer.get('viewer_uuid') : '') + '/project/' + projectUuid;
@@ -466,9 +470,9 @@ define([
 				shortTitle: this.getShortTitle(),
 				showNavigation: Object.keys(this.options.data).length > 0,
 				viewers: this.options.viewers,
-				autoRefresh: Registry.application.getAutoRefresh(),
-				showNumbering: Registry.application.getShowNumbering(),
-				showGrouping: Registry.application.getShowGrouping()
+				showNumbering: Registry.application.options.showNumbering,
+				showGrouping: Registry.application.options.showGrouping,
+				autoRefresh: Registry.application.options.autoRefresh
 			}));
 		},
 
@@ -485,6 +489,13 @@ define([
 			// add count bubbles / badges
 			//
 			this.addBadges();
+		},
+
+		onShow: function() {
+
+			// set initial state of view results notice and button
+			//
+			this.setViewResultsLink();
 		},
 
 		showFilters: function() {
@@ -569,6 +580,12 @@ define([
 			var self = this;
 			var selected = this.getSelected();
 
+			// preserve existing sorting order
+			//
+			if (this.assessmentRunsList.currentView && this.collection.length > 0) {
+				this.options.sortList = this.assessmentRunsList.currentView.getSortList();
+			}
+
 			// show assessment runs list view
 			//
 			this.assessmentRunsList.show(
@@ -582,8 +599,8 @@ define([
 					selected: selected,
 					sortList: this.options.sortList,
 					queryString: this.getQueryString(),
-					showNumbering: Registry.application.getShowNumbering(),
-					showGrouping: Registry.application.getShowGrouping(),
+					showNumbering: Registry.application.options.showNumbering,
+					showGrouping: Registry.application.options.showGrouping,
 					showStatus: true,
 					showErrors: true,
 					showDelete: false,
@@ -597,12 +614,6 @@ define([
 					}
 				})
 			);
-
-			// save sort list
-			//
-			if (this.collection.length > 0) {
-				this.options.sortList = this.assessmentRunsList.currentView.getSortList();
-			}
 		},
 
 		addBadge: function(selector, num) {
@@ -865,7 +876,7 @@ define([
 
 			// enable / disable refresh
 			//
-			if (Registry.application.getAutoRefresh()) {
+			if (Registry.application.options.autoRefresh) {
 				this.enableAutoRefresh();
 			} else {
 				this.disableAutoRefresh();

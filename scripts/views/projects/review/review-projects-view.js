@@ -134,7 +134,7 @@ define([
 		template: function(){
 			return _.template(Template,{
 				showDeactivatedProjects: this.options.showDeactivatedProjects ? true : false,
-				showNumbering: Registry.application.getShowNumbering()
+				showNumbering: Registry.application.options.showNumbering
 			});
 		},
 		
@@ -194,7 +194,7 @@ define([
 				new ReviewProjectsListView({
 					collection: this.collection,
 					showDeactivatedProjects: this.options.showDeactivatedProjects,
-					showNumbering: Registry.application.getShowNumbering(),
+					showNumbering: Registry.application.options.showNumbering,
 
 					// callbacks
 					//

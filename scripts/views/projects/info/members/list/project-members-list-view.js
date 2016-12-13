@@ -37,17 +37,17 @@ define([
 			// disable sorting on admin and delete columns
 			//
 			headers: { 
-				4: { 
+				5: { 
 					sorter: false 
 				},
-				5: { 
+				6: { 
 					sorter: false 
 				}
 			},
 
 			// sort on date column in descending order 
 			//
-			sortList: [[3, 1]] 
+			sortList: [[4, 1]] 
 		},
 
 		//

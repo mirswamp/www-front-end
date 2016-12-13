@@ -24,7 +24,10 @@ To report a security incident, click <a href="#contact/security">here</a>.
 <p><a href="http://www.youtube.com/channel/UCuQybvosn2J5CC1mAChXDQQ" target="_blank">The SWAMP Channel on YouTube</a></p>
 
 <h2><i class="fa fa-book"></i>User Manual</h2>
-<p><a href="http://continuousassurance.org/swamp/SWAMP-User-Manual.pdf" target="_blank">SWAMP User Manual (PDF)</a></p>
+<p><a href="https://www.swampinabox.org/doc/SWAMP-User-Manual.pdf" target="_blank">SWAMP User Manual (PDF)</a></p>
+
+<h2><i class="fa fa-bug"></i>Debugging Help</h2>
+<p><a href="https://www.swampinabox.org/doc/statusout.pdf" target="_blank">Status.out and Debugging SWAMP Failures FAQ (PDF)</a></p>
 
 <% if (config['api_explorer_enabled']) { %>
 <h2><i class="fa fa-compass"></i>API Explorer</h2> 

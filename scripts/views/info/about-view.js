@@ -20,10 +20,11 @@ define([
 	'underscore',
 	'backbone',
 	'marionette',
+	'config',
 	'text!templates/info/about.tpl',
 	'registry',
 	'version',
-], function($, _, Backbone, Marionette, Template, Registry, Version) {
+], function($, _, Backbone, Marionette, Config, Template, Registry, Version) {
 	return Backbone.Marionette.LayoutView.extend({
 
 		//
@@ -41,6 +42,7 @@ define([
 		template: function(data) {
 			return _.template(Template, _.extend(data, {
 				Version: Version,
+				Config: Config
 			}));
 		},
 

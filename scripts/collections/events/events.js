@@ -29,7 +29,7 @@ define([
 		//
 
 		model: Event,
-		url: Config.servers.rws + '/events',
+		url: Config.servers.web + '/events',
 
 		//
 		// overridden Backbone methods

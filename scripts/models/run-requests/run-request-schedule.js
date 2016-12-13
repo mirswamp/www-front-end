@@ -38,6 +38,6 @@ define([
 		//
 
 		idAttribute: 'run_request_schedule_uuid',
-		urlRoot: Config.servers.csa + '/run_request_schedules'
+		urlRoot: Config.servers.web + '/run_request_schedules'
 	});
 });

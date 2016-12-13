@@ -28,8 +28,8 @@ define([
 	'views/dialogs/notify-view',
 	'views/dialogs/error-view',
 	'views/users/user-profile/user-profile-view',
-	'views/users/accounts/change-permissions/change-my-permissions-view',
-	'views/users/accounts/change-linked-accounts/change-my-linked-accounts-view',
+	'views/users/permissions/change/change-my-permissions-view',
+	'views/users/linked-accounts/change/change-my-linked-accounts-view',
 	'views/users/accounts/edit/edit-my-account-view'
 ], function($, _, Backbone, Marionette, Template, Config, Registry, ProjectMemberships, ConfirmView, NotifyView, ErrorView, UserProfileView, ChangeMyPermissionsView, ChangeMyLinkedAccountsView, EditMyAccountView) {
 	return Backbone.Marionette.LayoutView.extend({

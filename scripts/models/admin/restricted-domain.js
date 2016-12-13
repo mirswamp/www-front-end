@@ -29,6 +29,6 @@ define([
 		//
 
 		idAttribute: 'restricted_domain_id',
-		urlRoot: Config.servers.rws + '/restricted-domains'
+		urlRoot: Config.servers.web + '/restricted-domains'
 	});
 });

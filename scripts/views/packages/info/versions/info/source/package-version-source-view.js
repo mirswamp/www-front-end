@@ -37,7 +37,6 @@ define([
 		},
 
 		events: {
-			'click #edit': 'onClickEdit',
 			'click #show-file-types': 'onClickShowFileTypes',
 			'click #show-gem-info': 'onClickShowGemInfo',
 			'click #show-wheel-info': 'onClickShowWheelInfo',
@@ -73,15 +72,6 @@ define([
 		//
 		// event handling methods
 		//
-
-		onClickEdit: function() {
-
-			// go to edit package version view
-			//
-			Backbone.history.navigate('#packages/versions/' + this.model.get('package_version_uuid') + '/source/edit', {
-				trigger: true
-			});
-		},
 
 		onClickShowFileTypes: function() {
 			var self = this;

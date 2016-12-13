@@ -42,7 +42,6 @@ define([
 		events: {
 			'click #add-new-version': 'onClickAddNewVersion',
 			'click #run-new-assessment': 'onClickRunNewAssessment',
-			'click #edit-package': 'onClickEditPackage',
 			'click #delete-package': 'onClickDeletePackage'
 		},
 
@@ -189,15 +188,6 @@ define([
 			// go to run new assessment view
 			//
 			Backbone.history.navigate('#assessments/run?package=' + this.model.get('package_uuid'), {
-				trigger: true
-			});
-		},
-
-		onClickEditPackage: function() {
-
-			// go to edit package view
-			//
-			Backbone.history.navigate('#packages/' + this.model.get('package_uuid') + '/edit', {
 				trigger: true
 			});
 		},

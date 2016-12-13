@@ -27,7 +27,7 @@ define([
 		// Backbone attributes
 		//
 
-		urlRoot: Config.servers.rws + '/admins',
+		urlRoot: Config.servers.web + '/admins',
 
 		//
 		// overridden Backbone methods

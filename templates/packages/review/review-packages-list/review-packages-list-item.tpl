@@ -21,9 +21,9 @@
 </td>
 
 <% if (showDelete) { %>
-<td class="append">
+<td class="delete append">
 	<% if (!model.isDeactivated()) { %>
-	<button type="button" class="delete btn btn-sm" uid="<%- model.get('package_uuid') %>"><i class="fa fa-close"></i></button>
+	<button type="button" class="btn btn-sm" uid="<%- model.get('package_uuid') %>"><i class="fa fa-close"></i></button>
 	<% } %>
 </td>
 <% } %>

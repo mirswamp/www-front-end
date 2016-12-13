@@ -29,7 +29,7 @@ define([
 		//
 
 		idAttribute: 'contact_uuid',
-		urlRoot: Config.servers.rws + '/contacts',
+		urlRoot: Config.servers.web + '/contacts',
 
 		//
 		// methods

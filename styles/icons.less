@@ -1,22 +1,31 @@
-/*
- * icon styles
- */
+/******************************************************************************\
+|                                                                              |
+|                                   icons.less                                 |
+|                                                                              |
+|******************************************************************************|
+|                                                                              |
+|        This defines various CSS styles used in this application.             |
+|                                                                              |
+|        Author(s): Abe Megahed                                                |
+|                                                                              |
+|        This file is subject to the terms and conditions defined in           |
+|        'LICENSE.txt', which is part of this source code distribution.        |
+|                                                                              |
+|******************************************************************************|
+|        Copyright (C) 2012-2016 Software Assurance Marketplace (SWAMP)        |
+\******************************************************************************/
 
 .primary i {
 	color: white;
-}
-
-.nav i {
-	color: @primaryColor;
 }
 
 .nav li:hover i {
 	color: white;
 }
 
-/*
- * content header icon styles
- */
+//
+// content header icon styles
+//
 
 .content {
 	h1 .icon, .dashboard .icon {
@@ -42,9 +51,9 @@
 	}
 }
 
-/*
- * medium content header icon styles
- */
+//
+// medium content header icon styles
+//
 
 @media (max-width: @screen-md-min) {
 	.content {
@@ -71,9 +80,9 @@
 	}
 }
 
-/*
- * small content header icon styles
- */
+//
+// small content header icon styles
+//
 
 @media (max-width: @screen-sm-min) {
 	.content {
@@ -100,9 +109,9 @@
 	}
 }
 
-/*
- * active icons
- */
+//
+// active icons
+//
 
 i.active:hover {
 	color: @primaryColor;
@@ -112,29 +121,29 @@ i.active.selected:hover {
 	color: white;
 }
 
-/*
- * navigation icons
- */
+//
+// navigation icons
+//
 
 .nav [class^="icon-"], button [class^="icon-"], h3 [class^="icon-"],
 .nav [class*=" icon-"], button [class*=" icon-"], h3 [class*=" icon-"] {
 	margin-top: -2px;
 }
 
-/*
- * input append icons
- */
+//
+// input append icons
+//
 
 span.add-on [class^="icon-"],
 span.add-on [class*=" icon-"] {
 	margin: 0;
 }
 
-/*
- * icon scaling
- */
+//
+// icon scaling
+//
 
- .icon2x {
+.icon2x {
 	-webkit-transform:scale(2.0);
 	-moz-transform:scale(2.0);
 	-o-transform:scale(2.0);
@@ -150,14 +159,19 @@ span.add-on [class*=" icon-"] {
 	margin-top: 0;
 }
 
-/*
- * colored icons
- */
+//
+// colored icons
+//
 
-.error i {
+i.error, i.warning,
+.btn i.error, .btn i.warning {
 	color: @mediumRed;
 }
 
-.success i {
+i.success {
 	color: @mediumGreen;
+}
+
+i.normal {
+	color: @primaryColor;
 }

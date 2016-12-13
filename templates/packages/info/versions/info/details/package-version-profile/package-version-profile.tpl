@@ -1,5 +1,8 @@
 <div id="package-version-profile" class="form-horizontal">
-
+	<% if (isOwned) { %>
+	<button id="edit-version" class="btn" style="float:right"><i class="fa fa-pencil"></i>Edit</button>
+	<% } %>
+	
 	<div class="form-group">
 		<label class="form-label">Package</label>
 		<div class="controls"><%- package.get('name') %></div>

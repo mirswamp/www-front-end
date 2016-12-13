@@ -17,6 +17,9 @@
 </div>
 <% } %>
 
+<div class="well">
+	<label>Base URL:</label><span id="server"><%= Config.servers.web %></span>
+</div>
 <div id="routes-list"></div>
 
 <label>

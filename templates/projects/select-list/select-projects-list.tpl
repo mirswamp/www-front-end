@@ -4,13 +4,15 @@
 		<tr>
 			<th class="prepend select">
 			</th>
+
 			<th class="project first">
 				<i class="fa fa-folder-open"></i>
-				<span>Project</span>
+				<span class="hidden-xxs">Project</span>
 			</th>
+			
 			<th class="description last">
 				<i class="fa fa-quote-left"></i>
-				<span>Description</span>
+				<span class="hidden-xxs">Description</span>
 			</th>
 		</tr>
 	</thead>

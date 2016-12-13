@@ -32,7 +32,7 @@ define([
 		//
 
 		idAttribute: 'invitation_key',
-		urlRoot: Config.servers.rws + '/invitations',
+		urlRoot: Config.servers.web + '/invitations',
 
 		//
 		// querying methods
@@ -78,14 +78,14 @@ define([
 
 		accept: function(options) {
 			$.ajax(_.extend(options, {
-				url: Config.servers.rws + '/invitations/' + this.get('invitation_key') + '/accept',
+				url: Config.servers.web + '/invitations/' + this.get('invitation_key') + '/accept',
 				type: 'PUT'
 			}));
 		},
 
 		decline: function(options) {
 			$.ajax(_.extend(options, {
-				url: Config.servers.rws + '/invitations/' + this.get('invitation_key') + '/decline',
+				url: Config.servers.web + '/invitations/' + this.get('invitation_key') + '/decline',
 				type: 'PUT'
 			}));
 		},
@@ -162,7 +162,7 @@ define([
 			var user = new User({});
 
 			user.fetch({
-				url: Config.servers.rws + '/invitations/' + this.get('invitation_key') + '/inviter',
+				url: Config.servers.web + '/invitations/' + this.get('invitation_key') + '/inviter',
 
 				// callbacks
 				//
@@ -187,7 +187,7 @@ define([
 			var user = new User({});
 
 			user.fetch({
-				url: Config.servers.rws + '/invitations/' + this.get('invitation_key') + '/invitee',
+				url: Config.servers.web + '/invitations/' + this.get('invitation_key') + '/invitee',
 
 				// callbacks
 				//

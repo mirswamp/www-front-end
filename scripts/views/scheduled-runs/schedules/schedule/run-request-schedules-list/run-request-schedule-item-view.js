@@ -21,7 +21,8 @@ define([
 	'underscore',
 	'backbone',
 	'marionette',
-	'text!templates/scheduled-runs/schedules/schedule/run-request-schedules-list/run-request-schedule-item.tpl'
+	'text!templates/scheduled-runs/schedules/schedule/run-request-schedules-list/run-request-schedule-item.tpl',
+	'utilities/time/date-utils'
 ], function($, _, Backbone, Marionette, Template) {
 	return Backbone.Marionette.ItemView.extend({
 

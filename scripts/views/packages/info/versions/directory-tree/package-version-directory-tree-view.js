@@ -54,6 +54,39 @@ define([
 			}
 		},
 
+		fetchContents: function() {
+			var self = this;
+
+			// fetch package version directory listing
+			//
+			this.options.packageVersion.fetchFileList({
+				data: {
+					'dirname': this.model.get('name')
+				},
+
+				// callbacks
+				//
+				success: function(data) {
+
+					// show contents
+					//
+					self.model.setContents(data);
+					self.onRender();
+				},
+
+				error: function() {
+
+					// show error dialog
+					//
+					Registry.application.modal.show(
+						new ErrorView({
+							message: "Could not get a file subtree for this package version."
+						})
+					);	
+				}
+			});
+		},
+
 		showContents: function() {
 			var self = this;
 
@@ -69,34 +102,24 @@ define([
 				this.$el.find('.contents').show();
 			} else {
 
-				// fetch package version directory tree
+				// get root name
 				//
-				this.options.packageVersion.fetchFileTree({
-					data: {
-						'dirname': this.model.get('name')
-					},
+				if (!this.model.has('name')) {
+					this.model.fetchRoot({
+						success: function(data) {
 
-					// callbacks
-					//
-					success: function(data) {
+							// set name of root directory
+							//
+							self.model.set({
+								'name': data
+							});
 
-						// show contents
-						//
-						self.model.setContents(data);
-						self.onRender();
-					},
-
-					error: function() {
-
-						// show error dialog
-						//
-						Registry.application.modal.show(
-							new ErrorView({
-								message: "Could not get a file subtree for this package version."
-							})
-						);	
-					}
-				});
+							self.fetchContents();
+						}
+					});
+				} else {
+					this.fetchContents();
+				}
 			}
 		}
 	});

@@ -40,8 +40,7 @@ define([
 			'click .alert-warning .close': 'onClickAlertWarningClose',
 			'click .alert-info .close': 'onClickAlertInfoClose',
 			'click #submit': 'onClickSubmit',
-			'click #cancel': 'onClickCancel',
-			'keypress': 'onKeyPress'
+			'click #cancel': 'onClickCancel'
 		},
 
 		//
@@ -104,15 +103,6 @@ define([
 
 		onClickAlertInfoClose: function() {
 			this.hideInfo();
-		},
-		
-		onKeyPress: function(event) {
-
-			// respond to enter key press
-			//
-			if (event.keyCode === 13) {
-				this.onClickSubmit();
-			}
 		},
 
 		onClickSubmit: function() {

@@ -223,7 +223,7 @@ define([
 				title: this.getTitle(),
 				shortTitle: this.getShortTitle(),
 				showNavigation: Object.keys(this.options.data).length > 0,
-				showNumbering: Registry.application.getShowNumbering()
+				showNumbering: Registry.application.options.showNumbering
 			}));
 		},
 
@@ -280,7 +280,7 @@ define([
 			this.scheduledRunsList.show(
 				new ScheduledRunsListView({
 					collection: this.collection,
-					showNumbering: Registry.application.getShowNumbering(),
+					showNumbering: Registry.application.options.showNumbering,
 					showDelete: true
 				})
 			);
@@ -290,7 +290,7 @@ define([
 			this.scheduledRunsLists.show(
 				new ScheduledRunsListsView({
 					collection: this.collection.getByRunRequests(this.collection.getRunRequests()),
-					showNumbering: Registry.application.getShowNumbering(),
+					showNumbering: Registry.application.options.showNumbering,
 					showDelete: true
 				})
 			);

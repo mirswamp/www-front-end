@@ -44,7 +44,7 @@ define([
 		tagName: 'tr',
 
 		events: {
-			'click button.delete': 'onClickDelete'
+			'click .delete button': 'onClickDelete'
 		},
 
 		//

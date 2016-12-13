@@ -32,7 +32,7 @@ define([
 		//
 
 		idAttribute: 'linked_account_id',
-		urlRoot: Config.servers.rws + '/linked-accounts',
+		urlRoot: Config.servers.web + '/linked-accounts',
 
 		//
 		// ajax methods
@@ -40,7 +40,7 @@ define([
 
 		setEnabled: function(enabled, options) {
 			$.ajax(_.extend(options, {
-				url: Config.servers.rws + '/linked-accounts/' + this.get('linked_account_id') + '/enabled',
+				url: Config.servers.web + '/linked-accounts/' + this.get('linked_account_id') + '/enabled',
 				type: 'POST',
 				data: {
 					enabled_flag: enabled

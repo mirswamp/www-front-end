@@ -121,7 +121,7 @@ define([
 				//
 				error: function(response) {
 					Registry.application.modal.show(
-						new ErrorView({
+						new NotifyView({
 							message: response.responseText,
 
 							// callbacks

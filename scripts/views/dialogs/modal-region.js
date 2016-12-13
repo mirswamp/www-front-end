@@ -31,6 +31,14 @@ define([
 		el: '#modal',
 
 		//
+		// querying methods
+		//
+
+		isShowing: function() {
+			return this.view != undefined;
+		},
+
+		//
 		// methods
 		//
 
@@ -39,6 +47,10 @@ define([
 			// call superclass method
 			//
 			Backbone.Marionette.Region.prototype.show.call(this, view);
+
+			// save view
+			//
+			this.view = view;
 
 			// clear tooltips
 			//
@@ -145,27 +157,59 @@ define([
 			// set focus on first input elements
 			//
 			if (!options || options.focus) {
-				var focus = 'input';
+				var focus = undefined;
 
 				// find type of element to focus on
 				//
 				if (options && options.focus != true) {
 					focus = options.focus;
+				} else {
+
+					// focus on first input element
+					//
+					if (this.$el.find('input:not(.optional)').length > 0) {
+						focus = 'input';
+					} 	
 				}
 
 				// find first element to focus on
 				//
-				var element = this.$el.find(focus).first();
-				if (element && (element.attr('no-focus') || element.attr('no-focus') === '')) {
-					return;
-				} else if (element) {
-					element.focus();
+				if (focus) {
+					var element = this.$el.find(focus).first();
+					if (element && (element.attr('no-focus') || element.attr('no-focus') === '')) {
+						return;
+					} else if (element) {
+						element.focus();
+					}
 				}
+			}
+
+			// perform callback
+			//
+			if (this.view.onShown) {
+				this.view.onShown();
 			}
 		},
 
 		onHidden: function() {
 			this.$el.remove();
+			this.view = undefined;
+		},
+
+		onKeyPress: function(event) {
+
+			// if return key is pressed, then trigger primary button
+			//
+			if (event.keyCode == 13) {
+				if (this.view && this.view.$el.find('.btn-primary').length > 0) {
+					this.view.$el.find('.btn-primary').trigger('click');
+
+					// finish handling event
+					//
+					event.stopPropagation();
+					event.preventDefault();
+				}
+			}
 		}
 	});
 });

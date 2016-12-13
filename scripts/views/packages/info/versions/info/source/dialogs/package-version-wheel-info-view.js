@@ -62,8 +62,7 @@ define([
 		},
 
 		events: {
-			'click #ok': 'onClickOk',
-			'keypress': 'onKeyPress'
+			'click #ok': 'onClickOk'
 		},
 
 		//
@@ -111,16 +110,6 @@ define([
 			if (this.options.accept) {
 				this.options.accept();
 			}
-		},
-
-		onKeyPress: function(event) {
-
-			// respond to enter key press
-			//
-	        if (event.keyCode === 13) {
-	            this.onClickOk();
-	            Registry.application.modal.hide();
-	        }
 		}
 	});
 });

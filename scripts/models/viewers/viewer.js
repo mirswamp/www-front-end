@@ -37,21 +37,21 @@ define([
 
 		getDefaultViewer: function(options) {
 			this.fetch( _.extend(options, {
-				url: Config.servers.csa + '/viewers/default/' + this.get('project_uid')
+				url: Config.servers.web + '/viewers/default/' + this.get('project_uid')
 			}));
 		},
 
 		setDefaultViewer: function(viewerUuid, options) {
 			$.ajax(_.extend(options, {
 				method: 'PUT',
-				url: Config.servers.csa + '/viewers/default/' + this.get('project_uid') + '/viewer/' + viewerUuid
+				url: Config.servers.web + '/viewers/default/' + this.get('project_uid') + '/viewer/' + viewerUuid
 			}));
 		},
 
 		checkPermission: function(assessmentResultUuids, projectUuid, options) {
 			$.ajax(_.extend(options, {
 				type: 'GET',
-				url: Config.servers.csa + '/assessment_results/' + (assessmentResultUuids? assessmentResultUuids : 'none') + 
+				url: Config.servers.web + '/assessment_results/' + (assessmentResultUuids? assessmentResultUuids : 'none') + 
 					'/viewer/' + this.get('viewer_uuid') + 
 					'/project/' + projectUuid + 
 					'/permission'

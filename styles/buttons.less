@@ -1,15 +1,32 @@
-/*
- * button colors
- */
+/******************************************************************************\
+|                                                                              |
+|                                 buttons.less                                 |
+|                                                                              |
+|******************************************************************************|
+|                                                                              |
+|        This defines various CSS styles used in this application.             |
+|                                                                              |
+|        Author(s): Abe Megahed                                                |
+|                                                                              |
+|        This file is subject to the terms and conditions defined in           |
+|        'LICENSE.txt', which is part of this source code distribution.        |
+|                                                                              |
+|******************************************************************************|
+|        Copyright (C) 2012-2016 Software Assurance Marketplace (SWAMP)        |
+\******************************************************************************/
+
+//
+// button colors
+//
 
 @buttonLabelColor: @secondaryColor;
 @buttonLabelHoverColor: @secondaryColor;
 @primaryButtonColor: @primaryColor;
 @primaryButtonHoverColor: @primaryHoverColor;
 
-/*
- * buttons
- */
+//
+// buttons
+//
 
 .btn {
 	font-size: 16px;
@@ -42,9 +59,9 @@
 	color: @primaryButtonColor;
 }
 
-/*
- * mobile buttons
- */
+//
+// mobile buttons
+//
 
 @media(max-width:479px) {
 	.buttons button, .modal-footer button {
@@ -67,9 +84,9 @@
 	}
 }
 
-/*
- * primary buttons
- */
+//
+// primary buttons
+//
 
 .btn-primary, .btn-primary:focus, .btn-primary[disabled] {
 	background-color: @primaryButtonColor; 
@@ -96,9 +113,9 @@
 	}
 }
 
-/*
- * small and large buttons
- */
+//
+// small and large buttons
+//
 
 .btn-sm {
 	padding: 1px 6px;
@@ -122,52 +139,44 @@
 	}	
 }
 
-/*
- * nav bar buttons
- */
+//
+// nav bar buttons
+//
 
 .navbar .btn, .navbar .btn:hover {
 	border: none;
 }
 
-/*
- * close buttons
- */
+//
+// close buttons
+//
 
 button.close:hover {
 	background: transparent;
 }
 
-/*
- * add / delete buttons
- */
+//
+// icon buttons
+//
 
-button.add.btn, 
-button.delete.btn,
-button.move-up.btn,
-button.move-down.btn {
+.icon.btn,
+.add.btn, 
+.delete .btn,
+.reorder .btn {
 	i {
 		margin-right: 0;
 	}
 }
 
-/*
- * button sets
- */
+//
+// button sets
+//
 
 .buttons {
 	button, .btn {
 		margin-bottom: 5px;
 	}
 }
-
-/*
-.panel .buttons {
-	.buttons, .btn {
-		margin-top: 0;
-	}	
-}
-*/
 
 .top.buttons {
 	margin-bottom: 15px;

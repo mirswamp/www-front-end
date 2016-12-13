@@ -225,7 +225,15 @@ require([
 
 		// store page load time
 		//
-		window.timing['document ready'] = new Date().getTime();
+		if (window.timing['document ready'] == undefined) {
+			window.timing['document ready'] = new Date().getTime();
+		}
+
+		// store page load time
+		//
+		if (window.timing['url'] == undefined) {
+			window.timing['url'] = window.top.location.href;
+		}
 
 		// go!
 		//

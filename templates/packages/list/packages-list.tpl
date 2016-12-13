@@ -8,22 +8,22 @@
 
 			<th class="package first">
 				<i class="fa fa-gift"></i>
-				<span>Package</span>
+				<span class="hidden-xxs">Package</span>
 			</th>
 
 			<th class="description hidden-xs">
 				<i class="fa fa-quote-left"></i>
-				<span>Description</span>
+				<span class="hidden-xxs">Description</span>
 			</th>
 
 			<th class="type">
 				<i class="fa fa-code"></i>
-				<span>Type</span>
+				<span class="hidden-xxs">Type</span>
 			</th>
 			
 			<th class="versions last">
 				<i class="fa fa-list-ol"></i>
-				<span>Versions</span>
+				<span class="hidden-xxs">Versions</span>
 			</th>
 
 			<% if (showDelete) { %>

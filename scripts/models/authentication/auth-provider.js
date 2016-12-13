@@ -27,6 +27,6 @@ define([
 		// Backbone attributes
 		//
 
-		urlRoot: Config.servers.rws + '/idps'
+		urlRoot: Config.servers.web + '/idps'
 	});
 });

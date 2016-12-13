@@ -57,7 +57,7 @@ define([
 		template: function(data) {
 			return _.template(Template, _.extend(data, {
 				loggedIn: Registry.application.session.user != null,
-				showNumbering: Registry.application.getShowNumbering()
+				showNumbering: Registry.application.options.showNumbering
 			}));
 		},
 
@@ -82,7 +82,7 @@ define([
 					self.openToolsList.show(
 						new ToolsListView({
 							collection: self.collection.getOpen(),
-							showNumbering: Registry.application.getShowNumbering(),
+							showNumbering: Registry.application.options.showNumbering,
 							showDelete: false
 						})
 					);
@@ -115,7 +115,7 @@ define([
 					self.commercialToolsList.show(
 						new ToolsListView({
 							collection: collection,
-							showNumbering: Registry.application.getShowNumbering(),
+							showNumbering: Registry.application.options.showNumbering,
 							showDelete: false
 						})
 					);

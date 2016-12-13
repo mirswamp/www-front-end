@@ -40,7 +40,6 @@ define([
 		events: {
 			'click #run-new-assessment': 'onClickRunNewAssessment',
 			'click #download-version': 'onClickDownloadVersion',
-			'click #edit-version': 'onClickEditVersion',
 			'click #delete-version': 'onClickDeleteVersion',
 			'click #cancel': 'onClickCancel',
 			'click #next': 'onClickNext'
@@ -88,15 +87,6 @@ define([
 
 		onClickDownloadVersion: function() {
 			this.model.download();
-		},
-
-		onClickEditVersion: function() {
-
-			// go to edit package version details view
-			//
-			Backbone.history.navigate('#packages/versions/' + this.model.get('package_version_uuid') + '/edit', {
-				trigger: true
-			});
 		},
 
 		onClickDeleteVersion: function() {

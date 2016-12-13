@@ -20,7 +20,8 @@ define([
 	'underscore',
 	'backbone',
 	'marionette',
-	'text!templates/assessment-results/assessment-runs/assessment-run-profile/assessment-run-profile.tpl'
+	'text!templates/assessment-results/assessment-runs/assessment-run-profile/assessment-run-profile.tpl',
+	'utilities/time/date-utils'
 ], function($, _, Backbone, Marionette, Template) {
 	return Backbone.Marionette.ItemView.extend({
 

@@ -49,10 +49,14 @@
 				<% if (user) { %>
 				<li<% if (nav == 'my-account') {%> class="active" <% } %>><a id="my-account"><i class="fa fa-user"></i>
 				<label class="username visible-sm-inline">
+					<% if (user.has('username')) { %>
 					<%- user.get('username').truncatedTo(9) %>
+					<% } %>
 				</label>
 				<label class="username hidden-sm">
+					<% if (user.has('username')) { %>
 					<%- user.get('username') %>
+					<% } %>
 				</label>
 				</a></li>
 				<% } %>
@@ -63,9 +67,9 @@
 
 				<div class="navbar-form navbar-right">
 					<% if (user) { %>
-					<button id="sign-out" class="btn btn-primary"><i class="fa fa-chevron-left"></i>Sign Out</button>
+					<button id="sign-out" class="btn"><i class="fa fa-chevron-left"></i>Sign Out</button>
 					<% } else { %>
-					<button id="sign-in" class="btn btn-primary hidden-xs"><i class="fa fa-chevron-right"></i>Sign In</button>
+					<button id="sign-in" type="button" class="btn btn-primary hidden-xs"><i class="fa fa-chevron-right"></i>Sign In</button>
 					<% } %>
 				</div>
 			</ul>

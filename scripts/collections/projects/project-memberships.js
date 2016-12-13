@@ -51,13 +51,13 @@ define([
 
 		fetchByProject: function(project, options) {
 			return this.fetch(_.extend(options, {
-				url: Config.servers.rws + '/projects/' + project.get('project_uid') + '/memberships'
+				url: Config.servers.web + '/projects/' + project.get('project_uid') + '/memberships'
 			}));
 		},
 
 		fetchByUser: function(user, options) {
 			return this.fetch(_.extend(options, {
-				url: Config.servers.rws + '/users/' + user.get('user_uid') + '/memberships'
+				url: Config.servers.web + '/users/' + user.get('user_uid') + '/memberships'
 			}));
 		}
 	});

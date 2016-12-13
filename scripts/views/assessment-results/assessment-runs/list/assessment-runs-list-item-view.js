@@ -21,7 +21,6 @@ define([
 	'backbone',
 	'marionette',
 	'tooltip',
-	'popover',
 	'text!templates/assessment-results/assessment-runs/list/assessment-runs-list-item.tpl',
 	'config',
 	'registry',
@@ -30,7 +29,7 @@ define([
 	'views/dialogs/notify-view',
 	'views/dialogs/error-view',
 	'utilities/time/date-utils'
-], function($, _, Backbone, Marionette, Tooltip, Popover, Template, Config, Registry, RunRequest, ConfirmView, NotifyView, ErrorView) {
+], function($, _, Backbone, Marionette, Tooltip, Template, Config, Registry, RunRequest, ConfirmView, NotifyView, ErrorView) {
 	return Backbone.Marionette.ItemView.extend({
 
 		//
@@ -41,8 +40,8 @@ define([
 
 		events: {
 			//'click #errors': 'onClickErrors',
-			'click button.delete': 'onClickDelete',
-			'click button.ssh': 'onClickSshButton'
+			'click .delete button': 'onClickDelete',
+			'click .ssh button': 'onClickSsh'
 		},
 
 		//
@@ -143,6 +142,15 @@ define([
 			}));
 		},
 
+		onRender: function() {
+
+			// show tooltips on hover
+			//
+			this.$el.find("[data-toggle='tooltip']").popover({
+				trigger: 'hover'
+			});
+		},
+
 		//
 		// event handling methods
 		//
@@ -185,7 +193,7 @@ define([
 			this.showViewer(this.options.viewers.getNative());
 		},
 
-		onClickSshButton: function() {
+		onClickSsh: function() {
 			var self = this;
 			this.model.getSshAccess({
 

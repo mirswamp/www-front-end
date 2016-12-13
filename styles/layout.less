@@ -1,3 +1,20 @@
+/******************************************************************************\
+|                                                                              |
+|                                  layout.less                                 |
+|                                                                              |
+|******************************************************************************|
+|                                                                              |
+|        This defines various CSS styles used in this application.             |
+|                                                                              |
+|        Author(s): Abe Megahed                                                |
+|                                                                              |
+|        This file is subject to the terms and conditions defined in           |
+|        'LICENSE.txt', which is part of this source code distribution.        |
+|                                                                              |
+|******************************************************************************|
+|        Copyright (C) 2012-2016 Software Assurance Marketplace (SWAMP)        |
+\******************************************************************************/
+
 body {
 	background-color: @veryVeryLightGrey;
 	margin: 0;
@@ -20,17 +37,17 @@ body {
 	top: 50%;
 }
 
-/*
- * main layout styles
- */
+//
+// main layout styles
+//
 
 #main {
 	margin-top: 50px;
 }
 
-/*
- * banner styles
- */
+//
+// banner styles
+//
 
 .banner {
 	max-width: 500px;
@@ -44,9 +61,9 @@ body {
 	max-width: 50%;
 }
 
-/*
- * medium banner styles
- */
+//
+// medium banner styles
+//
 
 @media (max-width: @screen-md-min) {
 	.banner {
@@ -54,9 +71,9 @@ body {
 	}
 }
 
-/*
- * small banner styles
- */
+//
+// small banner styles
+//
 
 @media (max-width: @screen-sm-min) {
 	.banner {
@@ -64,9 +81,9 @@ body {
 	}
 }
 
-/*
- * mobile banner styles
- */
+//
+// mobile banner styles
+//
 
 @media (max-width: @screen-xs-min) {
 	#dashboard #icon {
@@ -85,15 +102,15 @@ body {
 	}
 }
 
-/*
- * main styles
- */
+//
+// main styles
+//
 
 .tagline {
 	margin: 10px;
 }
 
-#main {
+#content {
 	.container {
 		color: @darkGrey;
 		background-color: white;
@@ -124,9 +141,9 @@ body {
 	margin-right: 10px;
 }
 
-/*
- * content styles
- */
+//
+// content styles
+//
 
 .content {
 	padding-left: 20px;
@@ -134,9 +151,9 @@ body {
 	padding-bottom: 20px;
 }
 
-/*
- * responsive styles
- */
+//
+// responsive styles
+//
 
 .visible-xxs {
 	display: none;
@@ -151,9 +168,9 @@ body {
 	}
 }
 
-/*
- * medium content styles
- */
+//
+// medium content styles
+//
 
 @media (max-width: @screen-sm-min) {
 	.content {
@@ -163,9 +180,9 @@ body {
 	}
 }
 
-/*
- * small content styles
- */
+//
+// small content styles
+//
 
 @media (max-width: @screen-xs-min) {
 	.content {
@@ -174,9 +191,9 @@ body {
 	}
 }
 
-/*
- * one column styles
- */
+//
+// one column styles
+//
 
 .one-column {
 	.bottom.content {
@@ -184,9 +201,9 @@ body {
 	}
 }
 
-/*
- * two column styles
- */
+//
+// two column styles
+//
 
 .two-column .content {
 	width: 100%;
@@ -200,9 +217,9 @@ body {
 	margin-top: 0;
 }
 
-/*
- * left side column styles
- */
+//
+// left side column styles
+//
 
 .left.side.column {
 	float: left;
@@ -213,9 +230,9 @@ body {
 	margin-left: 0;
 }
 
-/*
- * right side column styles
- */
+//
+// right side column styles
+//
 
 .right.side.column {
 	float: right;
@@ -226,9 +243,9 @@ body {
 	margin-right: 0;
 }
 
-/*
- * header and footer styles
- */
+//
+// header and footer styles
+//
 
 #footer .container {
 	color: black;
@@ -242,17 +259,9 @@ body {
 	margin-left: 20px;
 }
 
-/*
-@media (max-width: @screen-xs-min) {
-	#footer {
-		display: none;
-	}
-}
-*/
-
-/*
- * other layout styles
- */
+//
+// other layout styles
+//
 
 hr {
 	border: 0;
@@ -289,9 +298,9 @@ hr {
 	}
 }
 
-/*
- * panel styles
- */
+//
+// panel styles
+//
 
 .panel {
 	h2 {
@@ -301,18 +310,19 @@ hr {
 	}
 }
 
-/*
- * scrollable styles
- */
+//
+// scrollable styles
+//
 
 .vertically.scrollable {
 	overflow-y: auto;
 	overflow-x: hidden;
+	padding-right: 10px;
 }
 
-/*
- * image styles
- */
+//
+// image styles
+//
 
 .photo {
 	padding: 2px;
@@ -323,9 +333,9 @@ a .photo {
 	border: 1px solid @primaryColor;
 }
 
-/*
- * figure / illustration styles
- */
+//
+// figure / illustration styles
+//
 
 .figure.left {
 	float: left;
@@ -339,17 +349,17 @@ a .photo {
 	margin-bottom: 25px;
 }
 
-/*
- * filter styles
- */
+//
+// filter styles
+//
 
 .filters .btn-group {
 	margin-right: 75px
 }
 
-/*
- * media query styles
- */
+//
+// media query styles
+//
 
 @media (max-width: @screen-xs-min) {
 	.col-sm-6 {

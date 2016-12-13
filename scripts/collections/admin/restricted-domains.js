@@ -30,6 +30,6 @@ define([
 		//
 
 		model: RestrictedDomain,
-		url: Config.servers.rws + '/restricted-domains'
+		url: Config.servers.web + '/restricted-domains'
 	});
 });

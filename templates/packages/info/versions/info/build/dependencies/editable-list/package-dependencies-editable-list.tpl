@@ -25,5 +25,5 @@
 <% } %>
 
 <div class="middle buttons">
-	<button id="add-new-dependency" class="btn btn-primary"><i class="fa fa-plus"></i>Add New Dependency</button>
+	<button id="add-new-dependency" class="btn"><i class="fa fa-plus"></i>Add New Dependency</button>
 </div>

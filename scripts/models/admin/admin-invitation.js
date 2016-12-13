@@ -32,7 +32,7 @@ define([
 		//
 
 		idAttribute: 'invitation_key',
-		urlRoot: Config.servers.rws + '/admin_invitations',
+		urlRoot: Config.servers.web + '/admin_invitations',
 
 		//
 		// methods
@@ -74,7 +74,7 @@ define([
 				// find user associated with this email
 				//
 				var response = $.ajax({
-					url: Config.servers.rws + '/admin/email/user',
+					url: Config.servers.web + '/admin/email/user',
 					type: 'POST',
 						dataType: 'json',
 
@@ -109,7 +109,7 @@ define([
 				// find user associated with this username
 				//
 				var response = $.ajax({
-					url: Config.servers.rws + '/admin/username/user',
+					url: Config.servers.web + '/admin/username/user',
 					type: 'POST',
 						dataType: 'json',
 
@@ -163,14 +163,14 @@ define([
 
 		accept: function(options) {
 			$.ajax(_.extend(options, {
-				url: Config.servers.rws + '/admin_invitations/' + this.get('invitation_key') + '/accept',
+				url: Config.servers.web + '/admin_invitations/' + this.get('invitation_key') + '/accept',
 				type: 'PUT'
 			}));
 		},
 
 		decline: function(options) {
 			$.ajax(_.extend(options, {
-				url: Config.servers.rws + '/admin_invitations/' + this.get('invitation_key') + '/decline',
+				url: Config.servers.web + '/admin_invitations/' + this.get('invitation_key') + '/decline',
 				type: 'PUT'
 			}));
 		},

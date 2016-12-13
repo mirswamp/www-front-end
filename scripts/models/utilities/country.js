@@ -28,6 +28,6 @@ define([
 		//
 
 		idAttribute: 'country_id',
-		urlRoot: Config.servers.rws + '/countries'
+		urlRoot: Config.servers.web + '/countries'
 	});
 });

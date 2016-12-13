@@ -141,7 +141,7 @@ define([
 			return _.template(Template, {
 				userType: this.options.data['type']? this.options.data['type'].replace('-', ' ').toTitleCase() : undefined,
 				showDisabledAccounts: this.options.showDisabledAccounts ? true : false,
-				showNumbering: Registry.application.getShowNumbering()
+				showNumbering: Registry.application.options.showNumbering
 			});
 		},
 
@@ -207,7 +207,7 @@ define([
 			this.reviewAccountsList.show(
 				new ReviewAccountsListView({
 					collection: this.showDisabledAccounts()? this.collection : this.collection.getEnabled(),
-					showNumbering: Registry.application.getShowNumbering(),
+					showNumbering: Registry.application.options.showNumbering,
 					showForcePasswordReset: Registry.application.config['email_enabled'],
 					showHibernate: Registry.application.config['email_enabled'],
 					showLinkedAccount: Registry.application.config['linked_accounts_enabled'],

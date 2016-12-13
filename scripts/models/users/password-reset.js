@@ -28,7 +28,7 @@ define([
 		//
 
 		idAttribute: 'password_reset_key',
-		urlRoot: Config.servers.rws + '/password_resets',
+		urlRoot: Config.servers.web + '/password_resets',
 
 		//
 		// overridden Backbone methods

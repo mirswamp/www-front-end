@@ -267,8 +267,8 @@ define([
 				title: this.getTitle(),
 				shortTitle: this.getShortTitle(),
 				showNavigation: Object.keys(this.options.data).length > 0,
-				showNumbering: Registry.application.getShowNumbering(),
-				showGrouping: Registry.application.getShowGrouping()
+				showNumbering: Registry.application.options.showNumbering,
+				showGrouping: Registry.application.options.showGrouping
 			}));
 		},
 
@@ -335,6 +335,12 @@ define([
 
 		showList: function() {
 
+			// preserve existing sorting order
+			//
+			if (this.selectAssessmentsList.currentView && this.collection.length > 0) {
+				this.options.sortList = this.selectAssessmentsList.currentView.getSortList();
+			}
+			
 			// show select assessments list view
 			//
 			this.selectAssessmentsList.show(
@@ -343,17 +349,11 @@ define([
 					collection: this.collection,
 					sortList: this.options.sortList,
 					selectedAssessments: this.options.selectedAssessments,
-					showNumbering: Registry.application.getShowNumbering(),
-					showGrouping: Registry.application.getShowGrouping(),
+					showNumbering: Registry.application.options.showNumbering,
+					showGrouping: Registry.application.options.showGrouping,
 					showDelete: true
 				})
 			);
-
-			// save sort list
-			//
-			if (this.collection.length > 0) {
-				this.options.sortList = this.selectAssessmentsList.currentView.getSortList();
-			}
 		},
 
 		//

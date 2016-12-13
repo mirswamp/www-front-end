@@ -2,12 +2,22 @@
 @import "jquery/datepicker.css";
 @import "select2/select2.css";
 @import "select2/select2-bootstrap.css";
-/*
- * bootstrap imports
- */
-/*
- * library imports
- */
+/******************************************************************************\
+|                                                                              |
+|                                   styles.less                                |
+|                                                                              |
+|******************************************************************************|
+|                                                                              |
+|        This defines various CSS styles used in this application.             |
+|                                                                              |
+|        Author(s): Abe Megahed                                                |
+|                                                                              |
+|        This file is subject to the terms and conditions defined in           |
+|        'LICENSE.txt', which is part of this source code distribution.        |
+|                                                                              |
+|******************************************************************************|
+|        Copyright (C) 2012-2016 Software Assurance Marketplace (SWAMP)        |
+\******************************************************************************/
 /* 
  * sortable table styles
  */
@@ -16,7 +26,7 @@ table.tablesorter thead tr .header {
   background-repeat: no-repeat;
   background-position: center right;
   cursor: pointer;
-  padding-right: 20px;
+  padding-right: 15px;
   margin-right: 0px;
 }
 table.tablesorter thead tr .headerSortUp {
@@ -29,36 +39,44 @@ table.tablesorter thead tr .headerSortDown,
 table.tablesorter thead tr .headerSortUp {
   background-color: none;
 }
-/*
- * my imports
- */
-/*
- * golds
- */
+/******************************************************************************\
+|                                                                              |
+|                                  colors.less                                 |
+|                                                                              |
+|******************************************************************************|
+|                                                                              |
+|        This defines various CSS styles used in this application.             |
+|                                                                              |
+|        Author(s): Abe Megahed                                                |
+|                                                                              |
+|        This file is subject to the terms and conditions defined in           |
+|        'LICENSE.txt', which is part of this source code distribution.        |
+|                                                                              |
+|******************************************************************************|
+|        Copyright (C) 2012-2016 Software Assurance Marketplace (SWAMP)        |
+\******************************************************************************/
 /*
 @darkGold: DarkGoldenRod;
 @mediumGold: GoldenRod;
 @lightGold: GoldenRod;
 @paleLightGold: #fff4d9;
 */
-/*
- * reds
- */
-/*
- * greens
- */
-/*
- * greys
- */
-/*
- * gradients
- */
-/*
- * main colors
- */
-/*
- * embedded fonts
- */
+/******************************************************************************\
+|                                                                              |
+|                                  fonts.less                                  |
+|                                                                              |
+|******************************************************************************|
+|                                                                              |
+|        This defines various CSS styles used in this application.             |
+|                                                                              |
+|        Author(s): Abe Megahed                                                |
+|                                                                              |
+|        This file is subject to the terms and conditions defined in           |
+|        'LICENSE.txt', which is part of this source code distribution.        |
+|                                                                              |
+|******************************************************************************|
+|        Copyright (C) 2012-2016 Software Assurance Marketplace (SWAMP)        |
+\******************************************************************************/
 @font-face {
   font-family: 'TradeGothic';
   src: url('../fonts/trade-gothic/TradeGothic.eot?') format('eot'), url('../fonts/trade-gothic/TradeGothic.otf') format('otf'), url('../fonts/trade-gothic/TradeGothic.woff') format('woff'), url('../fonts/trade-gothic/TradeGothic.ttf') format('truetype');
@@ -67,9 +85,22 @@ table.tablesorter thead tr .headerSortUp {
   font-family: 'TradeGothicBold';
   src: url('../fonts/trade-gothic-bold/TradeGothic-Bold.eot?') format('eot'), url('../fonts/trade-gothic-bold/TradeGothic-Bold.otf') format('otf'), url('../fonts/trade-gothic-bold/TradeGothic-Bold.woff') format('woff'), url('../fonts/trade-gothic-bold/TradeGothic-Bold.ttf') format('truetype');
 }
-/*
- * main font styles
- */
+/******************************************************************************\
+|                                                                              |
+|                                typography.less                               |
+|                                                                              |
+|******************************************************************************|
+|                                                                              |
+|        This defines various CSS styles used in this application.             |
+|                                                                              |
+|        Author(s): Abe Megahed                                                |
+|                                                                              |
+|        This file is subject to the terms and conditions defined in           |
+|        'LICENSE.txt', which is part of this source code distribution.        |
+|                                                                              |
+|******************************************************************************|
+|        Copyright (C) 2012-2016 Software Assurance Marketplace (SWAMP)        |
+\******************************************************************************/
 body,
 input,
 button,
@@ -81,9 +112,6 @@ p,
   font-family: "Gill Sans MT", "Gill Sans", Calibri, sans-serif;
   font-size: 16px;
 }
-/*
- * header font styles
- */
 h1,
 h2,
 h3,
@@ -126,9 +154,6 @@ h1 i {
   margin-top: 5px;
   margin-right: 15px;
 }
-/*
- * medium header font styles
- */
 @media (max-width: 991px) {
   h1 {
     font-size: 225%;
@@ -136,19 +161,11 @@ h1 i {
     margin-bottom: 5px;
   }
 }
-/*
- * mobile header font styles
- */
 @media (max-width: 767px) {
   h1 {
     font-size: 175%;
   }
 }
-/*
-.right .content h1 div {
-	float: right;
-}
-*/
 h2 {
   margin-top: 20px;
   color: #998342;
@@ -188,9 +205,6 @@ p {
   margin-bottom: 0;
 }
 /*
- * highlighting font styles
- */
-/*
 .success, .success a {
 	color: @mediumGreen;
 }
@@ -210,28 +224,12 @@ h1 .name {
   padding-right: 2px;
   border-radius: 5px;
 }
-/*
-.highlighted {
-	color: @darkRed;
-	background-color: @veryLightRed;
-	border: 1px solid @lightRed;
-	padding-left: 2px;
-	padding-right: 2px;
-	border-radius: 5px;
-}
-*/
-/*
- * link font styles
- */
 a:hover .version.label {
   text-decoration: underline;
 }
 a span {
   display: inline-block;
 }
-/*
- * label font styles
- */
 .label {
   color: black;
   background-color: transparent;
@@ -242,44 +240,6 @@ a span {
 label i {
   margin-right: 5px;
 }
-/*
- * date font styles
- */
-div.datetime {
-  /*
-	.date::after {
-		content: " ";
-	}
-	*/
-  /*
-	.time::after {
-		content: " ";
-	}
-	*/
-}
-div.datetime .date {
-  margin-right: 5px;
-  float: left;
-}
-div.datetime .time {
-  font-style: italic;
-  float: left;
-}
-div.datetime .time {
-  margin-right: 5px;
-}
-div.datetime .year::before {
-  content: "(";
-}
-div.datetime .year {
-  font-style: italic;
-}
-div.datetime .year::after {
-  content: ") ";
-}
-/*
- * media query date font styles
- */
 /*
 @media (min-width: @screen-sm-min) {
 	div.datetime {
@@ -294,9 +254,6 @@ div.datetime .year::after {
 	}
 }
 */
-/*
- * other font styles
- */
 .fineprint {
   font-size: small;
 }
@@ -328,19 +285,33 @@ div.datetime .year::after {
 .email .tld::before {
   content: ".";
 }
-span.version {
+.version,
+.version a {
   color: black;
   font-weight: bold;
-  font-size: 85%;
+  font-size: 14px;
 }
 code {
   background-color: #f2e3b6;
   border: 1px solid #bfa452;
   border-radius: 10px;
 }
-/*
- * date font styles
- */
+/******************************************************************************\
+|                                                                              |
+|                                date-time.less                                |
+|                                                                              |
+|******************************************************************************|
+|                                                                              |
+|        This defines various CSS styles used in this application.             |
+|                                                                              |
+|        Author(s): Abe Megahed                                                |
+|                                                                              |
+|        This file is subject to the terms and conditions defined in           |
+|        'LICENSE.txt', which is part of this source code distribution.        |
+|                                                                              |
+|******************************************************************************|
+|        Copyright (C) 2012-2016 Software Assurance Marketplace (SWAMP)        |
+\******************************************************************************/
 div.datetime {
   /*
 	.date::after {
@@ -391,6 +362,22 @@ div.datetime .year::after {
 .negative.time {
   color: red;
 }
+/******************************************************************************\
+|                                                                              |
+|                                  layout.less                                 |
+|                                                                              |
+|******************************************************************************|
+|                                                                              |
+|        This defines various CSS styles used in this application.             |
+|                                                                              |
+|        Author(s): Abe Megahed                                                |
+|                                                                              |
+|        This file is subject to the terms and conditions defined in           |
+|        'LICENSE.txt', which is part of this source code distribution.        |
+|                                                                              |
+|******************************************************************************|
+|        Copyright (C) 2012-2016 Software Assurance Marketplace (SWAMP)        |
+\******************************************************************************/
 body {
   background-color: #f7f7f7;
   margin: 0;
@@ -409,15 +396,9 @@ body {
   position: relative;
   top: 50%;
 }
-/*
- * main layout styles
- */
 #main {
   margin-top: 50px;
 }
-/*
- * banner styles
- */
 .banner {
   max-width: 500px;
   text-align: center;
@@ -428,25 +409,16 @@ body {
 #icon {
   max-width: 50%;
 }
-/*
- * medium banner styles
- */
 @media (max-width: 992px) {
   .banner {
     max-width: 400px;
   }
 }
-/*
- * small banner styles
- */
 @media (max-width: 768px) {
   .banner {
     max-width: 300px;
   }
 }
-/*
- * mobile banner styles
- */
 @media (max-width: 480px) {
   #dashboard #icon {
     width: 75px;
@@ -461,13 +433,10 @@ body {
     margin-bottom: 10px;
   }
 }
-/*
- * main styles
- */
 .tagline {
   margin: 10px;
 }
-#main .container {
+#content .container {
   color: #58585b;
   background-color: white;
 }
@@ -490,17 +459,11 @@ body {
   margin-left: 0;
   margin-right: 10px;
 }
-/*
- * content styles
- */
 .content {
   padding-left: 20px;
   padding-right: 20px;
   padding-bottom: 20px;
 }
-/*
- * responsive styles
- */
 .visible-xxs {
   display: none;
 }
@@ -512,9 +475,6 @@ body {
     display: block !important;
   }
 }
-/*
- * medium content styles
- */
 @media (max-width: 768px) {
   .content {
     padding-left: 10px;
@@ -522,24 +482,15 @@ body {
     padding-bottom: 10px;
   }
 }
-/*
- * small content styles
- */
 @media (max-width: 480px) {
   .content {
     padding-left: 0;
     padding-right: 0;
   }
 }
-/*
- * one column styles
- */
 .one-column .bottom.content {
   padding-top: 50px;
 }
-/*
- * two column styles
- */
 .two-column .content {
   width: 100%;
 }
@@ -549,9 +500,6 @@ body {
 .main.column .content {
   margin-top: 0;
 }
-/*
- * left side column styles
- */
 .left.side.column {
   float: left;
   margin-right: 15px;
@@ -559,9 +507,6 @@ body {
 .right.main.column {
   margin-left: 0;
 }
-/*
- * right side column styles
- */
 .right.side.column {
   float: right;
   margin-left: 15px;
@@ -569,9 +514,6 @@ body {
 .left.main.column {
   margin-right: 0;
 }
-/*
- * header and footer styles
- */
 #footer .container {
   color: black;
   border-top: 5px solid #bfa452;
@@ -582,16 +524,6 @@ body {
   float: right;
   margin-left: 20px;
 }
-/*
-@media (max-width: @screen-xs-min) {
-	#footer {
-		display: none;
-	}
-}
-*/
-/*
- * other layout styles
- */
 hr {
   border: 0;
   width: 100%;
@@ -628,24 +560,16 @@ hr {
 .well.selected:hover h3 {
   color: white;
 }
-/*
- * panel styles
- */
 .panel h2 {
   margin-top: 10px;
   margin-bottom: 0;
   margin-left: 20px;
 }
-/*
- * scrollable styles
- */
 .vertically.scrollable {
   overflow-y: auto;
   overflow-x: hidden;
+  padding-right: 10px;
 }
-/*
- * image styles
- */
 .photo {
   padding: 2px;
   box-shadow: 10px 10px 20px #939597;
@@ -653,9 +577,6 @@ hr {
 a .photo {
   border: 1px solid #bfa452;
 }
-/*
- * figure / illustration styles
- */
 .figure.left {
   float: left;
   margin-right: 25px;
@@ -666,36 +587,371 @@ a .photo {
   margin-left: 25px;
   margin-bottom: 25px;
 }
-/*
- * filter styles
- */
 .filters .btn-group {
   margin-right: 75px;
 }
-/*
- * media query styles
- */
 @media (max-width: 480px) {
   .col-sm-6 {
     padding-left: 0;
     padding-right: 0;
   }
 }
-/*
- * link colors
- */
-/*
- * dropdown colors
- */
-/*
- * general navigation
- */
+/******************************************************************************\
+|                                                                              |
+|                                 buttons.less                                 |
+|                                                                              |
+|******************************************************************************|
+|                                                                              |
+|        This defines various CSS styles used in this application.             |
+|                                                                              |
+|        Author(s): Abe Megahed                                                |
+|                                                                              |
+|        This file is subject to the terms and conditions defined in           |
+|        'LICENSE.txt', which is part of this source code distribution.        |
+|                                                                              |
+|******************************************************************************|
+|        Copyright (C) 2012-2016 Software Assurance Marketplace (SWAMP)        |
+\******************************************************************************/
+.btn {
+  font-size: 16px;
+  color: #998342;
+  background-color: white;
+  background: -webkit-gradient(linear, left top, left bottom, from(white), to(#e7e7e7));
+  background: -webkit-linear-gradient(top, white, #e7e7e7);
+  background: -moz-linear-gradient(top, white, #e7e7e7);
+  background: -ms-linear-gradient(top, white, #e7e7e7);
+  background: -o-linear-gradient(top, white, #e7e7e7);
+  border: 1px solid #e7e7e7;
+  border-radius: 5px;
+  min-width: 25px;
+}
+.btn i {
+  top: 0;
+  margin-top: 4px;
+  margin-bottom: 4px;
+  margin-right: 5px;
+  color: #58585b;
+}
+.btn:hover {
+  color: #998342;
+  background-color: white;
+  background: -webkit-gradient(linear, left top, left bottom, from(white), to(#f7f7f7));
+  background: -webkit-linear-gradient(top, white, #f7f7f7);
+  background: -moz-linear-gradient(top, white, #f7f7f7);
+  background: -ms-linear-gradient(top, white, #f7f7f7);
+  background: -o-linear-gradient(top, white, #f7f7f7);
+}
+.btn:hover i {
+  color: #bfa452;
+}
+.btn.disabled,
+.btn[disabled] {
+  border: 1px solid #e7e7e7;
+  color: #bfa452;
+}
+@media (max-width: 479px) {
+  .buttons button,
+  .modal-footer button {
+    width: 100%;
+    margin-left: 0;
+    margin-right: 0;
+  }
+  .navbar-right .btn {
+    width: 100%;
+    margin-left: 0;
+    margin-right: 0;
+  }
+  .modal-footer .btn + .btn {
+    margin-left: 0;
+    margin-top: 10px;
+  }
+}
+.btn-primary,
+.btn-primary:focus,
+.btn-primary[disabled] {
+  background-color: #bfa452;
+  background-color: #e5c563;
+  background: -webkit-gradient(linear, left top, left bottom, from(#e5c563), to(#bfa452));
+  background: -webkit-linear-gradient(top, #e5c563, #bfa452);
+  background: -moz-linear-gradient(top, #e5c563, #bfa452);
+  background: -ms-linear-gradient(top, #e5c563, #bfa452);
+  background: -o-linear-gradient(top, #e5c563, #bfa452);
+  border: 1px solid #bfa452;
+  color: white !important;
+  text-shadow: none;
+}
+.btn-primary i,
+.btn-primary:focus i,
+.btn-primary[disabled] i {
+  color: white;
+}
+.btn-primary:disabled:hover {
+  border: 1px solid #bfa452;
+}
+.btn-primary:not([disabled]):hover {
+  background-color: #998342;
+  background: -webkit-gradient(linear, left top, left bottom, from(#998342), to(#bfa452));
+  background: -webkit-linear-gradient(top, #998342, #bfa452);
+  background: -moz-linear-gradient(top, #998342, #bfa452);
+  background: -ms-linear-gradient(top, #998342, #bfa452);
+  background: -o-linear-gradient(top, #998342, #bfa452);
+  border: 1px solid #bfa452;
+}
+.btn-primary:not([disabled]):hover i {
+  color: white;
+}
+.btn-sm {
+  padding: 1px 6px;
+  -webkit-border-radius: 6px;
+  -moz-border-radius: 6px;
+  border-radius: 6px;
+}
+.btn-lg {
+  padding: 10px 15px;
+  font-size: 18px;
+  border-width: 1px;
+  -webkit-border-radius: 8px;
+  -moz-border-radius: 8px;
+  border-radius: 8px;
+}
+.btn-lg i {
+  position: relative;
+  margin-left: -5px;
+  margin-right: 10px;
+}
+.navbar .btn,
+.navbar .btn:hover {
+  border: none;
+}
+button.close:hover {
+  background: transparent;
+}
+.icon.btn i,
+.add.btn i,
+.delete .btn i,
+.reorder .btn i {
+  margin-right: 0;
+}
+.buttons button,
+.buttons .btn {
+  margin-bottom: 5px;
+}
+.top.buttons {
+  margin-bottom: 15px;
+  text-align: right;
+}
+.middle.buttons {
+  margin-top: 15px;
+  margin-bottom: 15px;
+  text-align: right;
+}
+.bottom.buttons {
+  margin-top: 15px;
+}
+/******************************************************************************\
+|                                                                              |
+|                                   icons.less                                 |
+|                                                                              |
+|******************************************************************************|
+|                                                                              |
+|        This defines various CSS styles used in this application.             |
+|                                                                              |
+|        Author(s): Abe Megahed                                                |
+|                                                                              |
+|        This file is subject to the terms and conditions defined in           |
+|        'LICENSE.txt', which is part of this source code distribution.        |
+|                                                                              |
+|******************************************************************************|
+|        Copyright (C) 2012-2016 Software Assurance Marketplace (SWAMP)        |
+\******************************************************************************/
+.primary i {
+  color: white;
+}
+.nav li:hover i {
+  color: white;
+}
+.content h1 .icon,
+.content .dashboard .icon {
+  float: left;
+  margin-top: 5px;
+  margin-left: 20px;
+  margin-right: 20px;
+  margin-bottom: 5px;
+  width: 90px;
+  height: 90px;
+  border-radius: 10px;
+  background-color: white;
+  background: -webkit-gradient(linear, left top, left bottom, from(white), to(#e7e7e7));
+  background: -webkit-linear-gradient(top, white, #e7e7e7);
+  background: -moz-linear-gradient(top, white, #e7e7e7);
+  background: -ms-linear-gradient(top, white, #e7e7e7);
+  background: -o-linear-gradient(top, white, #e7e7e7);
+  border: 4px solid #bfa452;
+  text-align: center;
+}
+.content h1 .icon i,
+.content .dashboard .icon i {
+  margin-left: 1px;
+  margin-top: 10px;
+  width: 100%;
+  font-size: 60px;
+  color: #333333;
+}
+@media (max-width: 992px) {
+  .content h1 .icon,
+  .content .dashboard .icon {
+    margin-top: 5px;
+    margin-left: 10px;
+    margin-right: 15px;
+    margin-bottom: 10px;
+    width: 60px;
+    height: 60px;
+    border-radius: 10px;
+    background-color: white;
+    background: -webkit-gradient(linear, left top, left bottom, from(white), to(#e7e7e7));
+    background: -webkit-linear-gradient(top, white, #e7e7e7);
+    background: -moz-linear-gradient(top, white, #e7e7e7);
+    background: -ms-linear-gradient(top, white, #e7e7e7);
+    background: -o-linear-gradient(top, white, #e7e7e7);
+    border: 4px solid #bfa452;
+    text-align: center;
+  }
+  .content h1 .icon i,
+  .content .dashboard .icon i {
+    margin-left: 0;
+    margin-top: 5px;
+    width: 100%;
+    font-size: 40px;
+    color: #333333;
+  }
+}
+@media (max-width: 768px) {
+  .content h1 .icon,
+  .content .dashboard .icon {
+    margin-top: 5px;
+    margin-left: 10px;
+    margin-right: 15px;
+    margin-bottom: 10px;
+    width: 45px;
+    height: 45px;
+    border-radius: 10px;
+    background-color: white;
+    background: -webkit-gradient(linear, left top, left bottom, from(white), to(#e7e7e7));
+    background: -webkit-linear-gradient(top, white, #e7e7e7);
+    background: -moz-linear-gradient(top, white, #e7e7e7);
+    background: -ms-linear-gradient(top, white, #e7e7e7);
+    background: -o-linear-gradient(top, white, #e7e7e7);
+    border: 4px solid #bfa452;
+    text-align: center;
+  }
+  .content h1 .icon i,
+  .content .dashboard .icon i {
+    margin-left: 0;
+    margin-top: 5px;
+    width: 100%;
+    font-size: 25px;
+    color: #333333;
+  }
+}
+i.active:hover {
+  color: #bfa452;
+}
+i.active.selected:hover {
+  color: white;
+}
+.nav [class^="icon-"],
+button [class^="icon-"],
+h3 [class^="icon-"],
+.nav [class*=" icon-"],
+button [class*=" icon-"],
+h3 [class*=" icon-"] {
+  margin-top: -2px;
+}
+span.add-on [class^="icon-"],
+span.add-on [class*=" icon-"] {
+  margin: 0;
+}
+.icon2x {
+  -webkit-transform: scale(2);
+  -moz-transform: scale(2);
+  -o-transform: scale(2);
+  margin: 10px;
+  margin-top: 0;
+}
+.icon3x {
+  -webkit-transform: scale(3);
+  -moz-transform: scale(3);
+  -o-transform: scale(3);
+  margin: 15px;
+  margin-top: 0;
+}
+i.error,
+i.warning,
+.btn i.error,
+.btn i.warning {
+  color: #c2002f;
+}
+i.success {
+  color: #339933;
+}
+i.normal {
+  color: #bfa452;
+}
+/******************************************************************************\
+|                                                                              |
+|                                  scrollbars.less                             |
+|                                                                              |
+|******************************************************************************|
+|                                                                              |
+|        This defines various CSS styles used in this application.             |
+|                                                                              |
+|        Author(s): Abe Megahed                                                |
+|                                                                              |
+|        This file is subject to the terms and conditions defined in           |
+|        'LICENSE.txt', which is part of this source code distribution.        |
+|                                                                              |
+|******************************************************************************|
+|        Copyright (C) 2012-2016 Software Assurance Marketplace (SWAMP)        |
+\******************************************************************************/
+::-webkit-scrollbar {
+  width: 14px;
+}
+::-webkit-scrollbar-thumb {
+  border-radius: 10px;
+  background: #939597;
+  border: 3px solid #e7e7e7;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #58585b;
+}
+::-webkit-scrollbar-thumb:active {
+  background: #bfa452;
+}
+::-webkit-scrollbar-track {
+  background: #e7e7e7;
+}
+/******************************************************************************\
+|                                                                              |
+|                                    navs.less                                 |
+|                                                                              |
+|******************************************************************************|
+|                                                                              |
+|        This defines various CSS styles used in this application.             |
+|                                                                              |
+|        Author(s): Abe Megahed                                                |
+|                                                                              |
+|        This file is subject to the terms and conditions defined in           |
+|        'LICENSE.txt', which is part of this source code distribution.        |
+|                                                                              |
+|******************************************************************************|
+|        Copyright (C) 2012-2016 Software Assurance Marketplace (SWAMP)        |
+\******************************************************************************/
 .nav h2 {
   margin-top: 0;
 }
-/*
- * nav bars 
- */
+.active {
+  cursor: pointer;
+}
 .well.nav {
   padding: 5px;
   margin-bottom: 0;
@@ -714,6 +970,9 @@ a .photo {
   min-width: 35px;
   text-align: center;
 }
+.nav li i {
+  color: #bfa452;
+}
 .nav li.selected a i,
 .nav li.active a i,
 .nav li a:hover a i {
@@ -723,9 +982,6 @@ a .photo {
   display: table-cell;
   width: 1%;
 }
-/*
- * top navigation bar 
- */
 .navbar,
 .navbar-inverse {
   background-image: none;
@@ -798,23 +1054,14 @@ a .photo {
   background: -ms-linear-gradient(top, #e5c563, #bfa452);
   background: -o-linear-gradient(top, #e5c563, #bfa452);
 }
-/*
- * mobile dropdown nav bar
- */
 .navbar-fixed-top .navbar-collapse,
 .navbar-fixed-bottom .navbar-collapse {
   max-height: 360px;
 }
-/*
- * nav pills
- */
 .nav-pills > li > a {
   padding-right: 5px;
   padding-left: 5px;
 }
-/*
- * nav tabs
- */
 .nav-tabs > li {
   margin-right: 5px;
 }
@@ -822,9 +1069,6 @@ a .photo {
   padding-right: 5px;
   padding-left: 5px;
 }
-/*
- * links
- */
 a {
   color: #998342;
 }
@@ -832,9 +1076,6 @@ a:hover,
 a:focus {
   color: #bfa452;
 }
-/*
- * navbar navigation
- */
 .nav > li > a {
   color: #998342;
   text-shadow: none;
@@ -865,9 +1106,6 @@ a:focus {
 .nav > li > a:focus {
   border: 1px solid #bfa452;
 }
-/*
- * header navigation
- */
 #header .nav > li > a {
   color: #bfa452;
   text-shadow: none;
@@ -876,9 +1114,6 @@ a:focus {
   color: white;
   background-color: #998342;
 }
-/*
- * tiles
- */
 .tile {
   cursor: pointer;
 }
@@ -909,9 +1144,6 @@ a:focus {
 .well.tile.selected:hover {
   color: white;
 }
-/*
- * dropdowns
- */
 .dropdown-menu {
   background-color: white;
 }
@@ -927,9 +1159,6 @@ a:focus {
   background-color: #998342;
   background-image: none;
 }
-/*
- * dropdown carats
- */
 .nav .dropdown-toggle .caret {
   border-top-color: #998342;
   border-bottom-color: #998342;
@@ -938,15 +1167,9 @@ a:focus {
 .nav .dropdown-toggle:focus .caret {
   border-top-color: #bfa452;
 }
-/* 
- * cause menus to show on hover rather than click
- */
 ul.nav li.dropdown:hover > ul.dropdown-menu {
   display: block;
 }
-/*
- * breadcrumbs
- */
 .breadcrumb {
   background: transparent;
   padding: 0;
@@ -955,166 +1178,22 @@ ul.nav li.dropdown:hover > ul.dropdown-menu {
 .breadcrumb i {
   margin-right: 5px;
 }
-/*
- * icon styles
- */
-.primary i {
-  color: white;
-}
-.nav i {
-  color: #bfa452;
-}
-.nav li:hover i {
-  color: white;
-}
-/*
- * content header icon styles
- */
-.content h1 .icon,
-.content .dashboard .icon {
-  float: left;
-  margin-top: 5px;
-  margin-left: 20px;
-  margin-right: 20px;
-  margin-bottom: 5px;
-  width: 90px;
-  height: 90px;
-  border-radius: 10px;
-  background-color: white;
-  background: -webkit-gradient(linear, left top, left bottom, from(white), to(#e7e7e7));
-  background: -webkit-linear-gradient(top, white, #e7e7e7);
-  background: -moz-linear-gradient(top, white, #e7e7e7);
-  background: -ms-linear-gradient(top, white, #e7e7e7);
-  background: -o-linear-gradient(top, white, #e7e7e7);
-  border: 4px solid #bfa452;
-  text-align: center;
-}
-.content h1 .icon i,
-.content .dashboard .icon i {
-  margin-left: 1px;
-  margin-top: 10px;
-  width: 100%;
-  font-size: 60px;
-  color: #333333;
-}
-/*
- * medium content header icon styles
- */
-@media (max-width: 992px) {
-  .content h1 .icon,
-  .content .dashboard .icon {
-    margin-top: 5px;
-    margin-left: 10px;
-    margin-right: 15px;
-    margin-bottom: 10px;
-    width: 60px;
-    height: 60px;
-    border-radius: 10px;
-    background-color: white;
-    background: -webkit-gradient(linear, left top, left bottom, from(white), to(#e7e7e7));
-    background: -webkit-linear-gradient(top, white, #e7e7e7);
-    background: -moz-linear-gradient(top, white, #e7e7e7);
-    background: -ms-linear-gradient(top, white, #e7e7e7);
-    background: -o-linear-gradient(top, white, #e7e7e7);
-    border: 4px solid #bfa452;
-    text-align: center;
-  }
-  .content h1 .icon i,
-  .content .dashboard .icon i {
-    margin-left: 0;
-    margin-top: 5px;
-    width: 100%;
-    font-size: 40px;
-    color: #333333;
-  }
-}
-/*
- * small content header icon styles
- */
-@media (max-width: 768px) {
-  .content h1 .icon,
-  .content .dashboard .icon {
-    margin-top: 5px;
-    margin-left: 10px;
-    margin-right: 15px;
-    margin-bottom: 10px;
-    width: 45px;
-    height: 45px;
-    border-radius: 10px;
-    background-color: white;
-    background: -webkit-gradient(linear, left top, left bottom, from(white), to(#e7e7e7));
-    background: -webkit-linear-gradient(top, white, #e7e7e7);
-    background: -moz-linear-gradient(top, white, #e7e7e7);
-    background: -ms-linear-gradient(top, white, #e7e7e7);
-    background: -o-linear-gradient(top, white, #e7e7e7);
-    border: 4px solid #bfa452;
-    text-align: center;
-  }
-  .content h1 .icon i,
-  .content .dashboard .icon i {
-    margin-left: 0;
-    margin-top: 5px;
-    width: 100%;
-    font-size: 25px;
-    color: #333333;
-  }
-}
-/*
- * active icons
- */
-i.active:hover {
-  color: #bfa452;
-}
-i.active.selected:hover {
-  color: white;
-}
-/*
- * navigation icons
- */
-.nav [class^="icon-"],
-button [class^="icon-"],
-h3 [class^="icon-"],
-.nav [class*=" icon-"],
-button [class*=" icon-"],
-h3 [class*=" icon-"] {
-  margin-top: -2px;
-}
-/*
- * input append icons
- */
-span.add-on [class^="icon-"],
-span.add-on [class*=" icon-"] {
-  margin: 0;
-}
-/*
- * icon scaling
- */
-.icon2x {
-  -webkit-transform: scale(2);
-  -moz-transform: scale(2);
-  -o-transform: scale(2);
-  margin: 10px;
-  margin-top: 0;
-}
-.icon3x {
-  -webkit-transform: scale(3);
-  -moz-transform: scale(3);
-  -o-transform: scale(3);
-  margin: 15px;
-  margin-top: 0;
-}
-/*
- * colored icons
- */
-.error i {
-  color: #c2002f;
-}
-.success i {
-  color: #339933;
-}
-/*
- * dashboard styles
- */
+/******************************************************************************\
+|                                                                              |
+|                                dashboard.less                                |
+|                                                                              |
+|******************************************************************************|
+|                                                                              |
+|        This defines various CSS styles used in this application.             |
+|                                                                              |
+|        Author(s): Abe Megahed                                                |
+|                                                                              |
+|        This file is subject to the terms and conditions defined in           |
+|        'LICENSE.txt', which is part of this source code distribution.        |
+|                                                                              |
+|******************************************************************************|
+|        Copyright (C) 2012-2016 Software Assurance Marketplace (SWAMP)        |
+\******************************************************************************/
 .dashboard {
   margin-top: 20px;
 }
@@ -1151,25 +1230,16 @@ span.add-on [class*=" icon-"] {
 .dashboard #last-login {
   position: absolute;
 }
-/*
- * medium dashboard styles
- */
 @media (max-width: 992px) {
   .dashboard [class*="col-"] {
     min-height: 0;
   }
 }
-/*
- * small dashboard styles
- */
 @media (max-width: 768px) {
   .dashboard .icon {
     margin-top: 0;
   }
 }
-/*
- * extra small dashboard styles
- */
 @media (max-width: 480px) {
   .content .dashboard .icon {
     display: inline-block;
@@ -1185,17 +1255,27 @@ span.add-on [class*=" icon-"] {
     margin-bottom: 0;
   }
 }
-/*
- * mobile dashboard styles
- */
 @media (max-width: 480px) {
   .dashboard [class*="col-"] {
     padding: 10px;
   }
 }
-/*
- * navbar styles
- */
+/******************************************************************************\
+|                                                                              |
+|                                   navbar.less                                |
+|                                                                              |
+|******************************************************************************|
+|                                                                              |
+|        This defines various CSS styles used in this application.             |
+|                                                                              |
+|        Author(s): Abe Megahed                                                |
+|                                                                              |
+|        This file is subject to the terms and conditions defined in           |
+|        'LICENSE.txt', which is part of this source code distribution.        |
+|                                                                              |
+|******************************************************************************|
+|        Copyright (C) 2012-2016 Software Assurance Marketplace (SWAMP)        |
+\******************************************************************************/
 #main .navbar.container {
   background-color: transparent;
 }
@@ -1266,9 +1346,22 @@ span.add-on [class*=" icon-"] {
   border-bottom-left-radius: 0;
   border-bottom-right-radius: 0;
 }
-/*
- * sidebar styles
- */
+/******************************************************************************\
+|                                                                              |
+|                                  sidebar.less                                |
+|                                                                              |
+|******************************************************************************|
+|                                                                              |
+|        This defines various CSS styles used in this application.             |
+|                                                                              |
+|        Author(s): Abe Megahed                                                |
+|                                                                              |
+|        This file is subject to the terms and conditions defined in           |
+|        'LICENSE.txt', which is part of this source code distribution.        |
+|                                                                              |
+|******************************************************************************|
+|        Copyright (C) 2012-2016 Software Assurance Marketplace (SWAMP)        |
+\******************************************************************************/
 .sidebar {
   background-color: #f7f7f7;
   border: 1px solid #e7e7e7;
@@ -1338,22 +1431,26 @@ span.add-on [class*=" icon-"] {
   padding: 0;
   margin-bottom: 0;
 }
-/*
- * tab styles
- */
+/******************************************************************************\
+|                                                                              |
+|                                    tabs.less                                 |
+|                                                                              |
+|******************************************************************************|
+|                                                                              |
+|        This defines various CSS styles used in this application.             |
+|                                                                              |
+|        Author(s): Abe Megahed                                                |
+|                                                                              |
+|        This file is subject to the terms and conditions defined in           |
+|        'LICENSE.txt', which is part of this source code distribution.        |
+|                                                                              |
+|******************************************************************************|
+|        Copyright (C) 2012-2016 Software Assurance Marketplace (SWAMP)        |
+\******************************************************************************/
 .nav-tabs {
   margin-top: 10px;
   margin-bottom: 15px;
   border-bottom: 2px solid #bfa452;
-  /*
-	 * shape
-	 */
-  /*
-	 * colors
-	 */
-  /*
-	 * horizontal spacing
-	 */
 }
 .nav-tabs > li,
 .nav-tabs li.active {
@@ -1432,9 +1529,22 @@ span.add-on [class*=" icon-"] {
 .nav-tabs li:last-child > a {
   margin-right: 0;
 }
-/*
- * tag styles
- */
+/******************************************************************************\
+|                                                                              |
+|                                    tags.less                                 |
+|                                                                              |
+|******************************************************************************|
+|                                                                              |
+|        This defines various CSS styles used in this application.             |
+|                                                                              |
+|        Author(s): Abe Megahed                                                |
+|                                                                              |
+|        This file is subject to the terms and conditions defined in           |
+|        'LICENSE.txt', which is part of this source code distribution.        |
+|                                                                              |
+|******************************************************************************|
+|        Copyright (C) 2012-2016 Software Assurance Marketplace (SWAMP)        |
+\******************************************************************************/
 .tag {
   border-radius: 5px;
   padding: 0 5px;
@@ -1487,9 +1597,22 @@ span.add-on [class*=" icon-"] {
 .tags {
   margin-left: 10px;
 }
-/*
- * badges
- */
+/******************************************************************************\
+|                                                                              |
+|                                  badges.less                                 |
+|                                                                              |
+|******************************************************************************|
+|                                                                              |
+|        This defines various CSS styles used in this application.             |
+|                                                                              |
+|        Author(s): Abe Megahed                                                |
+|                                                                              |
+|        This file is subject to the terms and conditions defined in           |
+|        'LICENSE.txt', which is part of this source code distribution.        |
+|                                                                              |
+|******************************************************************************|
+|        Copyright (C) 2012-2016 Software Assurance Marketplace (SWAMP)        |
+\******************************************************************************/
 .badge {
   font-family: "Gill Sans MT", "Gill Sans", Calibri, sans-serif;
   font-weight: bold;
@@ -1507,15 +1630,23 @@ span.add-on [class*=" icon-"] {
 .badge-group {
   white-space: nowrap;
 }
+.badge-group .icon {
+  margin: 0;
+  padding: 0;
+  height: 15px;
+}
+.badge-group a i {
+  color: #58585b;
+}
+.badge-group a:hover i {
+  color: #bfa452;
+}
 #header .badge {
   position: relative;
   vertical-align: top;
   margin-left: -2px;
   margin-top: -2px;
 }
-/*
- * colored badges
- */
 .badge-important {
   background-color: #939597;
   background: -webkit-gradient(linear, left top, left bottom, from(#939597), to(#333333));
@@ -1524,9 +1655,22 @@ span.add-on [class*=" icon-"] {
   background: -ms-linear-gradient(top, #939597, #333333);
   background: -o-linear-gradient(top, #939597, #333333);
 }
-/*
- * navigation pill elements 
- */
+/******************************************************************************\
+|                                                                              |
+|                                   pills.less                                 |
+|                                                                              |
+|******************************************************************************|
+|                                                                              |
+|        This defines various CSS styles used in this application.             |
+|                                                                              |
+|        Author(s): Abe Megahed                                                |
+|                                                                              |
+|        This file is subject to the terms and conditions defined in           |
+|        'LICENSE.txt', which is part of this source code distribution.        |
+|                                                                              |
+|******************************************************************************|
+|        Copyright (C) 2012-2016 Software Assurance Marketplace (SWAMP)        |
+\******************************************************************************/
 .nav-pills li {
   cursor: pointer;
   margin-right: 5px;
@@ -1541,16 +1685,10 @@ span.add-on [class*=" icon-"] {
 .well.nav-pills {
   margin-bottom: 15px;
 }
-/*
- * header pills 
- */
 .navbar .nav-pills {
   margin-left: 0;
   margin-right: 0;
 }
-/*
- * small header pills 
- */
 @media (max-width: 480px) {
   .navbar-collapse .nav-pills {
     width: 100%;
@@ -1579,20 +1717,8 @@ span.add-on [class*=" icon-"] {
   background: -ms-linear-gradient(top, #e5c563, #bfa452);
   background: -o-linear-gradient(top, #e5c563, #bfa452);
 }
-/*
- * progressive pill styles
- */
 .progressive.nav-pills {
   margin-bottom: 10px;
-  /*
-	 * shape
-	 */
-  /*
-	 * hover colors
-	 */
-  /* 
-	 * cursor
-	 */
   cursor: default;
 }
 .progressive.nav-pills > li {
@@ -1633,9 +1759,22 @@ span.add-on [class*=" icon-"] {
 .progressive.nav-pills li.active {
   cursor: default;
 }
-/*
- * alert colors
- */
+/******************************************************************************\
+|                                                                              |
+|                                  alerts.less                                 |
+|                                                                              |
+|******************************************************************************|
+|                                                                              |
+|        This defines various CSS styles used in this application.             |
+|                                                                              |
+|        Author(s): Abe Megahed                                                |
+|                                                                              |
+|        This file is subject to the terms and conditions defined in           |
+|        'LICENSE.txt', which is part of this source code distribution.        |
+|                                                                              |
+|******************************************************************************|
+|        Copyright (C) 2012-2016 Software Assurance Marketplace (SWAMP)        |
+\******************************************************************************/
 .alert-error label {
   color: #c2002f;
 }
@@ -1653,182 +1792,22 @@ span.add-on [class*=" icon-"] {
 .alert label {
   display: inline;
 }
-/*
- * button colors
- */
-/*
- * buttons
- */
-.btn {
-  font-size: 16px;
-  color: #998342;
-  background-color: white;
-  background: -webkit-gradient(linear, left top, left bottom, from(white), to(#e7e7e7));
-  background: -webkit-linear-gradient(top, white, #e7e7e7);
-  background: -moz-linear-gradient(top, white, #e7e7e7);
-  background: -ms-linear-gradient(top, white, #e7e7e7);
-  background: -o-linear-gradient(top, white, #e7e7e7);
-  border: 1px solid #e7e7e7;
-  border-radius: 5px;
-  min-width: 25px;
-}
-.btn i {
-  top: 0;
-  margin-top: 4px;
-  margin-bottom: 4px;
-  margin-right: 5px;
-  color: #58585b;
-}
-.btn:hover {
-  color: #998342;
-  background-color: white;
-  background: -webkit-gradient(linear, left top, left bottom, from(white), to(#f7f7f7));
-  background: -webkit-linear-gradient(top, white, #f7f7f7);
-  background: -moz-linear-gradient(top, white, #f7f7f7);
-  background: -ms-linear-gradient(top, white, #f7f7f7);
-  background: -o-linear-gradient(top, white, #f7f7f7);
-}
-.btn:hover i {
-  color: #bfa452;
-}
-.btn.disabled,
-.btn[disabled] {
-  border: 1px solid #e7e7e7;
-  color: #bfa452;
-}
-/*
- * mobile buttons
- */
-@media (max-width: 479px) {
-  .buttons button,
-  .modal-footer button {
-    width: 100%;
-    margin-left: 0;
-    margin-right: 0;
-  }
-  .navbar-right .btn {
-    width: 100%;
-    margin-left: 0;
-    margin-right: 0;
-  }
-  .modal-footer .btn + .btn {
-    margin-left: 0;
-    margin-top: 10px;
-  }
-}
-/*
- * primary buttons
- */
-.btn-primary,
-.btn-primary:focus,
-.btn-primary[disabled] {
-  background-color: #bfa452;
-  background-color: #e5c563;
-  background: -webkit-gradient(linear, left top, left bottom, from(#e5c563), to(#bfa452));
-  background: -webkit-linear-gradient(top, #e5c563, #bfa452);
-  background: -moz-linear-gradient(top, #e5c563, #bfa452);
-  background: -ms-linear-gradient(top, #e5c563, #bfa452);
-  background: -o-linear-gradient(top, #e5c563, #bfa452);
-  border: 1px solid #bfa452;
-  color: white !important;
-  text-shadow: none;
-}
-.btn-primary i,
-.btn-primary:focus i,
-.btn-primary[disabled] i {
-  color: white;
-}
-.btn-primary:disabled:hover {
-  border: 1px solid #bfa452;
-}
-.btn-primary:not([disabled]):hover {
-  background-color: #998342;
-  background: -webkit-gradient(linear, left top, left bottom, from(#998342), to(#bfa452));
-  background: -webkit-linear-gradient(top, #998342, #bfa452);
-  background: -moz-linear-gradient(top, #998342, #bfa452);
-  background: -ms-linear-gradient(top, #998342, #bfa452);
-  background: -o-linear-gradient(top, #998342, #bfa452);
-  border: 1px solid #bfa452;
-}
-.btn-primary:not([disabled]):hover i {
-  color: white;
-}
-/*
- * small and large buttons
- */
-.btn-sm {
-  padding: 1px 6px;
-  -webkit-border-radius: 6px;
-  -moz-border-radius: 6px;
-  border-radius: 6px;
-}
-.btn-lg {
-  padding: 10px 15px;
-  font-size: 18px;
-  border-width: 1px;
-  -webkit-border-radius: 8px;
-  -moz-border-radius: 8px;
-  border-radius: 8px;
-}
-.btn-lg i {
-  position: relative;
-  margin-left: -5px;
-  margin-right: 10px;
-}
-/*
- * nav bar buttons
- */
-.navbar .btn,
-.navbar .btn:hover {
-  border: none;
-}
-/*
- * close buttons
- */
-button.close:hover {
-  background: transparent;
-}
-/*
- * add / delete buttons
- */
-button.add.btn i,
-button.delete.btn i,
-button.move-up.btn i,
-button.move-down.btn i {
-  margin-right: 0;
-}
-/*
- * button sets
- */
-.buttons button,
-.buttons .btn {
-  margin-bottom: 5px;
-}
-/*
-.panel .buttons {
-	.buttons, .btn {
-		margin-top: 0;
-	}	
-}
-*/
-.top.buttons {
-  margin-bottom: 15px;
-  text-align: right;
-}
-.middle.buttons {
-  margin-top: 15px;
-  margin-bottom: 15px;
-  text-align: right;
-}
-.bottom.buttons {
-  margin-top: 15px;
-}
-/*
- * input elements
- */
-/*
- * input fields
- */
+/******************************************************************************\
+|                                                                              |
+|                                  forms.less                                  |
+|                                                                              |
+|******************************************************************************|
+|                                                                              |
+|        This defines various CSS styles used in this application.             |
+|                                                                              |
+|        Author(s): Abe Megahed                                                |
+|                                                                              |
+|        This file is subject to the terms and conditions defined in           |
+|        'LICENSE.txt', which is part of this source code distribution.        |
+|                                                                              |
+|******************************************************************************|
+|        Copyright (C) 2012-2016 Software Assurance Marketplace (SWAMP)        |
+\******************************************************************************/
 textarea,
 input[type="text"],
 input[type="password"],
@@ -1847,18 +1826,8 @@ input[type="color"],
 .uneditable-input {
   background-color: #f7f7f7;
 }
-/*
- * input group add ons
- */
 .input-group-addon {
   padding: 5px 10px;
-}
-/*
- * radio buttons and checkboxes
- */
-input[type="radio"],
-input[type="checkbox"] {
-  margin: 5px;
 }
 .well textarea,
 .accordion-inner textarea,
@@ -1930,9 +1899,6 @@ label {
 label input[type="checkbox"] {
   margin-right: 5px;
 }
-/*
- * form fields
- */
 .required:after {
   content: "*";
   color: #c2002f;
@@ -1944,9 +1910,6 @@ input.required:after {
 .form-control {
   height: auto;
 }
-/*
- * form groups
- */
 .form-group {
   margin-bottom: 10px;
   /*
@@ -1991,9 +1954,6 @@ input.required:after {
     padding-right: 0;
   }
 }
-/*
- * labels
- */
 label.form-group {
   margin-bottom: 0px;
 }
@@ -2011,15 +1971,9 @@ label.form-group {
 label span {
   font-weight: normal;
 }
-/*
- * readonly form elements
- */
 span.form-control {
   border: 1px solid #e7e7e7;
 }
-/*
- * user account input elements
- */
 form .postal-code.input-group {
   width: 100px;
 }
@@ -2076,9 +2030,6 @@ form.invitations-form label.error {
   padding-bottom: 0;
   margin-bottom: 0;
 }
-/*
- * dropdown selector
- */
 .dropdown-menu {
   padding: 0;
 }
@@ -2088,16 +2039,10 @@ form.invitations-form label.error {
 .dropdown-menu ul {
   padding: 0;
 }
-/*
- * country selector
- */
 #country-selector button img {
   margin-top: -3px;
   margin-left: 5px;
 }
-/*
- * time and date input selector
- */
 input[type="date"] {
   line-height: 16px;
 }
@@ -2117,9 +2062,6 @@ input[type="number"] {
 input[type="time"] {
   width: 100px;
 }
-/*
- * dropdown menus
- */
 .dropdown-menu > .active > a,
 .dropdown-menu > .active > a:hover,
 .dropdown-menu > .active > a:focus {
@@ -2128,9 +2070,22 @@ input[type="time"] {
 .select2-drop {
   min-width: 125px;
 }
-/*
- * validation styles
- */
+/******************************************************************************\
+|                                                                              |
+|                                validation.less                               |
+|                                                                              |
+|******************************************************************************|
+|                                                                              |
+|        This defines various CSS styles used in this application.             |
+|                                                                              |
+|        Author(s): Abe Megahed                                                |
+|                                                                              |
+|        This file is subject to the terms and conditions defined in           |
+|        'LICENSE.txt', which is part of this source code distribution.        |
+|                                                                              |
+|******************************************************************************|
+|        Copyright (C) 2012-2016 Software Assurance Marketplace (SWAMP)        |
+\******************************************************************************/
 label.error {
   font-weight: bold;
   color: #c2002f;
@@ -2156,9 +2111,6 @@ label.error.valid {
 .form-group.error textarea {
   border: 1px solid #c2002f;
 }
-/*
- * password validation styles
- */
 .password-meter-bg {
   background: transparent;
 }
@@ -2169,9 +2121,22 @@ label.error.valid {
 .password-meter-message {
   text-align: left;
 }
-/*
- * fieldset styles (curly braces)
- */
+/******************************************************************************\
+|                                                                              |
+|                                fieldsets.less                                |
+|                                                                              |
+|******************************************************************************|
+|                                                                              |
+|        This defines various CSS styles used in this application.             |
+|                                                                              |
+|        Author(s): Abe Megahed                                                |
+|                                                                              |
+|        This file is subject to the terms and conditions defined in           |
+|        'LICENSE.txt', which is part of this source code distribution.        |
+|                                                                              |
+|******************************************************************************|
+|        Copyright (C) 2012-2016 Software Assurance Marketplace (SWAMP)        |
+\******************************************************************************/
 legend {
   width: auto;
   color: #939597;
@@ -2192,17 +2157,24 @@ fieldset {
 legend + .form-group {
   margin-top: 0;
 }
-/*
- * table styles
- */
+/******************************************************************************\
+|                                                                              |
+|                                   tables.less                                |
+|                                                                              |
+|******************************************************************************|
+|                                                                              |
+|        This defines various CSS styles used in this application.             |
+|                                                                              |
+|        Author(s): Abe Megahed                                                |
+|                                                                              |
+|        This file is subject to the terms and conditions defined in           |
+|        'LICENSE.txt', which is part of this source code distribution.        |
+|                                                                              |
+|******************************************************************************|
+|        Copyright (C) 2012-2016 Software Assurance Marketplace (SWAMP)        |
+\******************************************************************************/
 table {
   width: 100%;
-  /*
-	 * table headers
-	 */
-  /*
-	 * table rows
-	 */
   /*
 	tr.first {
 		td:not(.prepend):not(.append) {
@@ -2210,24 +2182,6 @@ table {
 		}
 	}
 	*/
-  /*
-	 * table cells
-	 */
-  /*
-	 * select group checkboxes
-	 */
-  /*
-	 * zebra
-	 */
-  /*
-	 * rounded corners on first and last rows
-	 */
-  /*
-	 * prepended and appended columns
-	 */
-  /*
-	 * special columns
-	 */
 }
 table thead tr,
 table thead tr.tablesorter {
@@ -2254,10 +2208,18 @@ table th {
   white-space: nowrap;
   text-align: center;
 }
-table td,
-table th {
+table th,
+table td {
   border: none;
   padding: 5px 10px;
+}
+table th.prepend,
+table td.prepend {
+  padding-left: 0;
+}
+table th.append,
+table td.append {
+  padding-right: 0;
 }
 table td {
   vertical-align: top;
@@ -2265,8 +2227,11 @@ table td {
 table td.unpadded {
   padding: 0;
 }
-table tr:not(.first) td.duplicate:not(.prepend) {
+table tr:not(.first) td.duplicate:not(.prepend):not(.append) {
   opacity: 0 !important;
+}
+table tr:not(.first) td.duplicate:not(.prepend):not(.append) div {
+  display: none;
 }
 table tr.first.last td.select-group input {
   display: none;
@@ -2320,14 +2285,6 @@ table td.append {
   border: none;
   background: white;
 }
-table th.prepend,
-table td.prepend {
-  padding-left: 0px;
-}
-table th.append,
-table td.append {
-  padding-right: 0;
-}
 table td.results {
   text-align: center;
 }
@@ -2353,21 +2310,32 @@ table tr:not(.first) td.select-group input {
 #show-numbering {
   margin-top: 20px;
 }
-/*
- * responsive table styles
- */
 .table-responsive {
   border: none;
-  overflow: auto;
+  overflow-x: auto;
+  overflow-y: hidden;
 }
-/*
- * small table styles
- */
 @media (max-width: 768px) {
   table td {
     padding: 5px;
   }
 }
+/******************************************************************************\
+|                                                                              |
+|                                   lists.less                                 |
+|                                                                              |
+|******************************************************************************|
+|                                                                              |
+|        This defines various CSS styles used in this application.             |
+|                                                                              |
+|        Author(s): Abe Megahed                                                |
+|                                                                              |
+|        This file is subject to the terms and conditions defined in           |
+|        'LICENSE.txt', which is part of this source code distribution.        |
+|                                                                              |
+|******************************************************************************|
+|        Copyright (C) 2012-2016 Software Assurance Marketplace (SWAMP)        |
+\******************************************************************************/
 ul.initial li {
   display: block;
   margin-top: 0px;
@@ -2379,24 +2347,28 @@ ul.initial li h3 {
   margin-top: 0px;
   margin-bottom: -10px;
 }
-/*
- * modal dialog box styles
- */
+/******************************************************************************\
+|                                                                              |
+|                                  modals.less                                 |
+|                                                                              |
+|******************************************************************************|
+|                                                                              |
+|        This defines various CSS styles used in this application.             |
+|                                                                              |
+|        Author(s): Abe Megahed                                                |
+|                                                                              |
+|        This file is subject to the terms and conditions defined in           |
+|        'LICENSE.txt', which is part of this source code distribution.        |
+|                                                                              |
+|******************************************************************************|
+|        Copyright (C) 2012-2016 Software Assurance Marketplace (SWAMP)        |
+\******************************************************************************/
 .modal-backdrop,
 .modal-backdrop.fade.in {
   opacity: 0.5;
 }
 .modal {
   padding-top: 10px;
-  /*
-	.controls {
-		margin-left: 150px;
-	}
-
-	.control-label {
-		width: 150px;
-	}
-	*/
 }
 .modal-header {
   background: #e7e7e7;
@@ -2477,9 +2449,22 @@ ul.initial li h3 {
 .modal-footer {
   border-top: 5px solid #bfa452;
 }
-/*
- * directory tree view styles
- */
+/******************************************************************************\
+|                                                                              |
+|                                 tree-views.less                              |
+|                                                                              |
+|******************************************************************************|
+|                                                                              |
+|        This defines various CSS styles used in this application.             |
+|                                                                              |
+|        Author(s): Abe Megahed                                                |
+|                                                                              |
+|        This file is subject to the terms and conditions defined in           |
+|        'LICENSE.txt', which is part of this source code distribution.        |
+|                                                                              |
+|******************************************************************************|
+|        Copyright (C) 2012-2016 Software Assurance Marketplace (SWAMP)        |
+\******************************************************************************/
 .directory .expander {
   width: 10px;
   margin-left: 5px;
@@ -2541,9 +2526,22 @@ ul.initial li h3 {
 .build.file {
   color: #998342;
 }
-/*
- * tooltips
- */
+/******************************************************************************\
+|                                                                              |
+|                                  tooltips.less                               |
+|                                                                              |
+|******************************************************************************|
+|                                                                              |
+|        This defines various CSS styles used in this application.             |
+|                                                                              |
+|        Author(s): Abe Megahed                                                |
+|                                                                              |
+|        This file is subject to the terms and conditions defined in           |
+|        'LICENSE.txt', which is part of this source code distribution.        |
+|                                                                              |
+|******************************************************************************|
+|        Copyright (C) 2012-2016 Software Assurance Marketplace (SWAMP)        |
+\******************************************************************************/
 span[data-toggle='tooltip'] {
   display: inline;
   border-bottom: 1px dotted;
@@ -2572,20 +2570,27 @@ span[data-toggle='tooltip'] {
 .tooltip.bottom .tooltip-arrow {
   border-bottom-color: #bfa452;
 }
-/*
- * popover border attributes
- */
-/*
- * popover title
- */
+/******************************************************************************\
+|                                                                              |
+|                                  popovers.less                               |
+|                                                                              |
+|******************************************************************************|
+|                                                                              |
+|        This defines various CSS styles used in this application.             |
+|                                                                              |
+|        Author(s): Abe Megahed                                                |
+|                                                                              |
+|        This file is subject to the terms and conditions defined in           |
+|        'LICENSE.txt', which is part of this source code distribution.        |
+|                                                                              |
+|******************************************************************************|
+|        Copyright (C) 2012-2016 Software Assurance Marketplace (SWAMP)        |
+\******************************************************************************/
 .popover-title {
   color: white;
   font-weight: bold;
   background-color: #bfa452;
 }
-/*
- * popover body
- */
 .popover {
   border-color: #bfa452;
   border-width: 1px;
@@ -2594,9 +2599,6 @@ span[data-toggle='tooltip'] {
 .popover .popover-content {
   color: #58585b;
 }
-/*
- * popover arrow styles
- */
 .popover.right .arrow {
   border-right-color: #bfa452;
 }
@@ -2621,9 +2623,22 @@ span[data-toggle='tooltip'] {
 .popover.bottom .arrow:after {
   top: 2px;
 }
-/*
- * accordions
- */
+/******************************************************************************\
+|                                                                              |
+|                               accordions.less                                |
+|                                                                              |
+|******************************************************************************|
+|                                                                              |
+|        This defines various CSS styles used in this application.             |
+|                                                                              |
+|        Author(s): Abe Megahed                                                |
+|                                                                              |
+|        This file is subject to the terms and conditions defined in           |
+|        'LICENSE.txt', which is part of this source code distribution.        |
+|                                                                              |
+|******************************************************************************|
+|        Copyright (C) 2012-2016 Software Assurance Marketplace (SWAMP)        |
+\******************************************************************************/
 .panel-heading {
   background: white;
 }
@@ -2706,20 +2721,22 @@ span[data-toggle='tooltip'] {
 form .accordion {
   margin-right: 20px;
 }
-/*
- * front page styles
- */
-.welcome {
-  /*
-	 * buttons
-	 */
-  /*
-	 * horizontal rows
-	 */
-  /*
-	 * wells
-	 */
-}
+/******************************************************************************\
+|                                                                              |
+|                                 welcome.less                                 |
+|                                                                              |
+|******************************************************************************|
+|                                                                              |
+|        This defines various CSS styles used in this application.             |
+|                                                                              |
+|        Author(s): Abe Megahed                                                |
+|                                                                              |
+|        This file is subject to the terms and conditions defined in           |
+|        'LICENSE.txt', which is part of this source code distribution.        |
+|                                                                              |
+|******************************************************************************|
+|        Copyright (C) 2012-2016 Software Assurance Marketplace (SWAMP)        |
+\******************************************************************************/
 .welcome .main {
   padding: 0px;
   background: transparent;
@@ -2803,24 +2820,44 @@ form .accordion {
   margin-left: 15px;
   margin-right: 0;
 }
-/*
- * event styles
- */
+/******************************************************************************\
+|                                                                              |
+|                                  events.less                                 |
+|                                                                              |
+|******************************************************************************|
+|                                                                              |
+|        This defines various CSS styles used in this application.             |
+|                                                                              |
+|        Author(s): Abe Megahed                                                |
+|                                                                              |
+|        This file is subject to the terms and conditions defined in           |
+|        'LICENSE.txt', which is part of this source code distribution.        |
+|                                                                              |
+|******************************************************************************|
+|        Copyright (C) 2012-2016 Software Assurance Marketplace (SWAMP)        |
+\******************************************************************************/
 #events-list td.info {
   padding: 20px;
 }
 #events-list h2 {
   margin-top: 0;
 }
-/*
- * findbugs
- */
-.findbugs td.category {
-  min-width: 125px;
-}
-.findbugs td.priority {
-  width: 1px;
-}
+/******************************************************************************\
+|                                                                              |
+|                                progressbar.less                              |
+|                                                                              |
+|******************************************************************************|
+|                                                                              |
+|        This defines various CSS styles used in this application.             |
+|                                                                              |
+|        Author(s): Kevin Alford                                               |
+|                                                                              |
+|        This file is subject to the terms and conditions defined in           |
+|        'LICENSE.txt', which is part of this source code distribution.        |
+|                                                                              |
+|******************************************************************************|
+|        Copyright (C) 2012-2016 Software Assurance Marketplace (SWAMP)        |
+\******************************************************************************/
 .progress .bar {
   text-align: left;
   min-width: 9em;
@@ -2831,6 +2868,22 @@ form .accordion {
 .progress.invisible {
   display: none;
 }
+/******************************************************************************\
+|                                                                              |
+|                             viewer-loadscreen.less                           |
+|                                                                              |
+|******************************************************************************|
+|                                                                              |
+|        This defines various CSS styles used in this application.             |
+|                                                                              |
+|        Author(s): Kevin Alford                                               |
+|                                                                              |
+|        This file is subject to the terms and conditions defined in           |
+|        'LICENSE.txt', which is part of this source code distribution.        |
+|                                                                              |
+|******************************************************************************|
+|        Copyright (C) 2012-2016 Software Assurance Marketplace (SWAMP)        |
+\******************************************************************************/
 /* Modified from http://codepen.io/filipekiss/pen/LrCFe for use as a SPAN */
 .loading-flash span {
   border-radius: 50%;
@@ -2874,6 +2927,22 @@ form .accordion {
     opacity: 0;
   }
 }
+/******************************************************************************\
+|                                                                              |
+|                                  flags.less                                  |
+|                                                                              |
+|******************************************************************************|
+|                                                                              |
+|        This defines various CSS styles used in this application.             |
+|                                                                              |
+|        Author(s): Abe Megahed                                                |
+|                                                                              |
+|        This file is subject to the terms and conditions defined in           |
+|        'LICENSE.txt', which is part of this source code distribution.        |
+|                                                                              |
+|******************************************************************************|
+|        Copyright (C) 2012-2016 Software Assurance Marketplace (SWAMP)        |
+\******************************************************************************/
 .flag {
   width: 16px;
   height: 11px;
@@ -3638,33 +3707,22 @@ form .accordion {
 .flag.flag-cx {
   background-position: -208px -165px;
 }
-/*
- * mobile styles
- */
-/*
-.mobile {
-	background-color: white;
-
-	#header {
-		display: none;
-	}
-
-	#main {
-		margin-top: 0;
-	}
-
-	#footer {
-		display: none;
-	}
-
-	.top.content {
-		padding-bottom: 70px;
-	}
-}
-*/
-/*
- * gemfile styles
- */
+/******************************************************************************\
+|                                                                              |
+|                                 gemfiles.less                                |
+|                                                                              |
+|******************************************************************************|
+|                                                                              |
+|        This defines various CSS styles used in this application.             |
+|                                                                              |
+|        Author(s): Abe Megahed                                                |
+|                                                                              |
+|        This file is subject to the terms and conditions defined in           |
+|        'LICENSE.txt', which is part of this source code distribution.        |
+|                                                                              |
+|******************************************************************************|
+|        Copyright (C) 2012-2016 Software Assurance Marketplace (SWAMP)        |
+\******************************************************************************/
 .gem-info .comment {
   color: #939597;
   font-style: italic;
@@ -3795,9 +3853,22 @@ form .accordion {
   content: "end";
   font-weight: bold;
 }
-/*
- * api styles
- */
+/******************************************************************************\
+|                                                                              |
+|                                    api.less                                  |
+|                                                                              |
+|******************************************************************************|
+|                                                                              |
+|        This defines various CSS styles used in this application.             |
+|                                                                              |
+|        Author(s): Abe Megahed                                                |
+|                                                                              |
+|        This file is subject to the terms and conditions defined in           |
+|        'LICENSE.txt', which is part of this source code distribution.        |
+|                                                                              |
+|******************************************************************************|
+|        Copyright (C) 2012-2016 Software Assurance Marketplace (SWAMP)        |
+\******************************************************************************/
 .method {
   font-family: 'TradeGothicBold', sans-serif;
   text-transform: uppercase;
@@ -3817,9 +3888,6 @@ form .accordion {
 .route::before {
   content: "/";
 }
-/*
- * api table styles
- */
 th.api-method,
 th.api-server {
   width: 10%;
@@ -3868,9 +3936,22 @@ td.order {
     opacity: 0.0;
   }
 }
-/*
- * gemfile styles
- */
+/******************************************************************************\
+|                                                                              |
+|                              key-value-pairs.less                            |
+|                                                                              |
+|******************************************************************************|
+|                                                                              |
+|        This defines various CSS styles used in this application.             |
+|                                                                              |
+|        Author(s): Abe Megahed                                                |
+|                                                                              |
+|        This file is subject to the terms and conditions defined in           |
+|        'LICENSE.txt', which is part of this source code distribution.        |
+|                                                                              |
+|******************************************************************************|
+|        Copyright (C) 2012-2016 Software Assurance Marketplace (SWAMP)        |
+\******************************************************************************/
 .key-value-pair {
   display: table;
   background: #f7f7f7;
@@ -3888,13 +3969,4 @@ td.order {
 }
 .key-value-pair .value {
   display: inline;
-}
-.x-ray-backbone-view {
-  background: rgba(0, 0, 0, 0.05);
-  border: 1px solid rgba(255, 0, 0, 0.3);
-  margin: 4px;
-  overflow: hidden;
-}
-.x-ray-view-template-name {
-  color: rgba(0, 0, 255, 0.5);
 }

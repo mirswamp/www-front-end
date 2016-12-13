@@ -23,15 +23,20 @@
 
 			<th class="datetime hidden-xs<% if (!showStatus) { %> last<% } %>">
 				<i class="fa fa-calendar"></i>
-				<span>Date / Time</span>
+				<span>Date</span>
 			</th>
 
 			<% if (showStatus) { %>
-			<th class="status last">
+			<th class="status">
 				<i class="fa fa-info-circle"></i>
 				<span>Status</span>
 			</th>
 			<% } %>
+
+			<th class="results last">
+				<i class="fa fa-bug"></i>
+				<span>Results</span>
+			</th>
 
 			<% if (showDelete) { %>
 			<th class="append delete hidden-xs"></th>

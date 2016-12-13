@@ -136,7 +136,7 @@ define([
 									showEmail: this.options.showEmail,
 									showUsername: this.options.showUsername,
 									showDelete: currentProjectMembership && currentProjectMembership.isAdmin(),
-									showNumbering: Registry.application.getShowNumbering()
+									showNumbering: Registry.application.options.showNumbering
 								})
 							);
 						},

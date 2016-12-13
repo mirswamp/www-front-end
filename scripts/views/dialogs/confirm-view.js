@@ -32,8 +32,7 @@ define([
 
 		events: {
 			'click #ok': 'onClickOk',
-			'click #cancel': 'onClickCancel',
-			'keypress': 'onKeyPress'
+			'click #cancel': 'onClickCancel'
 		},
 
 		//
@@ -76,15 +75,6 @@ define([
 			//
 			if (this.options.reject) {
 				this.options.reject();
-			}
-		},
-
-		onKeyPress: function(event) {
-
-			// respond to enter key press
-			//
-			if (event.keyCode === 13) {
-				this.onClickOk();
 			}
 		}
 	});

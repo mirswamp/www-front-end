@@ -114,7 +114,8 @@ define([
 		},
 
 		getTag: function() {
-			return this.tagify(this.getDescription().truncatedTo(this.maxTagLength));
+			var description = this.getDescription();
+			return this.tagify(description? description.truncatedTo(this.maxTagLength) : '?');
 		},
 
 		getData: function() {

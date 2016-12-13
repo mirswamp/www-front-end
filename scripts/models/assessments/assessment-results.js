@@ -28,7 +28,7 @@ define([
 		//
 
 		idAttribute: 'assessment_result_uuid',
-		urlRoot: Config.servers.csa + '/assessment_results',
+		urlRoot: Config.servers.web + '/assessment_results',
 
 		//
 		// ajax methods

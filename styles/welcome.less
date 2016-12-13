@@ -1,0 +1,130 @@
+/******************************************************************************\
+|                                                                              |
+|                                 welcome.less                                 |
+|                                                                              |
+|******************************************************************************|
+|                                                                              |
+|        This defines various CSS styles used in this application.             |
+|                                                                              |
+|        Author(s): Abe Megahed                                                |
+|                                                                              |
+|        This file is subject to the terms and conditions defined in           |
+|        'LICENSE.txt', which is part of this source code distribution.        |
+|                                                                              |
+|******************************************************************************|
+|        Copyright (C) 2012-2016 Software Assurance Marketplace (SWAMP)        |
+\******************************************************************************/
+
+.welcome {
+	.main {
+		padding: 0px;
+		background: transparent;
+		border-radius: 15px;
+	}
+
+	.content {
+		margin-top: 0;
+	}
+
+	.header {
+		margin-top: 20px;
+		padding-bottom: 20px;
+
+		h1 {
+			margin-top: 0;
+			font-size: 200%;
+		}
+
+		.description {
+			padding-left: 10px;
+		}
+	}
+
+	//
+	// buttons
+	//
+
+	.btn {
+		box-shadow: 2px 2px 10px -2px rgba(0, 0, 0, 0.5);
+	}
+
+	//
+	// horizontal rows
+	//
+
+	.row  {
+		margin-left: -15px;
+		margin-right: -15px;
+
+		> .content {
+			padding-top: 0;
+			padding-bottom: 0;
+			padding-left: 20px;
+			padding-right: 20px;
+		}
+	}
+
+	.column {
+		.make-sm-column(4);
+		.make-xs-column(6);
+
+		.well {
+			width: 100%;
+		}
+	}
+
+	@media (max-width: @screen-xs) {
+		.column {
+			width: 100%;
+		}
+	}
+
+	//
+	// zebra striping
+	//
+
+	.rows {
+		.row:nth-child(odd) {
+			background-color: @veryLightGrey;
+			.well {
+				background-color: white;
+			}
+		}
+	}
+
+	//
+	// horizontal wells
+	//
+
+	.row:nth-child(odd) {
+		background-color: veryVeryLightGrey;
+		.well {
+			background-color: @veryLightGrey;
+		}
+	}
+
+	.row:first-child {
+		background-color: white;
+		border-bottom: 4px solid @primaryColor;
+	}
+
+	//
+	// wells
+	//
+
+	.well {
+		margin-left: 0;
+		margin-right: 0;
+		margin-bottom: 20px;
+	}
+
+	.well.left {
+		margin-left: 0;
+		margin-right: 15px;
+	}
+
+	.well.right {
+		margin-left: 15px;
+		margin-right: 0;
+	}
+}

@@ -10,6 +10,6 @@
 </div>
 
 <div class="modal-footer">
-	<button id="cancel" class="btn" data-dismiss="modal" tabindex="-1"><i class="fa fa-times"></i>Cancel</button>
-	<button id="ok" class="btn btn-primary"><i class="fa fa-check"></i>OK</button>
+	<button id="cancel" class="btn" data-dismiss="modal" tabindex="6"><i class="fa fa-times"></i>Cancel</button>
+	<button id="ok" class="btn btn-primary" tabindex="7"><i class="fa fa-check" <% if (disabled) { %> disabled<% } %>></i>OK</button>
 </div>

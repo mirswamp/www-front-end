@@ -28,7 +28,7 @@ define([
 		//
 
 		idAttribute: 'membership_uid',
-		urlRoot: Config.servers.rws + '/memberships',
+		urlRoot: Config.servers.web + '/memberships',
 
 		//
 		// methods

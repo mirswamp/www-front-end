@@ -5,45 +5,58 @@
 <% } %>
 
 <td class="package first">
-	<% if (packageUrl) { %>
-	<a href="<%- packageUrl %>"><span class="name"><%= stringToHTML(package.name) %></span></a>
-	<% } else { %>
-	<span class="name"><%= stringToHTML(package.name) %></span>
-	<% } %>
+	<div class="name">
+		<% if (packageUrl) { %>
+		<a href="<%- packageUrl %>"><%= stringToHTML(package.name) %></a>
+		<% } else { %>
+		<%= stringToHTML(package.name) %>
+		<% } %>
+	</div>
 
-	<% if (packageVersionUrl) { %>
-	<a href="<%- packageVersionUrl %>"><span class="version label"><%= stringToHTML(package.version_string) %></span></a>
-	<% } else { %>
-	<span class="version label"><%= stringToHTML(package.version_string) %></span>
-	<% } %>
+	<div class="version">
+		<% if (packageVersionUrl) { %>
+		<a href="<%- packageVersionUrl %>"><%= stringToHTML(package.version_string) %></a>
+		<% } else { %>
+		<%= stringToHTML(package.version_string) %>
+		<% } %>
+	</div>
 </td>
 
 <td class="tool">
-	<% if (toolUrl) { %>
-	<a href="<%- toolUrl %>"><span class="name"><%= stringToHTML(tool.name) %></span></a>
-	<% } else { %>
-	<span class="name"><%= stringToHTML(tool.name) %></span>
-	<% } %>
+	<div class="name">
+		<% if (toolUrl) { %>
+		<a href="<%- toolUrl %>"><%= stringToHTML(tool.name) %></a>
+		<% } else { %>
+		<%= stringToHTML(tool.name) %>
+		<% } %>
+	</div>
 
-	<% if (toolVersionUrl) { %>
-	<a href="<%- toolVersionUrl %>"><span class="version label"><%= stringToHTML(tool.version_string) %></span></a>
-	<% } else { %>
-	<span class="version label"><%= stringToHTML(tool.version_string) %></span>
-	<% } %>
+	
+	<div class="version">
+		<% if (toolVersionUrl) { %>
+		<a href="<%- toolVersionUrl %>"><%= stringToHTML(tool.version_string) %></a>
+		<% } else { %>
+		<%= stringToHTML(tool.version_string) %>
+		<% } %>
+	</div>
 </td>
 
 <td class="platform">
-	<% if (platformUrl) { %>
-	<a href="<%- platformUrl %>"><span class="name"><%= stringToHTML(platform.name) %></span></a>
-	<% } else { %>
-	<span class="name"><%= stringToHTML(platform.name) %></span>
-	<% } %>
+	<div class="name">
+		<% if (platformUrl) { %>
+		<a href="<%- platformUrl %>"><%= stringToHTML(platform.name) %></a>
+		<% } else { %>
+		<%= stringToHTML(platform.name) %>
+		<% } %>
+	</div>
 
-	<% if (platformVersionUrl) { %>
-	<a href="<%- platformVersionUrl %>"><span class="version label"><%= stringToHTML(platform.version_string) %></span></a>
-	<% } else { %>
-	<span class="version label"><%= stringToHTML(platform.version_string) %></span>
-	<% } %>
+	<div class="version">
+		<% if (platformVersionUrl) { %>
+		<a href="<%- platformVersionUrl %>"><%= stringToHTML(platform.version_string) %></a>
+		<% } else { %>
+		<%= stringToHTML(platform.version_string) %>
+		<% } %>
+	</div>
 </td>
 
 <td class="datetime hidden-xs<% if (!showStatus) { %> last<% } %>">
@@ -53,15 +66,20 @@
 <% if (showStatus) { %>
 <td class="status last">
 	<a href="<%- runUrl %>"><%- model.get('status').toLowerCase() %></a>
+</td>
+<% } %>
+
+<td class="results last">
 
 	<% if (showErrors) { %>
-	<% if (model.hasErrors()) { %>
-	<button type="button" class="btn btn-sm" id="errors" data-content="View errors" data-container="body"><i class="fa fa-exclamation"></i></button>
+	<% if (true || model.hasErrors() && errorUrl) { %>
+	<a id="errors" class="warning btn btn-sm" target="_blank" data-toggle="tooltip" data-content="Click to view error report" data-placement="top" href="<%- errorUrl %>">
+		<i class="warning fa fa-exclamation" style="margin:4px"></i>Error
+	</a>
 	<% } %>
 	<% } %>
 
-	<% if (!model.hasErrors() && model.get('assessment_result_uuid')) { %>
-	<br />
+	<% if (!model.hasErrors() && model.hasResults()) { %>
 
 	<div class="badge-group">
 	<% if (weakness_cnt > 0) { %>
@@ -75,17 +93,15 @@
 	
 	<% } %>
 </td>
-<% } %>
 
 <% if (showDelete) { %>
 <td class="append delete hidden-xs">
-	<button type="button" class="delete btn btn-sm"><i class="fa fa-times"></i></button>
+	<button type="button" class="btn btn-sm"><i class="fa fa-times"></i></button>
 </td>
 <% } %>
 
-<td class="append ssh hidden-xs"<% if (!showSsh) { %> display: none; <% } %>">
-	<% if (showSsh) { %>
-		<button class="btn ssh">SSH</button>
-	<% } %>
+<% if (showSsh) { %>
+<td class="append ssh hidden-xs">
+	<button class="btn"<% if (!sshEnabled) {%> style="display:none"<% } %>>SSH</button>
 </td>
-
+<% } %>

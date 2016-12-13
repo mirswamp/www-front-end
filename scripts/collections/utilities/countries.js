@@ -29,6 +29,6 @@ define([
 		//
 
 		model: Country,
-		url: Config.servers.rws + '/countries'
+		url: Config.servers.web + '/countries'
 	});
 });

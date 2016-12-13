@@ -45,7 +45,7 @@ define([
 			'change select.day-of-the-week': 'onChangeSelectDayOfTheWeek',
 			'change input.day-of-the-month': 'onChangeInputDayOfTheMonth',
 			'change .time .time_input': 'onChangeTimeInput',
-			'click button.delete': 'onClickDelete'
+			'click .delete button': 'onClickDelete'
 		},
 
 		//
@@ -219,27 +219,6 @@ define([
 
 							// callbacks
 							//
-							success: function() {
-
-								// show notification dialog
-								//
-								Registry.application.modal.show(
-									new NotifyView({
-										title: "Schedule Item Deleted",
-										message: "This schedule item has been successfuly deleted.",
-
-										// callbacks
-										//
-										accept: function() {
-
-											// update view
-											//
-											self.render();
-										}
-									})
-								);
-							},
-
 							error: function() {
 
 								// show error dialog

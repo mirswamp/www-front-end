@@ -51,12 +51,12 @@ define([
 		// methods
 		//
 
-		initialize: function() {
+		initialize: function(options) {
 			this.options.showSchedule = this.model == undefined;
 
 			// call superclass method
 			//
-			SortableTableListView.prototype.initialize.call(this);
+			SortableTableListView.prototype.initialize.call(this, options);
 		},
 
 		//

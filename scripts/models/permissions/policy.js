@@ -11,6 +11,6 @@ define([
 		//
 
 		idAttribute: 'policy_code',
-		urlRoot: Config.servers.rws + '/policies'
+		urlRoot: Config.servers.web + '/policies'
 	});
 });

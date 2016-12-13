@@ -31,7 +31,7 @@ define([
 		//
 
 		idAttribute: 'platform_uuid',
-		urlRoot: Config.servers.csa + '/platforms',
+		urlRoot: Config.servers.web + '/platforms',
 
 		//
 		// querying methods

@@ -37,7 +37,7 @@ define([
 
 		fetchAll: function(options) {
 			return this.fetch(_.extend(options, {
-				url: Config.servers.rws + '/admins/' + Registry.application.session.user.get('user_uid') + '/contacts'
+				url: Config.servers.web + '/admins/' + Registry.application.session.user.get('user_uid') + '/contacts'
 			}));
 		}
 	});
