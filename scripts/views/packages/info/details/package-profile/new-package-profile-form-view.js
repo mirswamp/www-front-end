@@ -13,7 +13,7 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2016 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2017 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 define([
@@ -39,7 +39,16 @@ define([
 		},
 
 		events: {
+			'click input[name="file-source"]': 'onClickFileSource',
 			'blur #external-url': 'onBlurExternalUrl'
+		},
+
+		//
+		// querying methods
+		//
+
+		useExternalUrl: function() {
+			return this.$el.find('input[value="use-external-url"]').is(':checked');
 		},
 
 		//
@@ -137,16 +146,16 @@ define([
 
 			// get values from form
 			//
-			var name = this.$el.find('#name').val();
-			var description = this.$el.find('#description').val();
-			var external_url = this.$el.find('#external-url').val();
+			var name = this.$el.find('#name input').val();
+			var description = this.$el.find('#description input').val();
+			var externalURL = this.useExternalUrl()? this.$el.find('#external-url input').val() : null;
 
 			// update model
 			//
 			package.set({
 				'name': name,
 				'description': description,
-				'external_url': external_url
+				'external_url': externalURL
 			});
 
 			// update version
@@ -157,6 +166,22 @@ define([
 		//
 		// event handling methods
 		//
+
+		onClickFileSource: function(event) {
+			var source = $(event.target).val();
+			switch (source) {
+				case 'use-local-file':
+					this.$el.find('#external-url').hide();
+					this.$el.find('#checkout-argument').hide();
+					this.$el.parent().find('#file').show();
+					break;
+				case 'use-external-url':
+					this.$el.find('#external-url').show();
+					this.$el.find('#checkout-argument').show();
+					this.$el.parent().find('#file').hide();
+					break;
+			}
+		},
 
 		onBlurExternalUrl: function() {
 			if (this.$el.find('#external-url').val() != '') {

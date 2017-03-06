@@ -24,6 +24,7 @@
 				<option value="none"></option>
 				<% } %>
 			</select>
+			<br /><br />
 			<div class="options">
 				<button id="show-file-types" class="btn"><i class="fa fa-file"></i>Show File Types</button>
 			</div>
@@ -194,6 +195,51 @@
 					</div>
 				</div>
 			</div>
+		</div>
+	</div>
+
+	<!-- web scripting types -->
+	<div class="form-group" id="web-scripting-type" <% if (packageType != 'web-scripting') { %>style="display:none"<% } %>>
+		<div class="panel-group" id="web-scripting-type-info-accordion">
+			<div class="panel">
+				<div class="panel-heading">
+					<label>
+					<a data-toggle="collapse" data-parent="#web-scripting-type-info-accordion" href="#web-scripting-type-info">
+						<i class="fa fa-minus-circle"></i>
+						Web scripting types
+					</a>
+					</label>
+				</div>
+
+				<div id="web-scripting-type-info" class="nested panel-collapse collapse in">
+					<div class="checkbox">
+						<label class="checkbox" id="html">
+							<input type="checkbox" name="web-scripting-type" value="html" />
+							HTML
+							<p>The package contains HTML code.</p>
+						</label>
+						<label class="checkbox" id="javascript">
+							<input type="checkbox" name="web-scripting-type" value="javscript" />
+							Javascript
+							<p>The package contains Javascript code.</p>
+						</label>
+						<label class="checkbox" id="php">
+							<input type="checkbox" name="web-scripting-type" value="php" />
+							PHP
+							<p>The package contains PHP code.</p>
+						</label>
+						<label class="checkbox" id="css">
+							<input type="checkbox" name="web-scripting-type" value="css" />
+							CSS
+							<p>The package contains CSS code.</p>
+						</label>
+						<label class="checkbox" id="xml">
+							<input type="checkbox" name="web-scripting-type" value="xml" />
+							XML
+							<p>The package contains XML code.</p>
+						</label>
+					</div>
+				</div>
 		</div>
 	</div>
 

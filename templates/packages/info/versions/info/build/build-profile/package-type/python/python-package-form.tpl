@@ -13,8 +13,8 @@
 					<option value="none"></option>
 					<option <% if (build_system == 'none') { %> selected <% } %> 
 						value="no-build">No build</option>
-					<option <% if (build_system == 'setuptools') { %> selected <% } %>
-						value="setuptools">Build with Setuptools</option>
+					<option <% if (build_system == 'python-setuptools') { %> selected <% } %>
+						value="python-setuptools">Build with Setuptools</option>
 					<option <% if (build_system == 'other') { %> selected <% } %>
 						value="other">Build (Other)</option>
 					<% } %>

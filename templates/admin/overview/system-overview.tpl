@@ -47,6 +47,14 @@
 		</div>
 		<p class="description">Review assessment results of all system users.</p>
 	</div>
+
+	<div class="active column" id="status">
+		<div class="icon-group">
+			<div class="icon"><i class="fa fa-dashboard"></i></div>
+			<h2>Status</h2>
+		</div>
+		<p class="description">Review status of the system and its running processes.</p>
+	</div>
 </div>
 
 

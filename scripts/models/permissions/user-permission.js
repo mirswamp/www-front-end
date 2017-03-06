@@ -12,7 +12,7 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2016 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2017 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 define([
@@ -39,8 +39,11 @@ define([
 		//
 
 		getDescription: function() {
-			return this.get('user_full_name') + ' has requested the permission: ' + this.get('permission') + 
-				(this.get('permission').endsWith('.')? '' : '.');
+			var name = this.has('user_full_name')? this.get('user_full_name') : '?';
+			var permission = this.has('permission')? this.get('permission') : '?';
+
+			return name + ' has requested the permission: ' + permission + 
+				(permission.endsWith('.')? '' : '.');
 		},
 
 		getNotificationHash: function() {
@@ -84,7 +87,7 @@ define([
 			'parasoft-user-j-test',
 			'parasoft-user-j-test',
 			'red-lizard-user',
-			'codesonar'
+			'codesonar-user'
 		]
 	});
 });

@@ -12,7 +12,7 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2016 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2017 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 function timeToObject(timeOfDay) {
@@ -61,7 +61,6 @@ function elapsedTimeToHTML(date1, date2) {
 	var time1 = date1? date1.getTime() : 0;
 	var time2 = date2? date2.getTime() : 0;
 	var seconds = Math.abs(Math.floor((time2 - time1) / 1000));
-	var sign = Math.sign(time2 - time1);
 
 	// constants
 	//
@@ -92,7 +91,7 @@ function elapsedTimeToHTML(date1, date2) {
 
 	// convert to HTML form
 	//
-	if (sign == -1) {
+	if (time2 - time1 < 0) {
 		var html = '<div class="negative time">';
 	} else {
 		var html = '<div class="time">';

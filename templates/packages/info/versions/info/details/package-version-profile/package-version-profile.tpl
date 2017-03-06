@@ -15,6 +15,13 @@
 	</div>
 	<% } %>
 
+	<% if (typeof checkout_argument != 'undefined') { %>
+	<div class="form-group">
+		<label class="form-label">Checkout argument</label>
+		<div class="controls"><%- checkout_argument %></div>
+	</div>
+	<% } %>
+
 	<div class="form-group">
 		<label class="form-label">Filename</label>
 		<div class="controls"><%- filename %></div>

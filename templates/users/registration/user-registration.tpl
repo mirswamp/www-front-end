@@ -14,6 +14,6 @@
 <div id="new-user-profile"></div>
 
 <div class="bottom buttons">
-	<button id="submit" type="submit" class="btn btn-primary btn-lg"><i class="fa fa-plus"></i>Submit</button>
+	<button id="submit" class="btn btn-primary btn-lg"><i class="fa fa-plus"></i>Submit</button>
 	<button id="cancel" class="btn btn-lg"><i class="fa fa-times"></i>Cancel</button>
 </div>

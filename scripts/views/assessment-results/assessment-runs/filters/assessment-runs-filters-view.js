@@ -12,7 +12,7 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2016 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2017 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 define([
@@ -230,6 +230,7 @@ define([
 				//
 				onChange: function(changes) {
 					self.packageFilter.currentView.setProject(changes.project);
+					self.onChange();
 				}
 			}));
 			this.packageFilter.show(new PackageFilterView({
@@ -244,6 +245,7 @@ define([
 				//
 				onChange: function(changes) {
 					self.toolFilter.currentView.setPackage(changes.package);
+					self.onChange();
 				}
 			}));
 			this.toolFilter.show(new ToolFilterView({
@@ -258,6 +260,7 @@ define([
 				//
 				onChange: function(changes) {
 					self.platformFilter.currentView.setTool(changes.tool);
+					self.onChange();
 				}
 			}));
 			this.platformFilter.show(new PlatformFilterView({

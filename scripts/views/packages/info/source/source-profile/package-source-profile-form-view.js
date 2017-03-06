@@ -13,7 +13,7 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2016 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2017 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 define([
@@ -156,6 +156,40 @@ define([
 				case 'ruby':
 					return this.getRubyType();
 					break;
+				case 'web-scripting':
+					return 'web-scripting';
+					break;
+			}
+		},
+
+		getWebScriptingTypes: function() {
+			var webScriptingTypes = [];
+				
+			if (this.$el.find('#html input').prop('checked')) {
+				webScriptingTypes.push('html');
+			}
+			if (this.$el.find('#javascript input').prop('checked')) {
+				webScriptingTypes.push('javascript');
+			}
+			if (this.$el.find('#php input').prop('checked')) {
+				webScriptingTypes.push('php');
+			}
+			if (this.$el.find('#css input').prop('checked')) {
+				webScriptingTypes.push('css');
+			}
+			if (this.$el.find('#xml input').prop('checked')) {
+				webScriptingTypes.push('xml');
+			}
+
+			return webScriptingTypes;
+		},
+
+		getPackageLanguage: function() {
+			var languageType = this.getLanguageType();
+			if (languageType != 'web-scripting') {
+				return languageType;
+			} else {
+				return this.getWebScriptingTypes();
 			}
 		},
 
@@ -255,6 +289,27 @@ define([
 			});	
 		},
 
+		setWebScriptingTypes: function(fileTypes) {
+
+			// set which scripting types are selected
+			//
+			if (fileTypes.contains('html') || fileTypes.contains('htm')) {
+				this.$el.find('#html input').prop('checked', true);
+			}
+			if (fileTypes.contains('js')) {
+				this.$el.find('#javascript input').prop('checked', true);
+			}
+			if (fileTypes.contains('php')) {
+				this.$el.find('#php input').prop('checked', true);
+			}
+			if (fileTypes.contains('css')) {
+				this.$el.find('#css input').prop('checked', true);
+			}
+			if (fileTypes.contains('xml')) {
+				this.$el.find('#xml input').prop('checked', true);
+			}
+		},
+
 		//
 		// rendering methods
 		//
@@ -283,6 +338,9 @@ define([
 				}
 				if (languages.contains('Python')) {
 					self.setPythonTypes(packageTypes);
+				}
+				if (languages.contains('Web Scripting')) {
+					// self.setWebScriptingTypes(packageTypes);
 				}
 
 				// set defaults for new packages
@@ -315,7 +373,7 @@ define([
 		showLanguageSelector: function(done) {
 			var self = this;
 			
-			// fetch languages
+			// fetch supported languages
 			//
 			Packages.fetchTypes({
 
@@ -326,7 +384,7 @@ define([
 					var languageSelector = self.$el.find('#language-type');
 					for (var i = 0; i < languages.length; i++) {
 						var language = languages[i];
-						var value = language != 'C/C++'? language.toLowerCase() : 'c';
+						var value = (language != 'C/C++'? language.toLowerCase() : 'c').replace(' ', '-');
 						languageSelector.append('<option value="' + value + '">' + language + (self.options.package.getLanguageType() == language? 'selected' : '') + '</option>');
 					}
 
@@ -484,7 +542,7 @@ define([
 
 				// callbacks
 				//
-				success: function(packageTypes, languageVersions) {
+				success: function(packageTypes, languageVersions, fileTypes) {
 					self.defaultPackageTypes = packageTypes;
 
 					switch (packageTypes[0]) {
@@ -579,6 +637,13 @@ define([
 						default:
 							self.options.parent.showWarning("This does not appear to be a package written in one of the allowed programming language types. ");
 							self.options.parent.hideNotice();
+							break;
+
+						// web package types
+						//
+						case 'web-scripting':
+							self.setLanguageType('web-scripting');
+							self.setWebScriptingTypes(fileTypes);
 							break;
 					}
 					self.onChangeLanguageType();
@@ -714,7 +779,8 @@ define([
 			// update package
 			//
 			package.set({
-				'package_type_id': Package.toPackageTypeId(this.getPackageType())
+				'package_type_id': Package.toPackageTypeId(this.getPackageType()),
+				'package_language': this.getPackageLanguage()
 			});
 
 			// update package version
@@ -929,6 +995,14 @@ define([
 				this.$el.find('#ruby-type').show();
 			} else {
 				this.$el.find('#ruby-type').hide();
+			}
+
+			// show / hide web scripting type
+			//
+			if (this.getLanguageType() == 'web-scripting') {
+				this.$el.find('#web-scripting-type').show();
+			} else {
+				this.$el.find('#web-scripting-type').hide();
 			}
 		},
 

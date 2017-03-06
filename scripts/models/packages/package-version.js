@@ -12,7 +12,7 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2016 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2017 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 define([
@@ -497,6 +497,148 @@ define([
 			return count;
 		},
 
+		getNumHTMLFiles: function(data) {
+			var count = 0;
+
+			// add counts for html file types
+			//
+			if (data['htm']) {
+				count += data['htm'];
+			}
+			if (data['html']) {
+				count += data['html'];
+			}
+			if (data['tpl']) {
+				count += data['tpl'];
+			}
+
+			return count;
+		},
+
+		getNumJavascriptFiles: function(data) {
+			var count = 0;
+
+			// add counts for javascript file types
+			//
+			if (data['js']) {
+				count += data['js'];
+			}
+
+			return count;
+		},
+
+		getNumCSSFiles: function(data) {
+			var count = 0;
+
+			// add counts for CSS file types
+			//
+			if (data['css']) {
+				count += data['css'];
+			}
+
+			return count;
+		},
+
+		getNumPHPFiles: function(data) {
+			var count = 0;
+
+			// add counts for PHP file types
+			//
+			if (data['php']) {
+				count += data['php'];
+			}
+
+			return count;
+		},
+
+		getNumXMLFiles: function(data) {
+			var count = 0;
+
+			// add counts for PHP file types
+			//
+			if (data['xml']) {
+				count += data['xml'];
+			}
+
+			return count;
+		},
+
+		getNumWebScriptingFiles: function(data) {
+			var count = 0;
+
+			// add counts for web scripting file types
+			//
+			count += this.getNumHTMLFiles(data);
+			count += this.getNumJavascriptFiles(data);
+			count += this.getNumCSSFiles(data);
+			count += this.getNumPHPFiles(data);
+			count += this.getNumXMLFiles(data);
+
+			return count;
+		},
+
+		fileTypesToPackageFileCounts: function(data) {
+
+			// find file counts for each package type
+			//
+			var packageFileCounts = [{
+					packageType: 'c-source',
+					numFiles: this.getNumCFiles(data)
+				}, {
+					packageType: 'java-source',
+					numFiles: this.getNumJavaSourceFiles(data)
+				}, {
+					packageType: 'java-bytecode',
+					numFiles: this.getNumJavaBytecodeFiles(data)
+				}, {
+					packageType: 'python',
+					numFiles: this.getNumPythonFiles(data)
+				}, {
+					packageType: 'ruby',
+					numFiles: this.getNumRubyFiles(data)
+				}, {
+					packageType: 'web-scripting',
+					numFiles: this.getNumWebScriptingFiles(data)
+				}
+			];
+
+			// sort by count field
+			//
+			packageFileCounts.sort(function(a, b) {
+				return ((a.numFiles < b.numFiles) ? 1 : ((a.numFiles > b.numFiles) ? -1 : 0));
+			});
+
+			return packageFileCounts;
+		},
+
+		packageFileCountsToPackageTypes: function(packageFileCounts) {
+
+			// extract valid package types from counts
+			//
+			var packageTypes = [];
+			for (var i = 0; i < packageFileCounts.length; i++) {
+				if (packageFileCounts[i].numFiles > 0) {
+					packageTypes.push(packageFileCounts[i].packageType);
+				}
+			}
+
+			return packageTypes;
+		},
+
+		packageFileCountsToLanguageVersions: function(packageFileCounts) {
+
+			// extract language versions from counts
+			//
+			var languageVersions = [];
+			for (var i = 0; i < packageFileCounts.length; i++) {
+				if (packageFileCounts[i].numFiles > 0) {
+					languageVersions.push(undefined);
+				}
+			}
+
+			return languageVersions;
+		},
+
 		inferPackageTypes: function(options) {
 			var self = this;
 
@@ -586,43 +728,10 @@ define([
 				// callbacks
 				//
 				success: function(data) {
-
-					// find file counts for each package type
-					//
-					var packageFileCounts = [{
-							packageType: 'c-source',
-							numFiles: self.getNumCFiles(data)
-						}, {
-							packageType: 'java-source',
-							numFiles: self.getNumJavaSourceFiles(data)
-						}, {
-							packageType: 'java-bytecode',
-							numFiles: self.getNumJavaBytecodeFiles(data)
-						}, {
-							packageType: 'python',
-							numFiles: self.getNumPythonFiles(data)
-						}, {
-							packageType: 'ruby',
-							numFiles: self.getNumRubyFiles(data)
-						}
-					];
-
-					// sort by count field
-					//
-					packageFileCounts.sort(function(a, b) {
-						return ((a.numFiles < b.numFiles) ? 1 : ((a.numFiles > b.numFiles) ? -1 : 0));
-					});
-
-					// extract valid package types from counts
-					//
-					var packageTypes = [];
-					var languageVersions = [];
-					for (var i = 0; i < packageFileCounts.length; i++) {
-						if (packageFileCounts[i].numFiles > 0) {
-							packageTypes.push(packageFileCounts[i].packageType);
-							languageVersions.push(undefined);
-						}
-					}
+					var packageFileCounts = self.fileTypesToPackageFileCounts(data);
+					var packageTypes = self.packageFileCountsToPackageTypes(packageFileCounts);
+					var languageVersions = self.packageFileCountsToLanguageVersions(packageFileCounts);
+					var fileTypes = Object.keys(data);
 
 					if (_.contains(packageTypes, 'ruby')) {
 
@@ -645,20 +754,23 @@ define([
 									}
 								}
 
-								// return package types
+								// return package, language version, and file types
 								//
-								success(packageTypes, languageVersions);
+								success(packageTypes, languageVersions, fileTypes);
 							},
 
 							error: function(jqXHR, textStatus, errorThrown) {
-								success(packageTypes);
+
+								// return package and file types
+								//
+								success(packageTypes, [], fileTypes);
 							}
 						}));
 					} else {
 
-						// return package types
+						// return package and file types
 						//
-						success(packageTypes);		
+						success(packageTypes, [], fileTypes);		
 					}
 				},
 

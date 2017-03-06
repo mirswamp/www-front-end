@@ -13,7 +13,7 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2016 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2017 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 define([
@@ -39,6 +39,8 @@ define([
 		events: {
 			'click .alert-warning .close': 'onClickAlertWarningClose',
 			'click .alert-info .close': 'onClickAlertInfoClose',
+			'input #username': 'onInput',
+			'input #password': 'onInput',
 			'click #submit': 'onClickSubmit',
 			'click #cancel': 'onClickCancel'
 		},
@@ -103,6 +105,13 @@ define([
 
 		onClickAlertInfoClose: function() {
 			this.hideInfo();
+		},
+
+		onInput: function() {
+
+			// enable submit button
+			//
+			this.$el.find("#submit").prop('disabled', false);
 		},
 
 		onClickSubmit: function() {

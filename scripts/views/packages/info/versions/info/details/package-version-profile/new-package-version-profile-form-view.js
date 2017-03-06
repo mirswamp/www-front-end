@@ -1,6 +1,6 @@
 /******************************************************************************\
 |                                                                              |
-|                       new-package-version-profile-form-view.js               |
+|                      new-package-version-profile-form-view.js                |
 |                                                                              |
 |******************************************************************************|
 |                                                                              |
@@ -12,7 +12,7 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2016 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2017 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 define([
@@ -39,8 +39,8 @@ define([
 		},
 
 		events: {
-			'click #archive': 'onClickArchive',
-			'click #use-external-url': 'onClickUseExternalUrl'
+			'click input[name="file-source"]': 'onClickFileSource',
+			'click #archive': 'onClickArchive'
 		},
 
 		//
@@ -53,29 +53,10 @@ define([
 			// add external url validation rule
 			//
 			$.validator.addMethod('archive', function(value) {
-				if (self.options.package.hasValidExternalUrl()) {
-					if (self.$el.find('#use-external-url').length > 0) {
-						if (self.$el.find('#use-external-url').is(':checked') ){
-							return true;
-						}
-					} else {
-						return true;
-					}
+				if (!self.useExternalUrl() && !self.hasValidFilename()) {
+					return "This file is not a recognized archive file format."
 				}
-				var fileName = self.model.getFilenameFromPath(value);
-				return self.model.isAllowedFilename(fileName);
-			}, function( params, element ){
-				if (self.$el.find('#use-external-url').length > 0) {
-					if (!self.$el.find('#use-external-url').is(':checked')) {
-						if ($(element).val()) {
-							return "This file is not a recognized archive file format.";
-						} else {
-							return "This field is required.";
-						}
-					}
-				}
-
-				return $(element).val() ? "This file is not a recognized archive file format." : "This field is required.";
+				return true;
 			});
 
 			// add file validation rule
@@ -98,7 +79,12 @@ define([
 		},
 
 		useExternalUrl: function() {
-			return this.$el.find('#use-external-url').is(':checked');
+			return this.$el.find('input[value="use-external-url"]').is(':checked');
+		},
+
+		hasValidFilename: function() {
+			var fileName = this.model.getFilenameFromPath(value);
+			return this.model.isAllowedFilename(fileName);
 		},
 
 		//
@@ -107,13 +93,14 @@ define([
 
 		template: function(data) {
 			return _.template(Template, _.extend(data, {
-				model: this.model
+				model: this.model,
+				package: this.options.package
 			}));
 		},
 
 		onRender: function() {
 
-			// show package version profile form
+			// show new package version profile form
 			//
 			this.packageVersionProfileForm.show(
 				new PackageVersionProfileFormView({
@@ -145,13 +132,10 @@ define([
 
 		validate: function() {
 
-			// validate package version profile form
+			// validate new package version profile form
 			//
 			this.packageVersionProfileForm.currentView.validate({
 				rules: {
-					"use_external_url": {
-						url: true
-					},
 					'file': {
 						file: true
 					},
@@ -171,6 +155,22 @@ define([
 		// form methods
 		//
 
+		onClickFileSource: function(event) {
+			var source = $(event.target).val();
+			switch (source) {
+				case 'use-local-file':
+					this.$el.find('#external-url').hide();
+					this.$el.find('#checkout-argument').hide();
+					this.$el.parent().find('#file').show();
+					break;
+				case 'use-external-url':
+					this.$el.find('#external-url').show();
+					this.$el.find('#checkout-argument').show();
+					this.$el.parent().find('#file').hide();
+					break;
+			}
+		},
+
 		onClickArchive: function(event) {
 			var self = this;
 
@@ -183,18 +183,22 @@ define([
 				}
 
 				event.preventDefault();
-				Registry.application.modal.show( new NotifyView({
+				Registry.application.modal.show(new NotifyView({
 					title: 'No File Required',
 					message: message
 				}));
 			}
 		},
 
-		onClickUseExternalUrl: function() {
-			this.$el.find('#archive').val('');
-		},
-
 		update: function(model) {
+			var checkoutArgument = this.$el.find('#checkout-argument input').val();
+
+			// update model
+			//
+			model.set({
+				'checkout_argument': checkoutArgument != ''? checkoutArgument : null
+			});
+
 			this.packageVersionProfileForm.currentView.update(model);
 		}
 	});

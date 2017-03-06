@@ -12,7 +12,7 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2016 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2017 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 define([
@@ -166,7 +166,39 @@ define([
 			}
 		},
 
-		save: function(assessmentRun, options) {
+		saveIncompatible: function(assessmentRun) {
+			var self = this;
+
+			// save assessment
+			//
+			assessmentRun.save(undefined, {
+
+				// callbacks
+				//
+				success: function(jqxhr, textstatus, errorThrown) {
+					var queryString = self.getPackageQueryString();
+
+					// go to my assessments view
+					//
+					Backbone.history.navigate('#assessments' + (queryString != ''? '?' + queryString : ''), {
+						trigger: true
+					});
+				},
+
+				error: function(jqxhr, textstatus, errorThrown) {
+
+					// show error dialog
+					//
+					Registry.application.modal.show(
+						new ErrorView({
+							message: "Could not save this assessment."
+						})
+					);
+				}
+			});
+		},
+
+		saveWithPermission: function(assessmentRun, selectedTool, options) {
 			var self = this;
 
 			// get triplet information
@@ -178,186 +210,177 @@ define([
 			var selectedPlatform = this.getPlatform();
 			var selectedPlatformVersion = this.getPlatformVersion();
 
-			if (!selectedTool) {
+			// ensure the user has permission and has accepted any pertinent EULAs
+			//
+			selectedTool.checkPermission({
+				project_uid: assessmentRun.get('project_uuid'),
+				package_uuid: assessmentRun.get('package_uuid'),
 
-				// disable save buttons
+				// callbacks
 				//
-				self.disableButtons();
+				approved: function() {
 
-				// save assessment
-				//
-				assessmentRun.save(undefined, options);
-
-			} else {
-
-				// ensure the user has permission and has accepted any pertinent EULAs
-				//
-				selectedTool.checkPermission({
-					project_uid: assessmentRun.get('project_uuid'),
-					package_uuid: assessmentRun.get('package_uuid'),
-
-					// callbacks
+					// disable save buttons
 					//
-					approved: function() {
+					self.disableButtons();
 
-						// check compatibility and save assessment
-						//
-						assessmentRun.checkCompatibility({
-							data: assessmentRun.attributes,
+					// save assessment
+					//
+					assessmentRun.save(undefined, options);
+				},
 
-							// callbacks
-							//
-							success: function() {
+				denied: function (response) {
+					switch (response.status) {
 
-								// disable save buttons
+						case 'no_permission':
+							selectedTool.noToolPermission();
+							break;
+
+						case 'owner_no_permission':
+							Registry.application.modal.show(
+								new NotifyView({
+									message: "The owner of this project must request permission to use \"" + selectedTool.get('name') + ".\""
+								})
+							);
+							break;
+
+						case 'no_user_policy':
+							selectedTool.confirmToolPolicy({
+								policy_code: response.policy_code,
+								policy: response.policy,
+
+								// callbacks
 								//
-								self.disableButtons();
-
-								// save assessment
-								//
-								assessmentRun.save(undefined, options);
-							},
-
-							error: function(jqxhr, textstatus, errorThrown) {
-								if (jqxhr.responseText === 'incompatible' || true) {
-									var queryString = self.getPackageQueryString();
-
-									// ask for confirmation to save anyway
-									//
-									var packageName = selectedPackage.get('name');
-									var packageVersion = selectedPackageVersion ? selectedPackageVersion.get('version_string') : 'latest';
-									var message = "Package " + packageName + " version " + packageVersion + " is not compatible";
-
-									if (selectedPlatform) {
-										var platformName = selectedPlatform.get('name');
-										var platformVersion = selectedPlatformVersion ? selectedPlatformVersion.get('version_string') : 'latest';
-										message += " with platform " + platformName + " version " + platformVersion;
-									}
-									message += ". Save assessment anyway?";
-
-									Registry.application.modal.show(
-										new ConfirmView({
-											title: "Save Incompatible Assessment",
-											message: message,
-											accept: function() {
-
-												// save assessment
-												//
-												assessmentRun.save(undefined, {
-													success: function(jqxhr, textstatus, errorThrown) {
-
-														// go to my assessments view
-														//
-														Backbone.history.navigate('#assessments' + (queryString != ''? '?' + queryString : ''), {
-															trigger: true
-														});
-													},
-
-													error: function(jqxhr, textstatus, errorThrown) {
-
-														// show error dialog
-														//
-														Registry.application.modal.show(
-															new ErrorView({
-																message: "Could not save this assessment."
-															})
-														);
-													}
-												});
-											},
-										})
-									);
-								} else {
+								error: function(response) {
 
 									// show error dialog
 									//
 									Registry.application.modal.show(
 										new ErrorView({
-											message: "Could not save this assessment."
+											message: "Error saving policy acknowledgement."
 										})
 									);
 								}
-							}
-						});
-					},
+							});
+							break;
 
-					denied: function (response) {
-						switch (response.status) {
+						case 'project_unbound':
+							selectedTool.confirmToolProject({
+								trial_project: self.options.data['project'].isTrialProject(),
+								project_uid: self.options.data['project'].get('project_uid'),
+								user_permission_uid: response.user_permission_uid,
 
-							case 'no_permission':
-								selectedTool.noToolPermission();
-								break;
+								// callbacks
+								//
+								error: function (response) {
 
-							case 'owner_no_permission':
-								Registry.application.modal.show(
-									new NotifyView({
-										message: "The owner of this project must request permission to use \"" + selectedTool.get('name') + ".\""
-									})
-								);
-								break;
-
-							case 'no_user_policy':
-								selectedTool.confirmToolPolicy({
-									policy_code: response.policy_code,
-									policy: response.policy,
-
-									// callbacks
+									// show error dialog
 									//
-									error: function(response) {
+									Registry.application.modal.show(
+										new ErrorView({
+											message: "Could not designate this project."
+										})
+									);
+								}
+							});
+							break;
 
-										// show error dialog
-										//
-										Registry.application.modal.show(
-											new ErrorView({
-												message: "Error saving policy acknowledgement."
-											})
-										);
-									}
-								});
-								break;
+						case 'member_project_unbound':
+							Registry.application.modal.show(
+								new NotifyView({
+									message: "The project owner has not designated \"" + self.options.data['project'].get('full_name') + "\" for use with \"" + selectedTool.get('name') + ".\" To do so the project owner must add an assessment which uses \"" + selectedTool.get('name') + ".\""
+								})
+							);
+						case 'package_unbound':
+							selectedTool.confirmToolPackage(selectedPackage);
+							break;
 
-							case 'project_unbound':
-								selectedTool.confirmToolProject({
-									trial_project: self.options.data['project'].isTrialProject(),
-									project_uid: self.options.data['project'].get('project_uid'),
-									user_permission_uid: response.user_permission_uid,
-
-									// callbacks
-									//
-									error: function (response) {
-
-										// show error dialog
-										//
-										Registry.application.modal.show(
-											new ErrorView({
-												message: "Could not designate this project."
-											})
-										);
-									}
-								});
-								break;
-
-							case 'member_project_unbound':
-								Registry.application.modal.show(
-									new NotifyView({
-										message: "The project owner has not designated \"" + self.options.data['project'].get('full_name') + "\" for use with \"" + selectedTool.get('name') + ".\" To do so the project owner must add an assessment which uses \"" + selectedTool.get('name') + ".\""
-									})
-								);
-							case 'package_unbound':
-								selectedTool.confirmToolPackage(selectedPackage);
-								break;
-
-							default:
-								Registry.application.modal.show(
-									new ErrorView({
-										message: response.responseText
-									})
-								);					
-								break;
-						}
+						default:
+							Registry.application.modal.show(
+								new ErrorView({
+									message: response.responseText
+								})
+							);					
+							break;
 					}
-				});
-			}
+				}
+			});	
+		},
+
+		save: function(assessmentRun, options) {
+			var self = this;
+
+			// get triplet information
+			//
+			var selectedPackage = self.getPackage();
+			var selectedPackageVersion = self.getPackageVersion();
+			var selectedTool = self.getTool();
+			var selectedToolVersion = self.getToolVersion();
+			var selectedPlatform = self.getPlatform();
+			var selectedPlatformVersion = self.getPlatformVersion();
+
+			// check compatibility and save assessment
+			//
+			assessmentRun.checkCompatibility({
+				data: assessmentRun.attributes,
+
+				// callbacks
+				//
+				success: function() {
+					if (selectedTool) {
+						self.saveWithPermission(assessmentRun, selectedTool, options);
+					} else {
+
+						// disable save buttons
+						//
+						self.disableButtons();
+
+						// save assessment
+						//
+						assessmentRun.save(undefined, options);
+					}
+				},
+
+				error: function(jqxhr, textstatus, errorThrown) {
+					if (jqxhr.responseText === 'incompatible' || true) {
+
+						// ask for confirmation to save anyway
+						//
+						var packageName = selectedPackage.get('name');
+						var packageVersion = selectedPackageVersion ? selectedPackageVersion.get('version_string') : 'latest';
+						var message = "Package " + packageName + " version " + packageVersion + " is not compatible";
+
+						if (selectedPlatform) {
+							var platformName = selectedPlatform.get('name');
+							var platformVersion = selectedPlatformVersion ? selectedPlatformVersion.get('version_string') : 'latest';
+							message += " with platform " + platformName + " version " + platformVersion;
+						}
+						message += ". Save assessment anyway?";
+
+						Registry.application.modal.show(
+							new ConfirmView({
+								title: "Save Incompatible Assessment",
+								message: message,
+
+								// callbacks
+								//
+								accept: function() {
+									self.saveIncompatible(assessmentRun);
+								},
+							})
+						);
+					} else {
+
+						// show error dialog
+						//
+						Registry.application.modal.show(
+							new ErrorView({
+								message: "Could not save this assessment."
+							})
+						);
+					}
+				}
+			});
 		},
 
 		scheduleOneTimeRunRequest: function(assessmentRun, notifyWhenComplete) {

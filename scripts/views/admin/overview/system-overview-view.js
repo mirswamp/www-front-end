@@ -12,7 +12,7 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2016 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2017 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 define([
@@ -35,7 +35,8 @@ define([
 			'click #projects': 'onClickProjects',
 			'click #packages' : 'onClickPackages',
 			'click #tools' : 'onClickTools',
-			'click #results' : 'onClickResults'
+			'click #results' : 'onClickResults',
+			'click #status' : 'onClickStatus'
 		},
 
 		//
@@ -68,6 +69,12 @@ define([
 
 		onClickResults: function() {
 			Backbone.history.navigate('#results/review', {
+				trigger: true
+			});
+		},
+
+		onClickStatus: function() {
+			Backbone.history.navigate('#status/review', {
 				trigger: true
 			});
 		}

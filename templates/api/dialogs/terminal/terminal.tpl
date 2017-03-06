@@ -13,5 +13,5 @@
 </div>
 
 <div class="modal-footer">
-	<button type="submit" id="ok" class="btn" data-dismiss="modal"><i class="fa fa-check"></i>OK</button> 
+	<button id="ok" class="btn" data-dismiss="modal"><i class="fa fa-check"></i>OK</button> 
 </div>

@@ -1,4 +1,5 @@
 <form action="/" class="form-horizontal" onsubmit="return false;">
+
 	<div class="form-group">
 		<label class="required control-label">Version</label>
 		<div class="controls">

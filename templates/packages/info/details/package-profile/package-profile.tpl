@@ -11,7 +11,12 @@
 	<% if (package_type) { %>
 	<div class="form-group">
 		<label class="form-label">Language</label>
-		<div class="controls"><%- package_type %></div>
+		<div class="controls">
+			<%- package_type %>
+			<% if (package_type == 'Web Scripting' && package_language) { %>
+			(<%- package_language.join(', ') %>)
+			<% } %>
+		</div>
 	</div>
 	<% } %>
 

@@ -29,7 +29,7 @@
 			<div class="input-group">
 				<input type="text" class="form-control" id="external-url" name="external-url" value="<%- model.get('external_url') %>"/>
 				<div class="input-group-addon">
-					<i class="active fa fa-question-circle" data-toggle="popover" data-placement="top" data-container="body" title="External URL" data-content="The External URL is the address from which the SWAMP will attempt to clone or pull files for the package. Currently, only publicly clonable GitHub repository URLs are allowed. You may copy the URL from the &quot;HTTPS clone URL&quot; displayed on your GitHub repository page. The default branch will be used. Example: https://github.com/htcondor/htcondor.git" value="<%- model.get('external_url') %>"></i>
+					<i class="active fa fa-question-circle" data-toggle="popover" data-placement="top" data-container="body" title="External URL" data-content="This is the web address from which the SWAMP will attempt to clone or pull files for the package. Only publicly clonable GitHub repository URLs are allowed. You may copy the URL from the &quot;HTTPS clone URL&quot; displayed on your GitHub repository page." value="<%- model.get('external_url') %>"></i>
 				</div>
 			</div>
 		</div>
@@ -45,6 +45,7 @@
 				<option value="java">Java</option>
 				<option value="python">Python</option>
 				<option value="ruby">Ruby</option>
+				<option value="web-scripting">Web Scripting (HTML, Javascript, PHP, CSS, or XML)</option>
 			</select>
 		</div>
 	</div>

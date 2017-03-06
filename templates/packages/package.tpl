@@ -17,4 +17,16 @@
 	<li><a id="runs"><i class="fa fa-bus"></i>Runs</a></li>
 </ul>
 
+<% if (showCompatibility) { %>
+<ul class="nav nav-tabs">
+	<li id="details"<% if (nav == 'details') { %> class="active" <% } %>>
+		<a><i class="fa fa-search"></i>Details</a>
+	</li>
+
+	<li id="compatibility"<% if (nav == 'compatibility') { %> class="active" <% } %>>
+		<a><i class="fa fa-handshake-o"></i>Compatibility</a>
+	</li>
+</ul>
+<% } %>
+
 <div id="package-info"></div>

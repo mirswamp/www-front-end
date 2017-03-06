@@ -12,7 +12,7 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2016 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2017 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 define([
@@ -125,10 +125,7 @@ define([
 					var template = TemplateLeftSidebar;
 			}
 
-			return _.template(template, _.extend(data, {
-				nav: this.options.nav,
-				isAdmin: Registry.application.session.user.isAdmin()
-			}));
+			return _.template(template);
 		},
 
 		onRender: function() {
@@ -151,7 +148,9 @@ define([
 				},
 
 				error: function() {
-					self.showSidebar();
+					Registry.application.error({
+						message: 'Could not fetch trial project for this user.'
+					});
 				}
 			});
 		},

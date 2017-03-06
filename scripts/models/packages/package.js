@@ -12,7 +12,7 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2016 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2017 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 define([
@@ -23,13 +23,10 @@ define([
 	'models/utilities/timestamped',
 	'models/packages/package-version',
 	'collections/packages/package-versions',
+	'collections/platforms/platforms',
+	'collections/platforms/platform-versions',
 	'views/dialogs/error-view'
-], function($, _, Config, Registry, Timestamped, PackageVersion, PackageVersions, ErrorView) {
-
-	//
-	// static attributes
-	//
-
+], function($, _, Config, Registry, Timestamped, PackageVersion, PackageVersions, Platforms, PlatformVersions, ErrorView) {
 	var Class = Timestamped.extend({
 
 		//
@@ -106,13 +103,6 @@ define([
 		// ajax methods
 		//
 
-		fetchSharedProjects: function(options) {
-			$.ajax(_.extend(options, {
-				url: this.urlRoot + '/' + this.get('package_uuid') + '/sharing',
-				type: 'GET'
-			}));
-		},
-
 		fetchLatestVersion: function(done) {
 
 			// get existing package versions
@@ -144,6 +134,17 @@ define([
 			});
 		},
 
+		//
+		// ajax sharing methods
+		//
+
+		fetchSharedProjects: function(options) {
+			$.ajax(_.extend(options, {
+				url: this.urlRoot + '/' + this.get('package_uuid') + '/sharing',
+				type: 'GET'
+			}));
+		},
+
 		saveSharedProjects: function(projects, options) {
 			$.ajax(_.extend(options, {
 				url: this.urlRoot + '/' + this.get('package_uuid') + '/sharing',
@@ -163,6 +164,62 @@ define([
 		},
 
 		//
+		// ajax compatibility methods
+		//
+
+		fetchCompatiblePlatforms: function(options) {
+			$.ajax(_.extend(_.extend({}, options), {
+				url: this.urlRoot + '/' + this.get('package_uuid') + '/platforms',
+				type: 'GET',
+
+				success: function(data) {
+					if (options.success) {
+						options.success(new Platforms(data));
+					}
+				}
+			}));		
+		},
+
+		fetchCompatiblePlatformVersions: function(options) {
+			$.ajax(_.extend(_.extend({}, options), {
+				url: this.urlRoot + '/' + this.get('package_uuid') + '/platforms/versions',
+				type: 'GET',
+
+				success: function(data) {
+					if (options.success) {
+						options.success(new PlatformVersions(data));
+					}
+				}
+			}));		
+		},
+
+		fetchIncompatiblePlatforms: function(options) {
+			$.ajax(_.extend(_.extend({}, options), {
+				url: this.urlRoot + '/' + this.get('package_uuid') + '/platforms/incompatible',
+				type: 'GET',
+
+				success: function(data) {
+					if (options.success) {
+						options.success(new Platforms(data));
+					}
+				}
+			}));		
+		},
+
+		fetchIncompatiblePlatformVersions: function(options) {
+			$.ajax(_.extend(_.extend({}, options), {
+				url: this.urlRoot + '/' + this.get('package_uuid') + '/platforms/versions/incompatible',
+				type: 'GET',
+
+				success: function(data) {
+					if (options.success) {
+						options.success(new PlatformVersions(data));
+					}
+				}
+			}));		
+		},
+
+		//
 		// overridden Backbone methods
 		//
 
@@ -176,6 +233,12 @@ define([
 			//
 			if (response.package_type_id) {
 				response.package_type_id = parseInt(response.package_type_id);
+			}
+
+			// convert package languages to an array
+			//
+			if (response.package_language) {
+				response.package_language = response.package_language.split(' ');
 			}
 
 			return response;
@@ -256,6 +319,9 @@ define([
 				case 13:
 					return 'java8-bytecode';
 					break;
+				case 14:
+					return 'web-scripting';
+					break;
 			}
 		},
 
@@ -300,6 +366,9 @@ define([
 				case 'java8-bytecode':
 					return 13;
 					break;
+				case 'web-scripting':
+					return 14;
+					break;
 			}
 		},
 
@@ -343,6 +412,9 @@ define([
 					break;
 				case 'java8-bytecode':
 					return 'Java';
+					break;
+				case 'web-scripting':
+					return ['HTML', 'Javascript', 'PHP', 'CSS', 'XML'];
 					break;
 			}
 		},
@@ -396,6 +468,9 @@ define([
 					break;
 				case 'java8-bytecode':
 					return 'Java 8 bytecode';
+					break;
+				case 'web-scripting':
+					return 'Web scripting';
 					break;
 			}		
 		},

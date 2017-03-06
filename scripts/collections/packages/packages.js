@@ -12,7 +12,7 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2016 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2017 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 define([
@@ -168,6 +168,8 @@ define([
 							languages.push('Python');
 						} else if (name.contains('Ruby') && !languages.contains('Ruby')) {
 							languages.push('Ruby');
+						} else if (name.contains('Web Scripting')) {
+							languages.push('Web Scripting');
 						}
 					}
 				}

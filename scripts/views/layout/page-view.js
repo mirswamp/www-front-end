@@ -7,7 +7,7 @@
 |        This defines the main single column page container view.              |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2016 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2017 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 define([
@@ -89,7 +89,7 @@ define([
 			// if return key is pressed, then trigger primary button
 			//
 			} else if (event.keyCode == 13) {
-				if (this.content.currentView.$el.find('.btn-primary').length > 0) {
+				if (this.content.currentView && this.content.currentView.$el.find('.btn-primary').length > 0) {
 
 					// let content handle event
 					//

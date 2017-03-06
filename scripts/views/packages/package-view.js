@@ -12,7 +12,7 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2016 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2017 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 define([
@@ -40,7 +40,9 @@ define([
 		events: {
 			'click #assessments': 'onClickAssessments',
 			'click #results': 'onClickResults',
-			'click #runs': 'onClickRuns'
+			'click #runs': 'onClickRuns',
+			'click #details': 'onClickDetails',
+			'click #compatibility': 'onClickCompatibility'
 		},
 
 		//
@@ -49,7 +51,9 @@ define([
 
 		template: function(data) {
 			return _.template(Template, _.extend(data, {
-				model: this.model
+				model: this.model,
+				nav: this.options.nav,
+				showCompatibility: false
 			}));
 		},
 
@@ -155,6 +159,24 @@ define([
 			Backbone.history.navigate('#run-requests?package=' + this.model.get('package_uuid'), {
 				trigger: true
 			});
-		}
+		},
+
+		onClickDetails: function() {
+
+			// go to package details view / tab
+			//
+			Backbone.history.navigate('#packages/' + this.model.get('package_uuid'), {
+				trigger: true
+			});
+		},
+
+		onClickCompatibility: function() {
+
+			// go to package compatibility view / tab
+			//
+			Backbone.history.navigate('#packages/' + this.model.get('package_uuid') + '/compatibility', {
+				trigger: true
+			});
+		},
 	});
 });

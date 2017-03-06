@@ -12,7 +12,7 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2016 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2017 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 define([
@@ -67,7 +67,10 @@ define([
 			// my account routes
 			//
 			'home': 'showHome',
-			'my-account(/:nav)': 'showMyAccount',
+			'my-account': 'showMyAccount',
+			'my-account/permissions': 'showMyPermissions',
+			'my-account/accounts': 'showMyLinkedAccounts',
+			'my-account/edit': 'showEditMyAccount',
 
 			// administration routes
 			//
@@ -76,7 +79,10 @@ define([
 
 			// user account routes
 			//
-			'accounts/:user_uid(/:nav)': 'showUserAccount',
+			'accounts/:user_uid': 'showUserAccount',
+			'accounts/:user_uid/permissions': 'showUserAccountPermissions',
+			'accounts/:user_uid/accounts': 'showUserLinkedAccounts',
+			'accounts/:user_uid/edit': 'showEditUserAccount',
 
 			// user event routes
 			//
@@ -90,9 +96,20 @@ define([
 
 			// system settings routes
 			//
-			'settings(/:nav)': 'showSettings',
+			'settings': 'showSettings',
+			'settings/restricted-domains': 'showSettings',
+			'settings/admins': 'showAdminSettings',
 			'settings/admins/invite': 'showInviteAdmins',
-			'settings/admins/invite/confirm/:invitation_key': 'showConfirmAdminInvitation'
+			'settings/admins/invite/confirm/:invitation_key': 'showConfirmAdminInvitation',
+			'settings/email': 'showEmailSettings',
+
+			// status routes
+			//
+			'status/review': 'showReviewStatus',
+
+			// no route found
+			//
+			'*404': 'showNotFound'
 		},
 
 		//
@@ -575,59 +592,12 @@ define([
 			});
 		},
 
-		showAccount: function(user, nav, options) {
+		showMyAccount: function(options) {
 			var self = this;
 			require([
 				'registry',
-				'views/users/accounts/user-account-view',
-				'views/users/accounts/edit/edit-user-account-view'
-			], function (Registry, UserAccountView, EditUserAccountView) {
-
-				// show content view
-				//
-				Registry.application.showContent({
-					nav1: 'home',
-					nav2: 'overview', 
-
-					// callbacks
-					//
-					done: function(view) {
-
-						// show user account view
-						//
-						if (nav != 'edit') {
-							view.content.show(
-								new UserAccountView({
-									model: user,
-									nav: nav || 'profile'
-								})
-							);
-						} else {
-
-							// show edit user account view
-							//
-							view.content.show(
-								new EditUserAccountView({
-									model: user
-								})
-							);
-						}
-
-						if (options && options.done) {
-							options.done();
-						}
-					}
-				});
-			});
-		},
-
-		showMyAccount: function(nav, options) {
-			var self = this;
-			require([
-				'registry',
-				'views/users/accounts/my-account-view',
-				'views/users/accounts/edit/edit-my-account-view'
-			], function (Registry, MyAccountView, EditMyAccountView) {
+				'views/users/accounts/my-account-view'
+			], function (Registry, MyAccountView) {
 
 				// show content view
 				//
@@ -641,20 +611,11 @@ define([
 
 						// show user account view
 						//
-						if (nav != 'edit') {
-							view.content.show(
-								new MyAccountView({
-									nav: nav || 'profile'
-								})
-							);
-						} else {
-
-							// show edit user account view
-							//
-							view.content.show(
-								new EditMyAccountView()
-							);
-						}
+						view.content.show(
+							new MyAccountView({
+								nav: options && options.nav? options.nav : 'profile'
+							})
+						);
 
 						if (options && options.done) {
 							options.done();
@@ -664,17 +625,61 @@ define([
 			});
 		},
 
+		showEditMyAccount: function(options) {
+			var self = this;
+			require([
+				'registry',
+				'views/users/accounts/edit/edit-my-account-view'
+			], function (Registry, EditMyAccountView) {
+
+				// show content view
+				//
+				Registry.application.showContent({
+					nav1: 'my-account',
+					nav2: undefined,
+
+					// callbacks
+					//
+					done: function(view) {
+
+						// show edit user account view
+						//
+						view.content.show(
+							new EditMyAccountView()
+						);
+
+						if (options && options.done) {
+							options.done();
+						}
+					}
+				});
+			});
+		},
+
+		showMyPermissions: function(options) {
+			this.showMyAccount(_.extend(options || {}, {
+				nav: 'permissions'
+			}));
+		},
+
+		showMyLinkedAccounts: function(options) {
+			this.showMyAccount(_.extend(options || {}, {
+				nav: 'accounts'
+			}));
+		},
+
 		//
 		// user account route handlers
 		//
 
-		showUserAccount: function(userUid, nav, options) {
+		showUserAccount: function(userUid, options) {
 			var self = this;
 			require([
 				'registry',
 				'models/users/user',
+				'views/users/accounts/user-account-view',
 				'views/dialogs/error-view'
-			], function (Registry, User, ErrorView) {
+			], function (Registry, User, UserAccountView, ErrorView) {
 
 				// fetch user associated with account
 				//
@@ -688,9 +693,30 @@ define([
 					//
 					success: function() {
 
-						// show user account view
+						// show content view
 						//
-						self.showAccount(user, nav, options);
+						Registry.application.showContent({
+							nav1: 'home',
+							nav2: 'overview', 
+
+							// callbacks
+							//
+							done: function(view) {
+
+								// show user account view
+								//
+								view.content.show(
+									new UserAccountView({
+										model: user,
+										nav: options? options.nav : 'profile'
+									})
+								);
+
+								if (options && options.done) {
+									options.done();
+								}
+							}
+						});
 					},
 
 					error: function() {
@@ -705,6 +731,78 @@ define([
 					}
 				});
 			});
+		},
+
+		showEditUserAccount: function(userUid, options) {
+			var self = this;
+			require([
+				'registry',
+				'models/users/user',
+				'views/users/accounts/edit/edit-user-account-view',
+				'views/dialogs/error-view'
+			], function (Registry, User, EditUserAccountView, ErrorView) {
+
+				// fetch user associated with account
+				//
+				var user = new User({
+					'user_uid': userUid
+				});
+
+				user.fetch({
+
+					// callbacks
+					//
+					success: function() {
+
+						// show content view
+						//
+						Registry.application.showContent({
+							nav1: 'home',
+							nav2: 'overview', 
+
+							// callbacks
+							//
+							done: function(view) {
+
+								// show edit user account view
+								//
+								view.content.show(
+									new EditUserAccountView({
+										model: user
+									})
+								);
+
+								if (options && options.done) {
+									options.done();
+								}
+							}
+						});
+					},
+
+					error: function() {
+
+						// show error dialog
+						//
+						Registry.application.modal.show(
+							new ErrorView({
+								message: "Could not find this user."
+							})
+						);
+					}
+				});
+			});
+		},
+
+		showUserAccountPermissions: function(userUid, options) {
+			this.showUserAccount(userUid, _.extend(options || {}, {
+				nav: 'permissions'
+			}));
+		},
+
+		showUserLinkedAccounts: function(userUid, options) {
+			this.showUserAccount(userUid, _.extend(options || {}, {
+				nav: 'accounts'
+			}));
 		},
 
 		//
@@ -799,7 +897,7 @@ define([
 		// system settings route handlers
 		//
 
-		showSettings: function(nav, options) {
+		showSettings: function(options) {
 			var self = this;
 			require([
 				'registry',
@@ -820,7 +918,7 @@ define([
 						//
 						view.content.show(
 							new SettingsView({
-								nav: Registry.application.config['email_enabled']? (nav || 'restricted-domains') : 'admins'
+								nav: Registry.application.config['email_enabled']? (options && options.nav? options.nav : 'restricted-domains') : 'admins'
 							})
 						);
 
@@ -830,6 +928,18 @@ define([
 					}
 				});
 			});
+		},
+
+		showAdminSettings: function(options) {
+			this.showSettings(_.extend(options || {}, {
+				nav: 'admins'
+			}));
+		},
+
+		showEmailSettings: function(options) {
+			this.showSettings(_.extend(options || {}, {
+				nav: 'email'
+			}));
 		},
 
 		showInviteAdmins: function() {
@@ -900,6 +1010,55 @@ define([
 						);
 					}
 				});
+			});
+		},
+
+		//
+		// status route handlers
+		//
+
+		showReviewStatus: function(options) {
+			var self = this;
+			require([
+				'registry',
+				'views/admin/status/review-status-view'
+			], function (Registry, ReviewStatusView) {
+
+				// show content view
+				//
+				Registry.application.showContent({
+					nav1: 'home',
+					nav2: 'status', 
+
+					// callbacks
+					//
+					done: function(view) {
+
+						// show review status view
+						//
+						view.content.show(
+							new ReviewStatusView()
+						);
+
+						if (options && options.done) {
+							options.done();
+						}
+					}
+				});
+			});
+		},
+
+		showNotFound: function() {
+			require([
+				'registry',
+				'views/not-found-view'
+			], function (Registry, NotFoundView) {
+
+				// show about view
+				//
+				Registry.application.showMain( 
+					new NotFoundView()
+				);
 			});
 		}
 	});

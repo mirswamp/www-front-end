@@ -12,7 +12,7 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2016 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2017 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 define([
@@ -23,9 +23,9 @@ define([
 	'popover',
 	'text!templates/packages/info/details/new-package-details.tpl',
 	'registry',
-	'views/dialogs/error-view',
+	'views/dialogs/notify-view',
 	'views/packages/info/details/package-profile/new-package-profile-form-view'
-], function($, _, Backbone, Marionette, Popover, Template, Registry, ErrorView, NewPackageProfileFormView) {
+], function($, _, Backbone, Marionette, Popover, Template, Registry, NotifyView, NewPackageProfileFormView) {
 	return Backbone.Marionette.LayoutView.extend({
 
 		//
@@ -92,7 +92,13 @@ define([
 			// append pertinent model data
 			//
 			data.append('user_uid', Registry.application.session.user.get('user_uid'));
-			data.append('external_url', this.model.get('external_url'));
+			
+			// append external url data
+			//
+			if (this.newPackageProfileForm.currentView.useExternalUrl()) {
+				data.append('external_url', this.model.get('external_url'));
+				data.append('checkout_argument', this.options.packageVersion.get('checkout_argument'));
+			}
 
 			// upload
 			//
@@ -184,10 +190,11 @@ define([
 
 					error: function(response) {
 
-						// show error dialog view
+						// show notify dialog view
 						//
-						Registry.application.modal.show(new ErrorView({
-							message: "Package upload error: " + response.statusText
+						Registry.application.modal.show(new NotifyView({
+							title: 'Package Upload Error',
+							message: response.statusText
 						}));
 
 						self.resetProgressBar();

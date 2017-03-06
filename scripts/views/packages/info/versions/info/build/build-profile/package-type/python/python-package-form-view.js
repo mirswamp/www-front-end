@@ -13,7 +13,7 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2016 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2017 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 define([
@@ -122,8 +122,8 @@ define([
 					this.$el.find("#build-system").val('distutils');
 					this.onSetBuildSystem();
 					break;
-				case 'setuptools':
-					this.$el.find("#build-system").val('setuptools');
+				case 'python-setuptools':
+					this.$el.find("#build-system").val('python-setuptools');
 					this.onSetBuildSystem();
 					break;
 				case 'wheels':
@@ -150,7 +150,7 @@ define([
 			//
 			switch (buildSystem) {
 				case 'distutils':
-				case 'setuptools':
+				case 'python-setuptools':
 				case 'wheels':
 					this.$el.find('#build-file').val('setup.py');
 					break;
@@ -168,7 +168,7 @@ define([
 			//
 			switch (buildSystem) {
 				case 'distutils':
-				case 'setuptools':
+				case 'python-setuptools':
 				case 'wheels':
 					this.$el.find('#build-target input').val('build');
 					break;
@@ -190,8 +190,8 @@ define([
 				case 'distutils':
 					return 'distutils';
 					break;
-				case 'setuptools':
-					return 'setuptools';
+				case 'python-setuptools':
+					return 'python-setuptools';
 					break;
 				case 'wheels':
 					return 'wheels';
@@ -210,7 +210,7 @@ define([
 				case 'distutils':
 					return 'Build with DistUtils';
 					break;
-				case 'setuptools':
+				case 'python-setuptools':
 					return 'Build with Setuptools';
 					break;
 				case 'wheels':

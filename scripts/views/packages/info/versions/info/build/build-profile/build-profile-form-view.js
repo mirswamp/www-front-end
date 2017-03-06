@@ -13,7 +13,7 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2016 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2017 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 define([
@@ -37,8 +37,9 @@ define([
 	'views/packages/info/versions/info/build/build-profile/package-type/android-source/android-source-package-form-view',
 	'views/packages/info/versions/info/build/build-profile/package-type/android-bytecode/android-bytecode-package-form-view',
 	'views/packages/info/versions/info/build/build-profile/package-type/python/python-package-form-view',
-	'views/packages/info/versions/info/build/build-profile/package-type/ruby/ruby-package-form-view'
-], function($, _, Backbone, Marionette, Validate, Tooltip, Popover, Template, Registry, Accordions, PlatformVersions, ErrorView, SelectPackageVersionDirectoryView, PackageDependenciesEditableListView, CPackageFormView, JavaSourcePackageFormView, JavaBytecodePackageFormView, AndroidSourcePackageFormView, AndroidBytecodePackageFormView, PythonPackageFormView, RubyPackageFormView) {
+	'views/packages/info/versions/info/build/build-profile/package-type/ruby/ruby-package-form-view',
+	'views/packages/info/versions/info/build/build-profile/package-type/web-scripting/web-scripting-package-form-view'
+], function($, _, Backbone, Marionette, Validate, Tooltip, Popover, Template, Registry, Accordions, PlatformVersions, ErrorView, SelectPackageVersionDirectoryView, PackageDependenciesEditableListView, CPackageFormView, JavaSourcePackageFormView, JavaBytecodePackageFormView, AndroidSourcePackageFormView, AndroidBytecodePackageFormView, PythonPackageFormView, RubyPackageFormView, WebScriptingPackageFormView) {
 	return Backbone.Marionette.LayoutView.extend({
 
 		//
@@ -52,7 +53,8 @@ define([
 
 		events: {
 			'change select': 'onChangeSelect',
-			'change input': 'onChangeInput',
+			'input input': 'onChangeInput',
+			'input textarea': 'onChangeInput',
 			'keyup input': 'onChangeInput',
 			'focus input': 'onFocusInput',
 			'focus select': 'onFocusInput',
@@ -230,6 +232,17 @@ define([
 				case 'padrino':
 					this.packageTypeForm.show(
 						new RubyPackageFormView({
+							model: this.model,
+							parent: this
+						})
+					);
+					break;
+
+				// web scripting package type
+				//
+				case 'web-scripting':
+					this.packageTypeForm.show(
+						new WebScriptingPackageFormView({
 							model: this.model,
 							parent: this
 						})

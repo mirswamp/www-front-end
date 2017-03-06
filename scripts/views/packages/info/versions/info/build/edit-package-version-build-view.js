@@ -13,7 +13,7 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2016 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2017 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 define([
@@ -137,10 +137,12 @@ define([
 
 								// update build script
 								//
-								if (self.buildProfileForm.currentView.packageTypeForm.currentView.getBuildSystem() != 'no-build' &&
-									self.buildProfileForm.currentView.packageTypeForm.currentView.getBuildSystem() != 'none')
-								{
-									self.showBuildScript(self.buildProfileForm.currentView.focusedInput);
+								if (self.buildProfileForm.currentView.packageTypeForm.currentView.getBuildSystem) {
+									if (self.buildProfileForm.currentView.packageTypeForm.currentView.getBuildSystem() != 'no-build' &&
+										self.buildProfileForm.currentView.packageTypeForm.currentView.getBuildSystem() != 'none')
+									{
+										self.showBuildScript(self.buildProfileForm.currentView.focusedInput);
+									}
 								}
 
 								// enable save button

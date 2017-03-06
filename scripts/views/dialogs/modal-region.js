@@ -12,7 +12,7 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2016 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2017 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 define([
@@ -35,7 +35,7 @@ define([
 		//
 
 		isShowing: function() {
-			return this.view != undefined;
+			return this.currentView != undefined;
 		},
 
 		//
@@ -47,10 +47,6 @@ define([
 			// call superclass method
 			//
 			Backbone.Marionette.Region.prototype.show.call(this, view);
-
-			// save view
-			//
-			this.view = view;
 
 			// clear tooltips
 			//
@@ -186,14 +182,14 @@ define([
 
 			// perform callback
 			//
-			if (this.view.onShown) {
-				this.view.onShown();
+			if (this.currentView.onShown) {
+				this.currentView.onShown();
 			}
 		},
 
 		onHidden: function() {
 			this.$el.remove();
-			this.view = undefined;
+			this.currentView = undefined;
 		},
 
 		onKeyPress: function(event) {
@@ -201,8 +197,8 @@ define([
 			// if return key is pressed, then trigger primary button
 			//
 			if (event.keyCode == 13) {
-				if (this.view && this.view.$el.find('.btn-primary').length > 0) {
-					this.view.$el.find('.btn-primary').trigger('click');
+				if (this.currentView && this.currentView.$el.find('.btn-primary').length > 0) {
+					this.currentView.$el.find('.btn-primary').trigger('click');
 
 					// finish handling event
 					//

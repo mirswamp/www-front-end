@@ -12,7 +12,7 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2016 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2017 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 define([
@@ -44,6 +44,7 @@ define([
 			// package routes
 			//
 			'packages/:package_uuid': 'showPackage',
+			'packages/:package_uuid/compatibility': 'showPackageCompatibility',
 			'packages/:package_uuid/edit': 'showEditPackage',
 			'packages/:package_uuid/versions/add': 'showAddNewPackageVersion',
 
@@ -54,6 +55,7 @@ define([
 			'packages/versions/:package_version_uuid/source': 'showPackageVersionSource',
 			'packages/versions/:package_version_uuid/source/edit': 'showEditPackageVersionSource',
 			'packages/versions/:package_version_uuid/build': 'showPackageVersionBuild',
+			'packages/versions/:package_version_uuid/compatibility': 'showPackageVersionCompatibility',
 			'packages/versions/:package_version_uuid/build/edit': 'showEditPackageVersionBuild',
 			'packages/versions/:package_version_uuid/sharing': 'showPackageVersionSharing'
 		},
@@ -255,6 +257,34 @@ define([
 						//
 						view.packageInfo.show(
 							new PackageDetailsView({
+								model: view.model
+							})
+						);
+					}
+				});
+			});
+		},
+
+		showPackageCompatibility: function(packageUuid) {
+			var self = this;
+			require([
+				'registry',
+				'views/packages/info/compatibility/package-compatibility-view'
+			], function (Registry, PackageCompatibilityView) {
+
+				// show package view
+				//
+				self.showPackageView(packageUuid, {
+					nav: 'compatibility', 
+
+					// callbacks
+					//
+					done: function(view) {
+
+						// show package compatibility view
+						//
+						view.packageInfo.show(
+							new PackageCompatibilityView({
 								model: view.model
 							})
 						);
@@ -549,6 +579,35 @@ define([
 						//
 						view.options.parent.content.show(
 							new EditPackageVersionBuildView({
+								model: view.model,
+								package: view.options.package
+							})
+						);
+					}
+				});
+			});
+		},
+
+		showPackageVersionCompatibility: function(packageVersionUuid) {
+			var self = this;
+			require([
+				'registry',
+				'views/packages/info/versions/info/compatibility/package-version-compatibility-view',
+			], function (Registry, PackageVersionCompatibilityView) {
+
+				// show package version view
+				//
+				self.showPackageVersionView(packageVersionUuid, {
+					nav: 'compatibility',
+
+					// callbacks
+					// 
+					done: function(view) {
+
+						// show package version compatibility view
+						//
+						view.packageVersionInfo.show(
+							new PackageVersionCompatibilityView({
 								model: view.model,
 								package: view.options.package
 							})

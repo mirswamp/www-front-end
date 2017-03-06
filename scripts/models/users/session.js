@@ -12,7 +12,7 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2016 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2017 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 define([
@@ -58,6 +58,7 @@ define([
 			// fetch the user using the rws server session
 			//
 			this.user.fetch({
+				global: false,
 
 				// callbacks
 				//
@@ -150,6 +151,10 @@ define([
 
 		linkedAccountLogin: function(options) {
 			window.location = Config.servers.web + '/oauth2/redirect';
+		},
+
+		fetchStatus: function(options) {
+			return $.ajax(Config.servers.web + '/status', options);
 		}
 	});
 });

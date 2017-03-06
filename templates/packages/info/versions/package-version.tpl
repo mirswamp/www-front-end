@@ -31,6 +31,10 @@
 		<a><i class="fa fa-puzzle-piece"></i>Build</a>
 	</li>
 
+	<li id="compatibility"<% if (nav == 'compatibility') { %> class="active" <% } %>>
+		<a><i class="fa fa-handshake-o"></i>Compatibility</a>
+	</li>
+
 	<li id="sharing"<% if (nav == 'sharing') { %> class="active"<% } %> style="display:none">
 		<a><i class="fa fa-share-alt"></i>Sharing</a>
 	</li>

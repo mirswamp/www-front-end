@@ -12,7 +12,7 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2016 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2017 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 define([
@@ -39,9 +39,8 @@ define([
 	'routers/api-router',
 	'models/users/session',
 	'views/layout/page-view',
-	'views/dialogs/modal-region',
-	'views/dialogs/error-view',
-], function($, _, Backbone, Cookie, Config, Marionette, Template, Registry, StringUtils, ArrayUtils, HTMLUtils, BrowserSupport, MainRouter, PackageRouter, ToolRouter, PlatformRouter, ProjectRouter, AssessmentRouter, ResultsRouter, RunRequestsRouter, ApiRouter, Session, PageView, ModalRegion, ErrorView) {
+	'views/dialogs/modal-region'
+], function($, _, Backbone, Cookie, Config, Marionette, Template, Registry, StringUtils, ArrayUtils, HTMLUtils, BrowserSupport, MainRouter, PackageRouter, ToolRouter, PlatformRouter, ProjectRouter, AssessmentRouter, ResultsRouter, RunRequestsRouter, ApiRouter, Session, PageView, ModalRegion) {
 	return Marionette.Application.extend({
 
 		// attributes
@@ -106,31 +105,14 @@ define([
 
 			// log the user out if their session is found to be invalid
 			//
-			$(document).ajaxError(function(event, jqXHR){
-				if( jqXHR.responseText === 'SESSION_INVALID' ){
-					self.modal.show( 
-						new ErrorView({
-							message: "Sorry, your session has expired, please log in again to continue using the SWAMP.",
-							
-							// callbacks
-							//
-							accept: function() {
-								Registry.application.session.logout({
-
-									// callbacks
-									// 
-									success: function() {
-
-										// go to welcome view
-										//
-										Backbone.history.navigate("#", {
-											trigger: true
-										});
-									}
-								});
-							}
-						})
-					);
+			$(document).ajaxError(function(event, jqXHR) {
+				if (jqXHR.responseText === 'SESSION_INVALID') {
+					self.sessionExpired();
+				} else if (jqXHR.status == 401) {
+					data = JSON.parse(jqXHR.responseText);
+					if (data.status == 'NO_SESSION') {
+						self.sessionExpired();					
+					}
 				}
 			});
 
@@ -203,6 +185,8 @@ define([
 		},
 
 		startRouters: function() {
+			var self = this;
+
 			this.createRouters();
 
 			// after any route change, clear modal dialogs
@@ -215,7 +199,9 @@ define([
 				});
 			}
 
-			Backbone.history.start();
+			if (!Backbone.history.start()) {
+				this.mainRouter.showNotFound();
+			}
 		},
 
 		checkBrowserSupport: function() {
@@ -229,26 +215,20 @@ define([
 			var errorView;
 			
 			if (!browserSupportsCors()) {
-				this.modal.show(
-					new ErrorView({
-						message: "Sorry, your web browser does not support cross origin resources sharing.  You will need to upgrade your web browser to a newer version in order to use this application." +
-							"<p>We suggest the following: " + browserList + "</p>"
-					})
-				);
+				this.notify({
+					message: "Sorry, your web browser does not support cross origin resources sharing.  You will need to upgrade your web browser to a newer version in order to use this application." +
+						"<p>We suggest the following: " + browserList + "</p>"
+				});
 			} else if (!browserSupportsHTTPRequestUploads()) {
-				this.modal.show(
-					new ErrorView({
-						message: "Sorry, your web browser does not support the XMLHttpRequest2 object which is needed for uploading files.  You will need to upgrade your web browser to a newer version in order to upload files using this application." +
-							"<p>We suggest the following: " + browserList + "</p>"
-					})
-				);				
+				this.notify({
+					message: "Sorry, your web browser does not support the XMLHttpRequest2 object which is needed for uploading files.  You will need to upgrade your web browser to a newer version in order to upload files using this application." +
+						"<p>We suggest the following: " + browserList + "</p>"
+				});		
 			} else if (!browserSupportsFormData()) {
-				this.modal.show(
-					new ErrorView({
-						message: "Sorry, your web browser does not support the FormData object which is needed for uploading files.  You will need to upgrade your web browser to a newer version in order to upload files using this application." +
-							"<p>We suggest the following: " + browserList + "</p>"
-					})
-				);				
+				this.notify({
+					message: "Sorry, your web browser does not support the FormData object which is needed for uploading files.  You will need to upgrade your web browser to a newer version in order to upload files using this application." +
+						"<p>We suggest the following: " + browserList + "</p>"
+				});			
 			}
 		},
 
@@ -260,7 +240,7 @@ define([
 
 			// save options for later use
 			//
-			$.cookie('swamp', JSON.stringify({
+			$.cookie(Config.cookie.name, JSON.stringify({
 				layout: this.options.layout,
 				showNumbering: this.options.showNumbering,
 				showGrouping: this.options.showGrouping,
@@ -278,7 +258,7 @@ define([
 
 			// load options from cookie
 			//
-			var cookie = $.cookie('swamp');
+			var cookie = $.cookie(Config.cookie.name);
 			if (cookie) {
 				var options = JSON.parse(cookie);
 				this.options = _.extend(this.options, options);
@@ -473,41 +453,59 @@ define([
 
 		logout: function() {
 			var self = this;
-			require([
-				'views/dialogs/error-view'
-			], function (ErrorView) {
 
-				// end session
+			// end session
+			//
+			this.session.logout({
+
+				// callbacks
 				//
-				self.session.logout({
+				success: function() {
 
-					// callbacks
+					// go to welcome view
 					//
-					success: function() {
+					Backbone.history.navigate('#', {
+						trigger: true
+					});
+				},
+				
+				error: function(jqxhr, textstatus, errorThrown) {
 
-						// go to welcome view
-						//
-						Backbone.history.navigate('#', {
-							trigger: true
-						});
-					},
-					
-					error: function(jqxhr, textstatus, errorThrown) {
-
-						// show error dialog
-						//
-						self.modal.show(
-							new ErrorView({
-								message: "Could not log out: " + errorThrown + "."
-							})
-						);
-					}
-				});
+					// show error dialog
+					//
+					self.error({
+						message: "Could not log out: " + errorThrown + "."
+					});
+				}
 			});
 		},
 
 		isLoggedIn: function() {
 			return this.session.user != undefined;
+		},
+
+		sessionExpired: function() {
+			this.notify({
+				message: "Sorry, your session has expired, please log in again to continue using the SWAMP.",
+				
+				// callbacks
+				//
+				accept: function() {
+					Registry.application.session.logout({
+
+						// callbacks
+						// 
+						success: function() {
+
+							// go to welcome view
+							//
+							Backbone.history.navigate("#", {
+								trigger: true
+							});
+						}
+					});
+				}
+			});
 		},
 
 		//
@@ -619,6 +617,52 @@ define([
 						options
 					);
 				}
+			});
+		},
+
+		//
+		// dialog methods
+		//
+
+		notify: function(options) {
+			var self = this;
+			require([
+				'views/dialogs/notify-view'
+			], function(NotifyView) {
+
+				// show notify view
+				//
+				self.modal.show(
+					new NotifyView(options)
+				);
+			});
+		},
+
+		confirm: function(options) {
+			var self = this;
+			require([
+				'views/dialogs/confirm-view'
+			], function(ConfirmView) {
+
+				// show confirm view
+				//
+				self.modal.show(
+					new ConfirmView(options)
+				);
+			});
+		},
+
+		error: function(options) {
+			var self = this;
+			require([
+				'views/dialogs/error-view'
+			], function(ErrorView) {
+
+				// show error view
+				//
+				self.modal.show(
+					new ErrorView(options)
+				);
 			});
 		},
 

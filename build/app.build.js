@@ -7,7 +7,7 @@
 		{
 			name: "main",
 			exclude: [
-				"scripts/config/config.js"
+				"text!../config/config.json"
 			]
 		}
 	],
@@ -17,7 +17,7 @@
 
 		// config paths
 		//
-		config: 'config/config',
+		config: 'config',
 
 		// template paths
 		//

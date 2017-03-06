@@ -12,7 +12,7 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2016 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2017 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 define([
@@ -24,9 +24,9 @@ define([
 	'popover',
 	'text!templates/packages/info/versions/info/details/new-package-version-details.tpl',
 	'registry',
-	'views/dialogs/error-view',
+	'views/dialogs/notify-view',
 	'views/packages/info/versions/info/details/package-version-profile/new-package-version-profile-form-view'
-], function($, _, Backbone, Marionette, Tooltip, Popover, Template, Registry, ErrorView, NewPackageVersionProfileFormView) {
+], function($, _, Backbone, Marionette, Tooltip, Popover, Template, Registry, NotifyView, NewPackageVersionProfileFormView) {
 	return Backbone.Marionette.LayoutView.extend({
 
 		//
@@ -94,6 +94,13 @@ define([
 			//
 			data.append('package_uuid', this.options.package.get('package_uuid'));
 			data.append('user_uid', Registry.application.session.user.get('user_uid'));
+			
+			// append external url data
+			//
+			if (this.newPackageVersionProfileForm.currentView.useExternalUrl()) {
+				data.append('use_external_url', this.newPackageVersionProfileForm.currentView.useExternalUrl());
+				data.append('checkout_argument', this.model.get('checkout_argument'));
+			}
 
 			// upload
 			//
@@ -158,10 +165,11 @@ define([
 
 					error: function(response) {
 
-						// show error dialog view
+						// show notify dialog view
 						//
-						Registry.application.modal.show(new ErrorView({
-							message: "Package upload error: " + response.statusText
+						Registry.application.modal.show(new NotifyView({
+							title: 'Package Upload Error',
+							message: response.statusText
 						}));
 
 						self.resetProgressBar();

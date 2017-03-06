@@ -139,11 +139,11 @@
 							<li>Java bytecode</li>
 							<li>Python</li>
 							<li>Ruby</li>
-						</ul>
-						<strong><em>Upcoming:</em></strong>
-						<ul>
 							<li>PHP</li>
 							<li>Javascript</li>
+							<li>HTML</li>
+							<li>CSS</li>
+							<li>XML</li>
 						</ul>
 					</div>
 				</div>

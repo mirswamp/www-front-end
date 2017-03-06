@@ -1,17 +1,46 @@
 <form action="/" class="form-horizontal" onsubmit="return false;">
-	<% if (model.get('external_url')) { %>
-	<div class="form-group">
-		<label class="control-label">Use External URL</label>
 
-		<div class="checkbox controls">
-			<input type="checkbox" id="use-external-url" name="use_external_url" checked="checked" class="use-external-url" data-toggle="popover" data-placement="right" title="Use External URL" data-content="The external url is the address the SWAMP will attempt to clone or pull from. No file is required.">
-			<span><%- model.get('external_url') %></span>
+	<% if (!package.isNew() && package.has('external_url')) { %>
+	<div class="form-group" id="file-source">
+		<label class="control-label">File source</label>
+		<div class="controls">
+			<label class="radio">
+				<input type="radio" name="file-source" value="use-local-file"<% if (!model.has('external_url')) { %> checked<% } %> />
+				Local file system
+				<p>The package source code is located on your local hard drive.</p>
+			</label>
+			<label class="radio">
+				<input type="radio" name="file-source" value="use-external-url"<% if (model.has('external_url')) { %> checked<% } %>/>
+				Remote Git repository
+				<p>The package source code is located on a remote Git server.</p>
+			</label>
+		</div>
+	</div>
+
+	<div class="form-group" id="external-url">
+		<label class="control-label">External URL</label>
+		<div class="controls">
+			<div class="form-control-static">
+				<span><%- model.get('external_url') %></span>
+			</div>
 		</div>
 	</div>
 	<% } %>
 
-	<div class="form-group">
-		<label class="control-label">File</label>
+	<div class="form-group" id="checkout-argument"<% if (!package.has('external_url')) { %> style="display:none"<% } %>>
+		<label class="control-label">Checkout argument</label>
+		<div class="controls">
+			<div class="input-group">
+				<input type="text" class="form-control" value="<%= model.get('checkout_argument') %>">
+				<div class="input-group-addon">
+					<i class="active fa fa-question-circle" data-toggle="popover" data-placement="top" data-container="body" title="Checkout argument" data-content="This is a string passed to the checkout command after the external URL to fetch a particular branch, tag, or version of the code repository."></i>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="form-group" id="file"<% if (package.has('external_url')) { %> style="display:none"<% } %>>
+		<label class="required control-label">File</label>
 		<div class="controls">
 			<div class="input-group">
 				<input type="file" class="form-control" id="archive" name="file" class="archive" />

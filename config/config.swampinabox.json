@@ -1,0 +1,19 @@
+{
+	"servers": {
+		"web": "https://SED_HOSTNAME/swamp-web-server/public"
+	},
+
+	"cookie": {
+		"name": "swampuuid",
+		"domain": null,
+		"path": "/",
+		"secure": true
+	},
+
+	"options": {
+		"assessments": {
+			"allow_multiple_tool_selection": true,
+			"allow_viewing_zero_weaknesses": true
+		}
+	}
+}
