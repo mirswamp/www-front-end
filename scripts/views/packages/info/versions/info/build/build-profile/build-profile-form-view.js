@@ -362,7 +362,6 @@ define([
 		//
 
 		onChange: function() {
-			this.checkBuildSystem();
 			
 			// call on change callback
 			//
@@ -381,12 +380,10 @@ define([
 
 		onFocusInput: function(event) {
 			this.focusedInput = $(event.target).attr('id');
-			this.onChange();
 		},
 
 		onBlurInput: function(event) {
 			this.focusedInput = null;
-			this.onChange();
 		}
 	});
 });

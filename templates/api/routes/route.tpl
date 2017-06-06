@@ -5,8 +5,9 @@
 <ol class="breadcrumb">
 	<li><a href="#home"><i class="fa fa-home"></i>Home</a></li>
 	<li><a href="#help"><i class="fa fa-question"></i>Help</a></li>
-	<li><a href="#api"><i class="fa fa-code"></i>API Explorer</a></li>
-	<li><i class="fa fa-code"></i><span class="method"><%= method %></span> <span class="route"><%= route.replace(/\//g, '<wbr>/<wbr>') %></span></li>
+	<li><a href="#api"><i class="fa fa-compass"></i>API Explorer</a></li>
+	<li><a href="#api"><i class="fa fa-code"></i>Routes</a></li>
+	<li><span class="method"><%= method %></span> <span class="route"><%= route.replace(/\//g, '<wbr>/<wbr>') %></span></li>
 </ol>
 
 

@@ -20,10 +20,11 @@ define([
 	'underscore',
 	'backbone',
 	'marionette',
+	'popover',
 	'text!templates/admin/settings/system-email/system-email-list/system-email-list.tpl',
 	'views/widgets/lists/sortable-table-list-view',
 	'views/admin/settings/system-email/system-email-list/system-email-list-item-view'
-], function($, _, Backbone, Marionette, Template, SortableTableListView, SystemEmailListItemView) {
+], function($, _, Backbone, Marionette, Popover, Template, SortableTableListView, SystemEmailListItemView) {
 	return SortableTableListView.extend({
 
 		//
@@ -48,13 +49,51 @@ define([
 		},
 
 		//
+		// constructor
+		//
+
+		initialize: function(options) {
+
+			// set optional parameter defaults
+			//
+			if (this.options.showHibernate == undefined) {
+				this.options.showHibernate = true;
+			}
+
+			// call superclass method
+			//
+			SortableTableListView.prototype.initialize.call(this, _.extend(options, {
+				sorting: this.sorting
+			}));
+		},
+
+		//
 		// rendering methods
 		//
 
 		template: function(data) {
 			return _.template(Template, _.extend(data, {
-				collection: this.collection
+				collection: this.collection,
+				showNumbering: this.options.showNumbering,
+				showHibernate: this.options.showHibernate
 			}));
+		},
+
+		onRender: function() {
+
+			// display popovers on hover
+			//
+			this.$el.find('[data-toggle="popover"]').popover({
+				trigger: 'hover'
+			});
+		},
+
+		childViewOptions: function(model, index) {
+			return {
+				index: index,
+				showNumbering: this.options.showNumbering,
+				showHibernate: this.options.showHibernate
+			}
 		}
 	});
 });

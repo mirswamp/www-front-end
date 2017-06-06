@@ -79,12 +79,12 @@ define([
 		// event handling methods
 		//
 
-		onKeyPress: function(event) {
-			if (this.content.currentView.onKeyPress) {
+		onKeyDown: function(event) {
+			if (this.content.currentView.onKeyDown) {
 
 				// let view handle event
 				//
-				this.content.currentView.onKeyPress(event);
+				this.content.currentView.onKeyDown(event);
 
 			// if return key is pressed, then trigger primary button
 			//

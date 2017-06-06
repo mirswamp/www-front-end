@@ -115,16 +115,14 @@
 	</div>
 	
 	<% } %>
+
+	<% if (showSsh) { %>
+	<button class="ssh btn btn-sm"<% if (!sshEnabled) {%> style="display:none"<% } %>>SSH</button>
+	<% } %>
 </td>
 
 <% if (showDelete) { %>
 <td class="append delete hidden-xs">
 	<button type="button" class="btn btn-sm"><i class="fa fa-times"></i></button>
-</td>
-<% } %>
-
-<% if (showSsh) { %>
-<td class="append ssh hidden-xs">
-	<button class="btn"<% if (!sshEnabled) {%> style="display:none"<% } %>>SSH</button>
 </td>
 <% } %>

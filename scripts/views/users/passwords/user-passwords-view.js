@@ -1,10 +1,10 @@
 /******************************************************************************\
 |                                                                              |
-|                         change-user-linked-accounts-view.js                  |
+|                            user-passwords-view.js                            |
 |                                                                              |
 |******************************************************************************|
 |                                                                              |
-|        This defines a view for changing the user's linked-accounts.          |
+|        This defines a view for showing a user's application passwords.       |
 |                                                                              |
 |        Author(s): Abe Megahed                                                |
 |                                                                              |
@@ -20,25 +20,26 @@ define([
 	'underscore',
 	'backbone',
 	'marionette',
-	'models/authentication/user-linked-account',
-	'collections/authentication/user-linked-accounts',
-	'text!templates/users/linked-accounts/change/change-user-linked-accounts.tpl',
+	'collections/authentication/app-passwords',
+	'text!templates/users/passwords/user-passwords.tpl',
 	'registry',
-	'config',
-	'views/users/linked-accounts/list/linked-accounts-list-view',
-	'views/dialogs/notify-view',
+	'views/users/passwords/list/passwords-list-view',
 	'views/dialogs/error-view'
-], function($, _, Backbone, Marionette, UserLinkedAccount, UserLinkedAccounts, Template, Registry, Config, LinkedAccountsListView, NotifyView, ErrorView) {
+], function($, _, Backbone, Marionette, AppPasswords, Template, Registry, PasswordsListView, ErrorView) {
 	return Backbone.Marionette.LayoutView.extend({
 
 		//
 		// attributes
 		//
 
-		template: function(){
-			return _.template(Template, {
-				user: this.options.model
-			});
+		template: _.template(Template),
+
+		regions: {
+			passwordsList: '#passwords-list'
+		},
+
+		events: {
+			'click #add-new-password': 'onClickAddNewPassword'
 		},
 
 		//
@@ -46,7 +47,11 @@ define([
 		//
 
 		initialize: function() {
-			this.collection = new UserLinkedAccounts();	
+
+			// set attributes
+			//
+			this.model = this.options.model;
+			this.collection = new AppPasswords();
 		},
 
 		//
@@ -54,35 +59,33 @@ define([
 		//
 
 		onRender: function() {
-			var self = this;
 
 			// show list subview
 			//
-			this.showLinkedAccountsList();
+			this.fetchAndShowPasswordsList();
 		},
 
-		showLinkedAccountsList: function() {
+		showPasswordsList: function() {
+			this.passwordsList.show(
+				new PasswordsListView({
+					collection: this.collection,
+					readOnly: true,
+					showDelete: true
+				})
+			);
+		},
+
+		fetchAndShowPasswordsList: function() {
 			var self = this;
 
-			// fetch collection of linked accounts
+			// fetch collection of passwords
 			//
 			this.collection.fetchByUser(self.model, {
 
 				// callbacks
 				//
-				success: function() {
-
-					// show select linked accounts list view
-					//
-					self.linkedAccountsList = new LinkedAccountsListView({
-						el: self.$el.find('#linked-accounts-list'),
-						model: self.model,
-						collection: self.collection,
-						showStatus: false,
-						showDelete: true,
-						parent: self
-					});
-					self.linkedAccountsList.render();
+				success: function(data) {
+					self.showPasswordsList();
 				},
 
 				error: function() {
@@ -91,10 +94,27 @@ define([
 					//
 					Registry.application.modal.show(
 						new ErrorView({
-							message: "Could not get linked accounts for this user."
+							message: "Could not get passwords for this user."
 						})
 					);
 				}
+			});
+		},
+
+		//
+		// event handling methods
+		//
+
+		onClickAddNewPassword: function() {
+			var self = this;
+			require([
+				'views/users/passwords/dialogs/add-new-password-view'
+			], function (AddNewPasswordView) {
+				Registry.application.modal.show(
+					new AddNewPasswordView({
+						collection: self.collection
+					})
+				);
 			});
 		}
 	});

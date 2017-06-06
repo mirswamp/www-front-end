@@ -27,30 +27,6 @@ define([
 
 	var refreshInterval = 3000;
 
-	//
-	// local methods
-	//
-
-	function showResultsData(data) {
-
-		// display results in new window
-		//
-		if (data.results) {
-
-			// insert results into DOM
-			//
-			window.document.write(data.results);
-
-			// call window onload, if there is one
-			//
-			if (window.onload) {
-				window.onload();
-			}
-		} else if (data.results_url) {
-			window.location = data.results_url;
-		}
-	}
-
 	// create router
 	//
 	return Backbone.Router.extend({
@@ -117,6 +93,7 @@ define([
 		//
 
 		showAssessmentResultsViewer: function(assessmentResultUuid, viewerUuid, projectUuid) {
+			var self = this;
 			require([
 				'jquery',
 				'underscore',
@@ -147,7 +124,7 @@ define([
 
 								// display results in new window
 								//
-								showResultsData(data);
+								self.showResultsData(data);
 							} else if(data.results_status === 'LOADING') {
 
 								// display viewer status and call again until ready
@@ -207,7 +184,7 @@ define([
 
 								// display results in new window
 								//
-								showResultsData(data);
+								self.showResultsData(data);
 							} else if(data.results_status === 'LOADING') {
 
 								// display viewer status and call again until ready
@@ -259,6 +236,56 @@ define([
 				//
 				getResults();
 			});
+		},
+
+		showResultsData: function(data) {
+			if (data.results) {
+
+				// display results in formatted page view
+				//
+				require([
+					'registry'
+				], function (Registry) {
+					Registry.application.showContent({
+						nav1: 'home',
+						nav2: 'results', 
+
+						// callbacks
+						//
+						done: function(view) {
+
+							// insert results into DOM
+							//
+							view.$el.find('.content').append($(data.results));
+
+							// add handler for anchor clicks
+							//
+							view.$el.find('.content').find('a').on('click', function(event) {
+								var target = $(event.target).attr('href');
+								if (target.startsWith('#')) {
+									var element = view.$el.find('.content').find(target);
+									event.preventDefault();
+									var offset = element.position().top - 60;
+									$(document.body).animate({
+										'scrollTop': offset
+									}, 500);
+								}
+							});
+
+							// call window onload, if there is one
+							//
+							if (window.onload) {
+								window.onload();
+							}
+						}
+					});
+				});
+			} else if (data.results_url) {
+
+				// download results from url
+				//
+				window.location = data.results_url;
+			}
 		},
 
 		showAssessmentsResults: function(queryString) {

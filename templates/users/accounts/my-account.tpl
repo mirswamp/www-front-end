@@ -19,6 +19,10 @@
 		<a><i class="fa fa-link"></i>Linked Accounts</a>
 	</li>
 	<% } %>
+
+	<li id="passwords">
+		<a><i class="fa fa-key"></i>Application Passwords</a>
+	</li>
 </ul>
 
 <div id="user-profile">

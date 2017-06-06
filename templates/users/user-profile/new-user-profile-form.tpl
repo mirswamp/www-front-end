@@ -3,6 +3,7 @@
 
 	<fieldset>
 		<legend>Personal info</legend>
+
 		<div class="form-group">
 			<label class="required control-label">First name</label>
 			<div class="controls">
@@ -14,6 +15,7 @@
 				</div>
 			</div>
 		</div>
+
 		<div class="form-group">
 			<label class="required control-label">Last name</label>
 			<div class="controls">
@@ -29,6 +31,7 @@
 
 	<fieldset>
 		<legend>Account info</legend>
+
 		<div class="form-group">
 			<label class="required control-label">Username</label>
 			<div class="controls">
@@ -38,9 +41,9 @@
 						<i class="active fa fa-question-circle" data-toggle="popover" data-placement="top" data-container="body" title="Username" data-content="Your username is the name that you use to sign in to the web site."></i>
 					</div>
 				</div>
-			</div>
-			
+			</div>	
 		</div>
+
 		<div class="form-group">
 			<label class="required control-label">Password</label>
 			<div class="controls">
@@ -58,6 +61,7 @@
 				</div>
 			</div>
 		</div>
+
 		<div class="form-group">
 			<label class="required control-label">Confirm password</label>
 			<div class="controls">
@@ -74,6 +78,7 @@
 	<% if (config['use_promo_code']) { %>
 	<fieldset>
 		<legend>Promotional info</legend>
+
 		<div class="form-group">
 			<label class="control-label">Promotional code</label>
 			<div class="controls">
@@ -91,6 +96,7 @@
 	<% if (config['email_enabled']) { %>
 	<fieldset>
 		<legend>Contact info</legend>
+
 		<div class="form-group">
 			<label class="required control-label">Email address</label>
 			<div class="controls">
@@ -102,6 +108,7 @@
 				</div>
 			</div>
 		</div>
+		
 		<div class="form-group">
 			<label class="required control-label">Confirm email address</label>
 			<div class="controls">

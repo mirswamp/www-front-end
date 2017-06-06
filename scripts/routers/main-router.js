@@ -70,6 +70,7 @@ define([
 			'my-account': 'showMyAccount',
 			'my-account/permissions': 'showMyPermissions',
 			'my-account/accounts': 'showMyLinkedAccounts',
+			'my-account/passwords': 'showMyPasswords',
 			'my-account/edit': 'showEditMyAccount',
 
 			// administration routes
@@ -82,6 +83,7 @@ define([
 			'accounts/:user_uid': 'showUserAccount',
 			'accounts/:user_uid/permissions': 'showUserAccountPermissions',
 			'accounts/:user_uid/accounts': 'showUserLinkedAccounts',
+			'accounts/:user_uid/passwords': 'showUserPasswords',
 			'accounts/:user_uid/edit': 'showEditUserAccount',
 
 			// user event routes
@@ -298,13 +300,13 @@ define([
 		showRegister: function() {
 			require([
 				'registry',
-				'views/users/registration/aup-view'
-			], function (Registry, AUPView) {
+				'views/users/registration/sign-aup-view'
+			], function (Registry, SignAupView) {
 
 				// show aup view
 				//
 				Registry.application.showMain( 
-					new AUPView()
+					new SignAupView()
 				);
 			});
 		},
@@ -668,6 +670,12 @@ define([
 			}));
 		},
 
+		showMyPasswords: function(options) {
+			this.showMyAccount(_.extend(options || {}, {
+				nav: 'passwords'
+			}));
+		},
+
 		//
 		// user account route handlers
 		//
@@ -802,6 +810,12 @@ define([
 		showUserLinkedAccounts: function(userUid, options) {
 			this.showUserAccount(userUid, _.extend(options || {}, {
 				nav: 'accounts'
+			}));
+		},
+
+		showUserPasswords: function(userUid, options) {
+			this.showUserAccount(userUid, _.extend(options || {}, {
+				nav: 'passwords'
 			}));
 		},
 

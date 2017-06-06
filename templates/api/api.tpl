@@ -20,7 +20,12 @@
 <div class="well">
 	<label>Base URL:</label><span id="server"><%= Config.servers.web %></span>
 </div>
+
+<h2>Routes</h2>
 <div id="routes-list"></div>
+
+<h2>Data Types</h2>
+<div id="types-list"></div>
 
 <label>
 	<input type="checkbox" id="show-numbering" <% if (showNumbering) { %>checked<% } %>>

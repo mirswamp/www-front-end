@@ -1,6 +1,6 @@
 /******************************************************************************\
 |                                                                              |
-|                          change-my-permissions-view.js                       |
+|                             my-permissions-view.js                           |
 |                                                                              |
 |******************************************************************************|
 |                                                                              |
@@ -22,7 +22,7 @@ define([
 	'marionette',
 	'config',
 	'registry',
-	'text!templates/users/permissions/change/change-my-permissions.tpl',
+	'text!templates/users/permissions/my-permissions.tpl',
 	'models/permissions/policy',
 	'models/permissions/user-permission',
 	'collections/permissions/user-permissions',

@@ -73,7 +73,7 @@ table {
 	}
 
 	td {
-		vertical-align: top;	
+		vertical-align: top;
 	}
 
 	td.unpadded {
@@ -175,10 +175,6 @@ table {
 	// special columns
 	//
 
-	td.results {
-		text-align: center;
-	}
-
 	td.datetime {
 		width: 1px;
 	}
@@ -189,6 +185,12 @@ table {
 
 	td.reorder {
 		padding: 5px;
+	}
+
+	td.package {
+		.name {
+			word-break: break-word;
+		}
 	}
 
 	//
@@ -210,6 +212,12 @@ table {
 
 	ul {
 		-webkit-padding-start: 10px;
+	}
+
+	.version, .version a {
+		color: black;
+		font-weight: bold;
+		font-size: 14px;
 	}
 
 	//

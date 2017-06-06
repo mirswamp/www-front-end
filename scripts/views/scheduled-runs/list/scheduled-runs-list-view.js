@@ -76,9 +76,11 @@ define([
 		childViewOptions: function(model, index) {
 			return {
 				index: index,
+				collection: this.collection,
 				showDelete: this.options.showDelete,
 				showSchedule: this.options.showSchedule,
-				showNumbering: this.options.showNumbering
+				showNumbering: this.options.showNumbering,
+				parent: this
 			}
 		}
 	});

@@ -64,11 +64,10 @@ define([
 		onClickDecline: function() {
 			var self = this;
 
-			// save project invitation
+			// decline project invitation
 			//
-			this.model.save({
-				'status': 'declined'
-			}, {
+			this.model.decline({
+
 				// callbacks
 				//
 				success: function() {

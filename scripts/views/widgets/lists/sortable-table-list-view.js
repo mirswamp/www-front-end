@@ -299,10 +299,6 @@ define([
 
 		onShow: function() {
 
-			// call superclass items
-			//
-			TableListView.prototype.onRender.call(this);
-
 			// perform initial sort
 			//
 			if (this.sorting) {

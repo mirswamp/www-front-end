@@ -109,9 +109,13 @@ define([
 							//
 							success: function() {
 
-								// destroy scheduled assessment run
+								// remove item from collection
 								//
-								self.model.destroy();
+								self.collection.remove(self.model);
+
+								// update parent view
+								//
+								self.options.parent.options.parent.options.parent.render();
 							},
 
 							error: function() {

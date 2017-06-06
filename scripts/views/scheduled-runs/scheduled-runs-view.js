@@ -281,7 +281,8 @@ define([
 				new ScheduledRunsListView({
 					collection: this.collection,
 					showNumbering: Registry.application.options.showNumbering,
-					showDelete: true
+					showDelete: true,
+					parent: this
 				})
 			);
 		},
@@ -291,7 +292,8 @@ define([
 				new ScheduledRunsListsView({
 					collection: this.collection.getByRunRequests(this.collection.getRunRequests()),
 					showNumbering: Registry.application.options.showNumbering,
-					showDelete: true
+					showDelete: true,
+					parent: this
 				})
 			);
 		},

@@ -20,10 +20,8 @@ define([
 	'underscore',
 	'config',
 	'registry',
-	'models/utilities/timestamped',
-	'models/utilities/phone-number',
-	'models/utilities/address'
-], function($, _, Config, Registry, Timestamped, PhoneNumber, Address) {
+	'models/utilities/timestamped'
+], function($, _, Config, Registry, Timestamped) {
 	return Timestamped.extend({
 
 		//
@@ -37,8 +35,6 @@ define([
 			'email': undefined,
 			'username': undefined,
 			'password': undefined,
-			'phone': undefined,
-			'address': undefined,
 			'affiliation': undefined
 		},
 
@@ -99,6 +95,10 @@ define([
 
 		isPasswordResetRequired: function() {
 			return this.get('forcepwreset_flag') == '1';
+		},
+
+		isActive: function() {
+			return this.get('hibernate_flag') != '1';
 		},
 
 		isHibernating: function() {
@@ -282,31 +282,11 @@ define([
 		// overridden Backbone methods
 		//
 
-		/*
-		initialize: function() {
-			if (this.isNew()) {
-				this.set({
-					'address': new Address(),
-					'phone': new PhoneNumber()
-				});
-			}
-		},
-		*/
-
 		parse: function(response) {
 
 			// call superclass method
 			//
 			var JSON = Timestamped.prototype.parse.call(this, response);
-
-			// parse subfields
-			//
-			JSON.phone = new PhoneNumber(
-				PhoneNumber.prototype.parse(response.phone)
-			);
-			JSON.address = new Address(
-				Address.prototype.parse(response.address)
-			);
 
 			// convert dates
 			//
@@ -315,24 +295,6 @@ define([
 			}
 			if (response.penultimate_login_date) {
 				response.penultimate_login_date = this.toDate(response.penultimate_login_date);
-			}
-
-			return JSON;
-		},
-
-		toJSON: function() {
-
-			// call superclass method
-			//
-			var JSON = Timestamped.prototype.toJSON.call(this);
-
-			// convert subfields
-			//
-			if (this.has('phone')) {
-				JSON.phone = this.get('phone').toString();
-			}
-			if (this.has('address')) {
-				JSON.address = this.get('address').toString();
 			}
 
 			return JSON;

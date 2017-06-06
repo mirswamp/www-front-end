@@ -40,6 +40,13 @@
 	<fieldset>
 		<legend>Account info</legend>	
 
+		<div class="form-group">
+			<label class="form-label">Username</label>
+			<div class="controls">
+				<%- username %>
+			</div>
+		</div>
+		
 		<% if (config['email_enabled']) { %>
 		<div class="form-group">
 			<label class="form-label">Email address</label>
@@ -48,121 +55,7 @@
 			</div>
 		</div>
 		<% } %>
-		
-		<div class="form-group">
-			<label class="form-label">Username</label>
-			<div class="controls">
-				<%- username %>
-			</div>
-		</div>
 
-	</fieldset>
-
-	<fieldset>
-		<legend>Address</legend>
-
-		<div class="form-group">
-			<label class="form-label">Street address 1</label>
-			<div class="controls">
-				<% if (model.has('address') && model.get('address').hasAttributes()) { %>
-				<% if (model.get('address').has('street-address1')) { %>
-				<%- model.get('address').get('street-address1') %>
-				<% } %>
-				<% } %>
-			</div>
-		</div>
-
-		<div class="form-group">
-			<label class="form-label">Street address 2</label>
-			<div class="controls">
-				<% if (model.has('address') && model.get('address').hasAttributes()) { %>
-				<% if (model.get('address').has('street-address2')) { %>
-				<%- model.get('address').get('street-address2') %>
-				<% } %>
-				<% } %>
-			</div>
-		</div>
-		
-		<div class="form-group">
-			<label class="form-label">City</label>
-			<div class="controls">
-				<% if (model.has('address') && model.get('address').hasAttributes()) { %>
-				<% if (model.get('address').has('city')) { %>
-				<%- model.get('address').get('city') %>
-				<% } %>
-				<% } %>
-			</div>
-		</div>
-
-		<div class="form-group">
-			<label class="form-label">State</label>
-			<div class="controls">
-				<% if (model.has('address') && model.get('address').hasAttributes()) { %>
-				<% if (model.get('address').has('state')) { %>
-				<%- model.get('address').get('state') %>
-				<% } %>
-				<% } %>
-			</div>
-		</div>
-		
-		<div class="form-group">
-			<label class="form-label">Postal code</label>
-			<div class="controls">
-				<% if (model.has('address') && model.get('address').hasAttributes()) { %>
-				<% if (model.get('address').has('postal-code')) { %>
-				<%- model.get('address').get('postal-code') %>
-				<% } %>
-				<% } %>
-			</div>
-		</div>
-
-		<div class="form-group">
-			<label class="form-label">Country</label>
-			<div class="controls">
-				<% if (model.has('address') && model.get('address').hasAttributes()) { %>
-				<% if (model.get('address').has('country')) { %>
-				<%- model.get('address').get('country') %>
-				<% } %>
-				<% } %>
-			</div>
-		</div>
-	</fieldset>
-
-	<fieldset>
-		<legend>Phone</legend>
-
-		<div class="form-group">
-			<label class="form-label">Country code</label>
-			<div class="controls">
-				<% if (model.has('phone') && model.get('phone').hasAttributes()) { %>
-				<% if (model.get('phone').has('country-code')) { %>
-				<%- model.get('phone').get('country-code') %>
-				<% } %>
-				<% } %>
-			</div>
-		</div>
-		
-		<div class="form-group">
-			<label class="form-label">Area code</label>
-			<div class="controls">
-				<% if (model.has('phone') && model.get('phone').hasAttributes()) { %>
-				<% if (model.get('phone').has('area-code')) { %>
-				(<%- model.get('phone').get('area-code') %>)
-				<% } %>
-				<% } %>
-			</div>
-		</div>
-		
-		<div class="form-group">
-			<label class="form-label">Phone number</label>
-			<div class="controls">
-				<% if (model.has('phone') && model.get('phone').hasAttributes()) { %>
-				<% if (model.get('phone').has('phone-number')) { %>
-				<%- model.get('phone').get('phone-number') %>
-				<% } %>
-				<% } %>
-			</div>
-		</div>
 	</fieldset>
 
 	<% if (model.hasCreateDate() || model.hasUpdateDate()) { %>
@@ -226,11 +119,13 @@
 </form>
 
 <div class="bottom buttons">
-	<button id="edit" class="btn btn-primary btn-lg"><i class="fa fa-pencil"></i>Edit Profile</button>
-	<button id="change-password" class="btn btn-lg"><i class="fa fa-keyboard-o"></i>Change Password</button>
+	<% if (!config['ldap_readonly']) { %>
+	<button id="edit" class="btn btn-primary btn-lg"<% if (config['ldap_readonly']) { %> disabled<% } %>><i class="fa fa-pencil"></i>Edit Profile</button>
+	<button id="change-password" class="btn btn-lg"<% if (config['ldap_readonly']) { %> disabled<% } %>><i class="fa fa-keyboard-o"></i>Change Password</button>
 	<% if (config['email_enabled']) { %>
-	<button id="reset-password" class="btn btn-lg"><i class="fa fa-refresh"></i>Reset Password</button>
+	<button id="reset-password" class="btn btn-lg"<% if (config['ldap_readonly']) { %> disabled<% } %>><i class="fa fa-refresh"></i>Reset Password</button>
 	<% } %>
 	<button id="delete-account" class="btn btn-lg"><i class="fa fa-trash"></i>Delete Account</button>
+	<% } %>
 </div>
 

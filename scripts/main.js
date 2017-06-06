@@ -22,6 +22,10 @@
 
 require.config({
 
+	// timeout
+	//
+	waitSeconds: 0,
+
 	// paths
 	//
 	baseUrl: 'scripts', 
@@ -46,6 +50,7 @@ require.config({
 		marionette: 'library/backbone/marionette/backbone.marionette',
 		text: 'library/require/text',
 		fancybox: 'library/fancybox/jquery.fancybox',
+		clipboard: 'library/clipboard/clipboard.min',
 
 		// jquery paths
 		//
@@ -141,32 +146,69 @@ require.config({
 		// bootstrap dependencies
 		//
 
-		modal: {
-			deps: ['transition', 'jquery']
-		},
-
-		transition: {
+		affix: {
 			deps: ['jquery']
 		},
 
-		popover: {
-			deps: ['tooltip']
+		alert: {
+			deps: ['jquery']
 		},
 
-		clickover: {
-			deps: ['popover']
+		button: {
+			deps: ['jquery']
 		},
 
-		combobox: {
-			deps: ['typeahead']
+		carousel: {
+			deps: ['jquery']
 		},
 
 		collapse: {
 			deps: ['jquery', 'transition']
 		},
 
+		dropdown: {
+			deps: ['jquery']
+		},
+
+		modal: {
+			deps: ['jquery', 'transition']
+		},
+
+		popover: {
+			deps: ['jquery', 'tooltip']
+		},
+
+		scrollspy: {
+			deps: ['jquery']
+		},
+
+		tab: {
+			deps: ['jquery']
+		},
+
+		tooltip: {
+			deps: ['jquery']
+		},
+
+		transition: {
+			deps: ['jquery']
+		},
+
+		//
+		// bootstrap plug-in dependencies
+		//
+
+
+		clickover: {
+			deps: ['jquery', 'popover']
+		},
+
+		combobox: {
+			deps: ['jquery', 'typeahead']
+		},
+
 		select2: {
-			deps: ['select', 'combobox']
+			deps: ['jquery', 'select', 'combobox']
 		},
 
 		//
@@ -174,7 +216,7 @@ require.config({
 		//
 
 		backbone: {
-			deps: ['underscore', 'jquery', 'modal'],
+			deps: ['jquery', 'underscore', 'modal'],
 			exports: 'Backbone'
 		},
 

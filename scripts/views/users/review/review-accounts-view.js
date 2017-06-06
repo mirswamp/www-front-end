@@ -269,6 +269,6 @@ define([
 		onClickShowNumbering: function(event) {
 			Registry.application.setShowNumbering($(event.target).is(':checked'));
 			this.showList();
-		},
+		}
 	});
 });

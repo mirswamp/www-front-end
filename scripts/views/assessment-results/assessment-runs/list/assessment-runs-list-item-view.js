@@ -40,8 +40,8 @@ define([
 
 		events: {
 			//'click #errors': 'onClickErrors',
-			'click .delete button': 'onClickDelete',
-			'click .ssh button': 'onClickSsh'
+			'click .ssh': 'onClickSsh',
+			'click .delete button': 'onClickDelete'
 		},
 
 		//

@@ -1,7 +1,3 @@
-@import "jquery/jquery.validate.password.css";
-@import "jquery/datepicker.css";
-@import "select2/select2.css";
-@import "select2/select2-bootstrap.css";
 /******************************************************************************\
 |                                                                              |
 |                                   styles.less                                |
@@ -21,6 +17,10 @@
 /* 
  * sortable table styles
  */
+@import "jquery/jquery.validate.password.css";
+@import "jquery/datepicker.css";
+@import "select2/select2.css";
+@import "select2/select2-bootstrap.css";
 table.tablesorter thead tr .header {
   background-image: url(../images/tablesorter/bg.gif);
   background-repeat: no-repeat;
@@ -224,7 +224,7 @@ h1 .name {
   padding-right: 2px;
   border-radius: 5px;
 }
-a:hover .version.label {
+a:hover {
   text-decoration: underline;
 }
 a span {
@@ -285,16 +285,13 @@ label i {
 .email .tld::before {
   content: ".";
 }
-.version,
-.version a {
-  color: black;
-  font-weight: bold;
-  font-size: 14px;
-}
 code {
   background-color: #f2e3b6;
   border: 1px solid #bfa452;
   border-radius: 10px;
+}
+pre {
+  white-space: pre-wrap;
 }
 /******************************************************************************\
 |                                                                              |
@@ -343,6 +340,9 @@ div.datetime .year {
 }
 div.datetime .year::after {
   content: ") ";
+}
+.time .years::after {
+  content: " years ";
 }
 .time .weeks::after {
   content: " weeks ";
@@ -473,6 +473,11 @@ body {
   }
   .visible-xxs {
     display: block !important;
+  }
+}
+@media (max-width: 1024px) {
+  .container {
+    width: 100%;
   }
 }
 @media (max-width: 768px) {
@@ -731,6 +736,9 @@ button.close:hover {
 .delete .btn i,
 .reorder .btn i {
   margin-right: 0;
+}
+button.ssh {
+  margin-top: 5px;
 }
 .buttons button,
 .buttons .btn {
@@ -1628,6 +1636,7 @@ ul.nav li.dropdown:hover > ul.dropdown-menu {
   box-shadow: 2px 2px 5px -2px rgba(0, 0, 0, 0.5);
 }
 .badge-group {
+  text-align: center;
   white-space: nowrap;
 }
 .badge-group .icon {
@@ -2285,9 +2294,6 @@ table td.append {
   border: none;
   background: white;
 }
-table td.results {
-  text-align: center;
-}
 table td.datetime {
   width: 1px;
 }
@@ -2297,12 +2303,21 @@ table th.half-width {
 table td.reorder {
   padding: 5px;
 }
+table td.package .name {
+  word-break: break-word;
+}
 table td button i {
   margin-left: 0;
   margin-bottom: 3px;
 }
 table ul {
   -webkit-padding-start: 10px;
+}
+table .version,
+table .version a {
+  color: black;
+  font-weight: bold;
+  font-size: 14px;
 }
 table tr:not(.first) td.select-group input {
   display: none;
@@ -3969,4 +3984,68 @@ td.order {
 }
 .key-value-pair .value {
   display: inline;
+}
+/******************************************************************************\
+|                                                                              |
+|                                  results.less                                |
+|                                                                              |
+|******************************************************************************|
+|                                                                              |
+|        This defines various CSS styles used in this application.             |
+|                                                                              |
+|        Author(s): Abe Megahed                                                |
+|                                                                              |
+|        This file is subject to the terms and conditions defined in           |
+|        'LICENSE.txt', which is part of this source code distribution.        |
+|                                                                              |
+|******************************************************************************|
+|        Copyright (C) 2012-2016 Software Assurance Marketplace (SWAMP)        |
+\******************************************************************************/
+table.results {
+  width: 100%;
+}
+table.results td.priority {
+  width: 1%;
+}
+table.results td.group {
+  width: 5%;
+  word-break: break-all;
+}
+table.results td.code {
+  width: 10%;
+  word-break: break-all;
+}
+table.results td.file {
+  width: 20%;
+  word-break: break-all;
+}
+table.results td.line,
+table.results td.col {
+  width: 2%;
+}
+table.results td.message {
+  width: 45%;
+  word-break: break-all;
+}
+table.results td.resolution {
+  width: 40%;
+  word-break: break-all;
+}
+table.results td.line,
+table.results td.col,
+table.results td.priority {
+  text-align: center;
+}
+table.summary {
+  width: 100%;
+}
+table.summary th,
+table.summary tr {
+  font-weight: bold;
+  background: #a6caf0;
+  text-align: center;
+}
+table.summary td {
+  text-align: center;
+  background: #eeeee0;
 }

@@ -127,6 +127,7 @@ define([
 		template: function(data) {
 			return _.template(Template, _.extend(data, {
 				collection: this.collection,
+				config: Registry.application.config,
 				showForcePasswordReset: this.options.showForcePasswordReset,
 				showHibernate: this.options.showHibernate,
 				showLinkedAccount: this.options.showLinkedAccount,

@@ -61,10 +61,10 @@ Some indications that a compromise has occurred include:
 <p>How you intend to use SWAMP resources must be clearly defined in your project request. Subsequently, access is granted specifically for the research that is described in the request - nothing else. Just because you can access a resource does not mean that you have authorization to do so. You must operate within sanctioned parameters regardless of what may be technically possible.</p>
 
 <h3>2.5 Unacceptable Behavior</h3>
-<p>Following are examples of unacceptable behavior that are subject to the penalties described in section 5.0:</p>
+<p>Following are examples of unacceptable behavior that are subject to the penalties described in section 2.7:</p>
 
-<p>Using, or attempting to use, SWAMP resources without authorization or for purposes other than those stated on your project request</p>
 <ul>
+	<li>Using, or attempting to use, SWAMP resources without authorization or for purposes other than those stated on your project request</li>
 	<li>Tampering with or obstructing the operation of the facilities</li>
 	<li>Reading, changing, distributing, or copying others' data or software without authorization</li>
 	<li>Using SWAMP resources to attempt to gain unauthorized access to other (non-SWAMP) sites</li>
@@ -95,6 +95,3 @@ Some indications that a compromise has occurred include:
 
 <h2>6.0 Termination/Access Restriction</h2>
 <p>SWAMP reserves the right, in its sole discretion, to terminate your access to the SWAMP Web Site and the related services or any portion thereof at any time, without notice.</p>
-
-<h2>Statement of Agreement</h2>
-<p>By clicking 'I Accept' it serves as acknowledgement that you have read and understand your responsibilities as a user. If you have questions, please contact the Help Desk at <code><a href="mailto:support@continuousassurance.org">support@continuousassurance.org</a></code>.</p>

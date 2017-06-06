@@ -24,7 +24,8 @@ define([
 	'popover',
 	'text!templates/users/authentication/dialogs/sign-in.tpl',
 	'registry',
-	'views/users/authentication/forms/sign-in-form-view'
+	'views/users/authentication/forms/sign-in-form-view',
+	'utilities/browser/query-strings'
 ], function($, _, Backbone, Marionette, Popover, Template, Registry, SignInFormView) {
 	return Backbone.Marionette.LayoutView.extend({
 
@@ -115,19 +116,6 @@ define([
 		// methods
 		//
 
-		showHome: function() {
-
-			// remove event handlers
-			//
-			this.undelegateEvents();
-
-			// go to home view
-			//
-			Backbone.history.navigate('#home', {
-				trigger: true
-			});
-		},
-
 		signIn: function() {
 			var self = this;
 			
@@ -136,7 +124,10 @@ define([
 			Registry.application.session.getUser({
 				success: function(user) {
 					Registry.application.session.user = user;
-					self.showHome();
+
+					// go to current view
+					//
+					Backbone.history.loadUrl('#' + (getFragment() || ''));
 				}
 			});
 

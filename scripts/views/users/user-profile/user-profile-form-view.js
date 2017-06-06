@@ -29,18 +29,13 @@ define([
 	'text!templates/users/user-profile/user-profile-form.tpl',
 	'config',
 	'registry',
-	'views/widgets/selectors/name-selector-view',
-	'views/widgets/selectors/country-selector-view'
-], function($, _, Backbone, Marionette, Collapse, Select, Validate, Tooltip, Popover, Template, Config, Registry, NameSelectorView, CountrySelectorView) {
+	'views/widgets/selectors/name-selector-view'
+], function($, _, Backbone, Marionette, Collapse, Select, Validate, Tooltip, Popover, Template, Config, Registry, NameSelectorView) {
 	return Backbone.Marionette.LayoutView.extend({
 
 		//
 		// attributes
 		//
-
-		regions: {
-			countrySelector: '#country-selector'
-		},
 
 		events: {
 			'blur #email': 'onBlurEmail'
@@ -104,70 +99,6 @@ define([
 
 				return (/^[0-9\sa-zA-Z]+$/.test(value));
 			}, 'Please only enter alphabet characters (letters, hyphens, and spaces) or numbers');
-
-			// add ITU E.164 phone number validation rule
-			//
-			$.validator.addMethod('ITUE164format', function (value, element) {
-				if (self.isUnitedStates()) {
-					return true;
-				} else {
-
-					// allow empty values for optional fields
-					//
-					if (value == '') {
-						return !$(element).hasClass('required');
-					}
-
-					var countryCode = self.$el.find('#country-code').val();
-					var areaCode = self.$el.find('#area-code').val();
-					var phoneNumber = self.$el.find('#phone-number').val();
-					var number = countryCode + areaCode + phoneNumber;
-					var numberWithoutSymbols = number.replace(/\D/g,'');
-					return numberWithoutSymbols.length <= 15;
-				}
-			}, 'Country + Area + Phone # can\'t be longer than 15 digits');
-
-			// add 3 + 7 phone number validation rule
-			//
-			$.validator.addMethod('usPhoneCheck', function (value, element) {
-				if (self.isUnitedStates()) {
-
-					// allow empty values for optional fields
-					//
-					if (value == '') {
-						return !$(element).hasClass('required');
-					}
-
-					var phoneNumber = self.$el.find('#phone-number').val();
-					var numberWithoutSymbols = phoneNumber.replace(/\D/g,'');
-					return numberWithoutSymbols.length == 7;
-				} else {
-					return true;
-				}
-			}, 'U.S. phone number must be 7 digits long');
-
-			// add U.S. area code validation rule
-			//
-			$.validator.addMethod('usAreaCheck', function (value, element) {
-				if (self.isUnitedStates()) {
-
-					// allow empty values for optional fields
-					//
-					if (value == '') {
-						return !$(element).hasClass('required');
-					}
-
-					var areaCode = self.$el.find('#area-code').val();
-					return areaCode.length == 3;
-				} else {
-					return true;
-				}
-			}, 'U.S. area code must be 3 digits long');
-		},
-
-		isUnitedStates: function() {
-			var countryCode = this.$el.find('#country-code').val();
-			return countryCode == '1';
 		},
 
 		//
@@ -183,29 +114,6 @@ define([
 		},
 
 		onRender: function() {
-
-			// show country selector
-			//
-			this.countrySelector.show(
-				new CountrySelectorView({
-					initialValue: this.model.get('address').get('country')
-				})
-			);
-
-			// add country selector callback
-			//
-			var self = this;
-			this.countrySelector.currentView.onclickmenuitem = function() {
-				var country = self.countrySelector.currentView.getSelected();
-				var countryCode = country.get('phone_code');
-
-				// set default phone code
-				//
-				self.model.get('phone').set({
-					'country-code': countryCode
-				});
-				self.$el.find('#country-code').val(countryCode);
-			}
 
 			// display popovers on hover
 			//
@@ -228,21 +136,6 @@ define([
 					'confirm-email': {
 						required: true,
 						equalTo: '#email'
-					},
-					'postal-code': {
-						alphaNumericOnly: true
-					},
-					'country-code': {
-						numericOnly: true
-					},
-					'area-code': {
-						numericOnly: true,
-						usAreaCheck: true
-					},
-					'phone-number': {
-						numericOrDashesOnly: true,
-				   		usPhoneCheck: true,
-						ITUE164format: true
 					}
 				},
 				messages: {
@@ -282,17 +175,9 @@ define([
 			var firstName = this.$el.find('#first-name').val();
 			var lastName = this.$el.find('#last-name').val();
 			var preferredName = this.$el.find('#preferred-name').val();
-			var email = this.$el.find('#email').val();
-			var streetAddress1 = this.$el.find('#street-address1').val();
-			var streetAddress2 = this.$el.find('#street-address2').val();
-			var city = this.$el.find('#city').val();
-			var state = this.$el.find('#state').val();
-			var postalCode = this.$el.find('#postal-code').val();
-			var country = this.countrySelector.currentView.getSelectedName();
-			var countryCode = this.$el.find('#country-code').val();
-			var areaCode = this.$el.find('#area-code').val();
-			var phoneNumber = this.$el.find('#phone-number').val();
 			var affiliation = this.$el.find('#affiliation').val();
+			var username = this.$el.find('#username').val();
+			var email = this.$el.find('#email').val();
 			var userType = this.$el.find('#user-type-selector').val();
 
 			// update model
@@ -303,31 +188,11 @@ define([
 				'preferred_name': preferredName,
 				'affiliation': affiliation != '' ? affiliation : undefined,
 				'user_type': userType != 'none' ? userType : undefined,
+				'username': username,
 				'email': email
-			});
-
-			// update phone numer
-			//
-			model.get('phone').set({
-				'country-code': countryCode != '' ? countryCode : undefined,
-				'area-code': areaCode != '' ? areaCode : undefined,
-				'phone-number': phoneNumber != '' ? phoneNumber : undefined
-			});
-
-			// update address
-			//
-			model.get('address').set({
-				'street-address1': streetAddress1 != '' ? streetAddress1 : undefined,
-				'street-address2': streetAddress2 != '' ? streetAddress2 : undefined,
-				'city': city != '' ? city : undefined,
-				'state': state != '' ? state : undefined,
-				'postal-code': postalCode != '' ? postalCode : undefined,
-				'country': country != '' ? country : undefined
 			});
 		},
 
-
-		/* Duplicate from new user profile form view */
 		onBlurEmail: function(event) {
 			var element = $(event.currentTarget);
 			var email = event.currentTarget.value;

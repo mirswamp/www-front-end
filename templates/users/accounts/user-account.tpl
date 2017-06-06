@@ -11,16 +11,20 @@
 
 <ul class="nav nav-tabs">
 	<li id="profile" class="active">
-		<a>User Profile</a>
+		<a><i class="fa fa-user"></i>User Profile</a>
 	</li>
 
 	<li id="permissions">
-		<a>Permissions</a>
+		<a><i class="fa fa-check"></i>Permissions</a>
+	</li>
+
+	<li id="passwords">
+		<a><i class="fa fa-key"></i>Application Passwords</a>
 	</li>
 
 	<% if (config['linked_accounts_enabled']) { %>
 	<li id="accounts">
-		<a>Linked Accounts</a>
+		<a><i class="fa fa-link"></i>Linked Accounts</a>
 	</li>
 	<% } %>
 </ul>

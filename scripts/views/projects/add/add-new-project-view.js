@@ -51,9 +51,7 @@ define([
 		//
 
 		initialize: function() {
-			var user = Registry.application.session.user;
 			this.model = new Project({
-				'project_owner_uid': user.get('user_uid'),
 				'project_type_code': Project.prototype.projectTypeCodes[0],
 				'status': 'pending',
 				'exclude_public_tools_flag': 0

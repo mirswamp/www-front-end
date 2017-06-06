@@ -101,8 +101,35 @@ define([
 					// check for conflict
 					//
 					} else if (response.status == 409) {
-						self.showInfo(response.responseText + "  " +
-							"If you have any questions, email us at " + Config.contact.security.email + " or call our 24/7 support line at " + Config.contact.support.phoneNumber);
+						var email = (Config.contact && Config.contact.security)?
+							Config.contact.security.email : undefined;
+						var phoneNumber = (Config.contact && Config.contact.support)?
+							Config.contact.support.phoneNumber : undefined;
+
+						// compose error message;
+						//
+						var message = response.responseText;
+
+						// add support info
+						//
+						if (email || phoneNumber) {
+							if (message != '') {
+								message += ' ';
+							}
+							message += "If you have any questions, ";
+							if (email) {
+								message += "email us at " + email;
+							}
+							if (phoneNumber) {
+								if (email) {
+									message += " or ";
+								}
+								message += "call our 24/7 support line at " + phoneNumber;
+							}
+							message += '.';
+						}
+
+						self.showInfo(message);
 
 						// disable ok button
 						//
@@ -140,13 +167,6 @@ define([
 		},
 
 		onRender: function() {
-			var self = this;
-
-			// show linked account sign in
-			//
-			if (Registry.application.config['linked_accounts_enabled']) {
-				this.showLinkedAccountForm();
-			}
 
 			// display popovers on hover
 			//
@@ -157,6 +177,15 @@ define([
 			// perform initial validation
 			//
 			//this.validate();
+		},
+
+		onShow: function() {
+
+			// show linked account sign in
+			//
+			if (Registry.application.config['linked_accounts_enabled']) {
+				this.showLinkedAccountForm();
+			}
 		},
 
 		showLinkedAccountForm: function() {

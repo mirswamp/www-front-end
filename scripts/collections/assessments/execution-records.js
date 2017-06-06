@@ -32,6 +32,23 @@ define([
 		model: ExecutionRecord,
 
 		//
+		// querying methods
+		//
+
+		equalTo: function(collection) {
+			if (this.length != collection.length) {
+				return false;
+			} else {
+				for (var i = 0; i < collection.length; i++) {
+					if (!this.at(i).equalTo(collection.at(i))) {
+						return false;
+					}
+				}
+			}
+			return true;
+		},
+
+		//
 		// ajax methods
 		//
 

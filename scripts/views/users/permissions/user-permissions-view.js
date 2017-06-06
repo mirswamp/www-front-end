@@ -1,6 +1,6 @@
 /******************************************************************************\
 |                                                                              |
-|                          change-user-permissions-view.js                     |
+|                             user-permissions-view.js                         |
 |                                                                              |
 |******************************************************************************|
 |                                                                              |
@@ -20,7 +20,7 @@ define([
 	'underscore',
 	'backbone',
 	'marionette',
-	'text!templates/users/permissions/change/change-user-permissions.tpl',
+	'text!templates/users/permissions/user-permissions.tpl',
 	'models/permissions/user-permission',
 	'collections/permissions/user-permissions',
 	'registry',

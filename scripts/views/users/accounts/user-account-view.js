@@ -25,11 +25,8 @@ define([
 	'registry',
 	'views/dialogs/confirm-view',
 	'views/dialogs/notify-view',
-	'views/dialogs/error-view',
-	'views/users/user-profile/user-profile-view',
-	'views/users/permissions/change/change-user-permissions-view',
-	'views/users/linked-accounts/change/change-user-linked-accounts-view'
-], function($, _, Backbone, Marionette, Template, Config, Registry, ConfirmView, NotifyView, ErrorView, UserProfileView, ChangeUserPermissionsView, ChangeUserLinkedAccountsView) {
+	'views/dialogs/error-view'
+], function($, _, Backbone, Marionette, Template, Config, Registry, ConfirmView, NotifyView, ErrorView) {
 	return Backbone.Marionette.LayoutView.extend({
 
 		//
@@ -44,6 +41,7 @@ define([
 			'click #profile': 'onClickProfile',
 			'click #permissions': 'onClickPermissions',
 			'click #accounts': 'onClickAccounts',
+			'click #passwords': 'onClickPasswords',
 			"click #edit": "onClickEdit",
 			'click #change-password': 'onClickChangePassword',
 			'click #reset-password': 'onClickResetPassword',
@@ -66,9 +64,10 @@ define([
 			// update top navigation
 			//
 			switch (this.options.nav) {
-				case 'password':
+				case 'profile':
+				case 'edit':
 					this.$el.find('.nav li').removeClass('active');
-					this.$el.find('.nav li#password').addClass('active');
+					this.$el.find('.nav li#profile').addClass('active');
 					break;
 				case 'permissions':
 					this.$el.find('.nav li').removeClass('active');
@@ -78,9 +77,11 @@ define([
 					this.$el.find('.nav li').removeClass('active');
 					this.$el.find('.nav li#accounts').addClass('active');
 					break;
+				case 'passwords':
+					this.$el.find('.nav li').removeClass('active');
+					this.$el.find('.nav li#passwords').addClass('active');
+					break;
 				default:
-				case 'edit':
-				case 'profile':
 					this.$el.find('.nav li').removeClass('active');
 					this.$el.find('.nav li#profile').addClass('active');
 					break;
@@ -89,39 +90,95 @@ define([
 			// display subviews
 			//
 			switch (this.options.nav) {
-				case 'password':
-					this.userProfile.show(
-						new ChangeUserPasswordView({
-							model: this.model,
-							parent: this
-						})
-					);
+				case 'profile':
+					this.showUserProfile();
+					break;
+				case 'edit':
+					this.showEditUserProfile();
 					break;
 				case 'permissions':
-					this.userProfile.show(
-						new ChangeUserPermissionsView({
-							model: this.model,
-							parent: this
-						})
-					);
+					this.showUserPermissions();
 					break;
 				case 'accounts':
-					this.userProfile.show(
-						new ChangeUserLinkedAccountsView({
-							model: this.model,
-							parent: this
-						})
-					);
+					this.showUserLinkedAccounts();
 					break;
-				case 'profile':
-					this.userProfile.show(
-						new UserProfileView({
-							model: this.model,
-							parent: this
-						})
-					);
+				case 'passwords':
+					this.showUserPasswords();
+					break;
+				default:
+					this.showUserProfile();
 					break;
 			}
+		},
+
+		showUserProfile: function() {
+			var self = this;
+			require([
+				'views/users/user-profile/user-profile-view'
+			], function (UserProfileView) {
+				self.userProfile.show(
+					new UserProfileView({
+						model: self.model,
+						parent: self
+					})
+				);
+			});
+		},
+
+		showEditUserAccount: function() {
+			var self = this;
+			require([
+				'views/users/accounts/edit/edit-user-account-view'
+			], function (EditUserAccountView) {
+				self.userProfile.show(
+					new EditUserAccountView({
+						model: self.model,
+						parent: self
+					})
+				);
+			});
+		},
+
+		showUserPermissions: function() {
+			var self = this;
+			require([
+				'views/users/permissions/user-permissions-view'
+			], function (UserPermissionsView) {
+				self.userProfile.show(
+					new UserPermissionsView({
+						model: self.model,
+						parent: self
+					})
+				);
+			});
+		},
+
+		showUserLinkedAccounts: function() {
+			var self = this;
+			require([
+				'views/users/linked-accounts/user-linked-accounts-view',
+			], function (UserLinkedAccountsView) {
+				self.userProfile.show(
+					new UserLinkedAccountsView({
+						model: self.model,
+						parent: self
+					})
+				);
+			});
+		},
+
+		showUserPasswords: function() {
+			var self = this;
+			require([
+				'views/users/passwords/user-passwords-view',
+			], function (UserPasswordsView) {
+				self.userProfile.show(
+					new UserPasswordsView({
+						model: self.model,
+						parent: self
+					})
+				);
+			});
 		},
 
 		//
@@ -142,6 +199,12 @@ define([
 
 		onClickAccounts: function() {
 			Backbone.history.navigate('#accounts/' + this.model.get('user_uid') + '/accounts', {
+				trigger: true
+			});
+		},
+
+		onClickPasswords: function() {
+			Backbone.history.navigate('#accounts/' + this.model.get('user_uid') + '/passwords', {
 				trigger: true
 			});
 		},

@@ -17,7 +17,9 @@
 		
 			<div class="bottom buttons" style="text-align:center">
 				<button id="sign-in" class="btn btn-primary btn-lg visible-xs-inline"><i class="fa fa-chevron-right"></i>Sign In</button>
+				<% if (!config['ldap_readonly']) { %>
 				<button id="sign-up" class="btn btn-lg"><i class="fa fa-pencil"></i>Sign Up!</button>
+				<% } %>
 			</div>
 		</div>
 	</div>

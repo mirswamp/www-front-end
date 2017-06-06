@@ -149,6 +149,8 @@ define([
 			// set package and tool
 			//
 			assessmentRun.set({
+				'assessment_run_uuid': undefined,
+
 				'package_uuid': selectedPackage.get('package_uuid'),
 				'package_version_uuid': selectedPackageVersion? selectedPackageVersion.get('package_version_uuid') : null,
 

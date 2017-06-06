@@ -59,6 +59,18 @@
 	<fieldset>
 		<legend>Account info</legend>
 
+		<div class="form-group">
+			<label class="required control-label">Username</label>
+			<div class="controls">
+				<div class="input-group">
+					<input type="text" class="required form-control" name="username" id="username" value="<%- username %>">
+					<div class="input-group-addon">
+						<i class="active fa fa-question-circle" data-toggle="popover" data-placement="top" data-container="body" title="Username" data-content="Your username is the name that you use to sign in to the web site."></i>
+					</div>
+				</div>
+			</div>	
+		</div>
+		
 		<% if (config['email_enabled']) { %>
 		<div class="form-group">
 			<label class="required control-label">Email address</label>
@@ -86,117 +98,6 @@
 		<% } %>
 	</fieldset>
 	
-	<fieldset>
-		<legend>Address</legend>
-
-		<div class="form-group">
-			<label class="control-label">Street Address 1</label>
-			<div class="controls">
-				<div class="input-group">
-					<input type="text" class="form-control" name="street-address1" id="street-address1" value="<%- model.get('address').get('street-address1') %>" />
-					<div class="input-group-addon">
-						<i class="active fa fa-question-circle" data-toggle="popover" data-placement="top" data-container="body" title="Street address 1" data-content="The street address where you reside."></i>
-					</div>
-				</div>
-			</div>
-		</div>
-
-		<div class="form-group">
-			<label class="control-label">Street Address 2</label>
-			<div class="controls">
-				<div class="input-group">
-					<input type="text" class="form-control" name="street-address2" id="street-address2" value="<%- model.get('address').get('street-address2') %>" />
-					<div class="input-group-addon">
-						<i class="active fa fa-question-circle" data-toggle="popover" data-placement="top" data-container="body" title="Street address 2" data-content="Additional information about your street address (building #, apartment #, etc.)"></i>
-					</div>
-				</div>
-			</div>
-		</div>
-
-		<div class="form-group">
-			<label class="control-label">City</label>
-			<div class="controls">
-				<div class="input-group">
-					<input type="text" class="form-control" name="city" id="city" value="<%- model.get('address').get('city') %>" />
-					<div class="input-group-addon">
-						<i class="active fa fa-question-circle" data-toggle="popover" data-placement="top" data-container="body" title="City" data-content="The city or village where you reside."></i>
-					</div>
-				</div>
-			</div>
-		</div>
-
-		<div class="form-group">
-			<label class="control-label">State</label>
-			<div class="controls">
-				<div class="input-group">
-					<input type="text" class="form-control" name="state" id="state" value="<%- model.get('address').get('state') %>" />
-					<div class="input-group-addon">
-						<i class="active fa fa-question-circle" data-toggle="popover" data-placement="top" data-container="body" title="State" data-content="The state or province where you reside."></i>
-					</div>
-				</div>
-			</div>
-		</div>
-
-		<div class="form-group">
-			<label class="control-label">Postal code</label>
-			<div class="controls">
-				<div class="postal-code input-group">
-					<input type="text" class="form-control" size="11" maxlength="11" name="postal-code" id="postal-code" value="<%- model.get('address').get('postal-code') %>" />
-					<div class="input-group-addon">
-						<i class="active fa fa-question-circle" data-toggle="popover" data-placement="top" data-container="body" title="Postal code" data-content="The postal or 'zip' code where you reside."></i>
-					</div>
-				</div>
-			</div>
-		</div>
-
-		<div class="form-group">
-			<label class="control-label">Country</label>
-			<div class="controls">
-				<div id="country-selector"></div>
-			</div>
-		</div>
-	</fieldset>
-
-	<fieldset>
-		<legend>Phone</legend>
-
-		<div class="form-group">
-			<label class="control-label">Country code</label>
-			<div class="controls">
-				<div class="country-code input-group">
-					<input type="text" class="form-control" readonly tabindex="-1" size="3" maxlength="3" name="country-code" id="country-code" value="<%- model.get('phone').get('country-code') %>" />
-					<div class="input-group-addon">
-						<i class="active fa fa-question-circle" data-toggle="popover" data-placement="top" data-container="body" title="Country code" data-content="The country code for your phone number."></i>
-					</div>
-				</div>
-			</div>
-		</div>
-
-		<div class="form-group">
-			<label class="control-label">Area code</label>
-			<div class="controls">
-				<div class="area-code input-group">
-					<input type="text" class="form-control" size="5" maxlength="5" name="area-code" id="area-code" value="<%- model.get('phone').get('area-code') %>" />
-					<div class="input-group-addon">
-						<i class="active fa fa-question-circle" data-toggle="popover" data-placement="top" data-container="body" title="Area code" data-content="The area code for your phone number."></i>
-					</div>
-				</div>
-			</div>
-		</div>
-		
-		<div class="form-group">
-			<label class="control-label">Phone number</label>
-			<div class="controls">
-				<div class="phone-number input-group">
-					<input type="text" class="form-control" size="11" name="phone-number" id="phone-number" value="<%- model.get('phone').get('phone-number') %>" />
-					<div class="input-group-addon">
-						<i class="active fa fa-question-circle" data-toggle="popover" data-placement="top" data-container="body" title="Phone number" data-content="Your phone number (optional)."></i>
-					</div>
-				</div>
-			</div>
-		</div>
-	</fieldset>
-
 	<div align="right">
 		<label><span class="required"></span>Fields are required</label>
 	</div>

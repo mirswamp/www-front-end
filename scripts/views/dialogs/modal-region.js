@@ -192,7 +192,7 @@ define([
 			this.currentView = undefined;
 		},
 
-		onKeyPress: function(event) {
+		onKeyDown: function(event) {
 
 			// if return key is pressed, then trigger primary button
 			//

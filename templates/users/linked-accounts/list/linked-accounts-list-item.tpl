@@ -6,6 +6,10 @@
 	<span class="name"><%- account.description %></span>
 </td>
 
+<td class="externalid">
+	<span class="externalid"><%- account.user_external_id %></span>
+</td>
+
 <td class="expiration">
 	<span class="expiration"><%- account.create_date %></span>
 </td>

@@ -39,8 +39,9 @@ define([
 	'routers/api-router',
 	'models/users/session',
 	'views/layout/page-view',
+	'views/keyboard/keyboard',
 	'views/dialogs/modal-region'
-], function($, _, Backbone, Cookie, Config, Marionette, Template, Registry, StringUtils, ArrayUtils, HTMLUtils, BrowserSupport, MainRouter, PackageRouter, ToolRouter, PlatformRouter, ProjectRouter, AssessmentRouter, ResultsRouter, RunRequestsRouter, ApiRouter, Session, PageView, ModalRegion) {
+], function($, _, Backbone, Cookie, Config, Marionette, Template, Registry, StringUtils, ArrayUtils, HTMLUtils, BrowserSupport, MainRouter, PackageRouter, ToolRouter, PlatformRouter, ProjectRouter, AssessmentRouter, ResultsRouter, RunRequestsRouter, ApiRouter, Session, PageView, Keyboard, ModalRegion) {
 	return Marionette.Application.extend({
 
 		// attributes
@@ -86,6 +87,16 @@ define([
 			//
 			this.session = new Session();
 
+			// initialize keyboard state
+			//
+			this.keyboard = new Keyboard({
+				el: this.$el
+			});
+
+			// listen for keyboard events
+			//
+			this.listenTo(this.keyboard, 'keydown', this.onKeyDown);
+
 			// in the event of a javascript error, reset the pending ajax spinner
 			//
 			$(window).error(function(){
@@ -106,12 +117,14 @@ define([
 			// log the user out if their session is found to be invalid
 			//
 			$(document).ajaxError(function(event, jqXHR) {
-				if (jqXHR.responseText === 'SESSION_INVALID') {
-					self.sessionExpired();
-				} else if (jqXHR.status == 401) {
-					data = JSON.parse(jqXHR.responseText);
-					if (data.status == 'NO_SESSION') {
-						self.sessionExpired();					
+				if (self.session.user) {
+					if (jqXHR.responseText === 'SESSION_INVALID') {
+						self.sessionExpired();
+					} else if (jqXHR.status == 401) {
+						data = JSON.parse(jqXHR.responseText);
+						if (data.status == 'NO_SESSION') {
+							self.sessionExpired();					
+						}
 					}
 				}
 			});
@@ -158,6 +171,10 @@ define([
 			// create regions
 			//
 			this.addRegions(this.regions);
+
+			// create new sounds
+			//
+			this.createSounds();
 		},
 
 		createRouters: function() {
@@ -230,6 +247,29 @@ define([
 						"<p>We suggest the following: " + browserList + "</p>"
 				});			
 			}
+		},
+
+		//
+		// sound methods
+		//
+
+		createSounds: function() {
+			var self = this;
+			require([
+				'utilities/multimedia/sound'
+			], function(Sound) {
+
+				// create sounds
+				//
+				self.sounds = {
+					'click': new Sound({
+						url: 'sounds/click.wav'
+					}),
+					'double-click': new Sound({
+						url: 'sounds/double-click.wav'
+					})
+				}
+			});
 		},
 
 		//
@@ -437,7 +477,7 @@ define([
 
 					// set server configuration info
 					//
-					if (response.status != 500) {
+					if (response.status == 401) {
 						var json = JSON.parse(response.responseText);
 						Registry.application.config = json.config;
 					} else {
@@ -484,6 +524,7 @@ define([
 			return this.session.user != undefined;
 		},
 
+		/*
 		sessionExpired: function() {
 			this.notify({
 				message: "Sorry, your session has expired, please log in again to continue using the SWAMP.",
@@ -507,6 +548,23 @@ define([
 				}
 			});
 		},
+		*/
+
+		sessionExpired: function() {
+			var self = this;
+			require([
+				'views/users/authentication/dialogs/sign-in-view'
+			], function (SignInView) {
+
+				// show sign in dialog
+				//
+				Registry.application.modal.show(
+					new SignInView(), {
+						focus: '#ok'
+					}
+				);
+			});
+		},
 
 		//
 		// rendering methods
@@ -517,15 +575,6 @@ define([
 			// render the template
 			//
 			$("body").html(this.template({}));
-
-			this.onRender();
-		},
-
-		onRender: function() {
-			var self = this;
-			$(window).on('keydown', function(event) {
-				self.onKeyPress(event);
-			});
 		},
 
 		showPage: function(view, options) {
@@ -666,21 +715,31 @@ define([
 			});
 		},
 
+		getActiveView: function() {
+			if (this.modal.isShowing()) {
+				return this.modal;
+			} else {
+				return this.main.currentView;
+			}
+		},
+
 		//
 		// event handlers
 		//
 
-		onKeyPress: function(event) {
+		onKeyDown: function(event) {
+			var activeView = this.getActiveView();
 
-			// let modal handle key event
+			// handle return key events
 			//
-			if (this.modal.isShowing()) {
-				this.modal.onKeyPress(event);
+			if (event.keyCode == 13 && event.target.tagName.toLowerCase() == 'textarea') {
+				return;
+			}
 
-			// let page handle key event
+			// let active view handle event
 			//
-			} else if (this.main.currentView && this.main.currentView.onKeyPress) {
-				this.main.currentView.onKeyPress(event);
+			if (activeView && activeView.onKeyDown) {
+				activeView.onKeyDown(event);
 			}
 		}
 	});

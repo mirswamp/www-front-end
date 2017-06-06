@@ -21,10 +21,8 @@ define([
 	'underscore',
 	'backbone',
 	'cookie',
-	'config',
-	'registry',
-	'views/dialogs/error-view'
-], function($, _, Backbone, Cookie, Config, Registry, ErrorView) {
+	'config'
+], function($, _, Backbone, Cookie, Config) {
 	return Backbone.Model.extend({
 
 		//

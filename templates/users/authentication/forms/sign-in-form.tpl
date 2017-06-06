@@ -32,7 +32,7 @@
 				<i class="active fa fa-question-circle" data-toggle="popover" data-placement="top" data-container="body" title="Password" data-content="This is the password that you specified when you registered with the SWAMP."></i>
 			</div>
 		</div>
-		<% if (config['email_enabled']) { %>
+		<% if (config['email_enabled'] && !config['ldap_readonly']){ %>
 		<div><a id="reset-password" class="fineprint"><i class="normal fa fa-repeat"></i> Reset my password</a></div>
 		<% } %>
 	</div>

@@ -1,0 +1,66 @@
+/******************************************************************************\
+|                                                                              |
+|                                  results.less                                |
+|                                                                              |
+|******************************************************************************|
+|                                                                              |
+|        This defines various CSS styles used in this application.             |
+|                                                                              |
+|        Author(s): Abe Megahed                                                |
+|                                                                              |
+|        This file is subject to the terms and conditions defined in           |
+|        'LICENSE.txt', which is part of this source code distribution.        |
+|                                                                              |
+|******************************************************************************|
+|        Copyright (C) 2012-2016 Software Assurance Marketplace (SWAMP)        |
+\******************************************************************************/
+
+table.results {
+	width: 100%;
+
+	td.priority {
+		width: 1%;
+	}
+
+	td.group {
+		width: 5%;
+		word-break: break-all;
+	}
+	td.code {
+		width: 10%;
+		word-break: break-all;
+	}
+	td.file {
+		width: 20%;
+		word-break: break-all;
+	}
+	td.line, td.col {
+		width: 2%;
+	}
+
+	td.message {
+		width: 45%;
+		word-break: break-all;
+	}
+	
+	td.resolution {
+		width: 40%;
+		word-break: break-all;
+	}
+	td.line, td.col, td.priority {
+		text-align: center;
+	}
+}
+
+table.summary {
+	width: 100%;
+	th, tr {
+		font-weight: bold; background:#a6caf0;
+		text-align: center;
+	}	
+	
+	td {
+		text-align: center;
+		background:#eeeee0;
+	}
+}

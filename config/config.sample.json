@@ -1,33 +1,13 @@
 {
 	"servers": {
-		"web": "<Your web services root URL>",
-		"api": "<Your api documentation web services root URL>"
+		"web": "https://SED_HOSTNAME/swamp-web-server/public"
 	},
 
-	"contact": {
-		
-		"support": {
-			"email": "<Your support email address (optional - you may delete this line)>",
-			"phoneNumber": "<Your support phone number (optional - you may delete this line)>",
-			"description": "our 24/7 support staff",
-			"message": "Feel free to contact us with questions, suggested improvements, new feature ideas, praise, criticism, or whatever thoughts you wish to share.",
-		},
-		
-		"security": {
-			"email": "<Your security email address (optional - you may delete this line)>",
-			"phoneNumber": "<Your security phone number (optional - you may delete this line)>",
-			"description": "our security team",
-			"message": "<Your security message here (optional - you may delete this line)>"
-		}
-	},
-
-	// cookie for storing user session
-	//
 	"cookie": {
-		"name": "swampuuid",
+		"name": "swamp",
 		"domain": null,
 		"path": "/",
-		"secure": false
+		"secure": true
 	},
 
 	"options": {

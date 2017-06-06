@@ -59,24 +59,6 @@ define([
 			this.showPlatformsList();
 		},
 
-
-		onShow: function() {
-			var self = this;
-
-			/*
-			// capture all key events
-			//
-			$('main').on('keypress', function(event) {
-
-				// if no modal is open
-				//
-				if ($('modal-backdrop').length == 0) {
-					self.onKeyPress(event);
-				}
-			});
-			*/
-		},
-
 		showLightBox: function() {
 			var self = this;
 			require([
@@ -287,7 +269,7 @@ define([
 			});
 		},
 
-		onKeyPress: function(event) {
+		onKeyDown: function(event) {
 
 			// respond to return key
 			//

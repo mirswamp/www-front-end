@@ -23,9 +23,10 @@ define([
 	'text!templates/widgets/selectors/name-selector.tpl',
 	'registry',
 	'collections/packages/packages',
+	'collections/packages/package-types',
 	'views/dialogs/error-view',
 	'views/widgets/selectors/name-selector-view'
-], function($, _, Backbone, Template, Registry, Packages, ErrorView, NameSelectorView) {
+], function($, _, Backbone, Template, Registry, Packages, PackageTypes, ErrorView, NameSelectorView) {
 	return NameSelectorView.extend({
 
 		//
@@ -50,20 +51,20 @@ define([
 
 			// fetch package types
 			//
-			Packages.fetchTypes({
+			new PackageTypes().fetch({
 
 				// callbacks
 				//
-				success: function(data) {
+				success: function(collection) {
 
 					// get type names
 					//
 					var types = [{
 						name: 'Any'
 					}];
-					for (var i = 0; i < data.length; i++) {
+					for (var i = 0; i < collection.length; i++) {
 						types.push({
-							name: data[i].name
+							name: collection.at(i).name
 						});
 					}
 

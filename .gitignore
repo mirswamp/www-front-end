@@ -1,6 +1,7 @@
-scripts/config.js
+config/config.json
 piwik/config/config.ini.php
 piwik/misc/How_to_install_Piwik.html
 piwik/tmp
+swamp-web-server
 *.DS_Store
 *.swp

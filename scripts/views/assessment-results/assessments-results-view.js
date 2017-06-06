@@ -382,7 +382,7 @@ define([
 
 			// fetch execution records for a single project
 			//
-			this.collection.fetchByProject(project, {
+			new ExecutionRecords().fetchByProject(project, {
 
 				// attributes
 				//
@@ -390,8 +390,8 @@ define([
 
 				// callbacks
 				//
-				success: function() {
-					done(self.collection);
+				success: function(collection) {
+					done(collection);
 				},
 
 				error: function() {
@@ -412,7 +412,7 @@ define([
 
 			// fetch execution records for multiple projects
 			//
-			this.collection.fetchByProjects(projects, {
+			new ExecutionRecords().fetchByProjects(projects, {
 
 				// attributes
 				//
@@ -420,8 +420,8 @@ define([
 
 				// callbacks
 				//
-				success: function() {
-					done(self.collection);
+				success: function(collection) {
+					done(collection);
 				},
 
 				error: function() {
@@ -455,7 +455,7 @@ define([
 				if (this.model) {
 					this.fetchProjectExecutionRecords(this.model, done);
 				} else {
-					done();
+					done(new ExecutionRecords());
 				}
 			}
 		},
@@ -562,11 +562,14 @@ define([
 			
 			// fetch execution records
 			//
-			this.fetchExecutionRecords(function() {
+			this.fetchExecutionRecords(function(collection) {
 
-				// show list
+				// show list if changed
 				//
-				self.showList();
+				if (!self.collection.equalTo(collection)) {
+					self.collection = collection;
+					self.showList();
+				}
 
 				// perform callback
 				//

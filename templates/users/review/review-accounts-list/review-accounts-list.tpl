@@ -26,14 +26,14 @@
 				<span>Type</span>
 			</th>
 
-			<% if (showForcePasswordReset) { %>
+			<% if (showForcePasswordReset && !config['ldap_readonly']) { %>
 			<th class="force-password-reset hidden-xs">
 				<i class="fa fa-refresh" data-toggle="popover" data-placement="top" data-content="Force Password Reset" data-container="body"></i>
-				<input type="checkbox" class="select-all" />
+				<input type="checkbox" class="select-all" <% if (config['ldap_readonly']) { %> disabled<% } %>/>
 			</th>
 			<% } %>
 
-			<% if (showHibernate) { %>
+			<% if (showHibernate && !config['ldap_readonly']) { %>
 			<th class="hibernate hidden-xs">
 				<i class="fa fa-bed" data-toggle="popover" data-placement="top" data-content="Hibernating / Inactive" data-container="body"></i>
 				<input type="checkbox" class="select-all" />

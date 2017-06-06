@@ -1,6 +1,6 @@
 /******************************************************************************\
 |                                                                              |
-|                                    aup-view.js                               |
+|                                  sign-aup-view.js                            |
 |                                                                              |
 |******************************************************************************|
 |                                                                              |
@@ -22,7 +22,7 @@ define([
 	'backbone',
 	'marionette',
 	'validate',
-	'text!templates/users/registration/aup.tpl',
+	'text!templates/users/registration/sign-aup.tpl',
 	'text!templates/policies/acceptable-use-policy.tpl',
 	'registry',
 	'views/users/registration/user-registration-view',
@@ -57,15 +57,15 @@ define([
 			//
 			this.validator = this.validate();
 
-			// scroll to top
-			//
-			var el = this.$el.find('h1');
-			el[0].scrollIntoView(true);
-
 			// show subviews
 			//
 			this.$el.find('#aup-text').html(_.template(AupTemplate));
 			this.showSignUpView();
+
+			// scroll to top
+			//
+			var el = this.$el.find('h1');
+			el[0].scrollIntoView(true);
 		},
 
 		showSignUpView: function() {

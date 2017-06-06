@@ -1,6 +1,6 @@
 /******************************************************************************\
 |                                                                              |
-|                            system-email-list-view.js                         |
+|                         system-email-list-item-view.js                       |
 |                                                                              |
 |******************************************************************************|
 |                                                                              |
@@ -43,7 +43,10 @@ define([
 			return _.template(Template, _.extend(data, {
 				User: User,
 				model: this.model,
-				url: Registry.application.getURL() + '#accounts'
+				url: Registry.application.getURL() + '#accounts',
+				index: this.options.index,
+				showNumbering: this.options.showNumbering,
+				showHibernate: this.options.showHibernate
 			}));
 		}
 	});

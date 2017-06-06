@@ -41,9 +41,11 @@ define([
 		},
 
 		events: {
+			'click #show-inactive-accounts': 'onClickShowInactiveAccounts',
 			'click #send-email': 'onClickSendEmail',
 			'click #select-all': 'onClickSelectAll',
-			'click tbody td input': 'onClickSelectRow'
+			'click tbody td input': 'onClickSelectRow',
+			'click #show-numbering': 'onClickShowNumbering'
 		},
 
 		//
@@ -51,12 +53,31 @@ define([
 		//
 
 		initialize: function() {
+
+			// set optional parameter defaults
+			//
+			if (this.options.showInactiveAccounts == undefined) {
+				this.options.showInactiveAccounts = true;
+			}
+			if (this.options.showNumbering == undefined) {
+				this.options.showNumbering = Registry.application.options.showNumbering;
+			}
+
+			// set attributes
+			//
 			this.collection = new Users();
 		},
 
 		//
 		// rendering methods
 		//
+
+		template: function(data) {
+			return _.template(Template, _.extend(data, {
+				showInactiveAccounts: this.options.showInactiveAccounts,
+				showNumbering: this.options.showNumbering
+			}));
+		},
 
 		onRender: function() {
 			var self = this;
@@ -73,8 +94,8 @@ define([
 
 				// callbacks
 				//
-				success: function(data, status, jqXHR) {
-					self.showSystemEmailList(JSON.parse(jqXHR.xhr.responseText));
+				success: function(collection) {
+					self.showSystemEmailList();
 				},
 
 				error: function() {
@@ -90,31 +111,18 @@ define([
 			});
 		},
 
-		showSystemEmailList: function(data) {
-		
-			// create collection of users
-			//
-			var users = new Users();
-			for (var key in data) {
-				var item = data[key];
-				if (item.enabled_flag) {
-					users.add(new User(item));
-				}			
-			}
-
-			/*
-			// users must be flagged enabled
-			//
-			users = new Users(data.where({
-				enabled_flag: 1
-			}));
-			*/
+		showSystemEmailList: function() {
+			var self = this;
 
 			// show system email list view
 			//
 			this.systemEmailList.show(
 				new SystemEmailListView({
-					collection: users
+					collection: new Users(this.collection.filter(function(user) {
+						return user.isEnabled() && (self.options.showInactiveAccounts || user.isActive());
+					})),
+					showNumbering: this.options.showNumbering,
+					showHibernate: this.options.showInactiveAccounts
 				})
 			);
 		},
@@ -122,6 +130,11 @@ define([
 		//
 		// event handling methods
 		//
+
+		onClickShowInactiveAccounts: function(event) {
+			this.options.showInactiveAccounts = $(event.target).is(':checked');
+			this.showSystemEmailList();
+		},
 
 		onClickSendEmail: function() {
 			var recipients = [];
@@ -161,6 +174,12 @@ define([
 
 		onClickSelectRow: function() {
 			$('#select-all').prop('checked', false);
+		},
+
+		onClickShowNumbering: function(event) {
+			Registry.application.setShowNumbering($(event.target).is(':checked'));
+			this.options.showNumbering = Registry.application.options.showNumbering;
+			this.showSystemEmailList();
 		}
 	});
 });

@@ -136,7 +136,7 @@ define([
 									Registry.application.modal.show(
 										new NotifyView({
 											title: "My Email Updated",
-											message: "An email verification link has been sent to your new email address. Please follow the link to change your email address. Your previous email address will remain in effect until you do so.",
+											message: "An email verification link has been sent to your new email address. Please follow the link in the email to change your email address. Your previous email address will remain in effect until you do so.",
 
 											// callbacks
 											//

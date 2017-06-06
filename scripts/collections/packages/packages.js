@@ -134,10 +134,6 @@ define([
 		// static methods
 		//
 
-		fetchTypes: function(options) {
-			return $.ajax(Config.servers.web + '/packages/types', options);
-		},
-
 		fetchNumByUser: function(user, options) {
 			return $.ajax(Config.servers.web + '/packages/users/' + user.get('user_uid') + '/num', options);
 		},
@@ -148,46 +144,6 @@ define([
 
 		fetchNumAllProtected: function(projects, options) {
 			return $.ajax(Config.servers.web + '/packages/protected/' + projects.getUuidsStr() + '/num', options);
-		},
-
-		packageTypesToLanguages: function(packageTypes) {
-			var languages = [];
-
-			// get language names
-			//
-			for (var i = 0; i < packageTypes.length; i++) {
-				var packageType = packageTypes[i];
-				if (packageType.package_type_enabled) {
-					var name = packageType.name;
-					if (name) {
-						if (name.contains('C/C++') && !languages.contains('C/C++')) {
-							languages.push('C/C++');
-						} else if ((name.contains('Java') || name.contains('Android')) && !languages.contains('Java')) {
-							languages.push('Java');
-						} else if (name.contains('Python') && !languages.contains('Python')) {
-							languages.push('Python');
-						} else if (name.contains('Ruby') && !languages.contains('Ruby')) {
-							languages.push('Ruby');
-						} else if (name.contains('Web Scripting')) {
-							languages.push('Web Scripting');
-						}
-					}
-				}
-			}
-
-			return languages;
-		},
-
-		packageTypesToNames: function(packageTypes) {
-			var names = [];
-
-			// get package type names
-			//
-			for (var i = 0; i < packageTypes.length; i++) {
-				names.push(packageTypes[i].name);
-			}
-
-			return names;
 		}
 	});
 });

@@ -30,19 +30,17 @@ define([
 	'utilities/security/password-policy',
 	'models/users/user',
 	'models/users/session',
-	'views/users/registration/aup-view',
+	'views/users/registration/sign-aup-view',
 	'views/users/prompts/linked-account-link-prompt-view',
 	'views/users/registration/email-verification-view',
 	'views/dialogs/notify-view',
 	'views/dialogs/error-view'
-], function($, _, Backbone, Marionette, Tooltip, Popover, Template, LinkedAccountPolicyTemplate, Registry, Config, PasswordPolicy, User, Session, AupView, LinkedAccountLinkPromptView, EmailVerificationView, NotifyView, ErrorView) {
+], function($, _, Backbone, Marionette, Tooltip, Popover, Template, LinkedAccountPolicyTemplate, Registry, Config, PasswordPolicy, User, Session, SignAupView, LinkedAccountLinkPromptView, EmailVerificationView, NotifyView, ErrorView) {
 	return Backbone.Marionette.LayoutView.extend({
 
 		//
 		// attributes
 		//
-
-		template: _.template(Template),
 
 		regions: {
 			linkedAccountPolicyText: '#linked-account-policy-text'
@@ -62,6 +60,12 @@ define([
 		getPolicyText: function(data) {
 			return _.template(LinkedAccountPolicyTemplate, {
 				passwordPolicy: passwordPolicy
+			});
+		},
+
+		template: function() {
+			return _.template(Template, {
+				config: Registry.application.config
 			});
 		},
 
@@ -192,7 +196,7 @@ define([
 			if (this.isValid()) {
 				self.undelegateEvents();
 				Registry.application.showMain(
-					new AupView({
+					new SignAupView({
 
 						// callbacks
 						//
@@ -210,7 +214,7 @@ define([
 												// callbacks
 												//
 												accept: function() {
-													Session.linkedAccountRedirect();
+													window.location = Registry.application.getURL();
 												}
 											})
 										);

@@ -10,6 +10,10 @@
 				Description
 			</th>
 
+			<th class="externalid">
+				External ID
+			</th>
+
 			<% if (admin && showStatus) { %>
 				<th class="create_date">
 					Create Date

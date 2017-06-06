@@ -1,8 +1,19 @@
 <h2>Recipients</h2>
 <p>The following users are registered system email users:</p>
+
+<label>
+	<input type="checkbox" id="show-inactive-accounts"<% if (showInactiveAccounts) { %> checked="checked"<% } %>>
+	Show inactive accounts
+</label>
+
 <div id="system-email-list">
 	<div align="center"><i class="fa fa-spinner fa-spin fa-2x"></i><br/>Loading system email users...</div>
 </div>
+
+<label>
+	<input type="checkbox" id="show-numbering" <% if (showNumbering) { %>checked<% } %>>
+	Show numbering
+</label>
 
 <h2>Content</h2>
 <form action="/" class="form-horizontal">

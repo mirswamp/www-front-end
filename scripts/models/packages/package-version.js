@@ -266,7 +266,8 @@ define([
 				type: 'PUT',
 				dataType: 'JSON',
 				data: {
-					'projects': projects.toJSON()
+					//'projects': projects.toJSON()
+					'project_uuids': projects.getUuids()
 				}
 			}));
 		},

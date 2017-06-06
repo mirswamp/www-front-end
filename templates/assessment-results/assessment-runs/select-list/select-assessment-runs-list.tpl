@@ -50,10 +50,6 @@
 			<% if (showDelete) { %>
 			<th class="append delete hidden-xs"></th>
 			<% } %>
-
-			<% if (showSsh) { %>
-			<th class="append ssh hidden-xs"></th>
-			<% } %>
 		</tr>
 	</thead>
 	<tbody>

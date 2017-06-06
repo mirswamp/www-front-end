@@ -45,7 +45,8 @@ define([
 			}, {
 				showNumbering: this.options.showNumbering,
 				showSchedule: this.options.showSchedule,
-				showDelete: this.options.showDelete
+				showDelete: this.options.showDelete,
+				parent: this
 			}));
 		},
 

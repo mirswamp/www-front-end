@@ -112,7 +112,8 @@ define([
 			'api/routes/add': 'showAddNewApiRoute',
 			'api/routes/:route': 'showApiRoute',
 			'api/routes/:route/edit': 'showEditApiRoute',
-			'api/routes/:method/*route': 'showApiMethodRoute'
+			'api/routes/:method/*route': 'showApiMethodRoute',
+			'api/types/:type': 'showApiDataType'
 		},
 
 		//
@@ -363,6 +364,46 @@ define([
 						Registry.application.modal.show(
 							new NotifyView({
 								message: "Could not find specified API route: " + method + ' ' + route
+							})
+						);
+					}
+				});	
+			});	
+		},
+
+		showApiDataType: function(name) {
+			var self = this;
+			require([
+				'registry',
+				'models/api/type',
+				'views/api/types/type-view',
+				'views/dialogs/notify-view',
+			], function (Registry, Type, TypeView, NotifyView) {
+				var type = new Type();
+
+				// fetch route by name
+				//
+				type.fetchByName(name, {
+
+					// callbacks
+					//
+					success: function(model) {
+
+						// show main view
+						//
+						if (model) {
+							Registry.application.showMain(
+								new TypeView({
+									model: model
+								})
+							);
+						}
+					},
+
+					error: function(message) {
+						Registry.application.modal.show(
+							new NotifyView({
+								message: "Could not find specified API data type: " + type
 							})
 						);
 					}

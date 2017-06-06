@@ -159,7 +159,7 @@ define([
 						Registry.application.modal.show(
 							new NotifyView({
 								title: "My Password Changed",
-								message: "Your user password has been successfully changed.",
+								message: "Your user password has been successfully changed.  Note that this password reset also deleted any application passwords that you may have previously created. ",
 
 								// callbacks
 								//

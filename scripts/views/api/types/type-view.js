@@ -1,10 +1,10 @@
 /******************************************************************************\
 |                                                                              |
-|                          change-my-linked-accounts-view.js                   |
+|                                  type-view.js                                |
 |                                                                              |
 |******************************************************************************|
 |                                                                              |
-|        This defines a view for changing the user's linked-accounts.          |
+|        This defines an API documentation view of the application.            |
 |                                                                              |
 |        Author(s): Abe Megahed                                                |
 |                                                                              |
@@ -20,67 +20,68 @@ define([
 	'underscore',
 	'backbone',
 	'marionette',
-	'models/authentication/user-linked-account',
-	'collections/authentication/user-linked-accounts',
-	'text!templates/users/linked-accounts/change/change-my-linked-accounts.tpl',
 	'registry',
-	'config',
-	'views/users/linked-accounts/list/linked-accounts-list-view',
-	'views/dialogs/notify-view',
+	'text!templates/api/types/type.tpl',
+	'collections/api/fields',
+	'views/api/types/fields-list/fields-list-view',
 	'views/dialogs/error-view'
-], function($, _, Backbone, Marionette, UserLinkedAccount, UserLinkedAccounts, Template, Registry, Config, LinkedAccountsListView, NotifyView, ErrorView) {
+], function($, _, Backbone, Marionette, Registry, Template, Fields, FieldsListView, ErrorView) {
 	return Backbone.Marionette.LayoutView.extend({
 
 		//
 		// attributes
 		//
 
-		template: function(){
-			return _.template(Template);
+		regions: {
+			fieldsList: '#fields-list'
+		},
+
+		events: {
+			'click #back': 'onClickBack'
 		},
 
 		//
-		// methods
+		// constructor
 		//
 
 		initialize: function() {
-			this.model = Registry.application.session.user;
-			this.collection = new UserLinkedAccounts();
+			this.collection = new Fields();
 		},
 
 		//
 		// rendering methods
 		//
 
-		onRender: function() {
-			var self = this;
-
-			// show list subview
-			//
-			this.showLinkedAccountsList();
+		template: function(data) {
+			return _.template(Template, _.extend(data, {
+				editable: this.options.editable
+			}));
 		},
 
-		showLinkedAccountsList: function() {
-			var self = this;
+		onRender: function() {
+			this.fetchAndShowFields();
+		},
 
-			// fetch collection of linked accounts
+		showFields: function() {
+
+			// show list of fields
 			//
-			this.collection.fetchByUser(self.model, {
+			this.fieldsList.show(
+				new FieldsListView({
+					collection: this.collection,
+					showDelete: false
+				})
+			);
+		},
+
+		fetchAndShowFields: function() {
+			var self = this;
+			this.collection.fetchByType(this.model, {
 
 				// callbacks
 				//
 				success: function() {
-
-					// show select linked accounts list view
-					//
-					self.linkedAccountsList = new LinkedAccountsListView({
-						el: self.$el.find('#linked-accounts-list'),
-						model: self.model,
-						collection: self.collection,
-						showDelete: true,
-						parent: self
-					});
-					self.linkedAccountsList.render();
+					self.showFields();
 				},
 
 				error: function() {
@@ -89,11 +90,24 @@ define([
 					//
 					Registry.application.modal.show(
 						new ErrorView({
-							message: "Could not get linked accounts for this user."
+							message: "Could not fetch fields."
 						})
 					);
 				}
+			})
+		},
+
+		//
+		// event handling methods
+		//
+
+		onClickBack: function() {
+
+			// return to api view
+			//
+			Backbone.history.navigate('#api', {
+				trigger: true
 			});
-		}
+		},
 	});
 });

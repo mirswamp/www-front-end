@@ -36,7 +36,7 @@ define([
 			return _.template(Template, _.extend(data, {
 				model: this.model,
 				config: Registry.application.config,
-				myProfile: this.model.isCurrentUser(),
+				myProfile: this.model && this.model.isCurrentUser(),
 				showUserType: Registry.application.session.user.isAdmin()
 			}));
 		},

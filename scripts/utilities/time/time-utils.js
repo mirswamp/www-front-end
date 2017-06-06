@@ -58,7 +58,7 @@ function sleep(milliseconds) {
 //
 
 function elapsedTimeToHTML(date1, date2) {
-	var time1 = date1? date1.getTime() : 0;
+	var time1 = date1? date1.getTime(): 0;
 	var time2 = date2? date2.getTime() : 0;
 	var seconds = Math.abs(Math.floor((time2 - time1) / 1000));
 
@@ -68,11 +68,17 @@ function elapsedTimeToHTML(date1, date2) {
 	var secondsPerHour = secondsPerMinute * 60;
 	var secondsPerDay = secondsPerHour * 24;
 	var secondsPerWeek = secondsPerDay * 7;
+	var secondsPerYear = secondsPerWeek * 52;
+
+	// find elapsed years
+	//
+	var years = Math.floor(seconds / secondsPerYear);
+	seconds -= years * secondsPerYear;
 
 	// find elapsed weeks
 	//
 	var weeks = Math.floor(seconds / secondsPerWeek);
-	seconds -= weeks * secondsPerDay;
+	seconds -= weeks * secondsPerWeek;
 
 	// find elapsed days
 	//
@@ -95,6 +101,9 @@ function elapsedTimeToHTML(date1, date2) {
 		var html = '<div class="negative time">';
 	} else {
 		var html = '<div class="time">';
+	}
+	if (years > 0) {
+		html += '<span class="years">' + years + '</span>';
 	}
 	if (weeks > 0) {
 		html += '<span class="weeks">' + weeks + '</span>';

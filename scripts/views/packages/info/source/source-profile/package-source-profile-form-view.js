@@ -31,8 +31,9 @@ define([
 	'utilities/scripting/file-utils',
 	'models/packages/package',
 	'collections/packages/packages',
+	'collections/packages/package-types',
 	'views/dialogs/error-view'
-], function($, _, Backbone, Marionette, Dropdown, Select2, Validate, Tooltip, Popover, Template, Registry, FileUtils, Package, Packages, ErrorView) {
+], function($, _, Backbone, Marionette, Dropdown, Select2, Validate, Tooltip, Popover, Template, Registry, FileUtils, Package, Packages, PackageTypes, ErrorView) {
 	return Backbone.Marionette.ItemView.extend({
 
 		//
@@ -375,12 +376,12 @@ define([
 			
 			// fetch supported languages
 			//
-			Packages.fetchTypes({
+			new PackageTypes().fetch({
 
 				// callbacks
 				//
-				success: function(packageTypes) {
-					var languages = Packages.packageTypesToLanguages(packageTypes);
+				success: function(collection) {
+					var languages = collection.toLanguages();
 					var languageSelector = self.$el.find('#language-type');
 					for (var i = 0; i < languages.length; i++) {
 						var language = languages[i];
@@ -395,7 +396,7 @@ define([
 					// perform callback
 					//
 					if (done) {
-						done(languages, packageTypes);
+						done(languages, collection);
 					}
 				},
 
@@ -413,39 +414,38 @@ define([
 		},
 
 		setJavaTypes: function(packageTypes) {
-			packageTypeNames = Packages.packageTypesToNames(packageTypes);
 
 			// remove java7 / java8 options
 			//
-			if (!packageTypeNames.contains('Java 7 Source Code') &&
-				!packageTypeNames.contains('Java 7 Bytecode')) {
+			if (!packageTypes.supports('Java 7 Source Code') &&
+				!packageTypes.supports('Java 7 Bytecode')) {
 				this.$el.find('#java7').remove();
 			}
-			if (!packageTypeNames.contains('Java 8 Source Code') &&
-				!packageTypeNames.contains('Java 8 Bytecode')) {
+			if (!packageTypes.supports('Java 8 Source Code') &&
+				!packageTypes.supports('Java 8 Bytecode')) {
 				this.$el.find('#java8').remove();
 			}
 
 			// remove java source / bytecode options
 			//
-			if (!packageTypeNames.contains('Java 7 Source Code') &&
-				!packageTypeNames.contains('Java 8 Source Code')) {
+			if (!packageTypes.supports('Java 7 Source Code') &&
+				!packageTypes.supports('Java 8 Source Code')) {
 				this.$el.find('#java-source').remove();
 			}
-			if (!packageTypeNames.contains('Java 7 Bytecode') &&
-				!packageTypeNames.contains('Java 8 Bytecode')) {
+			if (!packageTypes.supports('Java 7 Bytecode') &&
+				!packageTypes.supports('Java 8 Bytecode')) {
 				this.$el.find('#java-bytecode').remove();
 			}
 
 			// remove android source option
 			//
-			if (!packageTypeNames.contains('Android Java Source Code')) {
+			if (!packageTypes.supports('Android Java Source Code')) {
 				this.$el.find('#android-source').remove();
 			}
 
 			// remove android bytecode option
 			//
-			if (!packageTypeNames.contains('Android .apk')) {
+			if (!packageTypes.supports('Android .apk')) {
 				this.$el.find('#android-bytecode').remove();
 			}
 		},
@@ -454,16 +454,16 @@ define([
 
 			// remove ruby framework options
 			//
-			if (!packageTypeNames.contains('Ruby')) {
+			if (!packageTypes.supports('Ruby')) {
 				this.$el.find('#ruby').remove();
 			}
-			if (!packageTypeNames.contains('Ruby Sinatra')) {
+			if (!packageTypes.supports('Ruby Sinatra')) {
 				this.$el.find('#ruby-sinatra').remove();
 			}
-			if (!packageTypeNames.contains('Ruby on Rails')) {
+			if (!packageTypes.supports('Ruby on Rails')) {
 				this.$el.find('#ruby-rails').remove();
 			}
-			if (!packageTypeNames.contains('Ruby Padrino')) {
+			if (!packageTypes.supports('Ruby Padrino')) {
 				this.$el.find('#ruby-padrino').remove();
 			}
 		},
@@ -472,10 +472,10 @@ define([
 
 			// remove python version options
 			//
-			if (!packageTypeNames.contains('Python2')) {
+			if (!packageTypes.supports('Python2')) {
 				this.$el.find('#python2').remove();
 			}
-			if (!packageTypeNames.contains('Python3')) {
+			if (!packageTypes.supports('Python3')) {
 				this.$el.find('#python3').remove();
 			}
 		},
@@ -556,7 +556,6 @@ define([
 
 						// java package types
 						//
-						case 'java-source':
 						case 'java7-source':
 							self.setLanguageType('java');
 							self.setJavaType('java-source');
@@ -565,6 +564,7 @@ define([
 							self.setDefaultAndroidSourceSetting();
 							break;
 
+						case 'java-source':
 						case 'java8-source':
 							self.setLanguageType('java');
 							self.setJavaType('java-source');
@@ -573,7 +573,6 @@ define([
 							self.setDefaultAndroidSourceSetting();
 							break;
 
-						case 'java-bytecode':
 						case 'java7-bytecode':
 							self.setLanguageType('java');
 							self.setJavaType('java-bytecode');
@@ -582,6 +581,7 @@ define([
 							self.setDefaultAndroidBytecodeSetting();
 							break;
 
+						case 'java-bytecode':
 						case 'java8-bytecode':
 							self.setLanguageType('java');
 							self.setJavaType('java-bytecode');

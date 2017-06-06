@@ -26,13 +26,13 @@
 	<% } %>
 </td>
 
-<% if (showForcePasswordReset) { %>
+<% if (showForcePasswordReset && !config['ldap_readonly']) { %>
 <td class="force-password-reset hidden-xs">
 	<input type="checkbox" name="select"<% if (model.get('forcepwreset_flag')) { %> checked<% } %>/>
 </td>
 <% } %>
 
-<% if (showHibernate) { %>
+<% if (showHibernate && !config['ldap_readonly']) { %>
 <td class="hibernate hidden-xs">
 	<input type="checkbox" name="select"<% if (model.get('hibernate_flag')) { %> checked<% } %>/>
 </td>
@@ -40,7 +40,9 @@
 
 <% if (showLinkedAccount) { %>
 <td class="has-linked-account hidden-xs">
-	<input disabled type="checkbox" name="select"<% if (model.get('has_linked_account')) { %> checked<% } %>/>
+	<% if (model.get('has_linked_account')) { %>
+	<i class="fa fa-chain"></i>
+	<% } %>
 </td>
 <% } %>
 
@@ -57,6 +59,9 @@
 </td>
 
 <td class="status last">
+	<% if (config['ldap_readonly']) { %>
+	<%- model.getStatus().toTitleCase() %>
+	<% } else { %>
 	<div class="btn-group">
 		<a class="btn btn-sm dropdown-toggle" data-toggle="dropdown">
 			<% if (!model.isEnabled()) { %><span class="warning"><% } %>
@@ -70,4 +75,5 @@
 			<li><a class="disabled">Disabled</a></li>
 		</ul>
 	</div>
+	<% } %>
 </td>

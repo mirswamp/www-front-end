@@ -4,7 +4,7 @@
 	},
 
 	"cookie": {
-		"name": "swampuuid",
+		"name": "swamp",
 		"domain": null,
 		"path": "/",
 		"secure": true

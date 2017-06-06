@@ -24,11 +24,13 @@ define([
 	'registry',
 	'text!templates/api/api.tpl',
 	'collections/api/routes',
+	'collections/api/types',
 	'views/api/routes/filters/route-filters-view',
 	'views/api/routes-list/routes-list-view',
+	'views/api/types-list/types-list-view',
 	'views/api/dialogs/report/api-report-view',
 	'views/dialogs/error-view'
-], function($, _, Backbone, Marionette, Config, Registry, Template, Routes, RouteFiltersView, RoutesListView, APIReportView, ErrorView) {
+], function($, _, Backbone, Marionette, Config, Registry, Template, Routes, Types, RouteFiltersView, RoutesListView, TypesListView, APIReportView, ErrorView) {
 	return Backbone.Marionette.LayoutView.extend({
 
 		//
@@ -37,7 +39,8 @@ define([
 
 		regions: {
 			routeFilters: '#route-filters',
-			routesList: '#routes-list'
+			routesList: '#routes-list',
+			typesList: '#types-list'
 		},
 
 		events: {
@@ -73,6 +76,7 @@ define([
 			// set attributes
 			//
 			this.collection = new Routes();
+			this.types = new Types();
 		},
 
 		//
@@ -106,9 +110,10 @@ define([
 			//
 			this.showFilters();
 
-			// show routes list
+			// show lists
 			//
-			this.fetchAndShowList();
+			this.fetchAndShowRoutesList();
+			this.fetchAndShowTypesList();
 		},
 
 		showFilters: function() {
@@ -144,7 +149,7 @@ define([
 			);
 		},
 
-		fetchAndShowList: function() {
+		fetchAndShowRoutesList: function() {
 			var self = this;
 			this.collection.reset();
 			this.collection.fetch({
@@ -153,7 +158,7 @@ define([
 				// callbacks
 				//
 				success: function() {
-					self.showList();
+					self.showRoutesList();
 				},
 
 				error: function() {
@@ -169,13 +174,49 @@ define([
 			});
 		},
 
-		showList: function() {
+		showRoutesList: function() {
 			this.routesList.show(
 				new RoutesListView({
 					collection: this.collection,
 					editable: false,
 					showServer: this.options.showServer,
 					showCategory: this.options.showCategory,
+					showUnfinished: this.options.showUnfinished,
+					showPrivate: this.options.showPrivate,
+					showNumbering: Registry.application.options.showNumbering
+				})
+			)
+		},
+
+		fetchAndShowTypesList: function() {
+			var self = this;
+			this.types.reset();
+			this.types.fetch({
+
+				// callbacks
+				//
+				success: function() {
+					self.showTypesList();
+				},
+
+				error: function() {
+
+					// show error dialog
+					//
+					Registry.application.modal.show(
+						new ErrorView({
+							message: "Could not fetch list of API data types."
+						})
+					);			
+				}
+			});
+		},
+
+		showTypesList: function() {
+			this.typesList.show(
+				new TypesListView({
+					collection: this.types,
+					editable: false,
 					showUnfinished: this.options.showUnfinished,
 					showPrivate: this.options.showPrivate,
 					showNumbering: Registry.application.options.showNumbering
@@ -202,7 +243,8 @@ define([
 
 		onClickShowNumbering: function(event) {
 			Registry.application.setShowNumbering($(event.target).is(':checked'));
-			this.showList();
+			this.showRoutesList();
+			this.showTypesList();
 		},
 
 		onClickViewReport: function() {

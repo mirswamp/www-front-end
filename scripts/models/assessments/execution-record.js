@@ -34,6 +34,10 @@ define([
 		// querying methods
 		//
 
+		equalTo: function(model) {
+			return _.isEqual(this.attributes, model.attributes);
+		},
+
 		hasErrors: function() {
 			return this.has('status') && this.get('status').toLowerCase().indexOf('errors') != -1;
 		},
