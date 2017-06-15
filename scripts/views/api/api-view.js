@@ -229,7 +229,8 @@ define([
 		//
 
 		onChange: function() {
-			this.fetchAndShowList();
+			this.fetchAndShowRoutesList();
+			this.fetchAndShowTypesList();
 		},
 
 		onClickAddNewRoute: function() {

@@ -63,9 +63,11 @@ define([
 						name: 'Any'
 					}];
 					for (var i = 0; i < collection.length; i++) {
-						types.push({
-							name: collection.at(i).name
-						});
+						if (collection.at(i).isEnabled()) {
+							types.push({
+								name: collection.at(i).get('name')
+							});
+						}
 					}
 
 					// set attributes

@@ -566,9 +566,10 @@ define([
 
 				// show list if changed
 				//
-				if (!self.collection.equalTo(collection)) {
+				if (!self.listShown || !self.collection.equalTo(collection)) {
 					self.collection = collection;
 					self.showList();
+					self.listShown = true;
 				}
 
 				// perform callback
