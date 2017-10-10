@@ -252,26 +252,13 @@ define([
 				// callbacks
 				//
 				success: function() {
+					var queryString = self.getQueryString();
 
-					// show success notification dialog
-					//
-					Registry.application.modal.show(
-						new NotifyView({
-							message: "Your assessment run has been started.",
-
-							// callbacks
-							//
-							accept: function() {
-								var queryString = self.getQueryString();
-
-								// go to runs / results view
-								//								
-								Backbone.history.navigate('#results' + (queryString != ''? '?' + queryString : ''), {
-									trigger: true
-								});
-							}
-						})
-					);
+					// go to runs / results view
+					//								
+					Backbone.history.navigate('#results' + (queryString != ''? '?' + queryString : ''), {
+						trigger: true
+					});
 				},
 
 				error: function() {

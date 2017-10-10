@@ -21,7 +21,7 @@ define([
 	'underscore',
 	'backbone',
 	'marionette',
-	'collapse',
+	'bootstrap/collapse',
 	'text!templates/packages/info/versions/info/build/build-profile/package-type/android-bytecode/android-bytecode-package.tpl',
 	'widgets/accordions'
 ], function($, _, Backbone, Marionette, Collapse, Template, Accordions) {

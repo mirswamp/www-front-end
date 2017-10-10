@@ -111,9 +111,11 @@ define([
 			'api(?*query_string)': 'showApi',
 			'api/routes/add': 'showAddNewApiRoute',
 			'api/routes/:route': 'showApiRoute',
-			'api/routes/:route/edit': 'showEditApiRoute',
+			'api/routes/:route_uuid/edit': 'showEditApiRoute',
 			'api/routes/:method/*route': 'showApiMethodRoute',
-			'api/types/:type': 'showApiDataType'
+			'api/types/add': 'showAddNewType',
+			'api/types/:type': 'showApiType',
+			'api/types/:type_uuid/edit': 'showEditApiType'
 		},
 
 		//
@@ -166,30 +168,6 @@ define([
 				'views/api/routes/add/add-new-route-view'
 			], function (Registry, AddNewRouteView) {
 
-				// show content view
-				//
-				/*
-				Registry.application.showContent({
-					nav1: 'home',
-					nav2: 'api', 
-
-					// callbacks
-					//
-					done: function(view) {
-
-						// show add new route view
-						//
-						view.content.show(
-							new AddNewRouteView()
-						);
-
-						if (options && options.done) {
-							options.done();
-						}
-					}
-				});
-				*/
-
 				// show main view
 				//
 				Registry.application.showMain(
@@ -219,32 +197,6 @@ define([
 					//
 					success: function(data) {
 
-						// show content view
-						//
-						/*
-						Registry.application.showContent({
-							nav1: 'home',
-							nav2: 'api', 
-
-							// callbacks
-							//
-							done: function(view) {
-
-								// show edit api route view
-								//
-								view.content.show(
-									new EditRouteView({
-										model: route
-									})
-								);
-
-								if (options && options.done) {
-									options.done();
-								}
-							}
-						});
-
-						*/
 						// show main view
 						//
 						Registry.application.showMain(
@@ -285,32 +237,6 @@ define([
 					// callbacks
 					//
 					success: function(data) {
-
-						// show content view
-						//
-						/*
-						Registry.application.showContent({
-							nav1: 'home',
-							nav2: 'api', 
-
-							// callbacks
-							//
-							done: function(view) {
-
-								// show api route view
-								//
-								view.content.show(
-									new RouteView({
-										model: route
-									})
-								);
-
-								if (options && options.done) {
-									options.done();
-								}
-							}
-						});
-						*/
 
 						// show main view
 						//
@@ -371,7 +297,21 @@ define([
 			});	
 		},
 
-		showApiDataType: function(name) {
+		showAddNewType: function() {
+			require([
+				'registry',
+				'views/api/types/add/add-new-type-view'
+			], function (Registry, AddNewTypeView) {
+
+				// show main view
+				//
+				Registry.application.showMain(
+					new AddNewTypeView()
+				);
+			});
+		},
+
+		showApiType: function(name) {
 			var self = this;
 			require([
 				'registry',
@@ -379,11 +319,10 @@ define([
 				'views/api/types/type-view',
 				'views/dialogs/notify-view',
 			], function (Registry, Type, TypeView, NotifyView) {
-				var type = new Type();
 
 				// fetch route by name
 				//
-				type.fetchByName(name, {
+				new Type().fetchByName(name, {
 
 					// callbacks
 					//
@@ -403,12 +342,51 @@ define([
 					error: function(message) {
 						Registry.application.modal.show(
 							new NotifyView({
-								message: "Could not find specified API data type: " + type
+								message: "Could not find specified API data type: " + dataType
 							})
 						);
 					}
 				});	
 			});	
+		},
+
+		showEditApiType: function(typeUuid) {
+			var self = this;
+			require([
+				'registry',
+				'models/api/type',
+				'views/api/types/edit/edit-type-view',
+				'views/dialogs/notify-view',
+			], function (Registry, Type, EditTypeView, NotifyView) {
+
+				// fetch route
+				//
+				new Type({
+					'type_uuid': typeUuid
+				}).fetch({
+
+					// callbacks
+					//
+					success: function(model) {
+
+						// show main view
+						//
+						Registry.application.showMain(
+							new EditTypeView({
+								model: model
+							})
+						);
+					},
+
+					error: function(message) {
+						Registry.application.modal.show(
+							new NotifyView({
+								message: "Could not find specified API type."
+							})
+						);
+					}
+				});
+			});
 		}
 	});
 });

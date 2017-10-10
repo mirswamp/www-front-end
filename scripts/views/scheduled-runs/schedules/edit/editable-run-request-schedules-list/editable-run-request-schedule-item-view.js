@@ -22,7 +22,7 @@ define([
 	'backbone',
 	'marionette',
 	'modernizr',
-	'timepicker',
+	'bootstrap.timepicker',
 	'text!templates/scheduled-runs/schedules/edit/editable-run-request-schedules-list/editable-run-request-schedule-item.tpl',
 	'registry',
 	'utilities/time/date-format',

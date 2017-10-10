@@ -52,11 +52,15 @@ define([
 		//
 
 		template: function(data) {
-			return _.template(Template, _.extend(data, {
-				collection: this.collection,
-				showDelete: this.options.showDelete,
-				showNumbering: this.options.showNumbering
-			}));
+			if (this.collection.length > 0) {
+				return _.template(Template, _.extend(data, {
+					collection: this.collection,
+					showDelete: this.options.showDelete,
+					showNumbering: this.options.showNumbering
+				}));
+			} else {
+				return _.template("No packages have been uploaded.")
+			}
 		},
 
 		childViewOptions: function(model, index) {

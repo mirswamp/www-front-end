@@ -4,7 +4,7 @@
 		<label class="required control-label">Package path</label>
 		<div class="controls">
 			<div class="input-group">
-				<input type="text" class="form-control" id="package-path" name="package-path" maxlength="200" class="required" value="<%- model.get('source_path') %>" />
+				<input type="text" class="form-control" id="package-path" name="package-path" maxlength="1000" class="required" value="<%- model.get('source_path') %>" />
 				<div class="input-group-addon">
 					<i class="active fa fa-question-circle" data-toggle="popover" data-placement="top" data-container="body" title="Package path" data-content="This is the name of the directory / folder within the compressed package file that contains your package source code. "></i>
 				</div>

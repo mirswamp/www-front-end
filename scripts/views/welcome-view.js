@@ -23,8 +23,9 @@ define([
 	'text!templates/welcome.tpl',
 	'config',
 	'registry',
-	'views/dialogs/error-view'
-], function($, _, Backbone, Marionette, Template, Config, Registry, ErrorView) {
+	'collections/tools/tools',
+	'collections/platforms/platforms'
+], function($, _, Backbone, Marionette, Template, Config, Registry, Tools, Platforms) {
 	return Backbone.Marionette.LayoutView.extend({
 
 		//
@@ -57,6 +58,10 @@ define([
 			this.showOpenToolsList();
 			this.showCommercialToolsList();
 			this.showPlatformsList();
+
+			if (this.options.showSignIn) {
+				this.showSignIn();
+			}
 		},
 
 		showLightBox: function() {
@@ -87,101 +92,95 @@ define([
 
 		showOpenToolsList: function() {
 			var self = this;
-			require([
-				'collections/tools/tools'
-			], function (Tools) {
-				var tools = new Tools();
-				tools.fetchPublic({
+			new Tools().fetchPublic({
 
-					// callbacks
+				// callbacks
+				//
+				success: function(tools) {
+					tools = tools.getOpen();
+
+					// add tool names to list
 					//
-					success: function() {
-						tools = tools.getOpen();
-
-						// add tool names to list
-						//
-						for (var i = 0; i < tools.length; i++) {
-							self.$el.find('#open-tools-list').append('<li>' + tools.at(i).get('name') + '</li>');
-						}
-					},
-
-					error: function() {
-
-						// show error dialog
-						//
-						Registry.application.modal.show(
-							new ErrorView({
-								message: "Could not fetch list of open tools."
-							})
-						);
+					for (var i = 0; i < tools.length; i++) {
+						self.$el.find('#open-tools-list').append('<li>' + tools.at(i).get('name') + '</li>');
 					}
-				});
+				},
+
+				error: function() {
+
+					// show error dialog
+					//
+					Registry.application.error({
+						message: "Could not fetch list of open tools."
+					});
+				}
 			});
 		},
 
 		showCommercialToolsList: function() {
 			var self = this;
-			require([
-				'collections/tools/tools'
-			], function (Tools) {
-				var tools = new Tools();
-				tools.fetchRestricted({
+			new Tools().fetchRestricted({
 
-					// callbacks
+				// callbacks
+				//
+				success: function(tools) {
+
+					// add tool names to list
 					//
-					success: function() {
-
-						// add tool names to list
-						//
-						for (var i = 0; i < tools.length; i++) {
-							self.$el.find('#commercial-tools-list').append('<li>' + tools.at(i).get('name') + '</li>');
-						}
-					},
-
-					error: function() {
-
-						// show error dialog
-						//
-						Registry.application.modal.show(
-							new ErrorView({
-								message: "Could not fetch list of commercial tools."
-							})
-						);
+					for (var i = 0; i < tools.length; i++) {
+						self.$el.find('#commercial-tools-list').append('<li>' + tools.at(i).get('name') + '</li>');
 					}
-				});
+				},
+
+				error: function() {
+
+					// show error dialog
+					//
+					Registry.application.error({
+						message: "Could not fetch list of commercial tools."
+					});
+				}
 			});
 		},
 
 		showPlatformsList: function() {
 			var self = this;
-			require([
-				'collections/platforms/platforms',
-			], function (Platforms) {
-				var platforms = new Platforms();
-				platforms.fetchPublic({
+			new Platforms().fetchPublic({
 
-					// callbacks
+				// callbacks
+				//
+				success: function(platforms) {
+
+					// add platform names to list
 					//
-					success: function() {
-
-						// add platform names to list
-						//
-						for (var i = 0; i < platforms.length; i++) {
-							self.$el.find('#platforms-list').append('<li>' + platforms.at(i).get('name') + '</li>');
-						}
-					},
-
-					error: function() {
-
-						// show error dialog
-						//
-						Registry.application.modal.show(
-							new ErrorView({
-								message: "Could not fetch list of supported platforms."
-							})
-						);
+					for (var i = 0; i < platforms.length; i++) {
+						self.$el.find('#platforms-list').append('<li>' + platforms.at(i).get('name') + '</li>');
 					}
-				});
+				},
+
+				error: function() {
+
+					// show error dialog
+					//
+					Registry.application.error({
+						message: "Could not fetch list of supported platforms."
+					});
+				}
+			});
+		},
+
+		showSignIn: function() {
+			require([
+				'views/users/authentication/dialogs/sign-in-view'
+			], function (SignInView) {
+
+				// show sign in dialog
+				//
+				Registry.application.modal.show(
+					new SignInView(), {
+						focus: '#ok'
+					}
+				)
 			});
 		},
 
@@ -199,18 +198,7 @@ define([
 		//
 
 		onClickSignIn: function() {
-			require([
-				'views/users/authentication/dialogs/sign-in-view'
-			], function (SignInView) {
-
-				// show sign in dialog
-				//
-				Registry.application.modal.show(
-					new SignInView(), {
-						focus: '#ok'
-					}
-				)
-			});
+			this.showSignIn();
 		},
 
 		onClickSignUp: function() {

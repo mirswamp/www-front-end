@@ -142,26 +142,6 @@ define([
 			}
 		},
 
-		setOwnerStatus: function(status) {
-			switch (status) {
-				case 'pending':
-					this.set({
-						'owner': 'pending'
-					});
-					break;
-				case 'approved':
-					this.set({
-						'owner': 'approved'
-					});
-					break;
-				case 'denied':
-					this.set({
-						'owner': 'denied'
-					});
-					break;
-			}
-		},
-
 		setForcePasswordReset: function(forcePasswordReset) {
 			this.set({
 				'forcepwreset_flag': forcePasswordReset? 1 : 0
@@ -239,18 +219,6 @@ define([
 				data: {
 					'old_password': oldPassword,
 					'new_password': newPassword,
-					'password_reset_key': options.password_reset_key,
-					'password_reset_id': options.password_reset_id
-				}
-			}));
-		},
-
-		resetPassword: function(password, options) {
-			$.ajax(_.extend(options, {
-				url: Config.servers.web + '/password_resets/' + options.password_reset_id + '/reset',
-				type: 'PUT',
-				data: {
-					'password': password,
 					'password_reset_key': options.password_reset_key,
 					'password_reset_id': options.password_reset_id
 				}

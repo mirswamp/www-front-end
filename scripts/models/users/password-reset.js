@@ -27,22 +27,30 @@ define([
 		// Backbone attributes
 		//
 
-		idAttribute: 'password_reset_key',
+		idAttribute: 'password_reset_uuid',
 		urlRoot: Config.servers.web + '/password_resets',
 
 		//
 		// overridden Backbone methods
 		//
 
-		save: function(options) {
-			$.ajax(_.extend(options, {
-				url: this.url(),
-				type: 'POST'
-			}));
+		url: function() {
+			return this.urlRoot + (this.isNew()? '' : '/' + this.get('password_reset_uuid') + '/' + this.get('password_reset_nonce'));
 		},
 
-		url: function() {
-			return this.urlRoot + ( this.isNew()? '' : '/' + this.get('password_reset_key') + '/' + this.get('password_reset_id') );
+		//
+		// ajax methods
+		//
+
+		reset: function(password, options) {
+			$.ajax(_.extend({
+				type: 'PUT',
+				url: this.urlRoot + '/reset',
+				data: {
+					'password': password,
+					'password_reset_key': this.get('password_reset_key')
+				}
+			}, options));
 		}
 	});
 });

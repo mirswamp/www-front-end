@@ -56,71 +56,8 @@ define([
 		},
 
 		addProject: function() {
-			var self = this;
-
-			// fetch user in case user permissions have changed
-			//
-			Registry.application.session.user.fetch({
-
-				// callbacks
-				//
-				success: function() {
-
-					// check to see if user has project owner permissions
-					//
-					if (Registry.application.session.user.isOwner()) {
-						Backbone.history.navigate('#projects/add', {
-							trigger: true
-						});
-					} else {
-
-						// fetch user permissions
-						//
-						var project_owner_permission = new UserPermission({ 
-							'user_uid': Registry.application.session.user.get('user_uid'),
-							'permission_code': 'project-owner'
-						});
-						project_owner_permission.fetch({
-
-							// callbacks
-							//
-							success: function() {
-
-								// show project ownership status dialog box
-								//
-								Registry.application.modal.show(
-									new ProjectOwnershipStatusView({
-										model: project_owner_permission
-									})
-								);
-							},
-
-							error: function() {
-
-								// show project ownership policy dialog box
-								//
-								Registry.application.modal.show(
-									new ProjectOwnershipPolicyView({
-										model: project_owner_permission
-									}), {
-										size: 'large'
-									}
-								);
-							}
-						});			
-					}
-				},
-
-				error: function() {
-
-					// show error dialog
-					//
-					Registry.application.modal.show(
-						new ErrorView({
-							message: "Could not fetch user."
-						})
-					);
-				}
+			Backbone.history.navigate('#projects/add', {
+				trigger: true
 			});
 		},
 

@@ -20,7 +20,7 @@ define([
 	'underscore',
 	'backbone',
 	'marionette',
-	'popover',
+	'bootstrap/popover',
 	'text!templates/packages/info/details/new-package-details.tpl',
 	'registry',
 	'views/dialogs/notify-view',

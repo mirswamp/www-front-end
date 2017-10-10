@@ -21,7 +21,7 @@ define([
 	'underscore',
 	'backbone',
 	'marionette',
-	'popover',
+	'bootstrap/popover',
 	'text!templates/users/authentication/forms/linked-account-sign-up-form.tpl',
 	'registry',
 	'views/users/authentication/selectors/auth-provider-selector-view',

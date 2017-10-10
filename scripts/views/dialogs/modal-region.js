@@ -20,8 +20,9 @@ define([
 	'underscore',
 	'backbone',
 	'marionette',
+	'bootstrap/modal',
 	'text!templates/dialogs/modal.tpl'
-], function($, _, Backbone, Marionette, Template) {
+], function($, _, Backbone, Marionette, Modal, Template) {
 	return Backbone.Marionette.Region.extend({
 
 		//
@@ -115,7 +116,6 @@ define([
 		enableDrag: function() {
 			var self = this;
 			require([
-				//'jquery-ui'
 				'draggable'
 			], function () {
 

@@ -21,7 +21,7 @@ define([
 	'underscore',
 	'backbone',
 	'marionette',
-	'validate',
+	'jquery.validate',
 	'text!templates/users/registration/sign-aup.tpl',
 	'text!templates/policies/acceptable-use-policy.tpl',
 	'registry',
@@ -129,24 +129,12 @@ define([
 
 				// enable registration
 				//
-				this.$el.find('#register').show();
-				this.$el.find('#cancel').hide();
-
-				//if (Registry.application.config['linked_accounts_enabled']) {
-				if (false) {
-					this.$el.find('#linked-account-sign-in').show();
-				}
+				this.$el.find('#register').prop('disabled', false);
 			} else {
 
 				// disable registration
 				//
-				this.$el.find('#register').hide();
-				this.$el.find('#cancel').show();
-				
-				//if (Registry.application.config['linked_accounts_enabled']) {
-				if (false) {
-					this.$el.find('#linked-account-sign-in').hide();
-				}
+				this.$el.find('#register').prop('disabled', true);
 			}
 		},
 

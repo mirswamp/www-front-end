@@ -21,7 +21,7 @@ define([
 	'underscore',
 	'backbone',
 	'marionette',
-	'dropdown',
+	'bootstrap/dropdown',
 	'text!templates/tools/review/review-tools-list/review-tools-list-item.tpl',
 	'registry',
 	'utilities/time/date-format',
@@ -109,17 +109,6 @@ define([
 
 							// callbacks
 							//
-							success: function() {
-
-								// show success notification dialog
-								//
-								Registry.application.modal.show(
-									new NotifyView({
-										message: "This tool has been successfuly deleted."
-									})
-								);
-							},
-
 							error: function() {
 
 								// show error dialog

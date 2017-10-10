@@ -21,14 +21,17 @@ define([
 	'backbone',
 	'marionette',
 	'text!templates/users/permissions/user-permissions.tpl',
+	'models/permissions/policy',
 	'models/permissions/user-permission',
 	'collections/permissions/user-permissions',
 	'registry',
 	'config',
 	'views/users/permissions/select-list/select-permissions-list-view',
+	'views/dialogs/notify-view',
 	'views/dialogs/error-view',
+	'views/tools/permissions/dialogs/tool-permission-view',
 	'views/users/permissions/dialogs/permission-comment-view'
-], function($, _, Backbone, Marionette, Template, UserPermission, UserPermissions, Registry, Config, SelectPermissionsListView, ErrorView, PermissionCommentView) {
+], function($, _, Backbone, Marionette, Template, Policy, UserPermission, UserPermissions, Registry, Config, SelectPermissionsListView, NotifyView, ErrorView, ToolPermissionView, PermissionCommentView) {
 	return Backbone.Marionette.LayoutView.extend({
 
 		//
@@ -45,6 +48,129 @@ define([
 
 		initialize: function() {
 			this.collection = new UserPermissions();
+		},
+
+		showPermissionDialog: function(permission) {
+			var permissionCode = permission.get('permission_code');
+			if (permission.has('user_info')) {
+
+				// show permission form dialog
+				//
+				this.showPermissionFormDialog(permission);			
+			} else {
+
+				// show permission comment dialog
+				//
+				this.showPermissionCommentDialog(permission);
+			}
+		},
+
+		showPermissionFormDialog: function(permission) {
+			var self = this;
+
+			// show permission form dialog
+			//
+			Registry.application.modal.show(
+				new ToolPermissionView({
+					model: permission,
+					
+					// callbacks
+					//
+					accept: function(data) {
+						self.showPermissionCommentDialog(permission, {
+							data: data
+						});
+					}
+				}), {
+					size: permission.has('policy')? 'large' : undefined
+				}
+			);
+		},
+
+		showPermissionCommentDialog: function(permission, options) {
+			var self = this;
+
+			// show permission comment dialog
+			//
+			Registry.application.modal.show(
+				new PermissionCommentView({
+					permission: permission,
+
+					// callbacks
+					//
+					accept: function(data) {
+
+						// perform permission request
+						//
+						self.model.requestPermission({
+							data: _.extend(options && options.data? options.data : {}, {
+								'title': permission.get('title'),
+								'permission_code': permission.get('permission_code'),
+								'comment': data.comment,
+								'status': permission.get('status')
+							}),
+
+							// callbacks
+							//
+							success: function() {
+
+								// update list
+								//
+								self.showPermissionsList();
+							},
+
+							error: function(response) {
+
+								// show error dialog
+								//
+								Registry.application.modal.show(
+									new ErrorView({
+										message: "Error: " + response.responseText
+									})
+								);
+							}
+						});
+					}
+				}), {
+					size: permission.has('policy')? 'large' : undefined
+				}
+			);
+		},
+
+		requestPermission: function(permission) {
+			var self = this;
+
+			// fetch policy
+			//
+			if (permission.has('policy_code')) {
+				var policy = new Policy({
+					'policy_code': permission.get('policy_code')
+				});
+				policy.fetch({
+
+					// callbacks
+					//
+					success: function() {
+						permission.set({
+							'policy': policy.get('policy')
+						})
+						self.showPermissionDialog(permission);
+					},
+
+					error: function() {
+
+						// show error dialog
+						//
+						Registry.application.modal.show(
+							new ErrorView({
+								message: "Could not fetch policy: " + policy.get('policy_code')
+							})
+						);
+					}
+				})
+			} else {
+				self.showPermissionDialog(permission);
+			}
 		},
 
 		changePermissions: function(currentPermissions, newPermissions) {

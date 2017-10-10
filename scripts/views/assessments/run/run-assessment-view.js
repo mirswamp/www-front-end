@@ -88,6 +88,7 @@ define([
 				onChange: function(changes) {
 					if (changes.package) {
 						self.toolSelectorView.setPackage(changes.package);
+						self.platformSelectorView.setPackage(changes.package);
 					}
 				}
 			});
@@ -110,6 +111,7 @@ define([
 				project: self.options.data['project'],
 				initialValue: this.options.data['platform'],
 				initialVersion: this.options.data['platform-version'] != 'latest'? this.options.data['platform-version'] : undefined,
+				packageSelected: this.options.data['package'],
 				toolSelected: this.options.data['tool'],
 				versionSelector: this.platformVersionSelector,
 
@@ -403,26 +405,13 @@ define([
 				// callbacks
 				//
 				success: function() {
+					var queryString = self.getPackageQueryString();
 
-					// show success notification dialog
+					// go to runs / results view
 					//
-					Registry.application.modal.show(
-						new NotifyView({
-							message: "Your assessment run has been started.",
-
-							// callbacks
-							//
-							accept: function() {
-								var queryString = self.getPackageQueryString();
-
-								// go to runs / results view
-								//
-								Backbone.history.navigate('#results' + (queryString != ''? '?' + queryString : ''), {
-									trigger: true
-								});
-							}
-						})
-					);
+					Backbone.history.navigate('#results' + (queryString != ''? '?' + queryString : ''), {
+						trigger: true
+					});
 				},
 
 				error: function() {
@@ -632,25 +621,29 @@ define([
 			var selectedTool = this.getTool();
 			var selectedPlatform = this.getPlatform();
 
-			if (!selectedTool) {
-				selectedTool = '*';
-			}
-
 			// enable or disable buttons
 			//
-			if (selectedPackage && selectedTool && selectedPlatform ||
-				selectedPackage && selectedTool && !selectedPackage.isPlatformUserSelectable()) {
+			if (selectedPackage && selectedPlatform ||
+				selectedPackage && !selectedPackage.isPlatformUserSelectable()) {
 				this.enableButtons();
 			} else {
 				this.disableButtons();
 			}
 
-			// hide platform selector
+			// show / hide platform selector
 			//
-			if (selectedPackage && !selectedPackage.isPlatformUserSelectable()) {
-				this.$el.find('#platform-selection').hide();
-			} else {
+			if (selectedPackage) {
+				this.$el.find('#tool-selection').show();
+			} else if (selectedTool) {
+				this.$el.find('#tool-selection').hide();
+			}
+
+			// show / hide platform selector
+			//
+			if (selectedPackage && selectedPackage.isPlatformUserSelectable()) {
 				this.$el.find('#platform-selection').show();
+			} else {
+				this.$el.find('#platform-selection').hide();
 			}
 		},
 

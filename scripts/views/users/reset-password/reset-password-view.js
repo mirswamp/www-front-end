@@ -20,9 +20,9 @@ define([
 	'underscore',
 	'backbone',
 	'marionette',
-	'validate',
-	'tooltip',
-	'popover',
+	'jquery.validate',
+	'bootstrap/tooltip',
+	'bootstrap/popover',
 	'text!templates/users/reset-password/reset-password.tpl',
 	'registry',
 	'utilities/security/password-policy',
@@ -50,7 +50,7 @@ define([
 			// add password validation rule
 			//
 			$.validator.addMethod('passwordValid', function(value) {
-				var username = self.options.user.get('username');
+				var username = self.model.get('username');
 				var passwordRating = $.validator.passwordRating(value, username);
 				return (passwordRating.messageKey === 'strong');
 			}, "Your password does not meet the required criteria.");
@@ -146,9 +146,7 @@ define([
 
 				// change password
 				//
-				this.options.user.resetPassword( password, {
-					password_reset_key: this.model.get('password_reset_key'),
-					password_reset_id: this.model.get('password_reset_id'),
+				this.model.reset(password, {
 
 					// callbacks
 					//

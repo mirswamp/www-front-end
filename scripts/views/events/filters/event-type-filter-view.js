@@ -20,7 +20,7 @@ define([
 	'underscore',
 	'backbone',
 	'marionette',
-	'collapse',
+	'bootstrap/collapse',
 	'modernizr',
 	'text!templates/events/filters/event-type-filter.tpl',
 	'utilities/browser/url-strings',

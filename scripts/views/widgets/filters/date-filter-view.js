@@ -20,16 +20,16 @@ define([
 	'underscore',
 	'backbone',
 	'marionette',
-	'validate',
-	'collapse',
-	'modernizr',
-	'datepicker',
+	'jquery.validate',
+	'bootstrap/collapse',
+	'jquery.datepicker',
 	'text!templates/widgets/filters/date-filter.tpl',
 	'registry',
 	'utilities/time/date-format',
+	'utilities/time/date-utils',
 	'utilities/browser/query-strings',
 	'utilities/browser/url-strings'
-], function($, _, Backbone, Marionette, Validate, Collapse, Modernizr, DatePicker, Template, Registry, DateFormat, QueryStrings, UrlStrings) {
+], function($, _, Backbone, Marionette, Validate, Collapse, DatePicker, Template, Registry, DateFormat, DateUtils, QueryStrings, UrlStrings) {
 	
 	//
 	// date conversion methods
@@ -256,7 +256,7 @@ define([
 			var afterDate;
 
 			if (this.hasAfterDate()) {
-				afterDate = LocalDateToUTCDate(stringToDate(this.$el.find('#after-date').val()));
+				afterDate = localDateToUTCDate(stringToDate(this.$el.find('#after-date').val()));
 			} else {
 				afterDate = null;
 			}
@@ -280,7 +280,7 @@ define([
 			var beforeDate;
 
 			if (this.hasBeforeDate()) {
-				beforeDate = LocalDateToUTCDate(stringToDate(this.$el.find('#before-date').val()));
+				beforeDate = localDateToUTCDate(stringToDate(this.$el.find('#before-date').val()));
 			} else {
 				beforeDate = null;
 			}

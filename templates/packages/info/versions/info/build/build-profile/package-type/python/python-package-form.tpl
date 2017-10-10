@@ -26,7 +26,7 @@
 			<label class="required control-label">Build command</label>
 			<div class="controls">
 				<div class="input-group">
-					<input type="text" class="form-control" id="other-build-command" name="other-build-command" maxlength="200" value="<%- build_cmd %>">
+					<input type="text" class="form-control" id="other-build-command" name="other-build-command" maxlength="4000" value="<%- build_cmd %>">
 					<div class="input-group-addon">
 						<i class="active fa fa-question-circle" data-toggle="popover" data-placement="top" data-container="body" title="Build command" data-content="The command to run to compile your package (e.g. gcc -c *.c)"></i>
 					</div>
@@ -67,7 +67,7 @@
 								<label class="control-label">Configure path</label>
 								<div class="controls">
 									<div class="input-group">
-										<input type="text" class="form-control" id="configure-path" maxlength="200" value="<%- config_dir %>">
+										<input type="text" class="form-control" id="configure-path" maxlength="1000" value="<%- config_dir %>">
 										<div class="input-group-addon">
 											<i class="active fa fa-question-circle" data-toggle="popover" data-placement="top" data-container="body" title="Configure path" data-content="The optional path to run the configure command from, relative to the package path. If no path is provided, '.' is assumed."></i>
 										</div>
@@ -82,7 +82,7 @@
 								<label class="control-label">Configure command</label>
 								<div class="controls">
 									<div class="input-group">
-										<input type="text" class="form-control" id="configure-command" maxlength="200" value="<%- config_cmd %>">
+										<input type="text" class="form-control" id="configure-command" maxlength="4000" value="<%- config_cmd %>">
 										<div class="input-group-addon">
 											<i class="active fa fa-question-circle" data-toggle="popover" data-placement="top" data-container="body" title="Configure command" data-content="The optional command to run before the build system is invoked."></i>
 										</div>
@@ -94,7 +94,7 @@
 								<label class="control-label">Configure options</label>
 								<div class="controls">
 									<div class="input-group">
-										<input type="text" class="form-control" id="configure-options" maxlength="200" value="<%- config_opt %>">
+										<input type="text" class="form-control" id="configure-options" maxlength="4000" value="<%- config_opt %>">
 										<div class="input-group-addon">
 											<i class="active fa fa-question-circle" data-toggle="popover" data-placement="top" data-container="body" title="Configure options" data-content="The arguments to pass to the configure command."></i>
 										</div>
@@ -110,7 +110,7 @@
 								<label class="control-label">Build path</label>
 								<div class="controls">
 									<div class="input-group">
-										<input type="text" class="form-control" id="build-path" maxlength="200" value="<%- build_dir %>">
+										<input type="text" class="form-control" id="build-path" maxlength="1000" value="<%- build_dir %>">
 										<div class="input-group-addon">
 											<i class="active fa fa-question-circle" data-toggle="popover" data-placement="top" data-container="body" title="Build path" data-content="The path to run the build command from, relative to the package path.  If no path is provided, '.' is assumed."></i>
 										</div>
@@ -125,7 +125,7 @@
 								<label class="control-label">Build file</label>
 								<div class="controls">
 									<div class="input-group">
-										<input type="text" class="form-control" id="build-file" maxlength="200" <% if (build_file) { %> value="<%- build_file %>" <% } %>>
+										<input type="text" class="form-control" id="build-file" maxlength="1000" <% if (build_file) { %> value="<%- build_file %>" <% } %>>
 										<div class="input-group-addon">
 											<i class="active fa fa-question-circle" data-toggle="popover" data-placement="top" data-container="body" title="Build file" data-content="The path to the file containing instructions used by the build system, relative to the build path.  If no file is specified, then the system will search the build path for a file with a name that is standard for the build system that you are using (i.e. 'Makefile' for make etc.)"></i>
 										</div>
@@ -140,7 +140,7 @@
 								<label class="control-label">Build options</label>
 								<div class="controls">
 									<div class="input-group">
-										<input type="text" class="form-control" id="build-options" maxlength="200" value="<%- build_opt %>">
+										<input type="text" class="form-control" id="build-options" maxlength="4000" value="<%- build_opt %>">
 										<div class="input-group-addon">
 											<i class="active fa fa-question-circle" data-toggle="popover" data-placement="top" data-container="body" title="Build options" data-content="Additional options to pass to the build system."></i>
 										</div>

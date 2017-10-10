@@ -250,24 +250,11 @@ define([
 						done();
 					}
 
-					// show success notify view
+					// show package
 					//
-					Registry.application.modal.show(
-						new NotifyView({
-							message: "Package " + self.options.package.get('name') + " version " + self.model.get('version_string') + " has been uploaded successfully.",
-
-							// callbacks
-							//
-							accept: function() {
-								
-								// show package
-								//
-								Backbone.history.navigate('#packages/' + self.options.package.get('package_uuid'), {
-									trigger: true
-								});
-							}
-						})
-					);
+					Backbone.history.navigate('#packages/' + self.options.package.get('package_uuid'), {
+						trigger: true
+					});
 				}
 			});
 		}

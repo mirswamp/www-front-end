@@ -20,7 +20,7 @@ define([
 	'underscore',
 	'backbone',
 	'marionette',
-	'popover',
+	'bootstrap/popover',
 	'text!templates/users/authentication/dialogs/reset-password.tpl',
 	'registry',
 	'utilities/security/password-policy',
@@ -48,10 +48,8 @@ define([
 
 		resetPassword: function(data) {
 			var self = this;
-			var passwordReset = new PasswordReset({});
 
-			passwordReset.save({
-				data: data,
+			new PasswordReset().save(data, {
 
 				// callbacks
 				//
@@ -59,7 +57,13 @@ define([
 
 					// show success notification view
 					//
-					if (self.options.user) {
+					if (Registry.application.session.user && Registry.application.session.user.isAdmin() && Registry.application.session.user != self.options.user) {
+						Registry.application.modal.show(
+							new NotifyView({
+								message: "Please inform this user to check their inbox for an email with a link that they may use to reset their password."
+							})
+						);
+					} else if (self.options.user) {
 						Registry.application.modal.show(
 							new NotifyView({
 								message: "Please check your inbox for an email with a link that you may use to reset your password."

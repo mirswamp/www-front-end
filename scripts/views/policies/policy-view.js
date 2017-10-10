@@ -20,8 +20,8 @@ define([
 	'underscore',
 	'backbone',
 	'marionette',
-	'tooltip',
-	'popover',
+	'bootstrap/tooltip',
+	'bootstrap/popover',
 	'text!templates/policies/policy-view.tpl',
 	'utilities/security/password-policy',
 ], function($, _, Backbone, Marionette, Tooltip, Popover, Template, PasswordPolicy) {

@@ -21,7 +21,7 @@ define([
 	'underscore',
 	'backbone',
 	'marionette',
-	'popover',
+	'bootstrap/popover',
 	'text!templates/users/authentication/dialogs/sign-in.tpl',
 	'registry',
 	'views/users/authentication/forms/sign-in-form-view',

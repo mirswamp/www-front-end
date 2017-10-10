@@ -39,8 +39,37 @@ String.prototype.endsWith = function(suffix) {
 	return suffix == this.substring(from, to);
 }
 
-String.prototype.contains = function(substring) {
-	return this.indexOf(substring) != -1;
+String.prototype.contains = function(content, caseSensitive) {
+
+	// set optional parameter defaults
+	//
+	if (caseSensitive == undefined) {
+		caseSensitive = true;
+	}
+
+	if (Array.isArray(content)) {
+		if (!caseSensitive) {
+			var string = this.toLowerCase();
+		}
+		for (var i = 0; i < content.length; i++) {
+			if (caseSensitive) {
+				if (this.contains(content[i])) {
+					return true;
+				}
+			} else {
+				if (string.contains(content[i].toLowerCase())) {
+					return true;
+				}
+			}
+		}
+		return false;
+	} else {
+		if (caseSensitive) {
+			return this.indexOf(content) != -1;
+		} else {
+			return this.toLowerCase().indexOf(content.toLowerCase()) != -1;
+		}
+	}
 };
 
 String.prototype.truncatedTo = function(maxChars) {

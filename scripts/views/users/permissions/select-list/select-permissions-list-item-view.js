@@ -45,7 +45,7 @@ define([
 
 		template: function(data) {
 			return _.template(Template, { 
-				admin: Registry.application.session.user.get('admin_flag') == '1',
+				admin: Registry.application.session.user.isAdmin(),
 				permission: data 
 			});
 		},
@@ -63,8 +63,12 @@ define([
 		},
 
 		onChangeStatus: function(event) {
-			this.model.set('status', event.target.value);
-			this.options.parent.setPermission(this.model);
+			if (this.model.isNew() && event.target.value == 'granted') {
+				this.options.parent.requestPermission(this.model, event);
+			} else {
+				this.model.set('status', event.target.value);
+				this.options.parent.setPermission(this.model);
+			}
 		}
 	});
 });

@@ -20,7 +20,7 @@ define([
 	'underscore',
 	'backbone',
 	'marionette',
-	'collapse',
+	'bootstrap/collapse',
 	'modernizr',
 	'text!templates/packages/filters/package-filter.tpl',
 	'utilities/browser/query-strings',

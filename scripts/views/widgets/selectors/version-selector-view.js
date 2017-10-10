@@ -20,7 +20,7 @@ define([
 	'underscore',
 	'backbone',
 	'marionette',
-	'dropdown',
+	'bootstrap/dropdown',
 	'text!templates/widgets/selectors/version-selector.tpl',
 	'views/widgets/selectors/name-selector-view'
 ], function($, _, Backbone, Marionette, Dropdown, Template, NameSelectorView) {

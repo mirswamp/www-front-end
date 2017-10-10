@@ -133,20 +133,7 @@ define([
 					// callbacks
 					//
 					success: function() {
-
-						// show success notify view
-						//
-						Registry.application.modal.show(
-							new NotifyView({
-								message: "Your account has been successfully linked.",
-
-								// callbacks
-								//
-								accept: function() {
-									window.location = Registry.application.getURL();
-								}
-							})
-						);
+						window.location = Registry.application.getURL();
 					},
 
 					error: function(response) {
@@ -172,20 +159,7 @@ define([
 											// callbacks
 											//
 											success: function() {
-
-												// show success notify view
-												//
-												Registry.application.modal.show(
-													new NotifyView({
-														message: "Your account has been successfully linked.",
-														
-														// callbacks
-														//
-														accept: function() {
-															window.location = Registry.application.getURL();
-														}
-													})
-												);
+												window.location = Registry.application.getURL();
 											},
 
 											error: function(response) {

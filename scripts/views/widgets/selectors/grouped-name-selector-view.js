@@ -21,7 +21,7 @@ define([
 	'underscore',
 	'backbone',
 	'marionette',
-	'dropdown',
+	'bootstrap/dropdown',
 	'select2',
 	'text!templates/widgets/selectors/grouped-name-selector.tpl'
 ], function($, _, Backbone, Marionette, Dropdown, Select2, Template) {

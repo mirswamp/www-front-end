@@ -1,4 +1,3 @@
-<% if (collection && collection.length > 0) { %>
 <table>
 	<thead>
 		<tr class="titles">
@@ -34,6 +33,3 @@
 	<tbody>
 	</tbody>
 </table>
-<% } else { %>
-<p>No packages have been uploaded yet.</p>
-<% } %>

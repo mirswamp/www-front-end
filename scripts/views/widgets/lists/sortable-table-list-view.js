@@ -20,7 +20,7 @@ define([
 	'underscore',
 	'backbone',
 	'marionette',
-	'tablesorter',
+	'jquery.tablesorter',
 	'views/widgets/lists/table-list-view'
 ], function($, _, Backbone, Marionette, TableSorter, TableListView) {
 	return TableListView.extend({

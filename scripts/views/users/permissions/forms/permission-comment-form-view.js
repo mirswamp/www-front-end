@@ -21,9 +21,9 @@ define([
 	'underscore',
 	'backbone',
 	'marionette',
-	'tooltip',
-	'popover',
-	'validate',
+	'bootstrap/tooltip',
+	'bootstrap/popover',
+	'jquery.validate',
 	'registry',
 	'text!templates/users/permissions/forms/permission-comment-form.tpl',
 	'views/widgets/lists/key-value-list/key-value-list-view'
@@ -61,9 +61,12 @@ define([
 		//
 
 		template: function(data) {
+			var isAdmin = Registry.application.session.user.isAdmin();
 			return _.template(Template, _.extend(data, {
-				policy: this.model.get('policy'),
-				changeUserPermissions: this.options.changeUserPermissions
+				policy: !isAdmin? this.model.get('policy') : null,
+				showUserJustification: this.options.changeUserPermissions,
+				showUserData: isAdmin,
+				showComment: true
 			}));
 		},
 

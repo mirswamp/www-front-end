@@ -2,12 +2,15 @@
 <td class="title">
 	<span class="title"><%- permission.title %></span>
 </td>
+
 <td class="description">
 	<span class="name"><%- permission.description %></span>
 </td>
+
 <td class="expiration">
 	<span class="expiration"><%- permission.expiration_date %></span>
 </td>
+
 <td class="status">
 	<% if (admin) { %>
 		<select class="status" style="width: 100px">
@@ -22,13 +25,13 @@
 		<span class="status"><%- permission.status %></span>
 	<% } %>
 </td>
+
 <td style="background: white" class="request">
-	<% if (!admin && permission.status != 'granted') { %>
+	<% if (!admin) { %>
 	<% if (permission.status == 'expired') { %>
 	<button class="btn renew">Renew</button>
-	<% } else { %>
+	<% } else if (permission.status != 'granted' && permission.status != 'pending') { %>
 	<button class="btn request">Request</button>
 	<% } %>
 	<% } %>
 </td>
-

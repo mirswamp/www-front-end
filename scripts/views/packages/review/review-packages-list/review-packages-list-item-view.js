@@ -21,13 +21,14 @@ define([
 	'underscore',
 	'backbone',
 	'marionette',
-	'dropdown',
+	'bootstrap/dropdown',
 	'text!templates/packages/review/review-packages-list/review-packages-list-item.tpl',
 	'registry',
 	'utilities/time/date-format',
 	'views/dialogs/error-view',
 	'views/dialogs/notify-view',
-	'views/dialogs/confirm-view'
+	'views/dialogs/confirm-view',
+	'utilities/time/date-utils'
 ], function($, _, Backbone, Marionette, Dropdown, Template, Registry, DateFormat, ErrorView, NotifyView, ConfirmView) {
 	return Backbone.Marionette.ItemView.extend({
 
@@ -108,17 +109,6 @@ define([
 
 							// callbacks
 							//
-							success: function() {
-
-								// show success notify view
-								//
-								Registry.application.modal.show(
-									new NotifyView({
-										message: "This package has been successfuly deleted."
-									})
-								);
-							},
-
 							error: function() {
 
 								// show error dialog

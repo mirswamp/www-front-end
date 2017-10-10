@@ -34,6 +34,7 @@ define([
 			// main routes
 			//
 			'': 'showWelcome',
+			'sign-in': 'showSignIn',
 			'about': 'showAbout',
 			'about/:anchor': 'showAbout',
 			'mailing-list/subscribe': 'showMailingListSubscribe',
@@ -143,6 +144,37 @@ define([
 				//
 				Registry.application.showPage(
 					new WelcomeView()
+				);
+			});
+		},
+
+		showSignIn: function() {
+			var self = this;
+			require([
+				'registry',
+				'views/welcome-view'
+			], function (Registry, WelcomeView) {
+				var user = Registry.application.session.user;
+
+				// check if user is logged in
+				//
+				if (user && (user.user_uid !== 'current')) {
+
+					// go to home view
+					//
+					self.navigate('#home', {
+						trigger: true
+					});
+
+					return;
+				}
+
+				// show welcome view
+				//
+				Registry.application.showPage(
+					new WelcomeView({
+						showSignIn: true
+					})
 				);
 			});
 		},
@@ -413,7 +445,7 @@ define([
 		// password reset route handlers
 		//
 
-		showResetPassword: function(passwordResetKey, passwordResetId) {
+		showResetPassword: function(passwordResetUuid, passwordResetNonce) {
 			require([
 				'registry',
 				'models/users/user',
@@ -425,38 +457,31 @@ define([
 
 				// fetch password reset
 				//
-				var passwordReset = new PasswordReset({
-					'password_reset_key': passwordResetKey,
-					'password_reset_id': passwordResetId
-				});
-
-				passwordReset.fetch({
+				new PasswordReset({
+					'password_reset_uuid': passwordResetUuid,
+					'password_reset_nonce': passwordResetNonce
+				}).fetch({
 
 					// callbacks
 					//
-					success: function() {
-
-						// fetch user associated with this password reset
-						//
-						var user = new User({});
+					success: function(model) {
 
 						// show reset password view
 						//
 						Registry.application.showMain( 
 							new ResetPasswordView({
-								model: passwordReset,
-								user: user
+								model: model
 							})
 						);
 					},
 
-					error: function() {
+					error: function(model) {
 
 						// show invalid reset password view
 						//
 						Registry.application.showMain( 
 							new InvalidResetPasswordView({
-								model: passwordReset
+								model: model
 							})
 						);
 					}

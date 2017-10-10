@@ -23,10 +23,15 @@ define([
 	'text!templates/dashboard/dashboard.tpl',
 	'registry',
 	'collections/projects/projects',
+	'collections/packages/packages',
 	'collections/tools/tools',
+	'collections/assessments/assessment-runs',
+	'collections/assessments/execution-records',
+	'collections/assessments/scheduled-runs',
+	'collections/events/user-events',
 	'views/dialogs/notify-view',
 	'utilities/time/date-utils'
-], function($, _, Backbone, Marionette, Template, Registry, Projects, Tools, NotifyView) {
+], function($, _, Backbone, Marionette, Template, Registry, Projects, Packages, Tools, AssessmentRuns, ExecutionRecords, ScheduledRuns, UserEvents, NotifyView) {
 	return Backbone.Marionette.ItemView.extend({
 
 		//
@@ -96,81 +101,73 @@ define([
 
 		addBadges: function(projects) {
 			var self = this;
-			require([
-				'collections/packages/packages',
-				'collections/assessments/assessment-runs',
-				'collections/assessments/execution-records',
-				'collections/assessments/scheduled-runs',
-				'collections/events/user-events'
-			], function (Packages, AssessmentRuns, ExecutionRecords, ScheduledRuns, UserEvents) {
-
-				// add num packages badge
-				//
-				if (projects.length > 0) {
-					Packages.fetchNumAllProtected(projects, {
-						success: function(number) {
-							self.addBadge("#packages .icon", number);
-						}
-					});
-				} else {
-					self.addBadge("#packages .icon", 0);
-				}
-
-				// add num tools badge
-				//
-				Tools.fetchNumByUser(Registry.application.session.user, {
+			
+			// add num packages badge
+			//
+			if (projects.length > 0) {
+				Packages.fetchNumAllProtected(projects, {
 					success: function(number) {
-						self.addBadge("#tools .icon", number);
+						self.addBadge("#packages .icon", number);
 					}
 				});
+			} else {
+				this.addBadge("#packages .icon", 0);
+			}
 
-				// add num assessments badge
-				//
-				if (projects.length > 0) {
-					AssessmentRuns.fetchNumByProjects(projects, {
-						success: function(number) {
-							self.addBadge("#assessments .icon", number);
-						}
-					});
-				} else {
-					self.addBadge("#assessments .icon", 0);
+			// add num tools badge
+			//
+			Tools.fetchNumByUser(Registry.application.session.user, {
+				success: function(number) {
+					self.addBadge("#tools .icon", number);
 				}
+			});
 
-				// add num results badge
-				//
-				if (projects.length > 0) {
-					ExecutionRecords.fetchNumByProjects(projects, {
-						success: function(number) {
-							self.addBadge("#results .icon", number);
-						}
-					});
-				} else {
-					self.addBadge("#results .icon", 0);
-				}
-
-				// add num scheduled runs badge
-				//
-				if (projects.length > 0) {
-					ScheduledRuns.fetchNumByProjects(projects, {
-						success: function(number) {
-							self.addBadge("#runs .icon", number);
-						}
-					});
-				} else {
-					self.addBadge("#runs .icon", 0);
-				}
-
-				// add num projects badge
-				//
-				self.addBadge("#projects .icon", projects.getNonTrialProjects().length);
-
-				// add num events badge
-				//
-				UserEvents.fetchNumAll({
+			// add num assessments badge
+			//
+			if (projects.length > 0) {
+				AssessmentRuns.fetchNumByProjects(projects, {
 					success: function(number) {
-						self.addBadge("#events .icon", number);
+						self.addBadge("#assessments .icon", number);
 					}
 				});
+			} else {
+				this.addBadge("#assessments .icon", 0);
+			}
+
+			// add num results badge
+			//
+			if (projects.length > 0) {
+				ExecutionRecords.fetchNumByProjects(projects, {
+					success: function(number) {
+						self.addBadge("#results .icon", number);
+					}
+				});
+			} else {
+				this.addBadge("#results .icon", 0);
+			}
+
+			// add num scheduled runs badge
+			//
+			if (projects.length > 0) {
+				ScheduledRuns.fetchNumByProjects(projects, {
+					success: function(number) {
+						self.addBadge("#runs .icon", number);
+					}
+				});
+			} else {
+				this.addBadge("#runs .icon", 0);
+			}
+
+			// add num projects badge
+			//
+			this.addBadge("#projects .icon", projects.getNonTrialProjects().length);
+
+			// add num events badge
+			//
+			UserEvents.fetchNumAll({
+				success: function(number) {
+					self.addBadge("#events .icon", number);
+				}
 			});
 		},
 

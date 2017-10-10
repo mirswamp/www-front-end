@@ -26,9 +26,15 @@ The objective of this policy is to:
 <h3>2.1 Account, Password, and Key Management</h3>
 <p>SWAMP will provide you with the accounts necessary to access allocated systems. An account is assigned for one user only and must not be shared with others - including students and/or collaborators.</p>
 
-<p>To create a SWAMP user account, you will be required to supply a valid email address.  We block users from using a number of email address domains that do not give us suitable indication of a users institutional membership (e.g. where they work or go to school).  As such, non-specific email domains such as those provided by google and yahoo will not be allowed.</p>
+<p>To create a SWAMP user account, you will be required to supply a valid email address or login using one of the supported third party login providers (e.g. GitHub, Google, or CILogon affiliated institutions). We block users from using a number of email address domains that do not give us suitable indication of a valid email address.</p>
 
-<p>Each project within SWAMP has a group and an owner assigned to it who is responsible for all activities on that particular project. Users must apply for a membership prior to submitting jobs and reviewing results. It is the duty of the project owner to only allow people that are actually working on that project to join the project group.</p>
+<p>As a SWAMP Project Owner, you are responsible for your SWAMP Project(s) and the activities that occur within your SWAMP Project(s). Your responsibilities include:</p>
+<ul>
+	<li>Maintaining an accurate Description of your Project in your SWAMP Project Profile.</li>
+	<li>Inviting only known colleagues to be Project Members and promptly removing Project Members who are no longer active colleagues.</li>
+	<li>Periodically reviewing Run Requests submitted by Project Members for appropriate use of SWAMP resources.</li>
+	<li>Reporting any violations of the SWAMP Acceptable Use Policy by Project Members to the SWAMP Help Desk.</li>
+</ul>
 
 <p>Passwords and keys secure access to your account. Never share a SWAMP password out loud or write it down where it could be found and/or associated with your account. Never use tools that openly expose SWAMP passwords on the network, such as telnet. Make sure that file and directory permissions prevent others from reading or copying SSH private keys, which are the equivalent of passwords. Do not store your password(s) in unencrypted files or even in encrypted files if possible. Password managers such as <a href="http://www.keepassx.org" target="_blank">KeePassX</a>, <a href="https://lastpass.com" target="_blank">LastPass</a>, and <a href="https://agilebits.com/onepassword" target="_blank">1Password</a> can help you create and manage your passwords.</p>
 
@@ -58,7 +64,7 @@ Some indications that a compromise has occurred include:
 </ul>
 
 <h3>2.4 Unauthorized Use and Access</h3>
-<p>How you intend to use SWAMP resources must be clearly defined in your project request. Subsequently, access is granted specifically for the research that is described in the request - nothing else. Just because you can access a resource does not mean that you have authorization to do so. You must operate within sanctioned parameters regardless of what may be technically possible.</p>
+<p>How you intend to use SWAMP resources must be clearly defined in your permission request. Subsequently, access is granted specifically for the research that is described in the request - nothing else. Just because you can access a resource does not mean that you have authorization to do so. You must operate within sanctioned parameters regardless of what may be technically possible.</p>
 
 <h3>2.5 Unacceptable Behavior</h3>
 <p>Following are examples of unacceptable behavior that are subject to the penalties described in section 2.7:</p>
@@ -88,10 +94,10 @@ Some indications that a compromise has occurred include:
 <p>Be responsible when uploading confidential, proprietary, and/or sensitive data to SWAMP, when sharing such data with other SWAMP users, and when downloading data from SWAMP. Only upload proprietary data or intellectual property to SWAMP that you own or have rights to use. Only share data with other SWAMP users consistent with your rights to share such data. SWAMP will make best efforts to maintain the security of all uploaded data. SWAMP must not be used with classified data. Do not upload classified data to SWAMP.</p>
 
 <h2>4.0 Information Collected by the Software Assurance Marketplace from Your Use</h2>
-<p>The <code><a href="https://www.swampinabox.org/doc/SWAMP-Privacy-Policy.pdf" target="_blank">Software Assurance MarketPlace (SWAMP) Privacy Policy</a></code> document ("Privacy Policy") explains the information that we collect from users, and how it is used.   By accepting this agreement you agree that you have read and understand the Privacy Policy and consent to all of the rights and privileges asserted by the Software Assurance Marketplace therein.</p>
+<p>The <code><a href="https://www.swampinabox.org/doc/SWAMP-Privacy-Policy.pdf" target="_blank">Software Assurance MarketPlace (SWAMP) Privacy Policy</a></code> document ("Privacy Policy") explains the information that we collect from users, and how it is used.   By accepting this agreement, you agree that you have read and understand the Privacy Policy and consent to all of the rights and privileges asserted by the Software Assurance Marketplace therein.</p>
 
 <h2>5.0 Proper Acquisition and Licensing of Software</h2>
-<p>All software used on SWAMP systems must have been appropriately acquired and properly licensed. Possession or use of illegally copied software is prohibited. Likewise users shall not duplicate copyright-protected software or materials, except as permitted by the owner of the copyright. Some software installed on SWAMP resources may require special authorization in order to be used. Users must abide by the requirements for protecting it from misuse.</p>
+<p>All software used on SWAMP systems must have been appropriately acquired and properly licensed. Possession or use of illegally copied software is prohibited. Likewise, users shall not duplicate copyright-protected software or materials, except as permitted by the owner of the copyright. Some software installed on SWAMP resources may require special authorization in order to be used. Users must abide by the requirements for protecting it from misuse.</p>
 
 <h2>6.0 Termination/Access Restriction</h2>
 <p>SWAMP reserves the right, in its sole discretion, to terminate your access to the SWAMP Web Site and the related services or any portion thereof at any time, without notice.</p>

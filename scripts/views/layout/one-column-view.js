@@ -20,7 +20,7 @@ define([
 	'underscore',
 	'backbone',
 	'marionette',
-	'affix',
+	'bootstrap/affix',
 	'text!templates/layout/one-column-top-navbar.tpl',
 	'text!templates/layout/one-column-bottom-navbar.tpl',
 	'registry',

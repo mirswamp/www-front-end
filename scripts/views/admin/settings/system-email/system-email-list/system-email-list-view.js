@@ -20,7 +20,7 @@ define([
 	'underscore',
 	'backbone',
 	'marionette',
-	'popover',
+	'bootstrap/popover',
 	'text!templates/admin/settings/system-email/system-email-list/system-email-list.tpl',
 	'views/widgets/lists/sortable-table-list-view',
 	'views/admin/settings/system-email/system-email-list/system-email-list-item-view'

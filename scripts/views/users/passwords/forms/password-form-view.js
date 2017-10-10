@@ -20,8 +20,8 @@ define([
 	'underscore',
 	'backbone',
 	'marionette',
-	'validate',
-	'popover',
+	'jquery.validate',
+	'bootstrap/popover',
 	'text!templates/users/passwords/forms/password-form.tpl'
 ], function($, _, Backbone, Marionette, Validate, Popover, Template) {
 	return Backbone.Marionette.LayoutView.extend({

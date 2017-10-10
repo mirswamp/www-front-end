@@ -106,24 +106,11 @@ define([
 						//
 						success: function() {
 
-							// show success notification dialog
+							// go to tool view
 							//
-							Registry.application.modal.show(
-								new NotifyView({
-									message: "Tool " + self.model.get('name') + " version " + self.toolVersion.get('version_string') + " has been uploaded successfully.",
-
-									// callbacks
-									//
-									accept: function() {
-										
-										// go to tool view
-										//
-										Backbone.history.navigate('#tools/' + tool.get('tool_uuid'), {
-											trigger: true
-										});
-									}
-								})
-							);
+							Backbone.history.navigate('#tools/' + tool.get('tool_uuid'), {
+								trigger: true
+							});
 						},
 
 						error: function(response) {

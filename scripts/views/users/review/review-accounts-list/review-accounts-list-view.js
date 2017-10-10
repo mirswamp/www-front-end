@@ -21,7 +21,7 @@ define([
 	'underscore',
 	'backbone',
 	'marionette',
-	'popover',
+	'bootstrap/popover',
 	'text!templates/users/review/review-accounts-list/review-accounts-list.tpl',
 	'registry',
 	'views/dialogs/confirm-view',

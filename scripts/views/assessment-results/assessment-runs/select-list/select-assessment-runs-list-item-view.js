@@ -21,7 +21,7 @@ define([
 	'underscore',
 	'backbone',
 	'marionette',
-	'tooltip',
+	'bootstrap/tooltip',
 	'text!templates/assessment-results/assessment-runs/select-list/select-assessment-runs-list-item.tpl',
 	'config',
 	'registry',

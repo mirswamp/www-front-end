@@ -15,123 +15,133 @@
 |        Copyright (C) 2012-2017 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
-function UTCDateToLocalDate(date) {
-	if (!date) {
-		return;
-	}
-	return new Date(
-		date.getTime() - 
-		(new Date()).getTimezoneOffset() * 60 * 1000
-	);
-}
+define([
+	'utilities/time/time-utils',
+	'utilities/time/date-format'
+], function() {
 
-function LocalDateToUTCDate(date) {
-	if (!date) {
-		return;
-	}
-	return new Date(
-		date.getTime() + 
-		(new Date()).getTimezoneOffset() * 60 * 1000
-	);
-}
-
-function UTCLocalTimeOfDay(timeOfDay) {
-	if (!timeOfDay) {
-		return;
-	}
-	var time = timeToObject(timeOfDay);
-
-	// get time zone offset
 	//
-	var timeZoneOffsetMinutes = new Date().getTimezoneOffset();
-	var timeZoneOffsetHours = Math.floor(timeZoneOffsetMinutes / 60);
-	timeZoneOffsetMinutes -= timeZoneOffsetHours * 60;
-
-	// add time zone offset
+	// add functions to global scope
 	//
-	time.hours -= timeZoneOffsetHours;
-	time.minutes -= timeZoneOffsetMinutes;
-	if (time.hours > 24) {
-		time.hours -= 24;
+
+	window.UTCDateToLocalDate = function(date) {
+		if (!date) {
+			return;
+		}
+		return new Date(
+			date.getTime() - 
+			(new Date()).getTimezoneOffset() * 60 * 1000
+		);
 	}
 
-	return time;
-}
-
-function UTCTimeOfDayToLocalDate(timeOfDay) {
-	if (!timeOfDay) {
-		return;
+	window.localDateToUTCDate = function(date) {
+		if (!date) {
+			return;
+		}
+		return new Date(
+			date.getTime() + 
+			(new Date()).getTimezoneOffset() * 60 * 1000
+		);
 	}
-	var time = UTCLocalTimeOfDay(timeOfDay);
 
-	var date = new Date();
-	date.setHours(time.hours);
-	date.setMinutes(time.minutes);
-	date.setSeconds(time.seconds);
-	return date;
-}
+	window.UTCLocalTimeOfDay = function(timeOfDay) {
+		if (!timeOfDay) {
+			return;
+		}
+		var time = timeToObject(timeOfDay);
 
-function UTCToLocalTimeOfDay(timeOfDay) {
-	if (!timeOfDay) {
-		return;
+		// get time zone offset
+		//
+		var timeZoneOffsetMinutes = new Date().getTimezoneOffset();
+		var timeZoneOffsetHours = Math.floor(timeZoneOffsetMinutes / 60);
+		timeZoneOffsetMinutes -= timeZoneOffsetHours * 60;
+
+		// add time zone offset
+		//
+		time.hours -= timeZoneOffsetHours;
+		time.minutes -= timeZoneOffsetMinutes;
+		if (time.hours > 24) {
+			time.hours -= 24;
+		}
+
+		return time;
 	}
-	var time_date = UTCTimeOfDayToLocalDate(timeOfDay);
-	return dateFormat(time_date, "HH:MM");
-}
 
-function UTCToLocalTimeOfDayMeridian(timeOfDay) {
-	if (!timeOfDay) {
-		return;
+	window.UTCTimeOfDayToLocalDate = function(timeOfDay) {
+		if (!timeOfDay) {
+			return;
+		}
+		var time = UTCLocalTimeOfDay(timeOfDay);
+
+		var date = new Date();
+		date.setHours(time.hours);
+		date.setMinutes(time.minutes);
+		date.setSeconds(time.seconds);
+		return date;
 	}
-	var time_date = UTCTimeOfDayToLocalDate(timeOfDay);
-	return dateFormat(time_date, "h:MM TT");
-}
 
-//
-// HTML date formatting methods
-//
-
-function dateToHTML(date) {
-	var html = '<div class="date">';
-	if (date) {
-		html += UTCDateToLocalDate(date).format('mm/dd/yyyy');
+	window.UTCToLocalTimeOfDay = function(timeOfDay) {
+		if (!timeOfDay) {
+			return;
+		}
+		var time_date = UTCTimeOfDayToLocalDate(timeOfDay);
+		return dateFormat(time_date, "HH:MM");
 	}
-	html += '</div>';
-	return html;	
-}
 
-function dateToDetailedHTML(date) {
-	var html = '<div class="datetime">';
+	window.UTCToLocalTimeOfDayMeridian = function(timeOfDay) {
+		if (!timeOfDay) {
+			return;
+		}
+		var time_date = UTCTimeOfDayToLocalDate(timeOfDay);
+		return dateFormat(time_date, "h:MM TT");
+	}
 
-	// add date
 	//
-	html += '<div class="date">';
-	if (date) {
-		html += UTCDateToLocalDate(date).format('mm/dd/yyyy');
-	}
-	html += '</div>';
-
-	// add time
+	// HTML date formatting methods
 	//
-	html += '<div class="time">';
-	if (date) {
-		html += UTCDateToLocalDate(date).format('HH:MM:ss');
+
+	window.dateToHTML = function(date) {
+		var html = '<div class="date">';
+		if (date) {
+			html += UTCDateToLocalDate(date).format('mm/dd/yyyy');
+		}
+		html += '</div>';
+		return html;	
 	}
-	html += '</div>';
 
-	html += '</div>';	
-	return html;
-}
+	window.dateToDetailedHTML = function(date) {
+		var html = '<div class="datetime">';
 
-function dateToSortableHTML(date) {
+		// add date
+		//
+		html += '<div class="date">';
+		if (date) {
+			html += UTCDateToLocalDate(date).format('mm/dd/yyyy');
+		}
+		html += '</div>';
 
-	// add non-displayable sorting datetime
-	//
-	var html = '<div class="datetime">';
-	if (date) {
-		html += UTCDateToLocalDate(date).format('mm/dd/yyyy HH:MM');
+		// add time
+		//
+		html += '<div class="time">';
+		if (date) {
+			html += UTCDateToLocalDate(date).format('HH:MM:ss');
+		}
+		html += '</div>';
+
+		html += '</div>';	
+		return html;
 	}
-	html += '</div>';
-	
-	return html;
-}
+
+	window.dateToSortableHTML = function(date) {
+
+		// add non-displayable sorting datetime
+		//
+		var html = '<div class="datetime">';
+		if (date) {
+			html += UTCDateToLocalDate(date).format('mm/dd/yyyy HH:MM');
+		}
+		html += '</div>';
+		
+		return html;
+	}
+});

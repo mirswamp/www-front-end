@@ -20,7 +20,7 @@ define([
 	'underscore',
 	'backbone',
 	'marionette',
-	'validate',
+	'jquery.validate',
 	'text!templates/projects/info/members/invitations/new-project-invitations-list/new-project-invitations-list.tpl',
 	'registry',
 	'models/users/user',

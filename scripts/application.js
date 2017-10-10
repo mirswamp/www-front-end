@@ -19,7 +19,7 @@ define([
 	'jquery',
 	'underscore',
 	'backbone',
-	'cookie',
+	'jquery.cookie',
 	'config',
 	'marionette',
 	'text!templates/layout/application.tpl',
@@ -27,6 +27,8 @@ define([
 	'utilities/scripting/string-utils',
 	'utilities/scripting/array-utils',
 	'utilities/browser/html-utils',
+	'utilities/time/time-utils',
+	'utilities/time/date-utils',
 	'utilities/browser/browser-support',
 	'routers/main-router',
 	'routers/package-router',
@@ -41,7 +43,7 @@ define([
 	'views/layout/page-view',
 	'views/keyboard/keyboard',
 	'views/dialogs/modal-region'
-], function($, _, Backbone, Cookie, Config, Marionette, Template, Registry, StringUtils, ArrayUtils, HTMLUtils, BrowserSupport, MainRouter, PackageRouter, ToolRouter, PlatformRouter, ProjectRouter, AssessmentRouter, ResultsRouter, RunRequestsRouter, ApiRouter, Session, PageView, Keyboard, ModalRegion) {
+], function($, _, Backbone, Cookie, Config, Marionette, Template, Registry, StringUtils, ArrayUtils, TimeUtils, HTMLUtils, DateUtils, BrowserSupport, MainRouter, PackageRouter, ToolRouter, PlatformRouter, ProjectRouter, AssessmentRouter, ResultsRouter, RunRequestsRouter, ApiRouter, Session, PageView, Keyboard, ModalRegion) {
 	return Marionette.Application.extend({
 
 		// attributes

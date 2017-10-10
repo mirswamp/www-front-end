@@ -20,8 +20,8 @@ define([
 	'underscore',
 	'backbone',
 	'marionette',
-	'tooltip',
-	'popover',
+	'bootstrap/tooltip',
+	'bootstrap/popover',
 	'text!templates/tools/info/versions/tool-version/tool-version-profile/tool-version-profile.tpl',
 	'utilities/time/date-utils'
 ], function($, _, Backbone, Marionette, Tooltip, Popover, Template) {

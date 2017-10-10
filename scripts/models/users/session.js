@@ -19,7 +19,7 @@ define([
 	'jquery',
 	'underscore',
 	'backbone',
-	'cookie',
+	'jquery.cookie',
 	'config',
 	'registry',
 	'models/users/user',
@@ -33,8 +33,8 @@ define([
 		//
 
 		login: function(username, password, options) {
-
-			// initialize the rws server session
+			
+			// initialize the web server session
 			//
 			$.ajax(Config.servers.web + '/login', _.extend(options, {
 				type:'POST',
@@ -86,28 +86,13 @@ define([
 			//
 			this.user = null;
 
-			// close rws server session
+			// close web server session
 			//
-			$.ajax(Config.servers.web + '/logout', {
+			$.ajax(Config.servers.web + '/logout', _.extend(options, {
 				type: 'POST',
-
-				/*
-				data: {
-					'last_url': Backbone.history.fragment
-				},
-				*/
 
 				// callbacks
 				//
-				success: function() {
-
-					// close csa server session
-					//
-					$.ajax(Config.servers.web + '/logout', _.extend( options, {
-						type: 'POST'
-					}));
-				},
-
 				error: function(jqxhr, textStatus, errorThrown) {
 
 					// show error dialog view
@@ -118,7 +103,7 @@ define([
 						})
 					);
 				}
-			});
+			}));
 		},
 
 		isLoggedIn: function() {

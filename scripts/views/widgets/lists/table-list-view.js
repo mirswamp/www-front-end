@@ -25,6 +25,12 @@ define([
 	return ListView.extend({
 
 		//
+		// attributes
+		//
+
+		// tagName: 'table',
+
+		//
 		// rendering methods
 		//
 

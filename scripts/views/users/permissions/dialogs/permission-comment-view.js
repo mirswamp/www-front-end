@@ -21,9 +21,9 @@ define([
 	'underscore',
 	'backbone',
 	'marionette',
-	'tooltip',
-	'popover',
-	'validate',
+	'bootstrap/tooltip',
+	'bootstrap/popover',
+	'jquery.validate',
 	'registry',
 	'text!templates/users/permissions/dialogs/permission-comment.tpl',
 	'views/users/permissions/forms/permission-comment-form-view'

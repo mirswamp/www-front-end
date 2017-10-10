@@ -45,9 +45,7 @@ define([
 		//
 
 		template: function(data) {
-			return _.template(Template, _.extend(data, {
-				permission: this.options.permission
-			}));
+			return _.template(Template, data);
 		},
 
 		onRender: function() {
@@ -61,7 +59,7 @@ define([
 			var self = this;
 			this.toolPermissionForm.show(
 				new ToolPermissionFormView({
-					permission: this.options.permission,
+					model: this.model,
 
 					// callbacks
 					//

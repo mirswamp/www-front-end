@@ -70,10 +70,11 @@ define([
 							//
 							accept: function() {
 
-								// go to home view
+								// go to welcome view
 								//
-								Backbone.history.navigate('#home');
-								window.location.reload();
+								Backbone.history.navigate('#sign-in', {
+									trigger: true
+								});
 							}
 						})
 					);

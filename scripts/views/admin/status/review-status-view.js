@@ -20,11 +20,16 @@ define([
 	'underscore',
 	'backbone',
 	'marionette',
+	'bootstrap/tab',
 	'text!templates/admin/status/review-status.tpl',
 	'registry',
-	'models/users/session'
-], function($, _, Backbone, Marionette, Template, Registry, Session) {
-	return Backbone.Marionette.ItemView.extend({
+	'models/users/session',
+	'views/admin/status/run-queue-summary/run-queue-summary-view',
+	'views/admin/status/run-queue/run-queue-view',
+	'views/admin/status/run-status-list/run-status-list-view',
+	'views/admin/status/viewer-status-list/viewer-status-list-view'
+], function($, _, Backbone, Marionette, Tab, Template, Registry, Session, RunQueueSummaryView, RunQueueView, RunStatusListView, ViewerStatusListView) {
+	return Backbone.Marionette.LayoutView.extend({
 
 		//
 		// attributes
@@ -32,13 +37,20 @@ define([
 
 		refreshInterval: 10000,
 
+		regions: {
+			runQueueSummary: '#run-queue-summary',
+			runQueue: '#run-queue',
+			runStatusList: '#run-status-list',
+			viewerStatusList: '#viewer-status-list'
+		},
+
 		events: {
 			'click #refresh': 'onClickRefresh',
 			'click #auto-refresh': 'onClickAutoRefresh',
 		},
 
 		//
-		// methods
+		// refresh methods
 		//
 
 		enableAutoRefresh: function() {
@@ -110,6 +122,12 @@ define([
 					// add returned HTML content to view
 					//
 					self.$el.find("#status").html(data);
+					/*
+					self.showRunQueueSummary(data["Condor Queue"]);
+					self.showRunQueue(data["Condor Queue"]);
+					self.showRunStatusList(data["Collector Assessment Records"]);
+					self.showViewerStatusList(data["Collector Viewer Records"]);
+					*/
 
 					// perform callback
 					//
@@ -118,6 +136,74 @@ define([
 					}
 				}
 			});
+		},
+
+		showRunQueueSummary: function(data) {
+			for (var key in data) {
+				this.runQueueSummary.show(
+					new RunQueueSummaryView({
+						server: key,
+						model: new Backbone.Model(data[key]['summary']),
+					})
+				);			
+			}
+		},
+
+		showRunQueue: function(data) {
+
+			// preserve existing sorting order
+			//
+			if (this.runQueue.currentView) {
+				this.runQueueSortList = this.runQueue.currentView.getSortList();
+			}
+
+			for (var key in data) {
+				this.runQueue.show(
+					new RunQueueView({
+						server: key,
+						collection: new Backbone.Collection(data[key]['data']),
+						sortList: this.runQueueSortList
+					})
+				);			
+			}
+		},
+
+		showRunStatusList: function(data) {
+
+			// preserve existing sorting order
+			//
+			if (this.runStatusList.currentView) {
+				this.runStatusSortList = this.runStatusList.currentView.getSortList();
+			}
+
+			for (var key in data) {
+				this.runStatusList.show(
+					new RunStatusListView({
+						server: key,
+						collection: new Backbone.Collection(data[key]['data']),
+						sortList: this.runStatusSortList
+					})
+				);			
+			}
+		},
+
+		showViewerStatusList: function(data) {
+
+			// preserve existing sorting order
+			//
+			if (this.viewerStatusList.currentView) {
+				this.viewerStatusSortList = this.viewerStatusList.currentView.getSortList();
+			}
+
+			for (var key in data) {
+				this.viewerStatusList.show(
+					new ViewerStatusListView({
+						server: key,
+						collection: new Backbone.Collection(data[key]['data']),
+						sortList: this.viewerStatusSortList
+					})
+				);			
+			}
 		},
 
 		//

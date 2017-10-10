@@ -39,7 +39,7 @@ define([
 			// set optional parameter defaults
 			//
 			if (options.allowLatest == undefined) {
-				options.allowLatest = true;
+				options.allowLatest = false;
 			}
 
 			// set attributes
@@ -56,6 +56,19 @@ define([
 		//
 		// setting methods
 		//
+
+		setPackage: function(package, options) {
+
+			// set attributes
+			//
+			this.options.packageSelected = package;
+
+			// reset selection
+			//
+			this.reset(_.extend(options || {}, {
+				update: true
+			}));
+		},
 
 		setTool: function(tool, options) {
 
@@ -95,6 +108,26 @@ define([
 			// fetch platforms
 			//
 			this.fetchPlatforms(function(publicPlatforms, protectedPlatforms) {
+
+				// cull Android from available platforms
+				//
+				if (self.options.packageSelected) {
+					if (self.options.packageSelected.getPackageType() == 'c-source') {
+						for (var i = 0; i < publicPlatforms.length; i++) {
+							var item = publicPlatforms.at(i);
+							if (item.get('name').contains('Android')) {
+								publicPlatforms.remove(item);
+							}
+						}
+
+						for (var i = 0; i < protectedPlatforms.length; i++) {
+							var item = protectedPlatforms.at(i);
+							if (item.get('name').contains('Android')) {
+								protectedPlatforms.remove(item);
+							}
+						}
+					}
+				}
 
 				// sort by name
 				//

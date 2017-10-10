@@ -19,12 +19,11 @@ define([
 	'jquery',
 	'underscore',
 	'backbone',
-	'cookie',
 	'config',
 	'registry',
 	'models/utilities/timestamped',
 	'views/dialogs/error-view'
-], function($, _, Backbone, Cookie, Config, Registry, Timestamped, ErrorView) {
+], function($, _, Backbone, Config, Registry, Timestamped, ErrorView) {
 	return Timestamped.extend({
 
 		//
@@ -51,6 +50,18 @@ define([
 		},
 
 		//
+		// querying methods
+		//
+
+		isRestricted: function() {
+			return this.has('user_info');
+		},
+
+		isAutoApprove: function() {
+			return this.get('auto_approve_flag') == '1';
+		},
+
+		//
 		// overridden Backbone methods
 		//
 
@@ -70,24 +81,14 @@ define([
 
 			// parse subfields
 			//
+			if (json.user_info) {
+				json.user_info = JSON.parse(json.user_info);
+			}
 			if (json.meta_information) {
 				json.meta_information = JSON.parse(json.meta_information);
 			}
 
 			return json;
 		},
-	}, {
-
-		//
-		// static attributes
-		//
-
-		restrictedPermissions: [
-			'parasoft-user-c-test',
-			'parasoft-user-j-test',
-			'parasoft-user-j-test',
-			'red-lizard-user',
-			'codesonar-user'
-		]
 	});
 });

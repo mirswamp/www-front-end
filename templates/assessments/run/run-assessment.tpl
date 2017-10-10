@@ -65,7 +65,7 @@
 	</div>
 </div>
 
-<div class="panel" id="tool-selection"<% if (toolVersion) { %> style="display:none"<% } %>>
+<div class="panel" id="tool-selection" style="display:none">
 	<div class="panel-header">
 		<h2><i class="fa fa-wrench"></i>Tool</h2>
 	</div>
@@ -81,7 +81,7 @@
 	</div>
 </div>
 
-<div class="panel" id="platform-selection"<% if (platformVersion) { %> style="display:none"<% } %>>
+<div class="panel" id="platform-selection" style="display:none">
 	<div class="panel-header">
 		<h2><i class="fa fa-bars"></i>Platform</h2>
 	</div>

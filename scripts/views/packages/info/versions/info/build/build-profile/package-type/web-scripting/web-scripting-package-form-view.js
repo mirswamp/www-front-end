@@ -21,19 +21,19 @@ define([
 	'underscore',
 	'backbone',
 	'marionette',
-	'collapse',
-	'dropdown',
-	'select',
-	'tooltip',
-	'popover',
-	'validate',
+	'bootstrap/collapse',
+	'bootstrap/dropdown',
+	'bootstrap/tooltip',
+	'bootstrap/popover',
+	'bootstrap.select',
+	'jquery.validate',
 	'text!templates/packages/info/versions/info/build/build-profile/package-type/web-scripting/web-scripting-package-form.tpl',
 	'registry',
 	'widgets/accordions',
 	'models/files/directory',
 	'views/packages/info/versions/info/build/build-profile/dialogs/select-package-version-file-view',
 	'views/packages/info/versions/info/build/build-profile/dialogs/select-package-version-directory-view'
-], function($, _, Backbone, Marionette, Collapse, Dropdown, Select, Tooltip, Popover, Validate, Template, Registry, Accordions, Directory, SelectPackageVersionFileView, SelectPackageVersionDirectoryView) {
+], function($, _, Backbone, Marionette, Collapse, Dropdown, Tooltip, Popover, Select, Validate, Template, Registry, Accordions, Directory, SelectPackageVersionFileView, SelectPackageVersionDirectoryView) {
 	return Backbone.Marionette.ItemView.extend({
 
 		//

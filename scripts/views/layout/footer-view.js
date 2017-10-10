@@ -20,9 +20,11 @@ define([
 	'underscore',
 	'backbone',
 	'marionette',
-	'tooltip',
-	'text!templates/layout/footer.tpl'
-], function($, _, Backbone, Marionette, Tooltip, Template) {
+	'bootstrap/tooltip',
+	'registry',	
+	'text!templates/layout/footer.tpl',
+	'views/dialogs/performance-view'
+], function($, _, Backbone, Marionette, Tooltip, Registry, Template, PerformanceView) {
 	return Backbone.Marionette.ItemView.extend({
 
 		//
@@ -49,15 +51,9 @@ define([
 		},
 
 		showPerformanceDialog: function() {
-			var self = this;
-			require([
-				'registry',
-				'views/dialogs/performance-view'
-			], function (Registry, PerformanceView) {
-				Registry.application.modal.show(
-					new PerformanceView()
-				);
-			});
+			Registry.application.modal.show(
+				new PerformanceView()
+			);
 		},
 
 		//

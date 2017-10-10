@@ -21,9 +21,9 @@ define([
 	'underscore',
 	'backbone',
 	'marionette',
-	'validate',
-	'tooltip',
-	'popover',
+	'jquery.validate',
+	'bootstrap/tooltip',
+	'bootstrap/popover',
 	'text!templates/packages/info/details/package-profile/package-profile-form.tpl'
 ], function($, _, Backbone, Marionette, Validate, Tooltip, Popover, Template) {
 	return Backbone.Marionette.ItemView.extend({

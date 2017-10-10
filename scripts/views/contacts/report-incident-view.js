@@ -20,7 +20,7 @@ define([
 	'underscore',
 	'backbone',
 	'marionette',
-	'collapse',
+	'bootstrap/collapse',
 	'text!templates/contacts/report-incident.tpl',
 	'config',
 	'registry',

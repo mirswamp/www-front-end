@@ -26,8 +26,7 @@
 <div id="comment-form">
 	<form class="form-horizontal">
 
-		<% if (changeUserPermissions) { %>
-		<div class="form-group">
+		<div class="form-group"<% if (!showUserJustification) { %> style="display:none"<% } %>>
 			<label class="control-label">User Justification</label>
 			<div class="controls">
 				<p class="form-control-static">
@@ -39,10 +38,9 @@
 				</p>
 			</div>
 		</div>
-		<% } %>
 
 		<% if (typeof meta_information != 'undefined') { %>
-		<div class="form-group">
+		<div class="form-group"<% if (!showUserData) { %> style="display:none"<% } %>>
 			<label class="control-label">User Data</label>
 			<div class="controls">
 				<div id="user-data"></div>
@@ -50,7 +48,7 @@
 		</div>
 		<% } %>
 
-		<div class="form-group">
+		<div class="form-group"<% if (!showComment) { %> style="display:none"<% } %>>
 			<label class="control-label">Comment</label>
 			<div class="controls">
 				<div class="input-group">

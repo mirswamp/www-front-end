@@ -29,7 +29,5 @@ To report a security incident, click <a href="#contact/security">here</a>.
 <h2><i class="fa fa-bug"></i>Debugging Help</h2>
 <p><a href="https://www.swampinabox.org/doc/statusout.pdf" target="_blank">Status.out and Debugging SWAMP Failures FAQ (PDF)</a></p>
 
-<% if (config['api_explorer_enabled']) { %>
 <h2><i class="fa fa-compass"></i>API Explorer</h2> 
-<p><a href="#api">Explore the SWAMP Application Programmer Interface (REST API)</a></p>
-<% } %>
+<p><a href="http://www.mir-swamp.org/api">Explore the SWAMP Application Programmer Interface (REST API)</a></p>

@@ -21,7 +21,7 @@ define([
 	'underscore',
 	'backbone',
 	'marionette',
-	'popover',
+	'bootstrap/popover',
 	'text!templates/assessments/select-list/select-assessments-list.tpl',
 	'collections/assessments/assessment-runs',
 	'views/widgets/lists/sortable-table-list-view',

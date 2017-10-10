@@ -21,9 +21,9 @@ define([
 	'underscore',
 	'backbone',
 	'marionette',
-	'tooltip',
-	'popover',
-	'validate',
+	'bootstrap/tooltip',
+	'bootstrap/popover',
+	'jquery.validate',
 	'registry',
 	'text!templates/tools/permissions/forms/tool-permission-form.tpl'
 ], function($, _, Backbone, Marionette, Tooltip, Popover, Validate, Registry, Template) {
@@ -55,21 +55,34 @@ define([
 		//
 
 		getData: function() {
-			return {
-				'user_type': this.$el.find('input:radio[name=user-type]:checked').val(),
-				'name': this.$el.find('#name').val(),
-				'email': this.$el.find('#email').val(),
-				'organization': this.$el.find("#organization").val(),
-				'project_url': this.$el.find("#project-url").val()
+			var data = {};
+			var userInfo = this.model.get('user_info');
+
+			if (userInfo) {
+				for (var key in userInfo) {
+					var id = key.replace(' ', '-');
+					switch (userInfo[key].type) {
+
+						case 'text':
+							data[key] = this.$el.find('#' + id + ' input').val();
+							break;
+
+						case 'enum':
+							data[key] = this.$el.find('#' + id + ' input:radio:checked').val()
+							break;
+					}
+				}
 			}
+
+			return data;
 		},
 
 		//
 		// rendering methods
 		//
 
-		template: function() {
-			return _.template(Template);
+		template: function(data) {
+			return _.template(Template, data);
 		},
 
 		onRender: function() {

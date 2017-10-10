@@ -1,5 +1,5 @@
-#compressed: 
-#	node /usr/local/lib/node_modules/requirejs/bin/r.js -o app.build.js
+#build: 
+#	node /usr/local/lib/node_modules/requirejs/bin/r.js -o build.js
 
-compressed: 
-	node ../build/r.js -o app.build.js
+build: 
+	node ../build/r.js -o build.js

@@ -20,12 +20,13 @@ define([
 	'underscore',
 	'backbone',
 	'marionette',
-	'button',
-	'collapse',
 	'text!templates/layout/header.tpl',
 	'config',
-	'registry'
-], function($, _, Backbone, Marionette, Button, Collapse, Template, Config, Registry) {
+	'registry',
+	'collections/projects/project-invitations',
+	'collections/admin/admin-invitations',
+	'collections/permissions/user-permissions'
+], function($, _, Backbone, Marionette, Template, Config, Registry, ProjectInvitations, AdminInvitations, UserPermissions) {
 	return Backbone.Marionette.ItemView.extend({
 
 		//
@@ -50,56 +51,50 @@ define([
 		//
 
 		fetchNumNotifications: function(done) {
-			require([
-				'collections/projects/project-invitations',
-				'collections/admin/admin-invitations',
-				'collections/permissions/user-permissions'
-			], function (ProjectInvitations, AdminInvitations, UserPermissions) {
 
-				// fetch number of project invitations
+			// fetch number of project invitations
+			//
+			ProjectInvitations.fetchNumPendingByUser(Registry.application.session.user, {
+				
+				// callback
 				//
-				ProjectInvitations.fetchNumPendingByUser(Registry.application.session.user, {
-					
-					// callback
+				success: function(numProjectInvitations) {
+					numProjectInvitations = parseInt(numProjectInvitations);
+
+					// fetch number of admin invitations
 					//
-					success: function(numProjectInvitations) {
-						numProjectInvitations = parseInt(numProjectInvitations);
-
-						// fetch number of admin invitations
+					AdminInvitations.fetchNumPendingByUser(Registry.application.session.user, {
+						
+						// callback
 						//
-						AdminInvitations.fetchNumPendingByUser(Registry.application.session.user, {
-							
-							// callback
-							//
-							success: function(numAdminInvitations) {
-								numAdminInvitations = parseInt(numAdminInvitations);
+						success: function(numAdminInvitations) {
+							numAdminInvitations = parseInt(numAdminInvitations);
 
-								if (Registry.application.session.user.isAdmin()) {
+							if (Registry.application.session.user.isAdmin()) {
 
-									// fetch number of pending permissions
+								// fetch number of pending permissions
+								//
+								UserPermissions.fetchNumPending({
+
+									// callback
 									//
-									UserPermissions.fetchNumPending({
+									success: function(numPendingPermissions) {
+										numPendingPermissions = parseInt(numPendingPermissions);
 
-										// callback
+										// return sum of notifications
 										//
-										success: function(numPendingPermissions) {
-											numPendingPermissions = parseInt(numPendingPermissions);
+										done(numProjectInvitations + numAdminInvitations + numPendingPermissions);
+									}
+								});
+							} else {
 
-											// return sum of notifications
-											//
-											done(numProjectInvitations + numAdminInvitations + numPendingPermissions);
-										}
-									});
-								} else {
-
-									// return sum of notifications
-									//
-									done(numProjectInvitations + numAdminInvitations);
-								}
+								// return sum of notifications
+								//
+								done(numProjectInvitations + numAdminInvitations);
 							}
-						});
-					}
-				});
+						}
+					});
+				}
 			});
 		},
 
@@ -144,7 +139,7 @@ define([
 		showPopovers: function() {
 			var self = this;
 			require([
-				'popover',
+				'bootstrap/popover',
 			], function () {
 
 				// display popovers on hover

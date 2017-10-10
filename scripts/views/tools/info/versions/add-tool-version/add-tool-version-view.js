@@ -70,24 +70,11 @@ define([
 						//
 						success: function() {
 
-							// show success notification dialog
+							// go to tool view
 							//
-							Registry.application.modal.show(
-								new NotifyView({
-									message: "Tool " + self.options.tool.get('name') + " version " + self.model.get('version_string') + " has been uploaded successfully.",
-
-									// callbacks
-									//
-									accept: function() {
-										
-										// go to tool view
-										//
-										Backbone.history.navigate('#tools/' + self.options.tool.get('tool_uuid'), {
-											trigger: true
-										});
-									}
-								})
-							);
+							Backbone.history.navigate('#tools/' + self.options.tool.get('tool_uuid'), {
+								trigger: true
+							});
 						},
 
 						error: function(response) {

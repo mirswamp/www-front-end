@@ -19,13 +19,14 @@ define([
 	'jquery',
 	'underscore',
 	'backbone',
+	'bootstrap.select',
 	'text!templates/widgets/selectors/country-selector.tpl',
 	'registry',
 	'models/utilities/country',
 	'collections/utilities/countries',
 	'views/dialogs/error-view',
 	'views/widgets/selectors/name-selector-view'
-], function($, _, Backbone, Template, Registry, Country, Countries, ErrorView, NameSelectorView) {
+], function($, _, Backbone, Select, Template, Registry, Country, Countries, ErrorView, NameSelectorView) {
 	return NameSelectorView.extend({
 
 		//

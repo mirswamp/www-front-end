@@ -29,6 +29,32 @@ define([
 
 		idAttribute: 'execution_record_uuid',
 		urlRoot: Config.servers.web + '/execution_records',
+
+		//
+		// attributes
+		//
+
+		terminalStates: [
+			'WAITING TO START',
+			'FAILED TO VALIDATE ASSESSMENT DATA',
+			'SUBMITTING TO HTCONDOR',
+			'FAILED TO START',
+			'Demand Queued',
+			'Swamp Off Queued',
+			'Drain ReLaunch',
+			'Drain ReQueued',
+			'Creating HTCondor Job',
+			'Failed to submit to HTCondor',
+			'Extracting Assessment Results',
+			'Failed to extract assessment results',
+			'Post-Processing',
+			'Saving Results',
+			'Finished',
+			'Finished with Errors',
+			'Finished with Errors - Retry',
+			'Terminating',
+			'Terminated'
+		],
 		
 		//
 		// querying methods
@@ -62,6 +88,28 @@ define([
 			return Config.servers.web + '/projects/' + project.get('project_uuid') + '/execution_records';
 		},
 
+		isKillable: function() {
+			return !this.get('status').contains(this.terminalStates, false);
+		},
+
+		//
+		// ajax methods
+		//
+
+		kill: function(options) {
+			$.ajax(_.extend(options, {
+				type: 'PUT',
+				url: Config.servers.web + '/execution_records/' + this.get('execution_record_uuid') + '/kill'
+			}));
+		},
+
+		getSshAccess: function(config) {
+			$.ajax(_.extend(config, {
+				type: 'GET',
+				url: Config.servers.web + '/execution_records/' + this.get('execution_record_uuid') + '/ssh_access'
+			}));
+		},
+
 		//
 		// overridden Backbone methods
 		//
@@ -82,13 +130,6 @@ define([
 			}
 
 			return response;
-		},
-
-		getSshAccess: function( config ){
-			$.ajax( _.extend( config, {
-				type: 'GET',
-				url: Config.servers.web + '/execution_records/' + this.get('execution_record_uuid') + '/ssh_access'
-			}));
 		}
 	});
 });

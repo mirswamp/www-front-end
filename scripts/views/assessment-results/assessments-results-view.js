@@ -232,7 +232,7 @@ define([
 			var viewer = this.getSelectedViewer();
 			var executionRecords = this.getSelected();
 			var useNativeViewer = (viewer && viewer.get('name').toLowerCase().indexOf('native') != -1);
-			var useJavascript = useNativeViewer && executionRecords.length > 1;
+			var useJavascript = useNativeViewer && executionRecords && executionRecords.length > 1;
 			var noResults = !executionRecords || executionRecords.length == 0;
 
 			// set results link
@@ -266,6 +266,33 @@ define([
 					}
 				});
 			}
+		},
+
+		showEnabledViewers: function() {
+			var executionRecords = this.getSelected();
+			for (var i = 0; i < executionRecords.length; i++) {
+				var tool = executionRecords.at(i).get('tool');
+
+				// check for Sonatype tool
+				//
+				if (tool.name == 'Sonatype Application Health Check') {
+
+					// hide viewer selection
+					//
+					this.$el.find('#viewers-accordion').hide();
+
+					// select native viewer
+					//
+					this.$el.find('input[name="viewers"]').removeAttr('checked');
+					this.$el.find('input#Native')[0].checked = true;
+					this.$el.find('input#Native').trigger('click');
+					return;
+				}
+			}
+
+			// show viewer selection
+			//
+			this.$el.find('#viewers-accordion').show();
 		},
 
 		//
@@ -615,6 +642,7 @@ define([
 					//
 					onSelect: function() {
 						self.setViewResultsLink();
+						self.showEnabledViewers();
 					}
 				})
 			);
@@ -966,12 +994,6 @@ define([
 		//
 
 		onBeforeDestroy: function() {
-			/*
-			if (this.interval) {
-				window.clearInterval(this.interval);
-			}
-			*/
-
 			if (this.timeout) {
 				window.clearTimeout(this.timeout);
 			}		

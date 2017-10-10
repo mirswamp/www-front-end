@@ -17,7 +17,7 @@
 
 define([
 	'jquery',
-	'collapse',
+	'bootstrap/collapse',
 ], function($, Collapse) {
 	return function(el) {
 

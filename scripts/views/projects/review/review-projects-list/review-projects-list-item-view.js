@@ -21,7 +21,7 @@ define([
 	'underscore',
 	'backbone',
 	'marionette',
-	'dropdown',
+	'bootstrap/dropdown',
 	'text!templates/projects/review/review-projects-list/review-projects-list-item.tpl',
 	'registry',
 	'utilities/time/date-format',
@@ -104,14 +104,6 @@ define([
 								});
 								self.options.collection.add(self.model);
 								self.options.parent.render();
-
-								// show success notification dialog
-								//
-								Registry.application.modal.show(
-									new NotifyView({
-										message: "This project has been successfuly deleted."
-									})
-								);
 							},
 
 							error: function() {

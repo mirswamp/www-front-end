@@ -45,7 +45,7 @@ define([
 
 		showPermissionDialog: function(permission) {
 			var permissionCode = permission.get('permission_code');
-			if (UserPermission.restrictedPermissions.contains(permissionCode)) {
+			if (permission.has('user_info')) {
 
 				// show permission form dialog
 				//
@@ -65,7 +65,7 @@ define([
 			//
 			Registry.application.modal.show(
 				new ToolPermissionView({
-					permission: permission,
+					model: permission,
 					
 					// callbacks
 					//
@@ -105,22 +105,29 @@ define([
 
 							// callbacks
 							//
-							success: function() {
+							success: function(model) {
 
 								// show success notification dialog
 								//
-								Registry.application.modal.show(
-									new NotifyView({
-										title: "Permission Requested",
-										message: "Your permission has been requested.  The SWAMP staff will review your requests and respond to you shortly.",
+								if (!permission.isAutoApprove()) {
+									Registry.application.modal.show(
+										new NotifyView({
+											title: "Permission Requested",
+											message: "Your permission has been requested.  The SWAMP staff will review your requests and respond to you shortly.",
 
-										// callbacks
-										//
-										accept: function() {
-											self.options.parent.render();
-										}
-									})
-								);
+											// callbacks
+											//
+											accept: function() {
+												self.options.parent.render();
+											}
+										})
+									);
+								} else {
+
+									// update status fields
+									//
+									self.showPermissionsList();
+								}
 							},
 
 							error: function(response) {

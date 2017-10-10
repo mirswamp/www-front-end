@@ -21,7 +21,7 @@ define([
 	'underscore',
 	'backbone',
 	'marionette',
-	'dropdown',
+	'bootstrap/dropdown',
 	'text!templates/widgets/selectors/named-selector.tpl'
 ], function($, _, Backbone, Marionette, Dropdown, Template) {
 	return Backbone.Marionette.ItemView.extend({

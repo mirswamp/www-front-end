@@ -18,7 +18,7 @@
 </form>
 
 <div class="bottom buttons">
-	<button id="register" class="btn btn-primary btn-lg" style="float:left; margin-bottom:25px; margin-right:10px; display:none"><i class="fa fa-pencil"></i>Register</button>
+	<button id="register" class="btn btn-primary btn-lg" style="float:left; margin-bottom:25px; margin-right:10px;" disabled><i class="fa fa-pencil"></i>Register</button>
 
 	<span id="linked-account-sign-in" style="float:left; margin-right:15px; display:none">
 		<span class="separator" style="float:left; margin-top:12px; margin-right:10px">Or</span>

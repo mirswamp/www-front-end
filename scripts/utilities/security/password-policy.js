@@ -22,7 +22,7 @@ define([
 	'jquery',
 	'underscore',
 	'backbone',
-	'validate',
+	'jquery.validate.bootstrap',
 ], function($, _, Backbone, Validate) {
 
 	//

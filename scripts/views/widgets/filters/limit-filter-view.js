@@ -20,8 +20,8 @@ define([
 	'underscore',
 	'backbone',
 	'marionette',
-	'validate',
-	'collapse',
+	'jquery.validate',
+	'bootstrap/collapse',
 	'modernizr',
 	'text!templates/widgets/filters/limit-filter.tpl'
 ], function($, _, Backbone, Marionette, Validate, Collapse, Modernizr, Template) {

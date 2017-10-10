@@ -34,6 +34,19 @@
 @dropdownLinkBackgroundHover: @primaryHoverColor;
 
 //
+// links
+//
+
+a {
+	color: @linkColor;
+	cursor: pointer;
+}
+
+a:hover, a:focus {
+	color: @linkColorHover;
+}
+
+//
 // general navigation
 //
 
@@ -41,10 +54,6 @@
 	h2 {
 		margin-top: 0;
 	}
-}
-
-.active {
-	cursor: pointer;
 }
 
 //
@@ -199,18 +208,6 @@
 		padding-right: 5px;
 		padding-left: 5px;
 	}
-}
-
-//
-// links
-//
-
-a {
-	color: @linkColor;
-}
-
-a:hover, a:focus {
-	color: @linkColorHover;
 }
 
 //

@@ -20,7 +20,7 @@ define([
 	'underscore',
 	'backbone',
 	'marionette',
-	'popover',
+	'bootstrap/popover',
 	'text!templates/assessment-results/assessment-runs/list/dialogs/ssh-info.tpl'
 ], function($, _, Backbone, Marionette, Popover, Template) {
 	return Backbone.Marionette.LayoutView.extend({

@@ -20,7 +20,7 @@ define([
 	'underscore',
 	'backbone',
 	'marionette',
-	'collapse',
+	'bootstrap/collapse',
 	'modernizr',
 	'text!templates/platforms/filters/platform-filter.tpl',
 	'views/platforms/selectors/platform-filter-selector-view'

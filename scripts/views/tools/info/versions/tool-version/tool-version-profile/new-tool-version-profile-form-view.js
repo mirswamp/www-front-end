@@ -21,7 +21,7 @@ define([
 	'underscore',
 	'backbone',
 	'marionette',
-	'validate',
+	'jquery.validate',
 	'text!templates/tools/info/versions/tool-version/tool-version-profile/new-tool-version-profile-form.tpl',
 	'views/tools/info/versions/tool-version/tool-version-profile/tool-version-profile-form-view'
 ], function($, _, Backbone, Marionette, Validate, Template, ToolVersionProfileFormView) {

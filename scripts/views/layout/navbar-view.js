@@ -20,7 +20,7 @@ define([
 	'underscore',
 	'backbone',
 	'marionette',
-	'popover',
+	'bootstrap/popover',
 	'text!templates/layout/navbar.tpl',
 	'registry',
 	'collections/tools/tools',

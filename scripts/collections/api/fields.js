@@ -33,6 +33,28 @@ define([
 		url: Config.servers.api + '/api/fields',
 
 		//
+		// methods
+		//
+
+		setParentType: function(type) {
+			var typeUuid = type.get('type_uuid');
+			for (var i = 0; i < this.length; i++) {
+				var model = this.at(i);
+				model.set({
+					'parent_type_uuid': typeUuid
+				});
+			}
+		},
+
+		reorder: function() {
+			for (var i = 0; i < this.length; i++) {
+				this.at(i).set({
+					order: i + 1
+				})
+			}
+		},
+
+		//
 		// ajax methods
 		//
 

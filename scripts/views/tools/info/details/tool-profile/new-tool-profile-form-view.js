@@ -21,9 +21,9 @@ define([
 	'underscore',
 	'backbone',
 	'marionette',
-	'validate',
-	'tooltip',
-	'popover',
+	'jquery.validate',
+	'bootstrap/tooltip',
+	'bootstrap/popover',
 	'text!templates/tools/info/details/tool-profile/new-tool-profile-form.tpl',
 	'views/tools/info/versions/tool-version/tool-version-profile/new-tool-version-profile-form-view'
 ], function($, _, Backbone, Marionette, Validate, Tooltip, Popover, Template, NewToolVersionProfileFormView) {

@@ -218,47 +218,33 @@ define([
 							// callbacks
 							//
 							success: function() {
-
-								// show success notification dialog
+								
+								// end session
 								//
-								Registry.application.modal.show(
-									new NotifyView({
-										title: "My Account Deleted",
-										message: "Your user account has been successfuly deleted.",
+								Registry.application.session.logout({
 
-										// callbacks
+									// callbacks
+									//
+									success: function(){
+
+										// go to welcome view
 										//
-										accept: function() {
+										Backbone.history.navigate('#', {
+											trigger: true
+										});
+									},
+									
+									error: function(jqxhr, textstatus, errorThrown) {
 
-											// end session
-											//
-											Registry.application.session.logout({
-
-												// callbacks
-												//
-												success: function(){
-
-													// go to welcome view
-													//
-													Backbone.history.navigate('#', {
-														trigger: true
-													});
-												},
-												
-												error: function(jqxhr, textstatus, errorThrown) {
-
-													// show error dialog
-													//
-													Registry.application.modal.show(
-														new ErrorView({
-															message: "Could not log out: " + errorThrown + "."
-														})
-													);
-												}
-											});
-										}
-									})
-								);
+										// show error dialog
+										//
+										Registry.application.modal.show(
+											new ErrorView({
+												message: "Could not log out: " + errorThrown + "."
+											})
+										);
+									}
+								});
 							},
 
 							error: function() {

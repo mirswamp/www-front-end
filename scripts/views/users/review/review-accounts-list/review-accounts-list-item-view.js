@@ -21,7 +21,7 @@ define([
 	'underscore',
 	'backbone',
 	'marionette',
-	'dropdown',
+	'bootstrap/dropdown',
 	'text!templates/users/review/review-accounts-list/review-accounts-list-item.tpl',
 	'config',
 	'registry',
@@ -44,10 +44,7 @@ define([
 			'click .hibernate': 'onClickHibernate',
 			'click a.pending': 'onClickPending',
 			'click a.enabled': 'onClickEnabled',
-			'click a.disabled': 'onClickDisabled',
-			'click a.owner-pending': 'onClickOwnerPending',
-			'click a.owner-approved': 'onClickOwnerApproved',
-			'click a.owner-denied': 'onClickOwnerDenied'
+			'click a.disabled': 'onClickDisabled'
 		},
 
 		//
@@ -96,28 +93,13 @@ define([
 			this.onChange();
 		},
 
-		onClickOwnerPending: function() {
-			this.model.setOwnerStatus('pending');
-			this.onChange();
-		},
-
 		onClickEnabled: function() {
 			this.model.setStatus('enabled');
 			this.onChange();
 		},
 
-		onClickOwnerApproved: function() {
-			this.model.setOwnerStatus('approved');
-			this.onChange();
-		},
-
 		onClickDisabled: function() {
 			this.model.setStatus('disabled');
-			this.onChange();
-		},
-
-		onClickOwnerDenied: function() {
-			this.model.setOwnerStatus('denied');
 			this.onChange();
 		},
 

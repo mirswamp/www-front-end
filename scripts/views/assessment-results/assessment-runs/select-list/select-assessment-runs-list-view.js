@@ -21,7 +21,7 @@ define([
 	'backbone',
 	'marionette',
 	'registry',
-	'popover',
+	'bootstrap/popover',
 	'text!templates/assessment-results/assessment-runs/select-list/select-assessment-runs-list.tpl',
 	'collections/assessments/execution-records',
 	'views/widgets/lists/sortable-table-list-view',

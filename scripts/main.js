@@ -41,24 +41,23 @@ require.config({
 
 		// library paths
 		//
+		text: 'library/require/text',
 		jquery: 'library/jquery/jquery-1.9.1.min',
 		'jquery-ui': 'library/jquery/jquery-ui/jquery-ui',
-		underscore: 'library/underscore/underscore-min',
+		underscore: 'library/underscore/underscore',
 		backbone: 'library/backbone/backbone-e91b36c',
 		'backbone.wreqr': 'library/backbone/wreqr/backbone.wreqr',
 		'backbone.babysitter': 'library/backbone/babysitter/backbone.babysitter',
 		marionette: 'library/backbone/marionette/backbone.marionette',
-		text: 'library/require/text',
-		fancybox: 'library/fancybox/jquery.fancybox',
 		clipboard: 'library/clipboard/clipboard.min',
 
 		// jquery paths
 		//
-		jqueryvalidate: 'library/jquery/validate/jquery.validate',
-		validate: 'library/jquery/validate/jquery.validate.bootstrap3',
-		cookie: 'library/jquery/cookie/jquery.cookie',
-		tablesorter: 'library/jquery/tablesorter/jquery.tablesorter',
-		datepicker: 'library/jquery/datepicker/datepicker',
+		'jquery.validate': 'library/jquery/validate/jquery.validate',
+		'jquery.validate.bootstrap': 'library/jquery/validate/jquery.validate.bootstrap3',
+		'jquery.cookie': 'library/jquery/cookie/jquery.cookie',
+		'jquery.tablesorter': 'library/jquery/tablesorter/jquery.tablesorter',
+		'jquery.datepicker': 'library/jquery/datepicker/datepicker',
 
 		// jquery ui plugin paths
 		//
@@ -67,29 +66,6 @@ require.config({
 		widget: 'library/jquery/jquery-ui/plugins/widget',
 		draggable: 'library/jquery/jquery-ui/plugins/draggable',
 		sortable: 'library/jquery/jquery-ui/plugins/sortable',
-		
-		// bootstrap paths
-		//
-		affix: 'library/bootstrap/affix',
-		alert: 'library/bootstrap/alert',
-		button: 'library/bootstrap/button',
-		carousel: 'library/bootstrap/carousel',
-		collapse: 'library/bootstrap/collapse',
-		dropdown: 'library/bootstrap/dropdown',
-		modal: 'library/bootstrap/modal',
-		popover: 'library/bootstrap/popover',
-		scrollspy: 'library/bootstrap/scrollspy',
-		tab: 'library/bootstrap/tab',
-		tooltip: 'library/bootstrap/tooltip',
-		transition: 'library/bootstrap/transition',
-
-		// bootstrap plugin paths
-		//
-		clickover: 'library/bootstrap/plugins/bootstrap-clickover/bootstrapx-clickover',
-		select: 'library/bootstrap/plugins/bootstrap-select/bootstrap-select',
-		combobox: 'library/bootstrap/plugins/bootstrap-combobox/bootstrap-combobox',
-		timepicker: 'library/bootstrap/plugins/bootstrap-timepicker/bootstrap-timepicker',
-		typeahead: 'library/bootstrap/plugins/bootstrap3-typeahead/bootstrap3-typeahead',
 
 		// modernizr path
 		//
@@ -97,15 +73,25 @@ require.config({
 		
 		// other plugins paths
 		//
-		select2: 'library/select2/select2.min'
+		select2: 'library/select2/select2.min',
+
+		// vendor paths
+		//
+		bootstrap: '../vendor/bootstrap/js',
+		fancybox: '../vendor/fancybox/jquery.fancybox',
+
+		// bootstrap plugin paths
+		//
+		'bootstrap.clickover': '../vendor/bootstrap/js/plugins/bootstrap/clickover/bootstrapx-clickover',
+		'bootstrap.combobox': '../vendor/bootstrap/js/plugins/bootstrap/combobox/bootstrap/combobox',
+		'bootstrap.multimodal': '../vendor/bootstrap/js/plugins/multimodal/multimodal',
+		'bootstrap.select': '../vendor/bootstrap/js/plugins/bootstrap-select/bootstrap-select',
+		'bootstrap.timepicker': '../vendor/bootstrap/js/plugins/bootstrap-timepicker/bootstrap-timepicker',
+		'bootstrap.typeahead': '../vendor/bootstrap/js/plugins/bootstrap3-typeahead/bootstrap3-typeahead',
 	},
 
 	shim: {
-
-		underscore: {
-			exports: '_'
-		},
-
+		
 		//
 		// jquery dependencies
 		//
@@ -114,133 +100,156 @@ require.config({
 			exports: '$'
 		},
 
-		jqueryvalidate: {
-			deps: ['jquery']
+		'jquery.validate': 	{
+			deps: ['jquery'], 
+			exports: '$.fn.validate'
 		},
 
-		validate: {
-			deps: ['jqueryvalidate']
+		'jquery.validate.bootstrap': {
+			deps: ['jquery', 'jquery.validate'], 
+			exports: '$.fn.validate.bootstrap'
 		},
 
-		cookie: {
-			deps: ['jquery']
+		'jquery.cookie': { 
+			deps: ['jquery'], 
+			exports: '$.cookie' 
 		},
 
-		tablesorter: {
-			deps: ['jquery']
+		'jquery.tablesorter': { 
+			deps: ['jquery'], 
+			exports: '$.tablesorter' 
 		},
 
-		datepicker: {
-			deps: ['jquery']
+		'jquery.datepicker': { 
+			deps: ['jquery'], 
+			exports: '$.datepicker' 
 		},
 
-		timepicker: {
-			deps: ['jquery']
+		'jquery.timepicker': { 
+			deps: ['jquery'], 
+			exports: '$.timepicker' 
 		},
 
-		fancybox: {
-			deps: ['jquery']
+		'jquery.fancybox': { 
+			deps: ['jquery'], 
+			exports: '$.fancybox' 
 		},
 
-		//
-		// bootstrap dependencies
-		//
-
-		affix: {
-			deps: ['jquery']
-		},
-
-		alert: {
-			deps: ['jquery']
-		},
-
-		button: {
-			deps: ['jquery']
-		},
-
-		carousel: {
-			deps: ['jquery']
-		},
-
-		collapse: {
-			deps: ['jquery', 'transition']
-		},
-
-		dropdown: {
-			deps: ['jquery']
-		},
-
-		modal: {
-			deps: ['jquery', 'transition']
-		},
-
-		popover: {
-			deps: ['jquery', 'tooltip']
-		},
-
-		scrollspy: {
-			deps: ['jquery']
-		},
-
-		tab: {
-			deps: ['jquery']
-		},
-
-		tooltip: {
-			deps: ['jquery']
-		},
-
-		transition: {
-			deps: ['jquery']
-		},
-
-		//
-		// bootstrap plug-in dependencies
-		//
-
-
-		clickover: {
-			deps: ['jquery', 'popover']
-		},
-
-		combobox: {
-			deps: ['jquery', 'typeahead']
-		},
-
-		select2: {
-			deps: ['jquery', 'select', 'combobox']
+		select2: ['jquery', 'bootstrap.select'],
+		
+		modernizr: {
+			exports: 'Modernizr'
 		},
 
 		//
 		// backbone dependencies
 		//
 
+		underscore: {
+			exports: '_'
+		},
+
 		backbone: {
-			deps: ['jquery', 'underscore', 'modal'],
+			deps: ['jquery', 'underscore'],
 			exports: 'Backbone'
 		},
 
-	    marionette : {
-	        deps : ['jquery', 'underscore', 'backbone'],
-	        exports : 'Marionette'
-	    },
-
-		modernizr: {
-			exports: 'Modernizr'
+		marionette : {
+			deps: ['jquery', 'underscore', 'backbone'],
+			exports : 'Marionette'
 		},
 
 		//
-		// utility dependencies
+		// bootstrap dependencies
 		//
 
-		'utilities/time/time-utils': {
-			deps: ['utilities/time/iso8601']
+		'bootstrap/affix': { 
+			deps: ['jquery'], 
+			exports: '$.fn.affix' 
+		}, 
+
+		'bootstrap/alert': { 
+			deps: ['jquery'], 
+			exports: '$.fn.alert' 
 		},
-		
-		'utilities/time/date-utils': {
-			deps: ['utilities/time/time-utils', 'utilities/time/date-format']
-		}
+
+		'bootstrap/button': { 
+			deps: ['jquery'], 
+			exports: '$.fn.button' 
+		},
+
+		'bootstrap/carousel': { 
+			deps: ['jquery'], 
+			exports: '$.fn.carousel' 
+		},
+
+		'bootstrap/collapse': { 
+			deps: ['jquery'], 
+			exports: '$.fn.collapse'
+		},
+
+		'bootstrap/dropdown': { 
+			deps: ['jquery'], 
+			exports: '$.fn.dropdown' 
+		},
+
+		'bootstrap/modal': { 
+			deps: ['jquery', 'bootstrap/transition'], 
+			exports: '$.fn.modal' 
+		},
+
+		'bootstrap/popover': { 
+			deps: ['jquery', 'bootstrap/tooltip'], 
+			exports: '$.fn.popover'
+		},
+
+		'bootstrap/scrollspy': { 
+			deps: ['jquery'], 
+			exports: '$.fn.scrollspy'
+		},
+
+		'bootstrap/tab': { 
+			deps: ['jquery'], 
+			exports: '$.fn.tab'
+		},
+
+		'bootstrap/tooltip': { 
+			deps: ['jquery'], 
+			exports: '$.fn.tooltip'
+		},
+
+		'bootstrap/transition': {
+			deps: ['jquery'],
+			exports: '$.fn.transition'
+		},
+
+		//
+		// bootstrap plugin dependencies
+		//
+
+		'bootstrap/clickover': ['bootstrap/popover'],
+		'bootstrap/combobox': ['bootstrap/typeahead'],
+		'bootstrap/multimodal': ['bootstrap/modal'],
+	},
+
+	/*
+	bundles: {
+		'bootstrap/bootstrap': [
+			'bootstrap/affix',
+			'bootstrap/alert',
+			'bootstrap/button',
+			'bootstrap/carousel',
+			'bootstrap/collapse',
+			'bootstrap/dropdown',
+			'bootstrap/modal',
+			'bootstrap/popover',
+			'bootstrap/scrollspy',
+			'bootstrap/tab',
+			'bootstrap/tooltip',
+			'bootstrap/transition'
+		],
 	}
+	*/
 });
 
 //

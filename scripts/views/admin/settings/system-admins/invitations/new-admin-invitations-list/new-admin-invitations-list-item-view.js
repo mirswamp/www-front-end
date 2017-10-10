@@ -21,7 +21,7 @@ define([
 	'underscore',
 	'backbone',
 	'marionette',
-	'validate',
+	'jquery.validate',
 	'text!templates/admin/settings/system-admins/invitations/new-admin-invitations-list/new-admin-invitations-list-item.tpl',
 	'registry',
 	'models/admin/admin-invitation',

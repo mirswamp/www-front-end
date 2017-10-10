@@ -20,9 +20,8 @@ define([
 	'jquery',
 	'underscore',
 	'backbone',
-	'cookie',
 	'config'
-], function($, _, Backbone, Cookie, Config) {
+], function($, _, Backbone, Config) {
 	return Backbone.Model.extend({
 
 		//

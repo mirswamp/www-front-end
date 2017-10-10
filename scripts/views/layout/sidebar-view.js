@@ -20,7 +20,7 @@ define([
 	'underscore',
 	'backbone',
 	'marionette',
-	'popover',
+	'bootstrap/popover',
 	'text!templates/layout/sidebar.tpl',
 	'text!templates/layout/sidebar-large.tpl',
 	'registry',

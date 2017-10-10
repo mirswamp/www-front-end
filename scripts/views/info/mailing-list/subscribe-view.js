@@ -19,8 +19,8 @@ define([
 	'jquery',
 	'underscore',
 	'backbone',
-	'tooltip',
-	'popover',
+	'bootstrap/tooltip',
+	'bootstrap/popover',
 	'marionette',
 	'text!templates/info/mailing-list/subscribe.tpl'
 ], function($, _, Backbone, Tooltip, Popover, Marionette, Template) {

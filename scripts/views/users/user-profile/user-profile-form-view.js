@@ -21,16 +21,16 @@ define([
 	'underscore',
 	'backbone',
 	'marionette',
-	'collapse',
-	'select',
-	'validate',
-	'tooltip',
-	'popover',
+	'jquery.validate',
+	'bootstrap/collapse',
+	'bootstrap/tooltip',
+	'bootstrap/popover',
+	'bootstrap.select',
 	'text!templates/users/user-profile/user-profile-form.tpl',
 	'config',
 	'registry',
 	'views/widgets/selectors/name-selector-view'
-], function($, _, Backbone, Marionette, Collapse, Select, Validate, Tooltip, Popover, Template, Config, Registry, NameSelectorView) {
+], function($, _, Backbone, Marionette, Validate, Collapse, Tooltip, Popover, Select, Template, Config, Registry, NameSelectorView) {
 	return Backbone.Marionette.LayoutView.extend({
 
 		//

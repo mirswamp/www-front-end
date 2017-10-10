@@ -20,7 +20,7 @@ define([
 	'underscore',
 	'backbone',
 	'marionette',
-	'tooltip',
+	'bootstrap/tooltip',
 	'text!templates/assessment-results/assessment-runs/list/assessment-runs-list-item.tpl',
 	'config',
 	'registry',

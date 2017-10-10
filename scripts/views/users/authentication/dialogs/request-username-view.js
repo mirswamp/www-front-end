@@ -20,7 +20,7 @@ define([
 	'underscore',
 	'backbone',
 	'marionette',
-	'popover',
+	'bootstrap/popover',
 	'text!templates/users/authentication/dialogs/request-username.tpl',
 	'registry',
 	'models/users/user',

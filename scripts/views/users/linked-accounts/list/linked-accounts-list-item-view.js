@@ -81,16 +81,9 @@ define([
 							//
 							success: function() {
 
-								// show success notify view
+								// update view
 								//
-								Registry.application.modal.show(
-									new NotifyView({
-										message: "The account has been successfully unlinked.",
-										accept: function(){
-											self.options.parent.render();
-										}
-									})
-								);
+								self.options.parent.render();
 							},
 
 							error: function() {

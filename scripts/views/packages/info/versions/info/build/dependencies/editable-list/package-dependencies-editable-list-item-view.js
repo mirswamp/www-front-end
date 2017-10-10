@@ -21,7 +21,7 @@ define([
 	'backbone',
 	'marionette',
 	'registry',
-	'popover',
+	'bootstrap/popover',
 	'text!templates/packages/info/versions/info/build/dependencies/editable-list/package-dependencies-editable-list-item.tpl',
 	'views/dialogs/error-view'
 ], function($, _, Backbone, Marionette, Registry, Popover, Template, ErrorView) {

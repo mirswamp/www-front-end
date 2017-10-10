@@ -4,8 +4,7 @@
 |                                                                              |
 |******************************************************************************|
 |                                                                              |
-|        This file contains the build version, which is replaced               |
-|        automatically upon deploy.                                            |
+|        This file parses the version information from a JSON file.            |
 |                                                                              |
 |        Author(s): Abe Megahed                                                |
 |                                                                              |
@@ -17,8 +16,10 @@
 \******************************************************************************/
 
 define([
-], function() {
-	return {
-		build: 'BUILD_VERSION'
-	};
+	'text!../version.json',
+], function(Version) {
+
+	// parse JSON info
+	//
+	return JSON.parse(Version);
 });

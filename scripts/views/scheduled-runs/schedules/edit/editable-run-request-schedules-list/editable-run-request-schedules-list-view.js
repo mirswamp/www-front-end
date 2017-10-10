@@ -20,7 +20,7 @@ define([
 	'underscore',
 	'backbone',
 	'marionette',
-	'validate',
+	'jquery.validate',
 	'text!templates/scheduled-runs/schedules/edit/editable-run-request-schedules-list/editable-run-request-schedules-list.tpl',
 	'views/widgets/lists/table-list-view',
 	'views/scheduled-runs/schedules/edit/editable-run-request-schedules-list/editable-run-request-schedule-item-view'
