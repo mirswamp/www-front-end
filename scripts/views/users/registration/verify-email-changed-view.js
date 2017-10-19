@@ -32,18 +32,10 @@ define([
 		// attributes
 		//
 
+		template: _.template(Template),
+
 		events: {
 			'click #verify': 'onClickVerify'
-		},
-
-		//
-		// rendering methods
-		//
-
-		template: function(data) {
-			return _.template(Template, _.extend(data, {
-				user: this.options.user
-			}));
 		},
 
 		//

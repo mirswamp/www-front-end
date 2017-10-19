@@ -362,18 +362,13 @@ define([
 
 					// callbacks
 					//
-					success: function() {
-
-						// fetch user corresponding to this email verification
-						//
-						var user = new User(emailVerification.get('user'));
+					success: function(model) {
 
 						// show verify email view
 						//
 						Registry.application.showMain( 
 							new VerifyEmailView({
-								model: emailVerification,
-								user: user
+								model: model
 							})
 						);
 					},
@@ -397,9 +392,9 @@ define([
 				'registry',
 				'models/users/user',
 				'models/users/email-verification',
-				'views/dialogs/error-view',
+				'views/dialogs/notify-view',
 				'views/users/registration/verify-email-changed-view'
-			], function (Registry, User, EmailVerification, ErrorView, VerifyEmailChangedView) {
+			], function (Registry, User, EmailVerification, NotifyView, VerifyEmailChangedView) {
 
 				// fetch email verification
 				//
@@ -411,28 +406,23 @@ define([
 
 					// callbacks
 					//
-					success: function() {
-
-						// fetch user corresponding to this email verification
-						//
-						var user = new User( emailVerification.get('user'));
+					success: function(model) {
 
 						// show verify email changed view
 						//
 						Registry.application.showMain( 
 							new VerifyEmailChangedView({
-								model: emailVerification,
-								user: user
+								model: model
 							})
 						);
 					},
 
 					error: function() {
 
-						// show error dialog
+						// show notify dialog
 						//
 						Registry.application.modal.show(
-							new ErrorView({
+							new NotifyView({
 								message: "We could not verify this user."
 							})
 						);

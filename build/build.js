@@ -9,7 +9,7 @@
 	//
 	preserveLicenseComments: false,
 	generateSourceMaps: false,
-	fileExclusionRegExp: /^build$/,
+	//fileExclusionRegExp: /^build$/,
 	skipDirOptimize: true,
 	inlineText: true,
 

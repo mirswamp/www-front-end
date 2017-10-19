@@ -147,7 +147,7 @@ define([
 			// get values from form
 			//
 			var name = this.$el.find('#name input').val();
-			var description = this.$el.find('#description input').val();
+			var description = this.$el.find('#description textarea').val();
 			var externalURL = this.useExternalUrl()? this.$el.find('#external-url input').val() : null;
 
 			// update model

@@ -19,8 +19,9 @@ define([
 	'jquery',
 	'underscore',
 	'config',
-	'models/utilities/timestamped'
-], function($, _, Config, Timestamped) {
+	'models/utilities/timestamped',
+	'models/users/user'
+], function($, _, Config, Timestamped, User) {
 	return Timestamped.extend({
 
 		//
@@ -50,6 +51,25 @@ define([
 					'password': password
 				}
 			}));
+		},
+
+		//
+		// overridden Backbone methods
+		//
+
+		parse: function(response) {
+
+			// call superclass method
+			//
+			var JSON = Timestamped.prototype.parse.call(this, response);
+
+			// parse subfields
+			//
+			if (JSON.user) {
+				JSON.user = new User(response.user);
+			}
+
+			return JSON;
 		}
 	});
 });
