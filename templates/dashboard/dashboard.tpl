@@ -15,78 +15,96 @@
 	</div>
 
 	<div class="nav row">
-		<div class="column" id="packages">
-			<div class="icon-group">
-				<div class="icon"><i class="fa fa-gift"></i></div>
-				<h2>Packages</h2>
+		<a href="#packages">
+			<div class="column" id="packages">
+				<div class="icon-group">
+					<div class="icon"><i class="fa fa-gift"></i></div>
+					<h2>Packages</h2>
+				</div>
+				<p class="description">Upload your code and manage your software packages.</p>
 			</div>
-			<p class="description">Upload your code and manage your software packages.</p>
-		</div>
+		</a>
 
-		<div class="column" id="tools" style="display:none">
-			<div class="icon-group">
-				<div class="icon"><i class="fa fa-wrench"></i></div>
-				<h2>Tools</h2>
+		<a href="#tools">
+			<div class="column" id="tools" style="display:none">
+				<div class="icon-group">
+					<div class="icon"><i class="fa fa-wrench"></i></div>
+					<h2>Tools</h2>
+				</div>
+				<p class="description">Manage your software assessment tools.</p>
 			</div>
-			<p class="description">Manage your software assessment tools.</p>
-		</div>
+		</a>
 
-		<div class="column" id="assessments">
-			<div class="icon-group">
-				<div class="icon"><i class="fa fa-check"></i></div>
-				<h2>Assessments</h2>
+		<a href="#assessments">
+			<div class="column" id="assessments">
+				<div class="icon-group">
+					<div class="icon"><i class="fa fa-check"></i></div>
+					<h2>Assessments</h2>
+				</div>
+				<p class="description">Perform assessments on packages using code analysis tools.</p>
 			</div>
-			<p class="description">Perform assessments on packages using code analysis tools.</p>
-		</div>
+		</a>
 
-		<div class="column" id="results">
-			<div class="icon-group">
-				<div class="icon"><i class="fa fa-bug"></i></div>
-				<h2>Results</h2>
+		<a href="#results">
+			<div class="column" id="results">
+				<div class="icon-group">
+					<div class="icon"><i class="fa fa-bug"></i></div>
+					<h2>Results</h2>
+				</div>
+				<p class="description">View the status and results of completed assessments.</p>
 			</div>
-			<p class="description">View the status and results of completed assessments.</p>
-		</div>
+		</a>
 		
-		<div class="column" id="runs">
-			<div class="icon-group">
-				<div class="icon"><i class="fa fa-bus"></i></div>
-				<h2>Runs</h2>
+		<a href="#run-requests">
+			<div class="column" id="runs">
+				<div class="icon-group">
+					<div class="icon"><i class="fa fa-bus"></i></div>
+					<h2>Runs</h2>
+				</div>
+				<p class="description">View assessments scheduled to run at regular intervals.</p>
 			</div>
-			<p class="description">View assessments scheduled to run at regular intervals.</p>
-		</div>
+		</a>
 
-		<div class="column" id="projects">
-			<div class="icon-group">
-				<div class="icon"><i class="fa fa-folder-open"></i></div>
-				<h2>Projects</h2>
+		<a href="#projects">
+			<div class="column" id="projects">
+				<div class="icon-group">
+					<div class="icon"><i class="fa fa-folder-open"></i></div>
+					<h2>Projects</h2>
+				</div>
+				<p class="description">Create projects to share results with other users.</p>
 			</div>
-			<p class="description">Create projects to share results with other users.</p>
-		</div>
+		</a>
 
-		<div class="column" id="events">
-			<div class="icon-group">
-				<div class="icon"><i class="fa fa-bullhorn"></i></div>
-				<h2>Events</h2>
+		<a href="#events?project=any">
+			<div class="column" id="events">
+				<div class="icon-group">
+					<div class="icon"><i class="fa fa-bullhorn"></i></div>
+					<h2>Events</h2>
+				</div>
+				<p class="description">View events associated with your projects & account.</p>
 			</div>
-			<p class="description">View events associated with your projects & account.</p>
-		</div>
+		</a>
 
 		<% if (isAdmin) { %>
-		<div class="column" id="settings">
-			<div class="icon-group">
-				<div class="icon"><i class="fa fa-gears"></i></div>
-				<h2>Settings</h2>
+		<a href="#settings">
+			<div class="column" id="settings">
+				<div class="icon-group">
+					<div class="icon"><i class="fa fa-gears"></i></div>
+					<h2>Settings</h2>
+				</div>
+				<p class="description">Review and modify SWAMP system wide settings.</p>
 			</div>
-			<p class="description">Review and modify SWAMP system wide settings.</p>
-		</div>
+		</a>
 
-		<div class="column" id="overview">
-			<div class="icon-group">
-				<div class="icon"><i class="fa fa-eye"></i></div>
-				<h2>Overview</h2>
+		<a href="#overview">
+			<div class="column" id="overview">
+				<div class="icon-group">
+					<div class="icon"><i class="fa fa-eye"></i></div>
+					<h2>Overview</h2>
+				</div>
+				<p class="description">Monitor SWAMP system wide activity.</p>
 			</div>
-			<p class="description">Monitor SWAMP system wide activity.</p>
-		</div>
+		</a>
 		<% } %>
 	</div>
 </div>

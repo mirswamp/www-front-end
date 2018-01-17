@@ -15,38 +15,37 @@
 </div>
 <div style="clear:both"></div>
 
-<div id="status">
-	<h2>Summary</h2>
-	<div id="run-queue-summary"></div>
+<h2>Summary</h2>
+<div id="run-queue-summary"></div>
 
-	<h2>Details</h2>
-	<ul class="nav nav-tabs">
+<h2>Details</h2>
+<ul class="nav nav-tabs">
+	<% for (var i = 0; i < tabs.length; i++) { %>
+	<% var tab = tabs[i]; %>
+	<% var id = (tab.replace(/ /g, '_').toLowerCase()); %>
+	<li id="<%= id %>-tab"<%if (activeTab == tab || !activeTab && i == 0) { %> class="active" <% } %>>
+		<a role="tab" data-toggle="tab" href="#<%= id %>-panel"><i class="fa fa-list"></i><span><%= tab %></span></a>
+	</li>
+	<% } %>
+</ul>
 
-		<li id="run-queue-tab" class="active">
-			<a role="tab" data-toggle="tab" href="#run-queue-panel"><i class="fa fa-list"></i>Run Queue</a>
-		</li>
-
-		<li id="run-status-tab">
-			<a role="tab" data-toggle="tab" href="#run-status-panel"><i class="fa fa-check"></i>Run Status</a>
-		</li>
-
-		<li id="viewer-status-tab">
-			<a role="tab" data-toggle="tab" href="#viewer-status-panel"><i class="fa fa-eye"></i>Viewer Status</a>
-		</li>
-	</ul>
-
-	<div class="tab-content">
-
-		<div id="run-queue-panel" role="tabpanel" class="tab-pane active">
-			<div id="run-queue">No run queue.</div>
-		</div>
-
-		<div id="run-status-panel" role="tabpanel" class="tab-pane">
-			<div id="run-status-list">No runs.</div>
-		</div>
-
-		<div id="viewer-status-panel" role="tabpanel" class="tab-pane">
-			<div id="viewer-status-list">No viewers.</div>
+<div class="tab-content">
+	<% for (var i = 0; i < tabs.length; i++) { %>
+	<% var tab = tabs[i]; %>
+	<% var id = (tab.replace(/ /g, '_').toLowerCase()); %>
+	<div id="<%= id %>-panel" role="tabpanel" class="tab-pane<% if (activeTab == tab || !activeTab && i == 0) { %> active<% } %>">
+		<div id="<%= id %>">
+			<div align="center"><i class="fa fa-spinner fa-spin fa-2x"></i><br/>Loading...</div> 
 		</div>
 	</div>
+	<% } %>
+</div>
+
+<label>
+	<input type="checkbox" id="show-numbering" <% if (showNumbering) { %>checked<% } %>>
+	Show numbering
+</label>
+
+<div class="bottom buttons">
+	<button id="kill-runs" class="btn btn-primary btn-lg"><i class="fa fa-times"></i>Kill Execution Runs</button>
 </div>

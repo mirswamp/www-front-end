@@ -12,7 +12,7 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2017 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2018 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 define([
@@ -86,7 +86,7 @@ define([
 		//
 
 		fetchNumByUser: function(project, user, options) {
-			return $.ajax(Config.servers.web + '/users/' + user.get('user_uid') + '/projects/events', {
+			return $.ajax(Config.servers.web + '/events/projects/users/' + user.get('user_uid') + '/num', {
 				success: function(data) {
 
 					// count events belonging to specific project

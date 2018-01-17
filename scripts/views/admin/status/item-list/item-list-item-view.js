@@ -1,10 +1,10 @@
 /******************************************************************************\
 |                                                                              |
-|                             run-status-list-view.js                          |
+|                               item-list-item-view.js                         |
 |                                                                              |
 |******************************************************************************|
 |                                                                              |
-|        This defines a view for displaying a list of job statuses.            |
+|        This defines a view for displaying a generic list of named items.     |
 |                                                                              |
 |        Author(s): Abe Megahed                                                |
 |                                                                              |
@@ -12,7 +12,7 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2017 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2018 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 define([
@@ -20,58 +20,28 @@ define([
 	'underscore',
 	'backbone',
 	'marionette',
-	'text!templates/admin/status/run-status-list/run-status-list.tpl',
-	'views/widgets/lists/sortable-table-list-view',
-	'views/admin/status/run-status-list/run-status-list-item-view'
-], function($, _, Backbone, Marionette, Template, SortableTableListView, RunStatusListItemView) {
-	return SortableTableListView.extend({
+	'text!templates/admin/status/item-list/item-list-item.tpl',
+	'registry',
+	'utilities/browser/html-utils'
+], function($, _, Backbone, Marionette, Template, Registry) {
+	return Backbone.Marionette.ItemView.extend({
 
 		//
 		// attributes
 		//
 
-		childView: RunStatusListItemView,
+		tagName: 'tr',
 
-		sorting: {
-
-			// sort on status column in ascending order 
-			//
-			sortList: [[3, 0]]
-		},
-
-		//
-		// constructor
-		//
-
-		initialize: function() {
-
-			// allow sort order to be passed in
-			//
-			if (this.options.sortList) {
-				this.sorting.sortList = this.options.sortList;
-			}
-		},
-		
 		//
 		// rendering methods
 		//
 
 		template: function(data) {
-			if (this.collection.length > 0) {
-				return _.template(Template, _.extend(data, {
-					collection: this.collection,
-					showNumbering: this.options.showNumbering
-				}));
-			} else {
-				return _.template("No jobs.")
-			}
-		},
-
-		childViewOptions: function(model, index) {
-			return {
-				index: index,
+			return _.template(Template, {
+				index: this.options.index + 1, 
+				data: data,	
 				showNumbering: this.options.showNumbering
-			}
+			});
 		}
 	});
 });

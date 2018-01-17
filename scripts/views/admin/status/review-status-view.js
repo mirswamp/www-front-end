@@ -12,7 +12,7 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2017 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2018 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 define([
@@ -24,11 +24,13 @@ define([
 	'text!templates/admin/status/review-status.tpl',
 	'registry',
 	'models/users/session',
+	'models/assessments/execution-record',
+	'collections/assessments/execution-records',
+	'views/dialogs/error-view',
 	'views/admin/status/run-queue-summary/run-queue-summary-view',
-	'views/admin/status/run-queue/run-queue-view',
-	'views/admin/status/run-status-list/run-status-list-view',
-	'views/admin/status/viewer-status-list/viewer-status-list-view'
-], function($, _, Backbone, Marionette, Tab, Template, Registry, Session, RunQueueSummaryView, RunQueueView, RunStatusListView, ViewerStatusListView) {
+	'views/admin/status/uuid-item-list/uuid-item-list-view',
+	'views/admin/status/uuid-item-select-list/uuid-item-select-list-view'
+], function($, _, Backbone, Marionette, Tab, Template, Registry, Session, ExecutionRecord, ExecutionRecords, ErrorView, RunQueueSummaryView, UuidItemListView, UuidItemSelectListView) {
 	return Backbone.Marionette.LayoutView.extend({
 
 		//
@@ -39,19 +41,43 @@ define([
 
 		regions: {
 			runQueueSummary: '#run-queue-summary',
-			runQueue: '#run-queue',
-			runStatusList: '#run-status-list',
-			viewerStatusList: '#viewer-status-list'
 		},
 
 		events: {
 			'click #refresh': 'onClickRefresh',
 			'click #auto-refresh': 'onClickAutoRefresh',
+			'click a[role="tab"]': 'onClickTab',
+			'click #show-numbering': 'onClickShowNumbering',
+			'click #kill-runs': 'onClickKillRuns'
+		},
+
+		//
+		// constructor
+		//
+		
+		initialize: function(options) {
+			this.tabState = [];
 		},
 
 		//
 		// refresh methods
 		//
+
+		saveTabState: function() {
+			var tabs = Object.keys(this.options.data);
+			for (var i = 0; i < tabs.length; i++) { 
+				var tab = tabs[i];
+				var id = tab.replace(/ /g, '_').toLowerCase() + '-panel';
+				if (this[tab] && this[tab].currentView) {
+					this.tabState[tab] = { 
+						sortList: this[tab].currentView.getSortList() 
+					};
+				}
+			}	
+			if (this['Condor Queue'] && this['Condor Queue'].currentView) { 
+				this.tabState['Condor Queue'].selected = this['Condor Queue'].currentView.getSelected();
+			}
+		},
 
 		enableAutoRefresh: function() {
 			this.$el.find('button#refresh').hide();
@@ -74,9 +100,13 @@ define([
 		showRefreshingList: function() {
 			var self = this;
 
-			// show assessment runs list
+			// save tab state
 			//
-			this.fetchAndShowList(function() {
+			this.saveTabState();
+
+			// fetch status data and render
+			//
+			this.fetchAndShow(function() {
 
 				// set up refresh
 				//
@@ -99,35 +129,72 @@ define([
 		//
 
 		template: function(data) {
+
+			// check if active tab is not found in list of tabs
+			//
+			if (this.options.activeTab) {	
+				if (!this.options.data[this.options.activeTab]) {
+					this.options.activeTab = undefined;
+				}
+			}
+		 		
 			return _.template(Template, _.extend(data, {
-				autoRefresh: Registry.application.options.autoRefresh
+				tabs: Object.keys(this.options.data),
+				activeTab: this.options.activeTab,
+				autoRefresh: Registry.application.options.autoRefresh,
+				showNumbering: Registry.application.options.showNumbering
 			}));
 		},
 
 		onRender: function() {	
-
+			this.showRunQueueSummary(this.options.data["Condor Queue"]);
+			this.showTabs(this.options.data);
+			
 			// show status list and schedule refresh
 			//
-			this.showRefreshingList();
+			if (!this.isRendered) {
+				this.showRefreshingList();
+			}
+
+			this.update();
+			this.isRendered = true;
 		},
 
-		fetchAndShowList: function(done) {
+		isEmptyCondorQueue: function() {
+			var queueTab = this.options.data["Condor Queue"];
+			if (queueTab) {
+				var queueKeys = Object.keys(queueTab);
+				if (queueKeys) {
+					var queueData = queueTab[queueKeys[0]];
+					return !queueData || !queueData.data.length;
+				}				
+			}
+		},
+
+		update: function() {
+
+			// show/hide kill-runs button
+			//
+			if ((!this.options.activeTab || this.options.activeTab == "Condor Queue") && !this.isEmptyCondorQueue()) {
+
+				this.$el.find('#kill-runs').show();
+			} else {
+				this.$el.find('#kill-runs').hide();
+			}
+		},
+
+		fetchAndShow: function(done) {
 			var self = this;
 			Session.fetchStatus({
 
 				// callbacks
 				//
 				success: function(data) {
+					self.options.data = data;
 
-					// add returned HTML content to view
+					// update entire display 
 					//
-					self.$el.find("#status").html(data);
-					/*
-					self.showRunQueueSummary(data["Condor Queue"]);
-					self.showRunQueue(data["Condor Queue"]);
-					self.showRunStatusList(data["Collector Assessment Records"]);
-					self.showViewerStatusList(data["Collector Viewer Records"]);
-					*/
+					self.render();	
 
 					// perform callback
 					//
@@ -136,6 +203,42 @@ define([
 					}
 				}
 			});
+		},
+
+		showTabs: function(data) {
+			if (!data) {
+				return;
+			}
+
+			var tabs = Object.keys(data);
+			for (var i = 0; i < tabs.length; i++) { 
+				var tab = tabs[i];
+				var id = tab.replace(/ /g, '_').toLowerCase() + '-panel';
+				var region = this.addRegion(tab, '#' + id);	
+				var object = data[tab];	
+				if (object) {
+					var keys = Object.keys(object); 
+					if (keys.length > 0) {	
+						var item = object[keys[0]]; 
+						if (tab == "Condor Queue") {
+							region.show(new UuidItemSelectListView({
+								fieldnames: item.fieldnames,
+								collection: new Backbone.Collection(item.data),
+								showNumbering: Registry.application.options.showNumbering,
+								sortList: this.tabState[tab] ? this.tabState[tab].sortList : undefined,
+								selected: this.tabState[tab] ? this.tabState[tab].selected : undefined
+							}));
+						} else {
+							region.show(new UuidItemListView({
+								fieldnames: item.fieldnames,
+								collection: new Backbone.Collection(item.data),
+								showNumbering: Registry.application.options.showNumbering,
+								sortList: this.tabState[tab] ? this.tabState[tab].sortList : undefined
+							}));
+						}
+					}
+				}				
+			}
 		},
 
 		showRunQueueSummary: function(data) {
@@ -149,69 +252,18 @@ define([
 			}
 		},
 
-		showRunQueue: function(data) {
-
-			// preserve existing sorting order
-			//
-			if (this.runQueue.currentView) {
-				this.runQueueSortList = this.runQueue.currentView.getSortList();
-			}
-
-			for (var key in data) {
-				this.runQueue.show(
-					new RunQueueView({
-						server: key,
-						collection: new Backbone.Collection(data[key]['data']),
-						sortList: this.runQueueSortList
-					})
-				);			
-			}
-		},
-
-		showRunStatusList: function(data) {
-
-			// preserve existing sorting order
-			//
-			if (this.runStatusList.currentView) {
-				this.runStatusSortList = this.runStatusList.currentView.getSortList();
-			}
-
-			for (var key in data) {
-				this.runStatusList.show(
-					new RunStatusListView({
-						server: key,
-						collection: new Backbone.Collection(data[key]['data']),
-						sortList: this.runStatusSortList
-					})
-				);			
-			}
-		},
-
-		showViewerStatusList: function(data) {
-
-			// preserve existing sorting order
-			//
-			if (this.viewerStatusList.currentView) {
-				this.viewerStatusSortList = this.viewerStatusList.currentView.getSortList();
-			}
-
-			for (var key in data) {
-				this.viewerStatusList.show(
-					new ViewerStatusListView({
-						server: key,
-						collection: new Backbone.Collection(data[key]['data']),
-						sortList: this.viewerStatusSortList
-					})
-				);			
-			}
-		},
-
 		//
 		// event handling methods
 		//
 
 		onClickRefresh: function() {
-			this.fetchAndShowList();
+			// save tab state
+			//
+			this.saveTabState();
+
+			// fetch status data and render
+			//
+			this.fetchAndShow();
 		},
 
 		onClickAutoRefresh: function(event) {
@@ -228,5 +280,44 @@ define([
 				this.disableAutoRefresh();
 			}
 		},
+
+		onClickTab: function(event) {
+			this.options.activeTab = $(event.target).closest('li').find('span').html();
+			this.update();
+		},
+
+		onClickShowNumbering: function(event) {
+			Registry.application.setShowNumbering($(event.target).is(':checked'));
+			this.render();
+		},
+
+		onClickKillRuns: function(event) {
+			var self = this;
+			var selected = this["Condor Queue"].currentView.getSelected();
+			var collection = new ExecutionRecords();
+			for (var i = 0; i < selected.length; i++) {
+				var execrunuuid = selected.at(i).get('EXECRUNUID');
+				var start = execrunuuid.indexOf('{') + 1;	
+				var end = execrunuuid.indexOf('}', start) - 1;
+				var type = selected.at(i).get('type');
+				var uuid = execrunuuid.replace(/{.*}/, '');
+				collection.add(new ExecutionRecord({
+					execution_record_uuid: uuid,
+					type: type	
+				}));
+			}
+			collection.killAll({
+				success: function() {
+					self.fetchAndShow();
+				},
+				error: function() {
+					Registry.application.modal.show(
+				    	new ErrorView({
+							message: "Could not kill all selected assessment runs."
+						})  
+					);
+				}
+			});
+		}
 	});
 });

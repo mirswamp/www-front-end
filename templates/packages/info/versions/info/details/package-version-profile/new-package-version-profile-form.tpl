@@ -14,6 +14,16 @@
 				Remote Git repository
 				<p>The package source code is located on a remote Git server.</p>
 			</label>
+			<div id="git-message" class="alert alert-info">
+				<label>Note: </label>
+				<span class="message">
+					<ul>
+						<li>The remote Git repository must be <b>publicly cloneable</b>. </li>
+						<li>The repository will be cloned recursively, so it will include any nested sub-module. </li>
+						<li>The clone operation occurs at package creation time, not when packages are assessed.</li>
+					</ul>
+				</span>
+			</div>
 		</div>
 	</div>
 
@@ -33,7 +43,7 @@
 			<div class="input-group">
 				<input type="text" class="form-control" value="<%= model.get('checkout_argument') %>">
 				<div class="input-group-addon">
-					<i class="active fa fa-question-circle" data-toggle="popover" data-placement="top" data-container="body" title="Checkout argument" data-content="This is a string passed to the checkout command after the external URL to fetch a particular branch, tag, or version of the code repository."></i>
+					<i class="active fa fa-question-circle" data-toggle="popover" data-placement="left" data-container="body" title="Checkout argument" data-html="true" data-content="<p>This is a string passed to the checkout command to fetch a particular branch, tag, or version of the code repository. The checkout command is run after the repository is cloned from the External URL.</p><b><i>Git command: </b></i><br/><pre>git checkout [argument]</pre>"></i>
 				</div>
 			</div>
 		</div>
@@ -55,6 +65,10 @@
 	<div id="package-version-profile-form"></div>
 
 	<div class="progress invisible">
-		<div class="bar bar-success" style="width: 0%;"><span class="bar-text"></span></div>
+		<div class="bar"></div>
+		<span class="bar-text">
+			<span class="bar-message">Cloning repository</span>
+			<span class="bar-percentage"></span>
+		</span>
 	</div>
 </form>

@@ -12,7 +12,7 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2017 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2018 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 define([
@@ -159,11 +159,13 @@ define([
 			var source = $(event.target).val();
 			switch (source) {
 				case 'use-local-file':
+					this.$el.find('#git-message').hide();
 					this.$el.find('#external-url').hide();
 					this.$el.find('#checkout-argument').hide();
 					this.$el.parent().find('#file').show();
 					break;
 				case 'use-external-url':
+					this.$el.find('#git-message').show();
 					this.$el.find('#external-url').show();
 					this.$el.find('#checkout-argument').show();
 					this.$el.parent().find('#file').hide();

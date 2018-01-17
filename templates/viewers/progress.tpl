@@ -1,14 +1,18 @@
 <div class="container">
 	<div class="row">
 		<div class="col-md-12 text-center hero-unit">
-			<h1>Preparing Results</h1>
+			<h1><%= title %></h1>
 			<p>
-				<%- viewer_status %>
+				<br />
+				<%- status %>
+				<br />
 				<span class="loading-flash">
 					<span></span>
 					<span></span>
 					<span></span>
 				</span>
+				<br />
+				<br />
 			</p>
 		</div>
 	</div>

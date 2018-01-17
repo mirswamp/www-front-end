@@ -29,7 +29,7 @@
 			<div class="input-group">
 				<input type="text" class="form-control" id="external-url" name="external-url" value="<%- model.get('external_url') %>"/>
 				<div class="input-group-addon">
-					<i class="active fa fa-question-circle" data-toggle="popover" data-placement="top" data-container="body" title="External URL" data-content="This is the web address from which the SWAMP will attempt to clone or pull files for the package. Only publicly clonable GitHub repository URLs are allowed. You may copy the URL from the &quot;HTTPS clone URL&quot; displayed on your GitHub repository page." value="<%- model.get('external_url') %>"></i>
+					<i class="active fa fa-question-circle" data-toggle="popover" data-placement="left" data-container="body" title="External URL" data-html="true" data-content="<p>This is the web address from which the SWAMP will attempt to clone or pull files for the package.</p><p>To find this URL, <b>go to your GitHub repository web page</b> and click the green 'Clone or download' button. </p><div style='text-align:center'><img width='143px' src='images/other/github-clone-or-download-button.png'></div><br/><b><i>Git command: </b></i><br/><pre style='word-break:keep-all'>git clone --recursive [external URL]</pre>" value="<%- model.get('external_url') %>"></i>
 				</div>
 			</div>
 		</div>

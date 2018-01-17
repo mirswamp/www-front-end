@@ -12,7 +12,7 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2017 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2018 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 define([
@@ -99,7 +99,10 @@ define([
 		kill: function(options) {
 			$.ajax(_.extend(options, {
 				type: 'PUT',
-				url: Config.servers.web + '/execution_records/' + this.get('execution_record_uuid') + '/kill'
+				url: Config.servers.web + '/execution_records/' + this.get('execution_record_uuid') + '/kill',
+				data: {
+					type: this.get('type')
+				}
 			}));
 		},
 

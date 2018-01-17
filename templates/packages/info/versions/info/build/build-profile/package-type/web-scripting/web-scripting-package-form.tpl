@@ -53,14 +53,14 @@
 						</label>
 
 						<span class="tags">
-							<span class="<% if (!showConfigure) { %>collapsed <% } %>toggle configure tag accordion-toggle" data-toggle="collapse" data-parent="#filters" href="#configure-settings"><i class="fa fa-gear"></i>Configure</span>
+							<span class="<% if (!showConfigure) { %>collapsed <% } %>toggle configure tag accordion-toggle" data-toggle="collapse" data-parent="#filters" href="#configure-settings"><i class="fa fa-tasks"></i>Configure</span>
 							<span class="<% if (!showBuild) { %>collapsed <% } %>toggle tag accordion-toggle" data-toggle="collapse" data-parent="#filters" href="#build-settings"><i class="fa fa-puzzle-piece"></i>Build</span>
 						</span>
 					</div>
 					<div id="advanced-settings" class="nested accordion-body collapse in">
 
 						<div id="configure-settings" class="well collapse<% if (showConfigure) { %> in<% } %>">
-							<h3><i class="fa fa-gear"></i>Configure settings<i class="fa fa-minus-circle close accordion-toggle" data-toggle="collapse" href="#configure-settings" /></h3>
+							<h3><i class="fa fa-tasks"></i>Configure settings<i class="fa fa-minus-circle close accordion-toggle" data-toggle="collapse" href="#configure-settings" /></h3>
 
 							<div class="form-group">
 								<label class="control-label">Configure path</label>

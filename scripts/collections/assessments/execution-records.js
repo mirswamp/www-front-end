@@ -12,7 +12,7 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2017 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2018 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 define([
@@ -46,6 +46,112 @@ define([
 				}
 			}
 			return true;
+		},
+
+		//
+		// batch methods
+		//
+		
+		killAll: function(options) {
+			var self = this;
+			var successes = 0, failures = 0;
+
+			function finish() {
+				if (failures) {
+					if (options && options.error) {
+						options.error();
+					}
+				} else {
+					if (options && options.success) {
+						options.success();
+					}
+				}
+			}
+
+			// destroy models individually
+			//
+			function kill(item) {
+				item.kill({
+
+					// callbacks
+					//
+					success: function() {
+						successes++;
+						if (self.length > 0) {
+							kill(self.pop());
+						} else {
+							finish();	
+						}
+					},
+
+					error: function() {
+						failures++;
+						if (self.length > 0) {
+							kill(self.pop());
+						} else {
+							finish();
+						}	
+					}
+				});
+					
+			}
+
+			// check for empty 
+			//
+			if (this.length === 0) {
+
+				// report success when completed
+				//
+				if (options.success) {
+					options.success();
+					return;
+				}
+			}
+
+			if (options && options.async) {
+
+				// kill items asynchronously - don't wait for each kill
+				// to finish before proceeding to the next item
+				//	
+				var count = this.length;	
+				for (var i = 0; i < count; i++) {
+					var item = this.pop();
+					item.kill({
+
+						// callbacks
+						//
+						success: function() {
+							successes++;
+
+							// perform callback when complete
+							//
+							if (successes === count) {
+								if (options.success) {
+									options.success();
+								}
+							}
+						},
+
+						error: function() {
+							errors++;
+
+							// report first error
+							//
+							if (errors === 1 && options.error) {
+								options.error();
+							}
+						}
+					});
+				}
+			} else {
+
+				// kill items sequentially - wait for each kill to finish
+				// before proceeding to the next item
+				//
+				if (this.length > 0) {
+					kill(this.pop());
+				}
+			}
 		},
 
 		//

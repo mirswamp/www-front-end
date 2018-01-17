@@ -1,10 +1,10 @@
 /******************************************************************************\
 |                                                                              |
-|                                 run-queue-view.js                            |
+|                                 item-list-view.js                            |
 |                                                                              |
 |******************************************************************************|
 |                                                                              |
-|        This defines a view for displaying a queue of running jobs.           |
+|        This defines a view for displaying a generic list of named items.     |
 |                                                                              |
 |        Author(s): Abe Megahed                                                |
 |                                                                              |
@@ -12,7 +12,7 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2017 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2018 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 define([
@@ -20,17 +20,17 @@ define([
 	'underscore',
 	'backbone',
 	'marionette',
-	'text!templates/admin/status/run-queue/run-queue.tpl',
+	'text!templates/admin/status/item-list/item-list.tpl',
 	'views/widgets/lists/sortable-table-list-view',
-	'views/admin/status/run-queue/run-queue-item-view'
-], function($, _, Backbone, Marionette, Template, SortableTableListView, RunQueueItemView) {
+	'views/admin/status/item-list/item-list-item-view'
+], function($, _, Backbone, Marionette, Template, SortableTableListView, ItemListItemView) {
 	return SortableTableListView.extend({
 
 		//
 		// attributes
 		//
 
-		childView: RunQueueItemView,
+		childView: ItemListItemView,
 
 		sorting: {
 
@@ -43,7 +43,11 @@ define([
 		// constructor
 		//
 
-		initialize: function() {
+		initialize: function(options) {
+
+			// call superclass constructor
+			//
+			SortableTableListView.prototype.initialize.call(this, options);	
 
 			// allow sort order to be passed in
 			//
@@ -59,17 +63,18 @@ define([
 		template: function(data) {
 			if (this.collection.length > 0) {
 				return _.template(Template, _.extend(data, {
-					collection: this.collection,
+					fieldnames: this.options.fieldnames,
 					showNumbering: this.options.showNumbering
 				}));
 			} else {
-				return _.template("No jobs are currently running.")
+				return _.template("No items.")
 			}
 		},
 
 		childViewOptions: function(model, index) {
 			return {
 				index: index,
+				fieldnames: this.options.fieldnames,
 				showNumbering: this.options.showNumbering
 			}
 		}

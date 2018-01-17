@@ -12,7 +12,7 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2017 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2018 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 define([
@@ -34,16 +34,6 @@ define([
 		//
 
 		events: {
-			'click #home': 'onClickHome',
-			'click #packages': 'onClickPackages',
-			'click #tools': 'onClickTools',
-			'click #assessments': 'onClickAssessments',
-			'click #results': 'onClickResults',
-			'click #runs': 'onClickRuns',
-			'click #projects': 'onClickProjects',
-			'click #events': 'onClickEvents',
-			'click #settings': 'onClickSettings',
-			'click #overview': 'onClickOverview',
 			'click #maximize-nav': 'onClickMaximizeNav',
 			'click #minimize-nav': 'onClickMinimizeNav',
 			'click #top-nav': 'onClickTopNav',
@@ -118,140 +108,6 @@ define([
 						self.$el.find("#tools").hide();
 					}
 				}
-			});
-		},
-
-		//
-		// event handling methods
-		//
-
-		onClickHome: function() {
-
-			// clear popovers
-			//
-			$(".popover").remove();
-
-			// go to my packages view
-			//
-			Backbone.history.navigate('#home', {
-				trigger: true
-			});	
-		},
-
-		onClickPackages: function() {
-
-			// clear popovers
-			//
-			$(".popover").remove();
-
-			// go to my packages view
-			//
-			Backbone.history.navigate('#packages', {
-				trigger: true
-			});	
-		},
-
-		onClickTools: function() {
-
-			// clear popovers
-			//
-			$(".popover").remove();
-
-			// go to my tools view
-			//
-			Backbone.history.navigate('#tools', {
-				trigger: true
-			});	
-		},
-
-		onClickAssessments: function() {
-
-			// clear popovers
-			//
-			$(".popover").remove();
-
-			// go to my assessments view
-			//
-			Backbone.history.navigate('#assessments', {
-				trigger: true
-			});
-		},
-
-		onClickResults: function() {
-
-			// clear popovers
-			//
-			$(".popover").remove();
-
-			// go to my results view
-			//
-			Backbone.history.navigate('#results', {
-				trigger: true
-			});
-		},
-
-		onClickRuns: function() {
-
-			// clear popovers
-			//
-			$(".popover").remove();
-
-			// go to my scheduled runs view
-			//
-			Backbone.history.navigate('#run-requests', {
-				trigger: true
-			});
-		},
-
-		onClickProjects: function() {
-
-			// clear popovers
-			//
-			$(".popover").remove();
-
-			// go to my projects view
-			//
-			Backbone.history.navigate('#projects', {
-				trigger: true
-			});	
-		},
-
-		onClickEvents: function() {
-
-			// clear popovers
-			//
-			$(".popover").remove();
-
-			// go to my events view
-			//
-			Backbone.history.navigate('#events?project=any', {
-				trigger: true
-			});	
-		},
-
-		onClickSettings: function() {
-
-			// clear popovers
-			//
-			$(".popover").remove();
-
-			// go to system settings view
-			//
-			Backbone.history.navigate('#settings', {
-				trigger: true
-			});			
-		},
-
-		onClickOverview: function() {
-
-			// clear popovers
-			//
-			$(".popover").remove();
-
-			// go to system overview view
-			//
-			Backbone.history.navigate('#overview', {
-				trigger: true
 			});
 		},
 

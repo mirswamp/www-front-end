@@ -12,7 +12,7 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2017 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2018 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 define([
@@ -66,7 +66,15 @@ define([
 
 				// callbacks
 				//
-				success: function() {
+				success: function(collection) {
+
+					// make dependencies new
+					//
+					for (var i = 0; i < collection.length; i++) {
+						collection.at(i).set({
+							'package_version_dependency_id': undefined
+						});
+					}
 
 					// get latest package version
 					//
@@ -91,7 +99,7 @@ define([
 							new NewPackageVersionView({
 								model: self.model,
 								package: self.options.package,
-								packageVersionDependencies: self.packageVersionDependencies
+								packageVersionDependencies: collection
 							})
 						);
 					});

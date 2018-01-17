@@ -12,7 +12,7 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2017 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2018 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 define([
@@ -92,7 +92,10 @@ define([
 			//
 			if (response && response.responseText) {
 				if (response.responseText.contains('{')) {
-					response = JSON.parse(response.responseText);
+					try {
+						response = JSON.parse(response.responseText);
+					} catch(error) {
+					}
 				}
 			}
 
@@ -176,7 +179,30 @@ define([
 					});
 					break;
 
+				case 'NO_SESSION':
+
+					// log in
+					//
+					Registry.application.sessionExpired();
+					break;
+
+				case 403:
+					Registry.application.modal.show(
+						new NotifyView({
+							message: "Permissions error.  You do not have permissions to view information from this project."
+						})
+					);	
+					break;
+
 				default:
+
+					// show error dialog
+					//
+					Registry.application.modal.show(
+						new NotifyView({
+							message: "Could not fetch run request."
+						})
+					);
 					break;
 			}
 		},

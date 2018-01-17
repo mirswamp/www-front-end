@@ -13,7 +13,7 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2017 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2018 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 //
@@ -21,6 +21,9 @@
 //
 
 function setQueryString(queryString) {
+	if (typeof queryString == 'object') {
+		queryString = toQueryString(queryString);
+	}
 	if (queryString) {
 		window.top.location.href = getWindowBaseLocation() + '?' + queryString;
 	} else {
@@ -39,7 +42,8 @@ function getWindowBaseLocation() {
 }
 
 function getQueryString() {
-	return window.top.location.search.substring(1);
+	return window.top.location.href.split('?')[1];
+	//return window.top.location.search.substring(1);
 }
 
 function getFragment() {
@@ -58,7 +62,10 @@ function toQueryString(data) {
 	var queryString = '';
 	for (var key in data) {
 		var value = data[key];
-		queryString = addQueryString(queryString, key + '=' + urlEncode(value));
+		if (value != undefined) {
+			value = value.toString();
+			queryString = addQueryString(queryString, key + '=' + urlEncode(value));
+		}
 	}
 	return queryString;
 }
@@ -87,7 +94,7 @@ function addQueryString(queryString, newString) {
 	}
 }
 
-function getQueryString(data, variables) {
+function getQueryStringVariables(data, variables) {
 	var queryString = '';
 	for (var i = 0; i < variables.length; i++) {
 		var key = variables[i];

@@ -12,73 +12,106 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2017 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2018 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 function stringToHTML(string) {
-
-	// provide escaping for HTML special chars
-	//
-	string = _.escape(string);
-
-	// allow strings to break before dashes
-	//
-	if (string) {
-		string = string.replace(/-/g, '<wbr>-<wbr>');
+	if (!string) {
+		return;
 	}
+
+	// allow strings to break after dashes
+	//
+	string = string.replace(/-/g, '-<wbr>');
+
+	// allow strings to break after slashes
+	//
+	string = string.replace(/\//g, '/<wbr>')
 
 	// allow strings to break before dots
 	//
-	if (string) {
-		string = string.replace(/\./g, '<wbr>.<wbr>');
-	}
+	string = string.replace(/\./g, '<wbr>.');
 
 	// allow strings to break before underscores
 	//
-	if (string) {
-		string = string.replace(/_/g, '<wbr>_<wbr>');
-	}
+	string = string.replace(/_/g, '<wbr>_');
+
+	// replace carriage returns
+	//
+	string = string.replace(/(?:\r\n|\r|\n)/g, '<br />')
+
+	// allow double quotation marks
+	//
+	string = string.replace(/\"/g, '&#34;');
+
+	// allow single quotation marks
+	//
+	string = string.replace(/\'/g, '&#39;');
 
 	// allow strings to break at case changes
 	//
-	if (string) {
-		var substrings = [];
+	string = camelCaseToHTML(string);
 
-		var i = 0;
-		while (i < string.length - 1) {
-			var lowercase = /[a-z]/.test(string[i]);
-			if (lowercase) {
-				var uppercase = /[A-Z]/.test(string[i + 1]);
-				if (uppercase) {
+	return string;
+}
 
-					// break at case change
-					//
-					substrings.push(string.substring(0, i + 1));
-					string = string.substring(i + 1, string.length);
-					i = 0;
-				} else {
-					i++;
-				}
+function unquotateHTML(string) {
+
+	if (!string) {
+		return;
+	}
+
+	// allow double quotation marks
+	//
+	string = string.replace(/\"/g, '&#34;');
+
+	// allow single quotation marks
+	//
+	string = string.replace(/\'/g, '&#39;');
+
+	return string;
+}
+
+function camelCaseToHTML(string) {
+	if (!string) {
+		return;
+	}
+
+	var substrings = [];
+	var i = 0;
+	while (i < string.length - 1) {
+		var lowercase = /[a-z]/.test(string[i]);
+		if (lowercase) {
+			var uppercase = /[A-Z]/.test(string[i + 1]);
+			if (uppercase) {
+
+				// break at case change
+				//
+				substrings.push(string.substring(0, i + 1));
+				string = string.substring(i + 1, string.length);
+				i = 0;
 			} else {
 				i++;
 			}
+		} else {
+			i++;
 		}
+	}
 
-		// add remainder of string
-		//
-		if (substrings.length > 0) {
-			substrings.push(string);
-		}
+	// add remainder of string
+	//
+	if (substrings.length > 0) {
+		substrings.push(string);
+	}
 
-		// reassemble string
-		//
-		if (substrings.length > 0) {
-			string = '';
-			for (var i = 0; i < substrings.length; i++) {
-				string += substrings[i];
-				if (i < substrings.length - 1) {
-					string += '<wbr>';
-				}
+	// reassemble string
+	//
+	if (substrings.length > 0) {
+		string = '';
+		for (var i = 0; i < substrings.length; i++) {
+			string += substrings[i];
+			if (i < substrings.length - 1) {
+				string += '<wbr>';
 			}
 		}
 	}

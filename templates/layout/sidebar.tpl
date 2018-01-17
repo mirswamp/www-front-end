@@ -10,47 +10,67 @@
 	%>
 
 	<% if (showHome) { %>
-	<div class="active tile well<% if (nav == 'home') { %> selected<% } %>" id="home" data-placement="<%- opposite(orientation) %>" data-content="Home" data-container="body">
-		<i class="fa fa-home"></i>
-	</div>
+	<a href="#home">
+		<div class="active tile well<% if (nav == 'home') { %> selected<% } %>" id="home" data-placement="<%- opposite(orientation) %>" data-content="Home" data-container="body">
+			<i class="fa fa-home"></i>
+		</div>
+	</a>
 	<% } %>
 
-	<div class="active tile well<% if (nav == 'packages') { %> selected<% } %>" id="packages" data-placement="<%- opposite(orientation) %>" data-content="Packages" data-container="body">
-		<i class="fa fa-gift"></i>
-	</div>
+	<a href="#packages">
+		<div class="active tile well<% if (nav == 'packages') { %> selected<% } %>" id="packages" data-placement="<%- opposite(orientation) %>" data-content="Packages" data-container="body">
+			<i class="fa fa-gift"></i>
+		</div>
+	</a>
 
-	<div class="active tile well<% if (nav == 'tools') { %> selected<% } %>" id="tools" style="display:none" data-placement="<%- opposite(orientation) %>" data-content="Tools" data-container="body">
-		<i class="fa fa-wrench"></i>
-	</div>
+	<a href="#tools">
+		<div class="active tile well<% if (nav == 'tools') { %> selected<% } %>" id="tools" style="display:none" data-placement="<%- opposite(orientation) %>" data-content="Tools" data-container="body">
+			<i class="fa fa-wrench"></i>
+		</div>
+	</a>
 
-	<div class="active tile well<% if (nav == 'assessments') { %> selected<% } %>" id="assessments" data-placement="<%- opposite(orientation) %>" data-content="Assessments" data-container="body">
-		<i class="fa fa-check"></i>
-	</div>
+	<a href="#assessments">
+		<div class="active tile well<% if (nav == 'assessments') { %> selected<% } %>" id="assessments" data-placement="<%- opposite(orientation) %>" data-content="Assessments" data-container="body">
+			<i class="fa fa-check"></i>
+		</div>
+	</a>
 
-	<div class="active tile well<% if (nav == 'results') { %> selected<% } %>" id="results" data-placement="<%- opposite(orientation) %>" data-content="Assessment Results" data-container="body">
-		<i class="fa fa-bug"></i>
-	</div>
+	<a href="#results">
+		<div class="active tile well<% if (nav == 'results') { %> selected<% } %>" id="results" data-placement="<%- opposite(orientation) %>" data-content="Assessment Results" data-container="body">
+			<i class="fa fa-bug"></i>
+		</div>
+	</a>
 
-	<div class="active tile well<% if (nav == 'runs') { %> selected<% } %>" id="runs" data-placement="<%- opposite(orientation) %>" data-content="Scheduled Runs" data-container="body">
-		<i class="fa fa-bus"></i>
-	</div>
+	<a href="#run-requests">
+		<div class="active tile well<% if (nav == 'runs') { %> selected<% } %>" id="runs" data-placement="<%- opposite(orientation) %>" data-content="Scheduled Runs" data-container="body">
+			<i class="fa fa-bus"></i>
+		</div>
+	</a>
 
-	<div class="active tile well<% if (nav == 'projects') { %> selected<% } %>" id="projects" data-placement="<%- opposite(orientation) %>" data-content="Projects" data-container="body">
-		<i class="fa fa-folder-open"></i>
-	</div>
+	<a href="#projects">
+		<div class="active tile well<% if (nav == 'projects') { %> selected<% } %>" id="projects" data-placement="<%- opposite(orientation) %>" data-content="Projects" data-container="body">
+			<i class="fa fa-folder-open"></i>
+		</div>
+	</a>
 
-	<div class="active tile well<% if (nav == 'events') { %> selected<% } %>" id="events" data-placement="<%- opposite(orientation) %>" data-content="Events" data-container="body">
-		<i class="fa fa-bullhorn"></i>
-	</div>
+	<a href="#events?project=any">
+		<div class="active tile well<% if (nav == 'events') { %> selected<% } %>" id="events" data-placement="<%- opposite(orientation) %>" data-content="Events" data-container="body">
+			<i class="fa fa-bullhorn"></i>
+		</div>
+	</a>
 
 	<% if (isAdmin) { %>
-	<div class="active tile well<% if (nav == 'settings') { %> selected<% } %>" id="settings" data-placement="<%- opposite(orientation) %>" data-content="System Settings" data-container="body">
-		<i class="fa fa-gears"></i>
-	</div>
+	<a href="#settings">
+		<div class="active tile well<% if (nav == 'settings') { %> selected<% } %>" id="settings" data-placement="<%- opposite(orientation) %>" data-content="System Settings" data-container="body">
+			<i class="fa fa-gears"></i>
+		</div>
+	</a>
 
-	<div class="active tile well<% if (nav == 'overview') { %> selected<% } %>" id="overview" data-placement="<%- opposite(orientation) %>" data-content="System Overview" data-container="body">
-		<i class="fa fa-eye"></i>
-	</div>
+	<a href="#overview">
+		<div class="active tile well<% if (nav == 'overview') { %> selected<% } %>" id="overview" data-placement="<%- opposite(orientation) %>" data-content="System Overview" data-container="body">
+			<i class="fa fa-eye"></i>
+		</div>
+	</a>
 	<% } %>
 
 	<div class="tile well last">

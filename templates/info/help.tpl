@@ -17,8 +17,8 @@ To report a security incident, click <a href="#contact/security">here</a>.
 <% } %>
 </p>
 
-<h2><i class="fa fa-gear"></i>FAQ</h2>
-<p><a href="http://continuousassurance.org/faqs/" target="_blank">Continuousassurance.org FAQ (External Link)</a></p>
+<h2><i class="fa fa-question-circle"></i>FAQ</h2>
+<p><a href="https://www.swampinabox.org/doc/SWAMP-FAQ.pdf" target="_blank">SWAMP FAQ (PDF)</a></p>
 
 <h2><i class="fa fa-youtube"></i>Videos</h2>
 <p><a href="http://www.youtube.com/channel/UCuQybvosn2J5CC1mAChXDQQ" target="_blank">The SWAMP Channel on YouTube</a></p>

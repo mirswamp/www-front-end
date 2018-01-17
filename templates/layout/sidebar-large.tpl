@@ -1,82 +1,96 @@
 <div class="large sidebar well">
 	<% if (showHome) { %>
-	<div align="center">
-		<a href="#"><img class="logo" width="75px" height="75px" src="images/icons/swamp-icon-small.png" /></a>
-	</div>
+	<a href="#home">
+		<div class="active tile well<% if (nav == 'home') { %> selected<% } %>" id="home">
+			<div align="center">
+				<i class="fa fa-home fa-3x"></i>
+				<div><label>Home</label></div>
+			</div>
+		</div>
+	</a>
 	<% } %>
 
-	<div class="active tile well<% if (nav == 'packages') { %> selected<% } %>" id="packages">
-		<div align="center">
-			<i class="fa fa-gift fa-3x"></i>
-			<br />
-			<label>Packages</label>
+	<a href="#packages">
+		<div class="active tile well<% if (nav == 'packages') { %> selected<% } %>" id="packages">
+			<div align="center">
+				<i class="fa fa-gift fa-3x"></i>
+				<div><label>Packages</label></div>
+			</div>
 		</div>
-	</div>
+	</a>
 
-	<div class="active tile well<% if (nav == 'tools') { %> selected<% } %>" id="tools">
-		<div align="center">
-			<i class="fa fa-wrench fa-3x"></i>
-			<br />
-			<label>Tools</label>
+	<a href="#tools">
+		<div class="active tile well<% if (nav == 'tools') { %> selected<% } %>" id="tools">
+			<div align="center">
+				<i class="fa fa-wrench fa-3x"></i>
+				<div><label>Tools</label></div>
+			</div>
 		</div>
-	</div>
+	</a>
 
-	<div class="active tile well<% if (nav == 'assessments') { %> selected<% } %>" id="assessments">
-		<div align="center">
-			<i class="fa fa-check fa-3x"></i>
-			<br />
-			<label>Assessments</label>
+	<a href="#assessments">
+		<div class="active tile well<% if (nav == 'assessments') { %> selected<% } %>" id="assessments">
+			<div align="center">
+				<i class="fa fa-check fa-3x"></i>
+				<div><label>Assessments</label></div>
+			</div>
 		</div>
-	</div>
+	</a>
 
-	<div class="active tile well<% if (nav == 'results') { %> selected<% } %>" id="results">
-		<div align="center">
-			<i class="fa fa-bug fa-3x"></i>
-			<br />
-			<label>Results</label>
+	<a href="#results">
+		<div class="active tile well<% if (nav == 'results') { %> selected<% } %>" id="results">
+			<div align="center">
+				<i class="fa fa-bug fa-3x"></i>
+				<div><label>Results</label></div>
+			</div>
 		</div>
-	</div>
+	</a>
 
-	<div class="active tile well<% if (nav == 'runs') { %> selected<% } %>" id="runs">
-		<div align="center">
-			<i class="fa fa-bus fa-3x"></i>
-			<br />
-			<label>Runs</label>
+	<a href="#run-requests">
+		<div class="active tile well<% if (nav == 'runs') { %> selected<% } %>" id="runs">
+			<div align="center">
+				<i class="fa fa-bus fa-3x"></i>
+				<div><label>Runs</label></div>
+			</div>
 		</div>
-	</div>
+	</a>
 
-	<div class="active tile well<% if (nav == 'projects') { %> selected<% } %>" id="projects">
-		<div align="center">
-			<i class="fa fa-folder-open fa-3x"></i>
-			<br />
-			<label>Projects</label>
+	<a href="#projects">
+		<div class="active tile well<% if (nav == 'projects') { %> selected<% } %>" id="projects">
+			<div align="center">
+				<i class="fa fa-folder-open fa-3x"></i>
+				<div><label>Projects</label></div>
+			</div>
 		</div>
-	</div>
+	</a>
 
-	<div class="active tile well<% if (nav == 'events') { %> selected<% } %>" id="events">
-		<div align="center">
-			<i class="fa fa-bullhorn fa-3x"></i>
-			<br />
-			<label>Events</label>
+	<a href="#events?project=any">
+		<div class="active tile well<% if (nav == 'events') { %> selected<% } %>" id="events">
+			<div align="center">
+				<i class="fa fa-bullhorn fa-3x"></i>
+				<div><label>Events</label></div>
+			</div>
 		</div>
-	</div>
+	</a>
 
 	<% if (isAdmin) { %>
-	<div class="active tile well<% if (nav == 'settings') { %> selected<% } %>" id="settings">
-		<div align="center">
-			<i class="fa fa-gears fa-3x"></i>
-			<br />
-			<label>Settings</label>
+	<a href="#settings">
+		<div class="active tile well<% if (nav == 'settings') { %> selected<% } %>" id="settings">
+			<div align="center">
+				<i class="fa fa-gears fa-3x"></i>
+				<div><label>Settings</label></div>
+			</div>
 		</div>
-	</div>
+	</a>
 
-	<div class="active tile well<% if (nav == 'overview') { %> selected<% } %>" id="overview">
-		<div align="center">
-			<i class="fa fa-eye fa-3x"></i>
-			<br />
-			<label>Overview</label>
+	<a href="#overview">
+		<div class="active tile well<% if (nav == 'overview') { %> selected<% } %>" id="overview">
+			<div align="center">
+				<i class="fa fa-eye fa-3x"></i>
+				<div><label>Overview</label></div>
+			</div>
 		</div>
-	</div>
+	</a>
 	<% } %>
 
 	<div class="tile well last">

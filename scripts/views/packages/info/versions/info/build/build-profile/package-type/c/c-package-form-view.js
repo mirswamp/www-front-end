@@ -13,7 +13,7 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2017 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2018 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 define([
@@ -50,17 +50,19 @@ define([
 		},
 
 		buildCommands: {
-			'make': 			'make',
-			'configure+make':	'make',
-			'cmake+make': 		'make', 
-			'other': 			undefined
+			'make': 					'make',
+			'configure+make':			'make',
+			'cmake+make': 				'make', 
+			'autotools+configure+make': 'make',
+			'other': 					undefined
 		},
 
 		configureCommands: {
-			'make': 			'',
-			'configure+make':	'./configure',
-			'cmake+make': 		'cmake .', 
-			'other': 			''	
+			'make': 					'',
+			'configure+make':			'./configure',
+			'cmake+make': 				'cmake .', 
+			'autotools+configure+make': 'mkdir -p m4 && autoreconf --install --force || ./autogen.sh && ./configure',
+			'other': 					''	
 		},
 
 		//
@@ -96,6 +98,10 @@ define([
 					this.$el.find("#build-system").val('no-build');
 					this.onSetBuildSystem();	
 					break;
+				case 'make':
+					this.$el.find("#build-system").val('make');
+					this.onSetBuildSystem();
+					break;
 				case 'cmake+make':
 					this.$el.find("#build-system").val('cmake');
 					this.onSetBuildSystem();
@@ -104,8 +110,8 @@ define([
 					this.$el.find("#build-system").val('configure');
 					this.onSetBuildSystem();
 					break;
-				case 'make':
-					this.$el.find("#build-system").val('make');
+				case 'autotools+configure+make':
+					this.$el.find("#build-system").val('autotools');
 					this.onSetBuildSystem();
 					break;
 				case 'other':
@@ -144,14 +150,17 @@ define([
 				case 'no-build':
 					return 'no-build';
 					break;
+				case 'make':
+					return 'make';
+					break;
 				case 'cmake':
 					return 'cmake+make';
 					break;
 				case 'configure':
 					return 'configure+make';
 					break;
-				case 'make':
-					return 'make';
+				case 'autotools':
+					return 'autotools+configure+make';
 					break;
 				case 'other':
 					return 'other';
@@ -164,14 +173,17 @@ define([
 				case 'no-build':
 					return 'No Build';
 					break;
+				case 'make':
+					return 'Make';
+					break;
 				case 'cmake+make':
 					return 'CMake + Make';
 					break;
 				case 'configure+make':
 					return 'Configure + Make';
 					break;
-				case 'make':
-					return 'Make';
+				case 'autotools+configure+make':
+					return 'Autotools + Configure + Make';
 					break;
 				case 'other':
 					return 'Other';

@@ -102,7 +102,7 @@
 
 						<% if (showConfigure) { %>
 						<div id="configure-settings" class="well">
-							<h3><i class="fa fa-gear"></i>Configure settings</h3>
+							<h3><i class="fa fa-tasks"></i>Configure settings</h3>
 
 							<% if (config_dir) { %>
 							<div class="form-group">

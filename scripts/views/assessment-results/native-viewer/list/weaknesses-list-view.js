@@ -1,10 +1,10 @@
 /******************************************************************************\
 |                                                                              |
-|                            viewer-status-list-view.js                        |
+|                              weaknesses-list-view.js                         |
 |                                                                              |
 |******************************************************************************|
 |                                                                              |
-|        This is a view for displaying a list of viewer instance statuses.     |
+|        This defines a view for displaying a list of weaknesses.              |
 |                                                                              |
 |        Author(s): Abe Megahed                                                |
 |                                                                              |
@@ -12,7 +12,7 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2017 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2018 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 define([
@@ -20,57 +20,72 @@ define([
 	'underscore',
 	'backbone',
 	'marionette',
-	'text!templates/admin/status/viewer-status-list/viewer-status-list.tpl',
+	'text!templates/assessment-results/native-viewer/list/weaknesses-list.tpl',
 	'views/widgets/lists/sortable-table-list-view',
-	'views/admin/status/viewer-status-list/viewer-status-list-item-view'
-], function($, _, Backbone, Marionette, Template, SortableTableListView, ViewerStatusListItemView) {
+	'views/assessment-results/native-viewer/list/weaknesses-list-item-view'
+], function($, _, Backbone, Marionette, Template, SortableTableListView, WeaknessesListItemView) {
 	return SortableTableListView.extend({
 
 		//
 		// attributes
 		//
 
-		childView: ViewerStatusListItemView,
+		tagName: 'table',
+		className: 'results',
+		childView: WeaknessesListItemView,
 
 		sorting: {
 
-			// sort on status column in ascending order 
+			// sort on name column in ascending order 
 			//
-			sortList: [[3, 0]]
+			sortList: [[0, 0]]
 		},
 
 		//
 		// constructor
 		//
 
-		initialize: function() {
+		initialize: function(options) {
 
-			// allow sort order to be passed in
+			// use specified sort order 
 			//
-			if (this.options.sortList) {
-				this.sorting.sortList = this.options.sortList;
+			if (options.sortList) {
+				this.sorting.sortList = options.sortList;
 			}
+
+			// call superclass method
+			//
+			SortableTableListView.prototype.initialize.call(this, _.extend(options, {
+				sorting: true,
+				showSortingColumn: true,
+				showGrouping: this.options.showGrouping,
+				groupExcept: ['line-number', 'column-number', 'group', 'code']
+			}));
+
+			// set line numbering start
+			//
+			this.start = this.options.start || 0;
 		},
-		
+
 		//
 		// rendering methods
 		//
 
 		template: function(data) {
 			if (this.collection.length > 0) {
-				return _.template(Template, _.extend(data, {
-					collection: this.collection,
+				return _.template(Template, _.extend(this.collection.at(0).attributes, {
 					showNumbering: this.options.showNumbering
 				}));
 			} else {
-				return _.template("No viewers.")
+				return _.template("No weaknesses have been found.")
 			}
 		},
 
 		childViewOptions: function(model, index) {
 			return {
-				index: index,
-				showNumbering: this.options.showNumbering
+				index: index + this.start,
+				showNumbering: this.options.showNumbering,
+				parent: this
 			}
 		}
 	});

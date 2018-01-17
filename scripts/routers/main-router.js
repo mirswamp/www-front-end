@@ -12,7 +12,7 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2017 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2018 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 define([
@@ -1050,8 +1050,10 @@ define([
 			var self = this;
 			require([
 				'registry',
-				'views/admin/status/review-status-view'
-			], function (Registry, ReviewStatusView) {
+				'models/users/session',
+				'views/admin/status/review-status-view',
+				'views/dialogs/error-view',
+			], function (Registry, Session, ReviewStatusView, ErrorView) {
 
 				// show content view
 				//
@@ -1062,16 +1064,36 @@ define([
 					// callbacks
 					//
 					done: function(view) {
+						Session.fetchStatus({
 
-						// show review status view
-						//
-						view.content.show(
-							new ReviewStatusView()
-						);
+							// callbacks
+							//
+							success: function(data) {
 
-						if (options && options.done) {
-							options.done();
-						}
+								// show review status view
+								//
+								view.content.show(
+									new ReviewStatusView({
+										data: data
+									})
+								);
+
+								if (options && options.done) {
+									options.done();
+								}
+							},
+
+							error: function() {
+
+								// show error dialog
+								//
+								Registry.application.modal.show(
+									new ErrorView({
+										message: "Could not fetch status."
+									})
+								);
+							}
+						});
 					}
 				});
 			});

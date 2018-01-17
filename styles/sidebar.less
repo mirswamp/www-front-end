@@ -12,7 +12,7 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2016 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2018 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 .sidebar {
@@ -39,6 +39,18 @@
 		border: 2px solid @veryLightGrey;
 		border-radius: 5px;
 		//box-shadow: 2px 2px 2px -2px rgba(0, 0, 0, 0.5);
+	}
+
+	.tile.selected {
+		i {
+			color: white;
+		}
+	}
+
+	.tile:not(.selected):not(:hover) {
+		i {
+			color: @darkGrey;
+		}
 	}
 
 	label {

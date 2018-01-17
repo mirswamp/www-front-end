@@ -12,7 +12,7 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2017 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2018 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 define([
@@ -72,11 +72,11 @@ define([
 		},
 
 		showWarning: function() {
-			this.$el.find('.alert').show();
+			this.$el.find('.alert-warning').show();
 		},
 
 		hideWarning: function() {
-			this.$el.find('.alert').hide();
+			this.$el.find('.alert-warning').hide();
 		},
 
 		//
@@ -116,20 +116,28 @@ define([
 			this.$el.find('.progress').fadeTo(0, 0.0);
 			this.$el.find('.progress').removeClass('invisible');
 			this.$el.find('.progress').fadeTo(1000, 1.0);
+
+			if (this.model.has('external_url')) {
+				var message = "Cloning repository";
+			} else {
+				var message = "Uploading";
+			}
+			
+			this.$el.find('.bar-message').text(message);
 		},
 
 		resetProgressBar: function() {
 			this.$el.find('.bar').width('0%');
-			this.$el.find('.bar-text').text('');
+			this.$el.find('.bar-message').text('');
 			this.$el.find('.progress').fadeTo(1000, 0.0);
 		},
 
-		showProgressPercent: function(percentage) {
-
-			// Progress from 0 to 1
-			//
-			this.$el.find('.bar').width(percentage * 100 + '%');
-			this.$el.find('.bar-text').text("Uploading " + Math.ceil(percentage * 100) + "%");
+		showProgressPercent: function(progress) {
+			if (progress > 0 && progress < 1) {
+				var percentage = Math.ceil(progress * 100) + '%';
+				this.$el.find('.bar').width(percentage);
+				this.$el.find('.bar-percentage').text(percentage);
+			}
 		},
 
 		//

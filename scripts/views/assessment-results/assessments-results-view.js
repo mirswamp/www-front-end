@@ -13,7 +13,7 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2017 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2018 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 define([
@@ -35,8 +35,9 @@ define([
 	'views/dialogs/error-view',
 	'views/assessment-results/assessment-runs/filters/assessment-runs-filters-view',
 	'views/assessment-results/assessment-runs/select-list/select-assessment-runs-list-view',
+	'views/assessment-results/native-viewer/native-viewer-view',
 	'views/widgets/selectors/version-filter-selector-view'
-], function($, _, Backbone, Marionette, Template, Registry, Config, Project, RunRequest, Projects, AssessmentRuns, ExecutionRecords, ScheduledRuns, ConfirmView, NotifyView, ErrorView, AssessmentRunsFiltersView, SelectAssessmentRunsListView, VersionFilterSelectorView) {
+], function($, _, Backbone, Marionette, Template, Registry, Config, Project, RunRequest, Projects, AssessmentRuns, ExecutionRecords, ScheduledRuns, ConfirmView, NotifyView, ErrorView, AssessmentRunsFiltersView, SelectAssessmentRunsListView, NativeViewerView, VersionFilterSelectorView) {
 	return Backbone.Marionette.LayoutView.extend({
 
 		//
@@ -376,8 +377,15 @@ define([
 			var executionRecords = this.getSelected();
 			var assessmentResultUuids = executionRecords && executionRecords.length > 0? executionRecords.getAttributes('assessment_result_uuid').join(',') : 'none';
 			var viewer = this.getSelectedViewer();
+			var useNativeViewer = (viewer && viewer.get('name').toLowerCase().indexOf('native') != -1);
 			var projectUuid = this.getAssesmentRunProjectUuid();
-			return Registry.application.getURL() + '#results/' + assessmentResultUuids + '/viewer/' + (viewer? viewer.get('viewer_uuid') : '') + '/project/' + projectUuid;
+			var url = Registry.application.getURL() + '#results/' + assessmentResultUuids + '/viewer/' + (viewer? viewer.get('viewer_uuid') : '') + '/project/' + projectUuid;
+
+			if (useNativeViewer) {
+				return url + '?to=' + NativeViewerView.itemsPerPage;
+			} else {
+				return url;
+			}
 		},
 
 		getAutoRefresh: function() {
@@ -809,7 +817,8 @@ define([
 				for (var i = 0; i < executionRecords.length; i++) {
 					var executionRecord = executionRecords[i];
 					var options = 'scrollbars=yes,directories=yes,titlebar=yes,toolbar=yes,location=yes';
-					var url = Registry.application.getURL() + '#results/' + executionRecord.get('assessment_result_uuid') + '/viewer/' + viewer.get('viewer_uuid') + '/project/' + executionRecord.get('project_uuid');
+					var queryString = '?to=' + NativeViewerView.itemsPerPage;
+					var url = Registry.application.getURL() + '#results/' + executionRecord.get('assessment_result_uuid') + '/viewer/' + viewer.get('viewer_uuid') + '/project/' + executionRecord.get('project_uuid') + queryString;
 					var target = '_blank';
 					var replace = false;
 

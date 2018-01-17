@@ -17,40 +17,45 @@
 	<ul class="nav nav-pills nav-justified">
 		<% if (showHome) { %>
 		<li<% if (nav == 'home') {%> class="active" <% } %>>
-			<a id="home" href="#"><i class="fa fa-home"></i>Home</a>
+			<a href="#home"><i class="fa fa-home"></i><label class="hidden-xxs">Home</label></a>
 		</li>
 		<% } %>
 
 		<li<% if (nav == 'packages') {%> class="active" <% } %>>
-			<a id="packages"><i class="fa fa-gift"></i><label class="hidden-xxs">Packages</label></a>
+			<a href="#packages"><i class="fa fa-gift"></i><label class="hidden-xxs">Packages</label></a>
 		</li>
 
 		<li<% if (nav == 'tools') {%> class="active" <% } %> style="display:none">
-			<a id="tools"><i class="fa fa-wrench"></i><label class="hidden-xxs">Tools</label></a>
+			<a href="#tools"><i class="fa fa-wrench"></i><label class="hidden-xxs">Tools</label></a>
 		</li>
 
 		<li<% if (nav == 'assessments') {%> class="active" <% } %>>
-			<a id="assessments"><i class="fa fa-check"></i><label class="hidden-xxs">Assessments</label></a>
+			<a href="#assessments"><i class="fa fa-check"></i><label class="hidden-xxs">Assessments</label></a>
 		</li>
+
 		<li<% if (nav == 'results') {%> class="active" <% } %>>
-			<a id="results"><i class="fa fa-bug"></i><label class="hidden-xxs">Results</label></a></li>
+			<a href="#results"><i class="fa fa-bug"></i><label class="hidden-xxs">Results</label></a>
+		</li>
+
 		<li<% if (nav == 'runs') {%> class="active" <% } %>>
-			<a id="runs"><i class="fa fa-bus"></i><label class="hidden-xxs">Runs</label></a>
+			<a href="#run-requests"><i class="fa fa-bus"></i><label class="hidden-xxs">Runs</label></a>
 		</li>
 		
 		<li<% if (nav == 'projects') {%> class="active" <% } %>>
-			<a id="projects"><i class="fa fa-folder-open"></i><label class="hidden-xxs">Projects</label></a>
+			<a href="#projects"><i class="fa fa-folder-open"></i><label class="hidden-xxs">Projects</label></a>
 		</li>
+
 		<li<% if (nav == 'events') {%> class="active" <% } %>>
-			<a id="events"><i class="fa fa-bullhorn"></i><label class="hidden-xxs">Events</label></a>
+			<a href="#events?project=any"><i class="fa fa-bullhorn"></i><label class="hidden-xxs">Events</label></a>
 		</li>
 		
 		<% if (isAdmin) { %>
 		<li<% if (nav == 'settings') {%> class="active" <% } %>>
-			<a id="settings"><i class="fa fa-gears"></i><label class="hidden-xxs">Settings</label></a>
+			<a href="#settings"><i class="fa fa-gears"></i><label class="hidden-xxs">Settings</label></a>
 		</li>
+
 		<li<% if (nav == 'overview') {%> class="active" <% } %>>
-			<a id="overview"><i class="fa fa-eye"></i><label class="hidden-xxs">Overview</label></a>
+			<a href="#overview"><i class="fa fa-eye"></i><label class="hidden-xxs">Overview</label></a>
 		</li>
 		<% } %>
 	</ul>

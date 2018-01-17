@@ -7,7 +7,7 @@
 |        This defines the about/information view of the application.           |
 |                                                                              |
 |******************************************************************************|
-|              Copyright (c) 2015 - Morgridge Institute for Research           |
+|        Copyright (C) 2012-2018 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 

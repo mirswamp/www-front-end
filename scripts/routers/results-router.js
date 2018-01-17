@@ -12,7 +12,7 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2017 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2018 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 define([
@@ -88,6 +88,20 @@ define([
 			});
 		},
 
+		showProgress: function(options) {
+			var self = this;
+			require([
+				'jquery',
+				'underscore',
+				'text!templates/viewers/progress.tpl',
+				'registry',
+			], function ($, _, Template, Registry) {
+				Registry.application.showPage(new Backbone.Marionette.ItemView({
+					template: _.template(Template, options)
+				}));
+			});
+		},
+
 		//
 		// assessment results route handlers
 		//
@@ -120,6 +134,8 @@ define([
 						// callbacks
 						//
 						success: function(data) {
+							self.gotResults = true;
+
 							if (data.results_status === 'SUCCESS') {
 
 								// display results in new window
@@ -127,17 +143,14 @@ define([
 								self.showResultsData(data);
 							} else if(data.results_status === 'LOADING') {
 
-								// display viewer status and call again until ready
-								//
-								var template = _.template(Template, {
-									viewer_status: data.results_viewer_status
-								});
-
 								// don't redraw if same status
 								//
-								if (template != lastStatus) {
-									$('body').html(template);
-									lastStatus = template;
+								if (data.results_viewer_status != lastStatus) {
+									self.showProgress({
+										title: 'Preparing Results',
+										status: data.results_viewer_status
+									});
+									lastStatus = data.results_viewer_status;
 								}
 
 								// re-fetch without launching the viewer
@@ -187,17 +200,14 @@ define([
 								self.showResultsData(data);
 							} else if(data.results_status === 'LOADING') {
 
-								// display viewer status and call again until ready
+								// redraw if status changes
 								//
-								var template = _.template(Template, {
-									viewer_status: data.results_viewer_status
-								});
-
-								// don't redraw if same status
-								//
-								if (template != lastStatus) {
-									$('body').html(template);
-									lastStatus = template;
+								if (data.results_viewer_status != lastStatus) {
+									self.showProgress({
+										title: 'Preparing Results',
+										status: data.results_viewer_status
+									});
+									lastStatus = data.results_viewer_status;
 								}
 
 								// re-fetch without launching the viewer
@@ -232,6 +242,17 @@ define([
 					assessmentResults.fetchInstanceStatus(viewerInstanceUuid, options);
 				};
 
+				// show loading page if results take longer than 1 second to load
+				//
+				window.setTimeout(function() {
+					if (!self.gotResults) {
+						self.showProgress({
+							title: 'Preparing Results',
+							status: 'fetching results...'
+						});
+					}
+				}, 1000);
+				
 				// start refreshing
 				//
 				getResults();
@@ -240,52 +261,112 @@ define([
 
 		showResultsData: function(data) {
 			if (data.results) {
-
-				// display results in formatted page view
-				//
-				require([
-					'registry'
-				], function (Registry) {
-					Registry.application.showContent({
-						nav1: 'home',
-						nav2: 'results', 
-
-						// callbacks
-						//
-						done: function(view) {
-
-							// insert results into DOM
-							//
-							view.$el.find('.content').append($(data.results));
-
-							// add handler for anchor clicks
-							//
-							view.$el.find('.content').find('a').on('click', function(event) {
-								var target = $(event.target).attr('href');
-								if (target.startsWith('#')) {
-									var element = view.$el.find('.content').find(target);
-									event.preventDefault();
-									var offset = element.position().top - 60;
-									$(document.body).animate({
-										'scrollTop': offset
-									}, 500);
-								}
-							});
-
-							// call window onload, if there is one
-							//
-							if (window.onload) {
-								window.onload();
-							}
-						}
-					});
-				});
+				if (typeof data.results == 'object') {
+					this.showJsonResults(data.results);
+				} else {
+					this.showHtmlResults(data.results);
+				}
 			} else if (data.results_url) {
 
 				// download results from url
 				//
 				window.location = data.results_url;
 			}
+		},
+
+		showJsonResults: function(json) {
+			require([
+				'registry',
+				'views/assessment-results/native-viewer/native-viewer-view'
+			], function (Registry, NativeViewerView) {
+
+				// show native viewer
+				//
+				Registry.application.showMain(
+					new NativeViewerView({
+						model: new Backbone.Model(json)
+					})
+				);
+
+				/*
+				Registry.application.showContent({
+					nav1: 'home',
+					nav2: 'results', 
+
+					// callbacks
+					//
+					done: function(view) {
+
+						// insert results into DOM
+						//
+						view.$el.find('.content').append('JSON!!');
+
+						// add handler for anchor clicks
+						//
+						view.$el.find('.content').find('a').on('click', function(event) {
+							var target = $(event.target).attr('href');
+							if (target.startsWith('#')) {
+								var element = view.$el.find('.content').find(target);
+								event.preventDefault();
+								var offset = element.position().top - 60;
+								$(document.body).animate({
+									'scrollTop': offset
+								}, 500);
+							}
+						});
+
+						// call window onload, if there is one
+						//
+						if (window.onload) {
+							window.onload();
+						}
+					}
+				});
+				*/
+			});
+		},
+
+		showHtmlResults: function(html) {
+			require([
+				'registry'
+			], function (Registry) {
+
+				// display results in formatted page view
+				//
+				Registry.application.showContent({
+					nav1: 'home',
+					nav2: 'results', 
+
+					// callbacks
+					//
+					done: function(view) {
+
+						// insert results into DOM
+						//
+						view.$el.find('.content').append($(html));
+
+						// add handler for anchor clicks
+						//
+						view.$el.find('.content').find('a').on('click', function(event) {
+							var target = $(event.target).attr('href');
+							if (target.startsWith('#')) {
+								var element = view.$el.find('.content').find(target);
+								event.preventDefault();
+								var offset = element.position().top - 60;
+								$(document.body).animate({
+									'scrollTop': offset
+								}, 500);
+							}
+						});
+
+						// call window onload, if there is one
+						//
+						if (window.onload) {
+							window.onload();
+						}
+					}
+				});
+			});
 		},
 
 		showAssessmentsResults: function(queryString) {

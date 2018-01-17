@@ -12,7 +12,7 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2016 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2018 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 /* 
  * sortable table styles
@@ -53,7 +53,7 @@ table.tablesorter thead tr .headerSortUp {
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2016 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2018 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 /*
 @darkGold: DarkGoldenRod;
@@ -75,7 +75,7 @@ table.tablesorter thead tr .headerSortUp {
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2016 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2018 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 @font-face {
   font-family: 'TradeGothic';
@@ -99,7 +99,7 @@ table.tablesorter thead tr .headerSortUp {
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2016 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2018 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 body,
 input,
@@ -310,7 +310,7 @@ pre {
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2016 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2018 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 div.datetime {
   /*
@@ -379,7 +379,7 @@ div.datetime .year::after {
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2016 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2018 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 body {
   background-color: #f7f7f7;
@@ -618,7 +618,7 @@ a .photo {
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2016 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2018 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 .btn {
   font-size: 16px;
@@ -773,7 +773,7 @@ button.ssh {
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2016 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2018 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 .primary i {
   color: white;
@@ -922,7 +922,7 @@ i.normal {
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2016 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2018 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 ::-webkit-scrollbar {
   width: 14px;
@@ -955,7 +955,7 @@ i.normal {
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2016 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2018 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 a {
   color: #998342;
@@ -1112,9 +1112,11 @@ a:focus {
 .nav > li > a:focus label {
   color: white;
 }
+/*
 .nav > li > a:focus {
-  border: 1px solid #bfa452;
+	border: 1px solid @primaryBorderColor;
 }
+*/
 #header .nav > li > a {
   color: #bfa452;
   text-shadow: none;
@@ -1201,7 +1203,7 @@ ul.nav li.dropdown:hover > ul.dropdown-menu {
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2016 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2018 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 .dashboard {
   margin-top: 20px;
@@ -1283,7 +1285,7 @@ ul.nav li.dropdown:hover > ul.dropdown-menu {
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2016 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2018 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 #main .navbar.container {
   background-color: transparent;
@@ -1369,7 +1371,7 @@ ul.nav li.dropdown:hover > ul.dropdown-menu {
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2016 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2018 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 .sidebar {
   background-color: #f7f7f7;
@@ -1396,6 +1398,12 @@ ul.nav li.dropdown:hover > ul.dropdown-menu {
   box-shadow: none;
   border: 2px solid #e7e7e7;
   border-radius: 5px;
+}
+.sidebar .tile.selected i {
+  color: white;
+}
+.sidebar .tile:not(.selected):not(:hover) i {
+  color: #58585b;
 }
 .sidebar label {
   margin: 0;
@@ -1454,7 +1462,7 @@ ul.nav li.dropdown:hover > ul.dropdown-menu {
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2016 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2018 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 .nav-tabs {
   margin-top: 10px;
@@ -1552,7 +1560,7 @@ ul.nav li.dropdown:hover > ul.dropdown-menu {
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2016 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2018 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 .tag {
   border-radius: 5px;
@@ -1620,7 +1628,7 @@ ul.nav li.dropdown:hover > ul.dropdown-menu {
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2016 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2018 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 .badge {
   font-family: "Gill Sans MT", "Gill Sans", Calibri, sans-serif;
@@ -1679,7 +1687,7 @@ ul.nav li.dropdown:hover > ul.dropdown-menu {
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2016 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2018 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 .nav-pills li {
   cursor: pointer;
@@ -1783,7 +1791,7 @@ ul.nav li.dropdown:hover > ul.dropdown-menu {
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2016 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2018 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 .alert-error label {
   color: #c2002f;
@@ -1816,7 +1824,7 @@ ul.nav li.dropdown:hover > ul.dropdown-menu {
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2016 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2018 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 textarea,
 input[type="text"],
@@ -2095,7 +2103,7 @@ input[type="time"] {
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2016 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2018 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 label.error {
   font-weight: bold;
@@ -2146,7 +2154,7 @@ label.error.valid {
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2016 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2018 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 legend {
   width: auto;
@@ -2182,7 +2190,7 @@ legend + .form-group {
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2016 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2018 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 table {
   width: 100%;
@@ -2351,7 +2359,7 @@ table tr:not(.first) td.select-group input {
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2016 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2018 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 ul.initial li {
   display: block;
@@ -2378,7 +2386,7 @@ ul.initial li h3 {
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2016 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2018 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 .modal-backdrop,
 .modal-backdrop.fade.in {
@@ -2480,7 +2488,7 @@ ul.initial li h3 {
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2016 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2018 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 .directory .expander {
   width: 10px;
@@ -2509,6 +2517,24 @@ ul.initial li h3 {
   margin-left: 25px;
   padding: 0;
 }
+.directory .file {
+  margin-left: 20px;
+}
+.directory .file i {
+  color: #bfa452;
+  position: relative;
+  margin-left: 5px;
+  margin-right: 5px;
+}
+.directory .file .size {
+  float: right;
+}
+.directory .selected.file {
+  background-color: #f2e3b6;
+}
+.directory .build.file {
+  color: #998342;
+}
 /*
 .root.directory {
 	> .info {
@@ -2519,29 +2545,11 @@ ul.initial li h3 {
 	}
 }
 */
-.file {
-  margin-left: 20px;
-}
-.file i {
-  color: #bfa452;
-  position: relative;
-  margin-left: 5px;
-  margin-right: 5px;
-}
-.file .size {
-  float: right;
-}
-.selected.file {
-  background-color: #f2e3b6;
-}
 .directory > .info {
   display: block;
 }
 .selected.directory > .info {
   background-color: #f2e3b6;
-}
-.build.file {
-  color: #998342;
 }
 /******************************************************************************\
 |                                                                              |
@@ -2557,7 +2565,7 @@ ul.initial li h3 {
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2016 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2018 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 span[data-toggle='tooltip'] {
   display: inline;
@@ -2601,7 +2609,7 @@ span[data-toggle='tooltip'] {
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2016 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2018 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 .popover-title {
   color: white;
@@ -2615,6 +2623,13 @@ span[data-toggle='tooltip'] {
 }
 .popover .popover-content {
   color: #58585b;
+  max-height: 200px;
+  overflow: auto;
+  word-break: normal;
+}
+table .popover {
+  min-width: 400px;
+  white-space: pre-wrap;
 }
 .popover.right .arrow {
   border-right-color: #bfa452;
@@ -2654,7 +2669,7 @@ span[data-toggle='tooltip'] {
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2016 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2018 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 .panel-heading {
   background: white;
@@ -2752,7 +2767,7 @@ form .accordion {
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2016 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2018 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 .welcome .main {
   padding: 0px;
@@ -2851,7 +2866,7 @@ form .accordion {
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2016 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2018 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 #events-list td.info {
   padding: 20px;
@@ -2873,14 +2888,25 @@ form .accordion {
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2016 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2018 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
-.progress .bar {
-  text-align: left;
-  min-width: 9em;
+.progress {
+  position: relative;
 }
-.progress .bar .bar-text {
-  margin-left: 2em;
+.progress .bar,
+.progress .bar-text {
+  position: absolute;
+  top: 0;
+  height: 20px;
+}
+.progress .bar .bar-message,
+.progress .bar-text .bar-message,
+.progress .bar .bar-percentage,
+.progress .bar-text .bar-percentage {
+  margin-left: 15px;
+}
+.progress .bar {
+  background: lightgrey;
 }
 .progress.invisible {
   display: none;
@@ -2899,7 +2925,7 @@ form .accordion {
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2016 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2018 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 /* Modified from http://codepen.io/filipekiss/pen/LrCFe for use as a SPAN */
 .loading-flash span {
@@ -2958,7 +2984,7 @@ form .accordion {
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2016 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2018 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 .flag {
   width: 16px;
@@ -3738,7 +3764,7 @@ form .accordion {
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2016 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2018 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 .gem-info .comment {
   color: #939597;
@@ -3884,7 +3910,7 @@ form .accordion {
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2016 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2018 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 .key-value-pair {
   display: table;
@@ -3918,42 +3944,21 @@ form .accordion {
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2016 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2018 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 table.results {
   width: 100%;
 }
-table.results td.priority {
-  width: 1%;
-}
-table.results td.group {
-  width: 5%;
-  word-break: break-all;
-}
-table.results td.code {
-  width: 10%;
-  word-break: break-all;
-}
-table.results td.file {
-  width: 20%;
-  word-break: break-all;
-}
-table.results td.line,
-table.results td.col {
-  width: 2%;
-}
-table.results td.message {
-  width: 45%;
-  word-break: break-all;
-}
-table.results td.resolution {
+table.results tbody td.file {
   width: 40%;
   word-break: break-all;
 }
-table.results td.line,
-table.results td.col,
-table.results td.priority {
-  text-align: center;
+table.results tbody td.line-number,
+table.results tbody td.column-number {
+  width: 5%;
+}
+table.results tbody td.code {
+  word-break: break-all;
 }
 table.summary {
   width: 100%;
