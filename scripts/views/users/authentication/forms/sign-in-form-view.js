@@ -96,7 +96,7 @@ define([
 					// check for bad request
 					//
 					} else if (response.status == 400) {
-						self.showWarning("Login failed. Please clear your cookies for mir-swamp.org and try again.");
+						self.showWarning("Login failed. Please clear your cookies and try again.");
 					
 					// check for conflict
 					//
@@ -138,7 +138,7 @@ define([
 					// check for empty response
 					//
 					} else if (response.responseText == '') {
-						self.showWarning("Log in request failed. It appears that you may have lost internet connectivity.  Please check your internet connection and try again.");
+						self.showWarning("Log in request failed. Can not connect to server.");
 					
 					// unknown error
 					//

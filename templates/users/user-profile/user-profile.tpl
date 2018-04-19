@@ -66,7 +66,7 @@
 		<div class="form-group">
 			<label class="form-label">Creation date</label>
 			<div class="controls">
-				<%= dateToHTML(model.getCreateDate()) %>
+				<%= datetimeToHTML(model.getCreateDate()) %>
 			</div>
 		</div>
 		<% } %>
@@ -75,7 +75,7 @@
 		<div class="form-group">
 			<label class="form-label">Last modified date</label>
 			<div class="controls">
-				<%= dateToHTML(model.getUpdateDate()) %>
+				<%= datetimeToHTML(model.getUpdateDate()) %>
 			</div>
 		</div>
 
@@ -83,7 +83,7 @@
 		<div class="form-group">
 			<label class="form-label">Previous sign in date</label>
 			<div class="controls">
-				<%= dateToHTML(model.get('penultimate_login_date')) %>
+				<%= datetimeToHTML(model.get('penultimate_login_date')) %>
 			</div>
 		</div>
 		<% } %>

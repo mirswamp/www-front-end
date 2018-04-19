@@ -86,7 +86,7 @@ define([
 			}));
 		},
 
-		handleError: function(response) {
+		handleError: function(response, options) {
 
 			// parse JSON response
 			//
@@ -153,6 +153,24 @@ define([
 
 								// callbacks
 								//
+								success: function() {
+
+									// perform callback
+									//
+									if (options && options.success) {
+										options.success();
+									}
+								},
+
+								reject: function() {
+
+									// perform callback
+									//
+									if (options && options.reject) {
+										options.reject();
+									}		
+								},
+
 								error: function(response) {
 
 									// show error dialog

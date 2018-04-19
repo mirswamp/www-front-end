@@ -16,8 +16,10 @@
 <span>
 	<% if (urls[key]) { %>
 	<a href="<%= urls[key] %>" target="_blank"><%= data[key] %></a>
-	<% } else { %>
+	<% } else if (typeof data[key] == 'string') { %>
 	<%= stringToHTML(data[key]) %>
+	<% } else { %>
+	<%= data[key] %>
 	<% } %>
 </span>
 </td>

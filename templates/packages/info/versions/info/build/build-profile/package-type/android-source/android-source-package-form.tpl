@@ -21,23 +21,14 @@
 			<% var showBuildSystem = maven_version || android_maven_plugin || build_system == 'android+gradle'; %>
 			<% var showAndroid = android_sdk_target || android_lint_target || android_redo_build; %>
 			<% var showConfigure = config_dir || config_cmd || config_opt; %>
-			<% var showBuild = build_dir || build_file || build_opt || build_target || model.isNew(); %>
+			<% var showBuild = true; %>
 			<% var showAdvanced = true; %>
 			
-			<div class="panel" id="advanced-settings-accordion"<% if (!build_system || build_system == 'no-build') { %> style="display:none" <% } %>>
+			<div id="advanced-settings" class="panel"<% if (!build_system || build_system == 'no-build') { %> style="display:none" <% } %>>
 				<div class="panel-group">
+					
 					<div class="panel-heading">
-						<label>
-						<a class="accordion-toggle" data-toggle="collapse" data-parent="#advanced-settings-accordion" href="#advanced-settings">
-							<% if (showAdvanced) { %>
-							<i class="fa fa-minus-circle"></i>
-							<% } else { %>
-							<i class="fa fa-plus-circle"></i>
-							<% } %>
-							Advanced settings
-						</a>
-						</label>
-
+						<label>Advanced settings</label>
 						<span class="tags">
 							<span class="<% if (!showBuildSystem) { %>collapsed <% } %>toggle build-system tag accordion-toggle" data-toggle="collapse" data-parent="#filters" href="#build-system-settings" data-toggle="button"<% if (!showBuildSystem) { %> style="display:none"<% } %>><i class="fa fa-tasks"></i>Build system</span>
 							<span class="<% if (!showAndroid) { %>collapsed <% } %>toggle android tag accordion-toggle" data-toggle="collapse" data-parent="#filters" href="#android-settings"><i class="fa fa-android"></i>Android</span>
@@ -45,8 +36,8 @@
 							<span class="<% if (!showBuild) { %>collapsed <% } %>toggle build tag accordion-toggle" data-toggle="collapse" data-parent="#filters" href="#build-settings"><i class="fa fa-puzzle-piece"></i>Build</span>
 						</span>
 					</div>
-					<div id="advanced-settings" class="nested accordion-body collapse<% if (showAdvanced) { %> in<% } %>">
 
+					<div class="nested">
 						<div id="build-system-settings" class="well collapse<% if (showBuildSystem) { %> in<% } %>"<% if (build_system != 'android+maven' && build_system != 'android+gradle') { %> style="display:none"<% } %>>
 							<h3><i class="fa fa-tasks"></i>Build system settings<i class="fa fa-minus-circle close accordion-toggle" data-toggle="collapse" href="#build-system-settings" /></h3>
 
@@ -207,25 +198,24 @@
 								</div>
 							</div>
 
-							<% var otherAntBuildTarget = build_system == 'android+ant' && build_target != 'release' && build_target != 'debug'; %>
-							<% var otherGradleBuildTarget = build_system == 'android+gradle' && build_target != 'compileReleaseSources' && build_target != 'compileDebugSources'; %>
-							<% var otherBuildTarget = otherAntBuildTarget || otherGradleBuildTarget; %>
+							<% if (build_system == 'android+gradle' && model.isNew()) { build_target = 'compileReleaseSources' }; %>
+							<% var otherBuildTarget = (build_system == 'android+ant' || build_system == 'android+gradle') && (build_target != 'compileReleaseSources' && build_target != 'compileDebugSources'); %>
 
 							<div class="form-group">
 								<label class="required control-label">Build target</label>
 								<div id="build-target" name="build-target" class="controls">
 
-									<select data-toggle="popover" data-placement="right" title="Build System" data-content="This is the name of the target that is created during the build."<% if (build_system != 'android+gradle' && build_system != 'android+ant') { %> style="display:none"<% } %>>
+									<select data-toggle="popover" data-placement="right" title="Build System" data-content="This is the name of the target that is created during the build."<% if (build_system != 'android+gradle' && build_system != 'android+ant') { %> style="display:none";<% } %>>
 
 										<!-- gradle build target options -->
 										<option class="gradle-settings"
 											<% if (build_system != 'android+gradle') { %> style="display:none" <% } %>
-											<% if (build_system == 'android+gradle' && build_target == 'compileReleaseSources') { %> selected <% } %>
+											<% if (build_target == 'compileReleaseSources') { %> selected <% } %>
 											value="compileReleaseSources">compileReleaseSources
 										</option>
 										<option class="gradle-settings"
 											<% if (build_system != 'android+gradle') { %> style="display:none" <% } %>
-											<% if (build_system == 'android+gradle' && build_target == 'compileDebugSources') { %> selected <% } %> 
+											<% if (build_target == 'compileDebugSources') { %> selected <% } %> 
 											value="compileDebugSources">compileDebugSources
 										</option>
 

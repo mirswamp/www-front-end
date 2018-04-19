@@ -11,7 +11,7 @@
 					<option selected value="wheels">Wheels</option>
 					<% } else { %>
 					<option value="none"></option>
-					<option <% if (build_system == 'none') { %> selected <% } %> 
+					<option <% if (!build_system || build_system == 'none') { %> selected <% } %> 
 						value="no-build">No build</option>
 					<option <% if (build_system == 'python-setuptools') { %> selected <% } %>
 						value="python-setuptools">Build with Setuptools</option>
@@ -35,31 +35,22 @@
 		</div>
 
 		<div class="form-group" <% if (isWheel) {%>style="display:none"<% } %>>
-			<% var showBuild = build_dir || build_file || build_opt || build_target || model.isNew(); %>
 			<% var showConfigure = config_dir || config_cmd || config_opt; %>
+			<% var showBuild = build_dir || build_file || build_opt || build_target; %>
 			<% var showAdvanced = true; %>
 
-			<div class="panel" id="advanced-settings-accordion" <% if (!build_system || build_system == 'none') { %> style="display:none" <% } %> >
+			<div id="advanced-settings" class="panel"<% if (!showAdvanced) { %> style="display:none" <% } %> >
 				<div class="panel-group">
-					<div class="panel-heading">
-						<label>
-						<a class="accordion-toggle" data-toggle="collapse" data-parent="#advanced-settings-accordion" href="#advanced-settings">
-							<% if (showAdvanced) { %>
-							<i class="fa fa-minus-circle"></i>
-							<% } else { %>
-							<i class="fa fa-plus-circle"></i>
-							<% } %>
-							Advanced settings
-						</a>
-						</label>
 
+					<div class="panel-heading">
+						<label>Advanced settings</label>
 						<span class="tags">
-							<span class="<% if (!showConfigure) { %>collapsed <% } %>toggle configure tag accordion-toggle" data-toggle="collapse" data-parent="#filters" href="#configure-settings"><i class="fa fa-tasks"></i>Configure</span>
-							<span class="<% if (!showBuild) { %>collapsed <% } %>toggle build tag accordion-toggle" data-toggle="collapse" data-parent="#filters" href="#build-settings"><i class="fa fa-puzzle-piece"></i>Build</span>
+							<span class="<% if (!showConfigure) { %>collapsed <% } %>toggle configure tag accordion-toggle" data-toggle="collapse" data-parent="#filters" href="#configure-settings"<% if (!build_system || build_system == 'no-build') { %> style="display:none"<% } %>><i class="fa fa-tasks"></i>Configure</span>
+							<span class="<% if (!showBuild) { %>collapsed <% } %>toggle build tag accordion-toggle" data-toggle="collapse" data-parent="#filters" href="#build-settings"<% if (!build_system || build_system == 'no-build') { %> style="display:none"<% } %>><i class="fa fa-puzzle-piece"></i>Build</span>
 						</span>
 					</div>
-					<div id="advanced-settings" class="nested accordion-body collapse<% if (showAdvanced) { %> in<% } %>">
 
+					<div class="nested">
 						<div id="configure-settings" class="well collapse<% if (showConfigure) { %> in<% } %>">
 							<h3><i class="fa fa-tasks"></i>Configure settings<i class="fa fa-minus-circle close accordion-toggle" data-toggle="collapse" href="#configure-settings" /></h3>
 
@@ -148,9 +139,8 @@
 								</div>
 							</div>
 
-							<% var buildTargetRequired = build_system != 'other' && build_system != 'none';%>
 							<div class="form-group">
-								<label class="<% if (buildTargetRequired) { %>required <% } %>control-label">Build target</label>
+								<label class="control-label">Build target</label>
 								<div id="build-target" class="controls">
 									<div class="input-group">
 										<input type="text" name="build-target" class="form-control" maxlength="200" value="<%- build_target %>">
@@ -160,7 +150,18 @@
 									</div>
 								</div>
 							</div>
+						</div>
+					</div>
 
+					<div class="form-group">
+						<label class="control-label">Exclude paths</label>
+						<div class="controls">
+							<div class="input-group">
+								<input type="text" class="form-control" id="exclude-paths" maxlength="1000" value="<%- exclude_paths %>">
+								<div class="input-group-addon">
+									<i class="active fa fa-question-circle" data-toggle="popover" data-placement="top" data-container="body" title="Build path" data-content="A comma separated list of paths to exclude from the build relative to the package path."></i>
+								</div>
+							</div>
 						</div>
 					</div>
 				</div>
@@ -168,10 +169,3 @@
 		</div>
 	</fieldset>
 </form>
-
-
-
-
-
-
-

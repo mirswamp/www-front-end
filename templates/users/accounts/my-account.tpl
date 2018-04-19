@@ -23,6 +23,12 @@
 	<li id="passwords">
 		<a><i class="fa fa-key"></i>Application Passwords</a>
 	</li>
+
+	<% if (config['classes_enabled']) { %>
+	<li id="classes">
+		<a><i class="fa fa-mortar-board"></i>Classes</a>
+	</li>
+	<% } %>
 </ul>
 
 <div id="user-profile">

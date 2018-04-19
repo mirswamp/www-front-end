@@ -61,7 +61,7 @@ define([
 		},
 
 		isPlatformUserSelectable: function() {
-			return this.get('platform_user_selectable') == '1';
+			return this.get('platform_user_selectable') != false;
 		},
 
 		getPackageType: function() {

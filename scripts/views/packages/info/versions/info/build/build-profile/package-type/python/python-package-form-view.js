@@ -75,34 +75,6 @@ define([
 			jQuery.validator.addMethod('buildSystemRequired', function (value) {
 				return (value != 'none');
 			}, "Please specify a build system.");
-
-			// add custom validation rule
-			//
-			jQuery.validator.addMethod('otherBuildCommandRequired', function (value) {
-				if (self.getBuildSystem() == 'other') {
-					return self.getBuildCommand('other') != '';
-				} else {
-					return true;
-				}
-			}, "Please specify a build command.");
-
-			jQuery.validator.addMethod('buildTargetRequired', function (value) {
-				var hasBuildTarget = self.getBuildTarget() != '';
-
-				// show build settings, if target not specified
-				//
-				if (!hasBuildTarget) {
-					self.$el.find("#build-settings").collapse('show');
-				}
-				
-				// make build target mandatory for some build systems
-				//
-				if (_.contains(['other', 'none'], self.getBuildSystem())) {
-					return true;
-				} else {
-					return hasBuildTarget;
-				}
-			}, "Please specify a build target.");
 		},
 
 		//
@@ -146,36 +118,10 @@ define([
 
 		setBuildSystemDefaults: function(buildSystem) {
 
-			// set default build file
-			//
-			switch (buildSystem) {
-				case 'distutils':
-				case 'python-setuptools':
-				case 'wheels':
-					this.$el.find('#build-file').val('setup.py');
-					break;
-				default:
-					this.$el.find('#build-file').val('');
-					break;
-			}
-
 			// set default build command
 			//
 			var buildCommand = this.buildCommands[buildSystem];
 			this.$el.find('#build-command').val(buildCommand);
-
-			// set default build target
-			//
-			switch (buildSystem) {
-				case 'distutils':
-				case 'python-setuptools':
-				case 'wheels':
-					this.$el.find('#build-target input').val('build');
-					break;
-				default:
-					this.$el.find('#build-target input').val('');
-					break;
-			}
 		},
 
 		//
@@ -226,8 +172,31 @@ define([
 			return this.$el.find('#build-system option[value=' + buildSystem + ']').length != 0;
 		},
 
+		hasConfigureSettings: function(buildSystem) {
+			var configurePath = this.$el.find('#configure-path').val();
+			var configureCommand = this.$el.find('#configure-command').val();
+			var configureOptions = this.$el.find('#configure-options').val();
+			return configurePath != '' || 
+				configureCommand != '' || 
+				configureOptions != '';
+		},
+
 		hasBuildSettings: function(buildSystem) {
-			return (buildSystem != 'no-build') && (buildSystem != 'none');
+			//return (buildSystem != 'no-build') && (buildSystem != 'none');
+			var buildPath = this.$el.find('#build-path').val();
+			var excludePaths = this.$el.find('#exclude-paths').val();
+			var buildFile = this.$el.find('#build-file').val();
+			var buildOptions = this.$el.find('#build-options').val();
+			var buildTarget = this.getBuildTarget();
+			return buildPath != '' || 
+				excludePaths != '' || 
+				buildFile != '' || 
+				buildOptions != '' || 
+				buildTarget != '';
+		},
+
+		hasExcludePaths: function() {
+			return this.$el.find('#exclude_paths').val() != '';
 		},
 
 		getBuildCommand: function(buildSystem) {
@@ -269,16 +238,64 @@ define([
 			this.validator = this.validate();
 		},
 
-		showAdvancedSettings: function() {
-			this.$el.find('#advanced-settings-accordion').show();
+		//
+		// configure settings methods
+		//
+
+		showConfigureSettings: function() {
+			this.$el.find('.tag[href="#configure-settings"]').show();
+
+			// expand / collapse settings
+			//
+			if (this.hasConfigureSettings()) {
+				this.$el.find('#configure-settings').collapse('show');
+			} else {
+				this.$el.find('#configure-settings').collapse('hide');
+			}
 		},
 
-		hideAdvancedSettings: function() {
-			this.$el.find('#advanced-settings-accordion').hide();
+		hideConfigureSettings: function() {
+			this.$el.find('.tag[href="#configure-settings"]').hide();
+			this.$el.find('#configure-settings').collapse('hide');
 		},
+
+		//
+		// build settings methods
+		//
+
+		showBuildSettings: function() {
+			this.$el.find('.tag[href="#build-settings"]').show();
+
+			// expand / collapse settings
+			//
+			if (this.hasBuildSettings()) {
+				this.$el.find('#build-settings').collapse('show');
+			} else {
+				this.$el.find('#build-settings').collapse('hide');
+			}
+		},
+
+		hideBuildSettings: function() {
+			this.$el.find('.tag[href="#build-settings"]').hide();
+			this.$el.find('#build-settings').collapse('hide');
+		},
+
+		//
+		// build system configuration
+		//
 
 		showBuildSystem: function(buildSystem) {
 
+			// expand / collapse build settings
+			//
+			if (buildSystem && buildSystem != 'none') {
+				this.showConfigureSettings();
+				this.showBuildSettings();
+			} else {
+				this.hideConfigureSettings();
+				this.hideBuildSettings();
+			}
+			
 			// show appropriate fields
 			//
 			if (buildSystem == 'other') {
@@ -306,14 +323,6 @@ define([
 				rules: {
 					'build-system': {
 						buildSystemRequired: true
-					},
-
-					'other-build-command': {
-						otherBuildCommandRequired: true
-					},
-
-					'build-target': {
-						buildTargetRequired: true
 					}
 				}
 			});
@@ -343,6 +352,7 @@ define([
 			// build settings
 			//
 			var buildPath = this.$el.find('#build-path').val();
+			var excludePaths = this.$el.find('#exclude-paths').val();
 			var buildFile = this.$el.find('#build-file').val();
 			var buildOptions = this.$el.find('#build-options').val();
 			var buildTarget = this.getBuildTarget();
@@ -365,6 +375,7 @@ define([
 				// build attributes
 				//
 				'build_dir': buildPath != ''? buildPath : null,
+				'exclude_paths': excludePaths != ''? excludePaths : null,
 				'build_file': buildFile != ''? buildFile : null,
 				'build_opt': buildOptions != ''? buildOptions : null,
 				'build_target': buildTarget != ''? buildTarget : null
@@ -403,19 +414,11 @@ define([
 
 		onChangeBuildSystem: function(event) {
 			var buildSystem = this.getBuildSystem();
-			var hasBuildSettings = this.hasBuildSettings(buildSystem);
 
 			// set defaults
 			//
 			this.setBuildSystemDefaults(buildSystem);
-
-			// show / hide advanced settings
-			//
-			if (hasBuildSettings) {
-				this.showAdvancedSettings();
-			} else {
-				this.hideAdvancedSettings();
-			}
+			var hasBuildSettings = this.hasBuildSettings(buildSystem);
 
 			// show / hide build system info
 			//
@@ -439,14 +442,6 @@ define([
 				} else {
 					this.options.parent.options.parent.showNotice(this.noBuildMessage);
 				}			
-			}
-
-			// indicate whether or not build target is required
-			//
-			if (buildSystem != 'other' && buildSystem != 'none') {
-				this.$el.find('#build-target').closest('.form-group').find('label').addClass('required');
-			} else {
-				this.$el.find('#build-target').closest('.form-group').find('label').removeClass('required');
 			}
 			
 			// perform callback

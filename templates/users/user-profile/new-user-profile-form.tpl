@@ -120,8 +120,29 @@
 				</div>
 			</div>
 		</div>
+
+		<% if (classes && classes.length > 0) { %>
+		<div class="form-group">
+			<label class="control-label">Enrolled in class</label>
+			<div class="controls">
+				<select id="class-code">
+					<option value="none">None</option>
+					<% for (var i = 0; i < classes.length; i++) { %>
+					<option value="<%= classes.at(i).get('class_code') %>"><%= classes.at(i).get('class_code') %></option>
+					<% } %>
+				</select>
+
+				<i class="active fa fa-question-circle" data-toggle="popover" data-placement="top" data-container="body" title="Enrolled in class" data-content="This is the name of the class that you are enrolled in that is using the SWAMP, if applicable."></i>
+			</div>
+		</div>
+		<% } %>
 	</fieldset>
 	<% } %>
+
+	<br />
+	<div class="alert alert-info" style="display:none">
+		<label>Note: </label><span class="message">By enrolling in this class, you agree to sharing your activity and account information in the SWAMP with your instructor.  At the end of the class, you may unenroll yourself from the class through your account profile.  Access your account profile by clicking on your username.</span>
+	</div>
 	
 	<div align="right">
 		<label><span class="required"></span>Fields are required</label>

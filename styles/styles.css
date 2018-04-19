@@ -404,23 +404,11 @@ body {
 }
 .banner {
   max-width: 500px;
-  text-align: center;
   margin-left: auto;
   margin-right: auto;
-  margin-bottom: 20px;
 }
 #icon {
   max-width: 50%;
-}
-@media (max-width: 992px) {
-  .banner {
-    max-width: 400px;
-  }
-}
-@media (max-width: 768px) {
-  .banner {
-    max-width: 300px;
-  }
 }
 @media (max-width: 480px) {
   #dashboard #icon {
@@ -437,6 +425,7 @@ body {
   }
 }
 .tagline {
+  text-align: center;
   margin: 10px;
 }
 #content .container {
@@ -2214,6 +2203,7 @@ table thead tr.tablesorter {
 table thead tr th,
 table thead tr.tablesorter th {
   color: white;
+  white-space: nowrap;
 }
 table thead tr th.headerSortDown,
 table thead tr.tablesorter th.headerSortDown,
@@ -2224,7 +2214,6 @@ table thead tr.tablesorter th.headerSortUp {
 table th {
   color: white;
   font-size: 14px;
-  white-space: nowrap;
   text-align: center;
 }
 table th,
@@ -2623,12 +2612,11 @@ span[data-toggle='tooltip'] {
 }
 .popover .popover-content {
   color: #58585b;
-  max-height: 200px;
   overflow: auto;
   word-break: normal;
 }
-table .popover {
-  min-width: 400px;
+td.code .popover {
+  min-width: 600px;
   white-space: pre-wrap;
 }
 .popover.right .arrow {
@@ -2788,20 +2776,27 @@ form .accordion {
 .welcome .header .description {
   padding-left: 10px;
 }
+.welcome #banner {
+  max-width: 350px;
+  margin: auto;
+}
+.welcome #banner table td {
+  text-align: center;
+}
 .welcome .btn {
   box-shadow: 2px 2px 10px -2px rgba(0, 0, 0, 0.5);
 }
-.welcome .row {
+.welcome .rows > .row {
   margin-left: -15px;
   margin-right: -15px;
 }
-.welcome .row > .content {
+.welcome .rows > .row > .content {
   padding-top: 0;
   padding-bottom: 0;
-  padding-left: 20px;
-  padding-right: 20px;
+  padding-left: 15px;
+  padding-right: 15px;
 }
-.welcome .column {
+.welcome .rows .column {
   position: relative;
   float: left;
   width: 50%;
@@ -2810,16 +2805,16 @@ form .accordion {
   padding-right: 15px;
 }
 @media (min-width: 768px) {
-  .welcome .column {
+  .welcome .rows .column {
     float: left;
     width: 33.33333333%;
   }
 }
-.welcome .column .well {
+.welcome .rows .column .well {
   width: 100%;
 }
 @media (max-width: 480px) {
-  .welcome .column {
+  .welcome .rows .column {
     width: 100%;
   }
 }
@@ -2829,15 +2824,17 @@ form .accordion {
 .welcome .rows .row:nth-child(odd) .well {
   background-color: white;
 }
-.welcome .row:nth-child(odd) {
+.welcome .rows > .row:nth-child(odd) {
   background-color: veryVeryLightGrey;
 }
-.welcome .row:nth-child(odd) .well {
-  background-color: #e7e7e7;
-}
-.welcome .row:first-child {
+.welcome .rows > .row:nth-child(odd) .well {
   background-color: white;
-  border-bottom: 4px solid #bfa452;
+}
+.welcome .rows > .row:first-child {
+  border-top: 4px solid #bfa452;
+}
+.welcome .rows #banner td {
+  background: #eeeeee;
 }
 .welcome .well {
   margin-left: 0;

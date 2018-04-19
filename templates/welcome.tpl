@@ -1,6 +1,6 @@
 <div class="welcome container">
 	<div class="header row">
-		<div class="col-md-7 content" align="center">
+		<div class="col-sm-7 content">
 			<div class="banner">
 				<img id="logo" class="img-responsive hidden-xxs" src="images/logos/swamp-logo-large.png" alt="logo" />
 				<div class="visible-xxs" align="center">
@@ -8,13 +8,22 @@
 					<img id="logotype" class="img-responsive" src="images/logos/swamp-logotype-large.png" alt="logotype" />					
 				</div>
 				<div class="tagline">Do It Early. Do It Often.</div>
-				<p></p>
+				<br />
 			</div>
+
+			<% if (config['stats_enabled']) { %>
+			<div id="banner"></div>
+			<% } %>
 		</div>
-		<div class="col-md-5 description">
+
+		<div class="col-sm-5 description">
+			<br />
 			<p>The Software Assurance Marketplace (SWAMP) is a service that provides continuous software assurance capabilities to developers and researchers. </p>
+
 			<p>This no-cost code analysis service is open to the public. Let the SWAMP help you to build better, safer, and more secure code today! </p>
-		
+
+			<p>Rather than spending time installing, licensing and configuring software assessment tools on your own machine, let the SWAMP do the work for you. </p>
+
 			<div class="bottom buttons" style="text-align:center">
 				<button id="sign-in" class="btn btn-primary btn-lg visible-xs-inline"><i class="fa fa-chevron-right"></i>Sign In</button>
 				<% if (!config['ldap_readonly']) { %>
@@ -23,36 +32,29 @@
 			</div>
 		</div>
 	</div>
+
 	<div class="rows">
-		<div class="row">
+		<div class="row" style="padding-bottom:25px">
 			<div class="content">
 				<h2>Get results in just three steps:</h2>
-				<p>Rather than spending time installing, licensing and configuring software assessment tools on your own machine, let the SWAMP do the work for you. </p>
-
-				<div class="row">
-					<div class="content">
-						<div class="col-sm-3">
-							<h3>1) Upload your package</h3>
-							<p>First, upload your code.  Rest assured that it will  remain <a href="https://www.swampinabox.org/doc/SWAMP-WP004-Privacy.pdf" target="_blank">private and secure</a>.</p>
-							<a href="images/screen-shots/upload-new-package-small.png" target="_blank" class="lightbox" title="Create and Upload a New Package"><image class="photo" src="images/screen-shots/upload-new-package-thumb.png" alt="upload new package screen shot" /></a>
-						</div>
-						<div class="col-sm-1"></div>
-						<div class="col-sm-3">
-							<h3>2) Run your assessment</h3>
-							<p>Next, create and run an assessment by choosing a package, tool, and platform.</p>
-							<a href="images/screen-shots/create-assessment-small.png" target="_blank" class="lightbox" title="Create and Run an Assessment"><image class="photo" src="images/screen-shots/create-assessment-thumb.png" alt="create and run an assessment screen shot" /></a>
-						</div>
-						<div class="col-sm-1"></div>
-						<div class="col-sm-3">
-							<h3>3) View your results</h3>
-							<p>Last, view your results using a native viewer or <a href="http://www.codedx.com" target="_blank">Code Dx&trade;</a> for full featured analysis.</p>
-							<a href="images/screen-shots/code-dx-results-small.png" target="_blank" class="lightbox" title="View Assessment Results"><image class="photo" src="images/screen-shots/code-dx-results-thumb.png" alt="code dx results screen shot" /></a>
-						</div>
-					</div>
+				<div class="col-sm-3">
+					<h3>1) Upload your package</h3>
+					<p>First, upload your code.  Rest assured that it will  remain <a href="https://www.swampinabox.org/doc/SWAMP-WP004-Privacy.pdf" target="_blank">private and secure</a>.</p>
+					<a href="images/screen-shots/upload-new-package-small.png" target="_blank" class="lightbox" title="Create and Upload a New Package"><image class="photo" src="images/screen-shots/upload-new-package-thumb.png" alt="upload new package screen shot" /></a>
 				</div>
-				<br />
+				<div class="col-sm-1"></div>
+				<div class="col-sm-3">
+					<h3>2) Run your assessment</h3>
+					<p>Next, create and run an assessment by choosing a package, tool, and platform.</p>
+					<a href="images/screen-shots/create-assessment-small.png" target="_blank" class="lightbox" title="Create and Run an Assessment"><image class="photo" src="images/screen-shots/create-assessment-thumb.png" alt="create and run an assessment screen shot" /></a>
+				</div>
+				<div class="col-sm-1"></div>
+				<div class="col-sm-3">
+					<h3>3) View your results</h3>
+					<p>Last, view your results using a native viewer or <a href="http://www.codedx.com" target="_blank">Code Dx&trade;</a> for full featured analysis.</p>
+					<a href="images/screen-shots/code-dx-results-small.png" target="_blank" class="lightbox" title="View Assessment Results"><image class="photo" src="images/screen-shots/code-dx-results-thumb.png" alt="code dx results screen shot" /></a>
+				</div>
 			</div>
-			<br />
 		</div>
 
 		<div class="row">

@@ -8,7 +8,7 @@
 		<label class="<% if (user_info[key].required) { %>required <% } %>control-label"><%= key.toTitleCase() %></label>
 		<div class="controls">
 			<div class="input-group">
-				<input type="text" class="<% if (user_info[key].required) { %>required <% } %>form-control" name="name" id="name" maxlength="100" class="required"<% if (user_info[key].placeholder) { %> placeholder="<%= user_info[key].placeholder %>"<% } %> >
+				<input type="text" class="<% if (user_info[key].required) { %>required <% } %>form-control" name="<%= key %>" maxlength="100" class="required"<% if (user_info[key].placeholder) { %> placeholder="<%= user_info[key].placeholder %>"<% } %> >
 				<% if (user_info[key].help) { %>
 				<div class="input-group-addon">
 					<i class="active fa fa-question-circle" data-toggle="popover" data-placement="top" data-container="body" title="<%= key.toTitleCase() %>" data-content="<%= user_info[key].help %>"></i>

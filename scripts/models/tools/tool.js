@@ -120,6 +120,69 @@ define([
 			return this.has('policy_code');
 		},
 
+		confirmPolicy: function(options) {
+			var self = this;
+
+			// fetch tool policy text
+			//
+			this.fetchPolicy({
+
+				// callbacks
+				//
+				success: function(policy) {
+
+					// show confirm tool policy dialog
+					//
+					self.confirmToolPolicy({
+						policy_code: self.get('policy_code'),
+						policy: policy,
+
+						// callbacks
+						//
+						success: function() {
+
+							// perform callback
+							//
+							if (options && options.success) {
+								options.success();
+							}
+						},
+
+						reject: function() {
+
+							// perform callback
+							//
+							if (options && options.reject) {
+								options.reject();
+							}		
+						},
+
+						error: function(response) {
+
+							// show error dialog
+							//
+							Registry.application.modal.show(
+								new ErrorView({
+									message: "Error saving policy acknowledgement."
+								})
+							);
+						}
+					});
+				},
+
+				error: function() {
+
+					// show error dialog
+					//
+					Registry.application.modal.show(
+						new ErrorView({
+							message: "Could not fetch tool policy."
+						})
+					);
+				}
+			});
+		},
+
 		//
 		// ajax methods
 		//
@@ -149,27 +212,27 @@ define([
 			}));
 		},
 
-		checkPermission: function(config) {
+		checkPermission: function(options) {
 			$.ajax({
 				url: this.urlRoot + '/' + this.get('tool_uuid') + '/permission',
 				type: 'POST',
 				dataType: 'JSON',
 				data: {
-					package_uuid: config.package_uuid,
-					project_uid: config.project_uid
+					package_uuid: options.package_uuid,
+					project_uid: options.project_uid
 				},
 
 				// callbacks
 				//
 				success: function(response) {
-					config.approved(response);
+					options.approved(response);
 				},
 
 				error: function(response) {
 					if (response.responseText.contains('{')) {
 						response  = JSON.parse(response.responseText);
 					}
-					config.denied(response);
+					options.denied(response);
 				}
 			});
 		},
@@ -186,7 +249,7 @@ define([
 						
 						// callbacks
 						//
-						accept: function(){
+						accept: function() {
 							Backbone.history.navigate('#my-account/permissions', {
 								trigger: true
 							});
@@ -196,7 +259,7 @@ define([
 			});
 		},
 
-		confirmToolPolicy: function(config) {
+		confirmToolPolicy: function(options) {
 			var self = this;
 			require([
 				'views/policies/dialogs/accept-policy-view'
@@ -205,13 +268,13 @@ define([
 					new AcceptPolicyView({
 						title: self.get('name') + " Policy",
 						message: "To use this tool you must first read and accept the following policy:",
-						policy: config.policy,
+						policy: options.policy,
 						
 						// callbacks
 						//
-						accept: function(){
+						accept: function() {
 							$.ajax({
-								url: Config.servers.web + '/user_policies/' + config.policy_code + '/user/' + Registry.application.session.user.get('user_uid'),
+								url: Config.servers.web + '/user_policies/' + options.policy_code + '/user/' + Registry.application.session.user.get('user_uid'),
 								data: {
 									accept_flag: 1
 								},
@@ -221,17 +284,32 @@ define([
 								// callbacks
 								//
 								success: function(response) {
-									if( 'success' in config ){
-										config.success( response );
+
+									// perform callback
+									//
+									if (options && options.success) {
+										options.success(response);
 									}
 								},
 
 								error: function(response) {
-									if( 'error' in config ){
-										config.error( response );
+
+									// perform callback
+									//
+									if (options && options.error) {
+										options.error(response);
 									}
 								}
 							});
+						},
+
+						reject: function() {
+
+							// perform callback
+							//
+							if (options && options.reject) {
+								options.reject();
+							}
 						}
 					}), {
 						size: 'large'
@@ -240,10 +318,10 @@ define([
 			});
 		},
 
-		confirmToolPackage: function(config) {
+		confirmToolPackage: function(options) {
 		},
 
-		confirmToolProject: function(config) {
+		confirmToolProject: function(options) {
 			var self = this;
 			require([
 				'views/dialogs/confirm-view'
@@ -251,27 +329,33 @@ define([
 				Registry.application.modal.show(
 					new ConfirmView({
 						title: 'Designate Tool Project',
-						message: 'This project is not a designated "' + self.get('name') + '" project. ' + ( config.trial_project ? '' : ' If you wish to designate this project, be advised that project members may be able to create, schedule, and run assessments with "' + self.get('name') + '."  You will be held responsible for any abuse or usage contrary to the tool\'s EULA as project owner, so please vet and inform your project members. ' ) + ' Click "OK" to designate the project now.',
+						message: 'This project is not a designated "' + self.get('name') + '" project. ' + (options.trial_project ? '' : ' If you wish to designate this project, be advised that project members may be able to create, schedule, and run assessments with "' + self.get('name') + '."  You will be held responsible for any abuse or usage contrary to the tool\'s EULA as project owner, so please vet and inform your project members. ' ) + ' Click "OK" to designate the project now.',
 						
 						// callbacks
 						//
 						accept: function() {
 							$.ajax({
-								url: Config.servers.web + '/user_permissions/' + config.user_permission_uid + '/project/' + config.project_uid,
+								url: Config.servers.web + '/user_permissions/' + options.user_permission_uid + '/project/' + options.project_uid,
 								type: 'POST',
 								dataType: 'JSON',
 
 								// callbacks
 								//
 								success: function(response) {
-									if ('success' in config) {
-										config.success( response );
+
+									// perform callback
+									//
+									if (options && options.success) {
+										options.success(response);
 									}
 								},
 
 								error: function(response) {
-									if ('error' in config) {
-										config.error( response );
+
+									// perform callback
+									//
+									if (options && options.error) {
+										options.error(response);
 									}
 								}
 							});

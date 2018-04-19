@@ -7,7 +7,7 @@
 			<div class="controls">
 				<select id="build-system" name="build-system" data-toggle="popover" data-placement="right" title="Build system" data-content="This is the name of the system used to build the package (i.e. 'make' etc)." >
 					<option value="none"></option>
-					<option <% if (build_system == 'no-build') { %> selected <% } %> 
+					<option <% if (!build_system || build_system == 'no-build') { %> selected <% } %> 
 						value="no-build">No build</option>
 					<option <% if (build_system == 'npm') { %> selected <% } %>
 						value="npm">NPM</option>
@@ -34,31 +34,22 @@
 		</div>
 
 		<div class="form-group">
-			<% var showBuild = build_dir || build_file || build_opt || build_target || model.isNew(); %>
 			<% var showConfigure = config_dir || config_cmd || config_opt; %>
+			<% var showBuild = build_system && build_system != 'no-build' && (build_dir || exclude_paths || build_file || build_opt || build_target); %>
 			<% var showAdvanced = true; %>
 
-			<div class="panel" id="advanced-settings-accordion" <% if (!build_system || build_system == 'no-build') { %> style="display:none" <% } %> >
+			<div id="advanced-settings" class="panel"<% if (!showAdvanced) { %> style="display:none" <% } %> >
 				<div class="panel-group">
-					<div class="panel-heading">
-						<label>
-						<a class="accordion-toggle" data-toggle="collapse" data-parent="#advanced-settings-accordion" href="#advanced-settings">
-							<% if (showAdvanced) { %>
-							<i class="fa fa-minus-circle"></i>
-							<% } else { %>
-							<i class="fa fa-plus-circle"></i>
-							<% } %>
-							Advanced settings
-						</a>
-						</label>
 
+					<div class="panel-heading">
+						<label>Advanced settings</label>
 						<span class="tags">
-							<span class="<% if (!showConfigure) { %>collapsed <% } %>toggle configure tag accordion-toggle" data-toggle="collapse" data-parent="#filters" href="#configure-settings"><i class="fa fa-tasks"></i>Configure</span>
-							<span class="<% if (!showBuild) { %>collapsed <% } %>toggle tag accordion-toggle" data-toggle="collapse" data-parent="#filters" href="#build-settings"><i class="fa fa-puzzle-piece"></i>Build</span>
+							<span class="<% if (!showConfigure) { %>collapsed <% } %>toggle configure tag accordion-toggle" data-toggle="collapse" data-parent="#filters" href="#configure-settings"<% if (!build_system || build_system == 'no-build') { %> style="display:none"<% } %>><i class="fa fa-tasks"></i>Configure</span>
+							<span class="<% if (!showBuild) { %>collapsed <% } %>toggle tag accordion-toggle" data-toggle="collapse" data-parent="#filters" href="#build-settings"<% if (!build_system || build_system == 'no-build') { %> style="display:none"<% } %>><i class="fa fa-puzzle-piece"></i>Build</span>
 						</span>
 					</div>
-					<div id="advanced-settings" class="nested accordion-body collapse in">
 
+					<div class="nested">
 						<div id="configure-settings" class="well collapse<% if (showConfigure) { %> in<% } %>">
 							<h3><i class="fa fa-tasks"></i>Configure settings<i class="fa fa-minus-circle close accordion-toggle" data-toggle="collapse" href="#configure-settings" /></h3>
 
@@ -119,7 +110,7 @@
 									<button id="select-build-path" class="btn"><i class="fa fa-list"></i>Select</button>
 								</div>
 							</div>
-
+							
 							<div class="form-group">
 								<label class="control-label">Build file</label>
 								<div class="controls">
@@ -160,16 +151,20 @@
 							</div>
 						</div>
 
+						<div class="form-group">
+							<label class="control-label">Exclude paths</label>
+							<div class="controls">
+								<div class="input-group">
+									<input type="text" class="form-control" id="exclude-paths" maxlength="1000" value="<%- exclude_paths %>">
+									<div class="input-group-addon">
+										<i class="active fa fa-question-circle" data-toggle="popover" data-placement="top" data-container="body" title="Build path" data-content="A comma separated list of paths to exclude from the build relative to the package path."></i>
+									</div>
+								</div>
+							</div>
+						</div>
 					</div>
 				</div>
 			</div>
 		</div>
 	</fieldset>
 </form>
-
-
-
-
-
-
-

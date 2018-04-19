@@ -58,7 +58,8 @@
 					<i class="active fa fa-question-circle" data-toggle="popover" data-placement="top" data-container="body" title="File" data-content="The file is the compressed archive file containing the source code and other assorted files that make up the contents of your software package."></i>
 				</div>
 			</div>
-			<a id="formats-supported" data-toggle="popover" title="Formats" data-content=".zip, .tar, .tar.gz, .tgz, .tar.bz2, .tar.xz, .tar.Z, .jar .war .ear .gem .whl, .apk">formats supported</a>
+			<p><a id="formats-supported" data-toggle="popover" title="Formats" data-content=".zip, .tar, .tar.gz, .tgz, .tar.bz2, .tar.xz, .tar.Z, .jar .war .ear .gem .whl, .apk">formats supported</a></p>
+			<p>For help creating package archives, you may wish to use the <a href="https://github.com/mirswamp/create_swamp_archive" target="_blank">create_swamp_archive</a> utiity.</p>
 		</div>
 	</div>
 

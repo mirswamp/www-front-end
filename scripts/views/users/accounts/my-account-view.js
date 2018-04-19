@@ -23,11 +23,10 @@ define([
 	'text!templates/users/accounts/my-account.tpl',
 	'config',
 	'registry',
-	'collections/projects/project-memberships',
 	'views/dialogs/confirm-view',
 	'views/dialogs/notify-view',
 	'views/dialogs/error-view'
-], function($, _, Backbone, Marionette, Template, Config, Registry, ProjectMemberships, ConfirmView, NotifyView, ErrorView) {
+], function($, _, Backbone, Marionette, Template, Config, Registry, ConfirmView, NotifyView, ErrorView) {
 	return Backbone.Marionette.LayoutView.extend({
 
 		//
@@ -43,6 +42,7 @@ define([
 			'click #permissions': 'onClickPermissions',
 			'click #accounts': 'onClickAccounts',
 			'click #passwords': 'onClickPasswords',
+			'click #classes': 'onClickClasses',
 			'click #edit': 'onClickEdit',
 			'click #change-password': 'onClickChangePassword',
 			'click #reset-password': 'onClickResetPassword',
@@ -92,6 +92,10 @@ define([
 					this.$el.find('.nav li').removeClass('active');
 					this.$el.find('.nav li#passwords').addClass('active');
 					break;	
+				case 'classes':
+					this.$el.find('.nav li').removeClass('active');
+					this.$el.find('.nav li#classes').addClass('active');
+					break;	
 				default:
 					this.$el.find('.nav li').removeClass('active');
 					this.$el.find('.nav li#profile').addClass('active');
@@ -115,6 +119,9 @@ define([
 					break;
 				case 'passwords':
 					this.showMyPasswords();
+					break;
+				case 'classes':
+					this.showMyClasses();
 					break;
 				default:
 					this.showMyProfile();
@@ -185,6 +192,20 @@ define([
 			], function (MyPasswordsView) {
 				self.userProfile.show(
 					new MyPasswordsView({
+						model: self.model,
+						parent: self
+					})
+				);
+			});
+		},
+
+		showMyClasses: function() {
+			var self = this;
+			require([
+				'views/users/classes/my-classes-view',
+			], function (MyClassesView) {
+				self.userProfile.show(
+					new MyClassesView({
 						model: self.model,
 						parent: self
 					})
@@ -287,6 +308,12 @@ define([
 
 		onClickPasswords: function() {
 			Backbone.history.navigate('#my-account/passwords', {
+				trigger: true
+			});
+		},
+
+		onClickClasses: function() {
+			Backbone.history.navigate('#my-account/classes', {
 				trigger: true
 			});
 		},

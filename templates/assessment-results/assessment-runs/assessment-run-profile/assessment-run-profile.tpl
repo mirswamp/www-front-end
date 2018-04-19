@@ -67,7 +67,7 @@
 			<label class="form-label">Create date</label>
 			<div class="controls">
 				<% if (model.has('create_date')) { %>
-				<%= dateToDetailedHTML(model.get('create_date')) %>
+				<%= datetimeToHTML(model.get('create_date')) %>
 				<% } %>
 			</div>
 		</div>
@@ -76,7 +76,7 @@
 			<label class="form-label">Run date</label>
 			<div class="controls">
 				<% if (model.has('run_date')) { %>
-				<%= dateToDetailedHTML(model.get('run_date')) %>
+				<%= datetimeToHTML(model.get('run_date')) %>
 				<% } else { %>
 				has not run
 				<% } %>
@@ -87,7 +87,7 @@
 			<label class="form-label">Completion date</label>
 			<div class="controls">
 				<% if (model.has('completion_date')) { %>
-				<%= dateToDetailedHTML(model.get('completion_date')) %>
+				<%= datetimeToHTML(model.get('completion_date')) %>
 				<% } else { %>
 				not completed
 				<% } %>

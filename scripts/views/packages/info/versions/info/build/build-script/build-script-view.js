@@ -29,35 +29,36 @@ define([
 		//
 
 		unarchiveCommands: {
-			'tar': 				'tar xf',
-			'tar.gz': 			'tar xzf',
-			'tgz': 				'tar xzf',
-			'tar.bz2': 			'tar xjf',
-			'tar.xz': 			'tar xJf',
-			'tar.Z': 			'tar xzf',
-			'zip': 				'unzip',
-			'jar': 				'jar -xf'
+			'tar': 						'tar xf',
+			'tar.gz': 					'tar xzf',
+			'tgz': 						'tar xzf',
+			'tar.bz2': 					'tar xjf',
+			'tar.xz': 					'tar xJf',
+			'tar.Z': 					'tar xzf',
+			'zip': 						'unzip',
+			'jar': 						'jar -xf'
 		},
 
 		buildCommands: {
-			'make': 			'make',
-			'configure+make':	'make',
-			'cmake+make': 		'make',
-			'ant': 				'ant',
-			'ant+ivy': 			'ant',
-			'android+ant': 		'ant',
-			'maven': 			'mvn',
-			'android+maven': 	'mvn', 
-			'gradle': 			'gradle',
-			'android+gradle': 	'gradle',
-			'distutils': 		'python',
+			'make': 					'make',
+			'configure+make':			'make',
+			'cmake+make': 				'make',
+			'autotools+configure+make': 'make',
+			'ant': 						'ant',
+			'ant+ivy': 					'ant',
+			'android+ant': 				'ant',
+			'maven': 					'mvn',
+			'android+maven': 			'mvn', 
+			'gradle': 					'gradle',
+			'android+gradle': 			'gradle',
+			'distutils': 				'python',
 			'python-setuptools': 		'python',
-			'wheels': 			'pip',
-			'rake': 			'pip install',
-			'bundler': 			"bundle install",
-			'bundler+rake': 	"bundle exec rake",
-			'bundler+other': 	"bundle install",
-			'other': 			undefined
+			'wheels': 					'pip',
+			'rake': 					'pip install',
+			'bundler': 					'bundle install',
+			'bundler+rake': 			'bundle exec rake',
+			'bundler+other': 			'bundle install',
+			'other': 					undefined
 		},
 
 		configureCommands: {

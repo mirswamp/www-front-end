@@ -50,15 +50,6 @@ define([
 			}));
 		},
 
-		onRender: function() {
-
-			// display popovers on hover
-			//
-			this.$el.find('[data-toggle="popover"]').popover({
-				trigger: 'manual'
-			});
-		},
-
 		//
 		// event handling methods
 		//

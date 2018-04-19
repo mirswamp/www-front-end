@@ -56,11 +56,7 @@ define([
 		//
 
 		initialize: function() {
-			var self = this;
-			this.listenTo(this.collection, 'change', function() {
-				self.render();
-				self.onShow();
-			});
+			this.listenTo(this.collection, 'change', this.onChange);
 		},
 
 		//
@@ -79,6 +75,8 @@ define([
 		},
 
 		childViewOptions: function() {
+			this.update();
+			
 			return {
 				readOnly: this.options.readOnly,
 				showDelete: this.options.showDelete
@@ -102,6 +100,14 @@ define([
 			// renumber (if list is numbered)
 			//
 			this.renumber();
+		},
+
+		//
+		// event handling methods
+		//
+
+		onChange: function() {
+			this.render();
 		}
 	});
 });

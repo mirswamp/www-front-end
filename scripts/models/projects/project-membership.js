@@ -35,7 +35,7 @@ define([
 		//
 
 		isAdmin: function() {
-			return this.get('admin_flag') === 1 || this.get('admin_flag') === '1';
+			return this.get('admin_flag');
 		},
 
 		setAdmin: function(isAdmin) {

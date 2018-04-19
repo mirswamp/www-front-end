@@ -30,9 +30,11 @@ define([
 	//
 	
 	var buildFiles = [
+		'composer.json',
 		'configure.ac',
 		'makefile',
 		'Makefile',
+		'package.json',
 		'pom.xml',
 		'build.xml',
 		'build.gradle',

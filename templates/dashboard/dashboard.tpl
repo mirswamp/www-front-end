@@ -2,7 +2,7 @@
 
 	<% if (user.has('penultimate_login_date')) { %>
 	<div id="last-login">
-		<span class="fineprint">You last signed in on <%= dateToHTML(user.get('penultimate_login_date')) %></span>
+		<span class="fineprint">You last signed in on <%= datetimeToHTML(user.get('penultimate_login_date')) %></span>
 	</div>
 	<% } %>
 
@@ -13,6 +13,8 @@
 		</div>
 		<div class="tagline">Do It Early. Do It Often.</div>
 	</div>
+
+	<br />
 
 	<div class="nav row">
 		<a href="#packages">

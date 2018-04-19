@@ -24,11 +24,12 @@ define([
 	'registry',
 	'models/users/user',
 	'models/users/email-verification',
+	'collections/users/user-classes',
 	'views/dialogs/error-view',
 	'views/dialogs/notify-view',
 	'views/users/dialogs/user-validation-error-view',
 	'views/users/user-profile/new-user-profile-form-view'
-], function($, _, Backbone, Marionette, Template, Registry, User, EmailVerification, ErrorView, NotifyView, UserValidationErrorView, NewUserProfileFormView) {
+], function($, _, Backbone, Marionette, Template, Registry, User, EmailVerification, UserClasses, ErrorView, NotifyView, UserValidationErrorView, NewUserProfileFormView) {
 	return Backbone.Marionette.LayoutView.extend({
 
 		//
@@ -121,14 +122,51 @@ define([
 		//
 
 		onRender: function() {
+			var self = this;
 
-			// display user profile form
+			// check for student registration
 			//
-			this.newUserProfile.show(
-				new NewUserProfileFormView({
-					model: this.model
-				})
-			);
+			if (Registry.application.config['classes_enabled']) {
+
+				// fetch user classes
+				//
+				new UserClasses().fetch({
+
+					// callbacks
+					//
+					success: function(collection) {
+
+						// display user profile form
+						//
+						self.newUserProfile.show(
+							new NewUserProfileFormView({
+								model: self.model,
+								classes: collection
+							})
+						);
+					},
+
+					error: function() {
+
+						// show error dialog
+						//
+						Registry.application.modal.show(
+							new ErrorView({
+								message: "Could not fetch user classes."
+							})
+						);
+					}
+				});
+			} else {
+
+				// display user profile form
+				//
+				this.newUserProfile.show(
+					new NewUserProfileFormView({
+						model: this.model
+					})
+				);	
+			}
 
 			// scroll to top
 			//

@@ -92,20 +92,49 @@ define([
 		},
 
 		onRender: function() {
+			var self = this;
 			var packageType = this.options.package.getPackageType();
 
 			// show subviews
 			//
 			this.showPackageDependencies();
 
-			if (this.options.package) {
-				this.showPackageType(packageType);
-			}
-
 			// infer default build system
 			//
-			if (!this.model.has('build_system')) {
-				this.setDefaultBuildSystem(packageType);
+			if (this.model.isNew()) {
+				this.setDefaultBuildInfo({
+
+					// callbacks
+					//
+					success: function() {
+
+						// show build info for specific package type
+						//
+						self.showPackageType(packageType);
+
+						// show notice about current build system
+						//
+						if (self.model.has('build_system')) {
+							self.showNotice();
+						}
+
+						// notify of change
+						//
+						self.onChange();
+					},
+
+					error: function() {
+
+						// show build info for specific package type
+						//
+						self.showPackageType(packageType);
+					}
+				});
+			} else {
+
+				// show build info for specific package type
+				//
+				this.showPackageType(packageType);
 			}
 
 			// display popovers on hover
@@ -150,6 +179,15 @@ define([
 							}
 						})
 					);
+				},
+
+				error: function() {
+
+					// show error dialog
+					//
+					Registry.application.error({
+						message: "Could not fetch package dependencies."
+					});
 				}
 			});
 		},
@@ -260,6 +298,48 @@ define([
 			}
 		},
 
+		setDefaultBuildInfo: function(options) {
+			var self = this;
+
+			// fetch and set default build info
+			//
+			this.model.fetchBuildInfo({
+				data: {
+					'package_type_id': this.options.package.get('package_type_id')
+				},
+
+				// callbacks
+				//
+				success: function(buildInfo) {
+
+					// set model attributes
+					//
+					self.model.set({
+						'build_system': buildInfo['build_system'],
+						'config_dir': buildInfo['config_dir'],
+						'config_cmd': buildInfo['config_cmd'],
+						'build_dir': buildInfo['build_dir'],
+						'build_file': buildInfo['build_file']
+					});
+
+					// peform callback
+					//
+					if (options && options.success) {
+						options.success();
+					}
+				},
+
+				error: function() {
+
+					// perform callback
+					//
+					if (options && options.error) {
+						options.error();
+					}
+				}
+			});
+		},
+
 		setDefaultBuildSystem: function(packageType) {
 
 			// check to see if method to set build system exists
@@ -277,17 +357,16 @@ define([
 					// callbacks
 					//
 					success: function(buildSystem) {
-						self.packageTypeForm.currentView.setBuildSystem(buildSystem);
-						var notice = "This package appears to use the '" + self.packageTypeForm.currentView.getBuildSystemName(buildSystem) + "' build system. ";
-						var isWheel = self.model.getFilename().endsWith('.whl');
-						var isApk = self.model.getFilename().endsWith('.apk');
-
-						// notify if build system can be changed
+						
+						// set build system
 						//
-						if (buildSystem != 'ruby-gem' && !isWheel && !isApk) {
-							notice += " You can set the build system if this is not correct."
+						self.packageTypeForm.currentView.setBuildSystem(buildSystem);
+
+						// show notice about current build system
+						//
+						if (self.model.has('build_system')) {
+							self.showNotice();
 						}
-						self.options.parent.showNotice(notice);
 					},
 
 					error: function() {
@@ -297,6 +376,23 @@ define([
 						self.packageTypeForm.currentView.setBuildSystem();
 					}
 				});
+			}
+		},
+
+		showNotice: function() {
+			var buildSystem = this.model.get('build_system');
+			if (buildSystem && buildSystem != 'none') {
+				var buildSystemName = this.packageTypeForm.currentView.getBuildSystemName(buildSystem);
+				var notice = "This package appears to use the '" + buildSystemName + "' build system. ";
+				var isWheel = this.model.getFilename().endsWith('.whl');
+				var isApk = this.model.getFilename().endsWith('.apk');
+
+				// notify if build system can be changed
+				//
+				if (buildSystem != 'ruby-gem' && !isWheel && !isApk) {
+					notice += " You can set the build system if this is not correct."
+				}
+				this.options.parent.showNotice(notice);
 			}
 		},
 
@@ -352,7 +448,9 @@ define([
 
 			// update model from sub view
 			//
-			if (this.packageTypeForm.currentView) {
+			if (this.packageTypeForm &&
+				this.packageTypeForm.currentView &&
+				this.packageTypeForm.currentView.update) {
 				this.packageTypeForm.currentView.update(packageVersion);
 			}
 		},
@@ -367,6 +465,16 @@ define([
 			//
 			if (this.options.onChange) {
 				this.options.onChange();
+			}
+
+			// recheck build system
+			//
+			if (!this.timeout) {
+				var self = this;
+				this.timeout = window.setTimeout(function() {
+					self.checkBuildSystem();
+					self.timeout = null;
+				}, 1000);
 			}
 		},
 
@@ -384,6 +492,7 @@ define([
 
 		onBlurInput: function(event) {
 			this.focusedInput = null;
+			this.onChange();
 		}
 	});
 });

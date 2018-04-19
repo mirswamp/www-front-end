@@ -79,6 +79,7 @@ define([
 				// path attributes
 				//
 				'source_path': attributes['source_path'],
+				'exclude_paths': attributes['exclude_paths'],
 				'filename': attributes['filename'],
 
 				// config attributes
@@ -380,6 +381,20 @@ define([
 			}
 			$.ajax(_.extend(options, {
 				url: this.urlRoot + '/' + (this.isNew()? 'new': this.get('package_version_uuid')) + '/build-system',
+				type: 'GET'
+			}));
+		},
+
+		fetchBuildInfo: function(options) {
+			if (this.isNew()) {
+				if (!options.data) {
+					options.data = {};
+				}
+				options.data['package_path'] = this.get('package_path');
+				options.data['source_path'] = this.get('source_path');
+			}
+			$.ajax(_.extend(options, {
+				url: this.urlRoot + '/' + (this.isNew()? 'new': this.get('package_version_uuid')) + '/build-info',
 				type: 'GET'
 			}));
 		},

@@ -28,19 +28,19 @@ define([
 	'collections/assessments/execution-records',
 	'views/dialogs/error-view',
 	'views/admin/status/run-queue-summary/run-queue-summary-view',
-	'views/admin/status/uuid-item-list/uuid-item-list-view',
-	'views/admin/status/uuid-item-select-list/uuid-item-select-list-view'
-], function($, _, Backbone, Marionette, Tab, Template, Registry, Session, ExecutionRecord, ExecutionRecords, ErrorView, RunQueueSummaryView, UuidItemListView, UuidItemSelectListView) {
+	'views/admin/status/status-tabs/status-tabs-view',
+], function($, _, Backbone, Marionette, Tab, Template, Registry, Session, ExecutionRecord, ExecutionRecords, ErrorView, RunQueueSummaryView, StatusTabsView) {
 	return Backbone.Marionette.LayoutView.extend({
 
 		//
 		// attributes
 		//
 
-		refreshInterval: 10000,
+		refreshInterval: 5000,
 
 		regions: {
 			runQueueSummary: '#run-queue-summary',
+			details: '#details',
 		},
 
 		events: {
@@ -64,18 +64,32 @@ define([
 		//
 
 		saveTabState: function() {
-			var tabs = Object.keys(this.options.data);
-			for (var i = 0; i < tabs.length; i++) { 
-				var tab = tabs[i];
-				var id = tab.replace(/ /g, '_').toLowerCase() + '-panel';
-				if (this[tab] && this[tab].currentView) {
-					this.tabState[tab] = { 
-						sortList: this[tab].currentView.getSortList() 
-					};
+			if (this.options.data) {
+
+				// save sort order for each tab
+				//
+				var tabs = Object.keys(this.options.data);
+				for (var i = 0; i < tabs.length; i++) {
+					var tab = tabs[i];
+					var id = tab.replace(/ /g, '_').toLowerCase() + '-panel';
+
+					// create new state for each tab
+					//
+					this.tabState[tab] = {};
+
+					// store sorting order for each tab
+					//
+					if (this[tab] && this[tab].currentView) {
+						this.tabState[tab].sortList = this[tab].currentView.getSortList();
+					}
 				}
-			}	
-			if (this['Condor Queue'] && this['Condor Queue'].currentView) { 
-				this.tabState['Condor Queue'].selected = this['Condor Queue'].currentView.getSelected();
+
+				// save selected checkboxes
+				//
+				var detailsView = this.getRegion('details').currentView;
+				if (detailsView['Condor Queue'] && detailsView['Condor Queue'].currentView) { 
+					this.tabState['Condor Queue'].selected = detailsView['Condor Queue'].currentView.getSelected();
+				}
 			}
 		},
 
@@ -93,11 +107,11 @@ define([
 			var self = this;
 			
 			this.timeout = window.setTimeout(function() {
-				self.showRefreshingList();
+				self.showRefreshingStatus();
 			}, this.refreshInterval);
 		},
 
-		showRefreshingList: function() {
+		showRefreshingStatus: function() {
 			var self = this;
 
 			// save tab state
@@ -128,36 +142,15 @@ define([
 		// rendering methods
 		//
 
-		template: function(data) {
-
-			// check if active tab is not found in list of tabs
-			//
-			if (this.options.activeTab) {	
-				if (!this.options.data[this.options.activeTab]) {
-					this.options.activeTab = undefined;
-				}
-			}
-		 		
+		template: function(data) {		
 			return _.template(Template, _.extend(data, {
-				tabs: Object.keys(this.options.data),
-				activeTab: this.options.activeTab,
 				autoRefresh: Registry.application.options.autoRefresh,
 				showNumbering: Registry.application.options.showNumbering
 			}));
 		},
 
-		onRender: function() {	
-			this.showRunQueueSummary(this.options.data["Condor Queue"]);
-			this.showTabs(this.options.data);
-			
-			// show status list and schedule refresh
-			//
-			if (!this.isRendered) {
-				this.showRefreshingList();
-			}
-
-			this.update();
-			this.isRendered = true;
+		onRender: function() {		
+			this.showRefreshingStatus();
 		},
 
 		isEmptyCondorQueue: function() {
@@ -173,28 +166,34 @@ define([
 
 		update: function() {
 
-			// show/hide kill-runs button
+			// show / hide kill-runs button
 			//
-			if ((!this.options.activeTab || this.options.activeTab == "Condor Queue") && !this.isEmptyCondorQueue()) {
+			if ((!this.options.activeTab || this.options.activeTab == "Condor Queue")) {
 
 				this.$el.find('#kill-runs').show();
 			} else {
 				this.$el.find('#kill-runs').hide();
 			}
+
+			if (this.isEmptyCondorQueue()) {
+				this.$el.find('#kill-runs').attr('disabled', true);
+			}
 		},
 
 		fetchAndShow: function(done) {
 			var self = this;
+
+			// fetch new status info
+			//
 			Session.fetchStatus({
 
 				// callbacks
 				//
 				success: function(data) {
-					self.options.data = data;
 
-					// update entire display 
+					// show status info
 					//
-					self.render();	
+					self.showStatus(data);
 
 					// perform callback
 					//
@@ -205,40 +204,28 @@ define([
 			});
 		},
 
-		showTabs: function(data) {
-			if (!data) {
-				return;
-			}
+		showStatus: function(data) {
+			this.options.data = data;
 
-			var tabs = Object.keys(data);
-			for (var i = 0; i < tabs.length; i++) { 
-				var tab = tabs[i];
-				var id = tab.replace(/ /g, '_').toLowerCase() + '-panel';
-				var region = this.addRegion(tab, '#' + id);	
-				var object = data[tab];	
-				if (object) {
-					var keys = Object.keys(object); 
-					if (keys.length > 0) {	
-						var item = object[keys[0]]; 
-						if (tab == "Condor Queue") {
-							region.show(new UuidItemSelectListView({
-								fieldnames: item.fieldnames,
-								collection: new Backbone.Collection(item.data),
-								showNumbering: Registry.application.options.showNumbering,
-								sortList: this.tabState[tab] ? this.tabState[tab].sortList : undefined,
-								selected: this.tabState[tab] ? this.tabState[tab].selected : undefined
-							}));
-						} else {
-							region.show(new UuidItemListView({
-								fieldnames: item.fieldnames,
-								collection: new Backbone.Collection(item.data),
-								showNumbering: Registry.application.options.showNumbering,
-								sortList: this.tabState[tab] ? this.tabState[tab].sortList : undefined
-							}));
-						}
-					}
-				}				
+			// update child views
+			//
+			this.showRunQueueSummary(data["Condor Queue"]);
+			this.showDetails(data);	
+
+			if (this.isEmptyCondorQueue()) {
+				this.$el.find('#kill-runs').attr('disabled', true);
 			}
+		},
+
+		showDetails: function(data) {
+			this.details.show(
+				new StatusTabsView({
+					activeTab: this.options.activeTab,
+					tabState: this.tabState,
+					data: data,
+					parent: this
+				})
+			);
 		},
 
 		showRunQueueSummary: function(data) {
@@ -257,6 +244,7 @@ define([
 		//
 
 		onClickRefresh: function() {
+			
 			// save tab state
 			//
 			this.saveTabState();
@@ -282,18 +270,18 @@ define([
 		},
 
 		onClickTab: function(event) {
-			this.options.activeTab = $(event.target).closest('li').find('span').html();
+			this.options.activeTab = $(event.target).html();
 			this.update();
 		},
 
 		onClickShowNumbering: function(event) {
 			Registry.application.setShowNumbering($(event.target).is(':checked'));
-			this.render();
+			this.update();
 		},
 
 		onClickKillRuns: function(event) {
 			var self = this;
-			var selected = this["Condor Queue"].currentView.getSelected();
+			var selected = this.getRegion('details').currentView['Condor Queue'].currentView.getSelected()
 			var collection = new ExecutionRecords();
 			for (var i = 0; i < selected.length; i++) {
 				var execrunuuid = selected.at(i).get('EXECRUNUID');

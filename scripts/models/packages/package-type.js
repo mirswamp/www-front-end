@@ -34,11 +34,11 @@ define([
 		//
 
 		isEnabled: function() {
-			return this.get('package_type_enabled') == 1;
+			return this.get('package_type_enabled');
 		},
 
 		isUserSelectable: function() {
-			return this.get('platform_user_selectable') == 1;
+			return this.get('platform_user_selectable');
 		}
 	});
 });

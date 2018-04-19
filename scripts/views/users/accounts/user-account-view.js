@@ -42,6 +42,7 @@ define([
 			'click #permissions': 'onClickPermissions',
 			'click #accounts': 'onClickAccounts',
 			'click #passwords': 'onClickPasswords',
+			'click #classes': 'onClickClasses',
 			"click #edit": "onClickEdit",
 			'click #change-password': 'onClickChangePassword',
 			'click #reset-password': 'onClickResetPassword',
@@ -81,6 +82,10 @@ define([
 					this.$el.find('.nav li').removeClass('active');
 					this.$el.find('.nav li#passwords').addClass('active');
 					break;
+				case 'classes':
+					this.$el.find('.nav li').removeClass('active');
+					this.$el.find('.nav li#classes').addClass('active');
+					break;	
 				default:
 					this.$el.find('.nav li').removeClass('active');
 					this.$el.find('.nav li#profile').addClass('active');
@@ -104,6 +109,9 @@ define([
 					break;
 				case 'passwords':
 					this.showUserPasswords();
+					break;
+				case 'classes':
+					this.showUserClasses();
 					break;
 				default:
 					this.showUserProfile();
@@ -181,6 +189,20 @@ define([
 			});
 		},
 
+		showUserClasses: function() {
+			var self = this;
+			require([
+				'views/users/classes/user-classes-view',
+			], function (UserClassesView) {
+				self.userProfile.show(
+					new UserClassesView({
+						model: self.model,
+						parent: self
+					})
+				);
+			});
+		},
+
 		//
 		// event handling methods
 		//
@@ -205,6 +227,12 @@ define([
 
 		onClickPasswords: function() {
 			Backbone.history.navigate('#accounts/' + this.model.get('user_uid') + '/passwords', {
+				trigger: true
+			});
+		},
+
+		onClickClasses: function() {
+			Backbone.history.navigate('#accounts/' + this.model.get('user_uid') + '/classes', {
 				trigger: true
 			});
 		},

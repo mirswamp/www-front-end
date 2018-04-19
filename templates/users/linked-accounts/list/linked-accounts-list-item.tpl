@@ -1,17 +1,17 @@
 <td class="title">
-	<span class="title"><%- account.title %></span>
+	<%- account.title %>
 </td>
 
 <td class="description">
-	<span class="name"><%- account.description %></span>
+	<%- account.description %>
 </td>
 
 <td class="externalid">
-	<span class="externalid"><%- account.user_external_id %></span>
+	<%- account.user_external_id %>
 </td>
 
-<td class="expiration">
-	<span class="expiration"><%- account.create_date %></span>
+<td class="create_date">
+	<%= dateToSortableHTML(account.create_date) %>
 </td>
 
 <% if (admin && showStatus) { %>

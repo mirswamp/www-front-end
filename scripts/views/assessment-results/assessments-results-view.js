@@ -270,6 +270,8 @@ define([
 		},
 
 		showEnabledViewers: function() {
+
+			/*
 			var executionRecords = this.getSelected();
 			for (var i = 0; i < executionRecords.length; i++) {
 				var tool = executionRecords.at(i).get('tool');
@@ -290,6 +292,7 @@ define([
 					return;
 				}
 			}
+			*/
 
 			// show viewer selection
 			//

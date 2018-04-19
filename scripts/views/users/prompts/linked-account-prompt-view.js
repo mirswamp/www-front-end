@@ -30,12 +30,14 @@ define([
 	'utilities/security/password-policy',
 	'models/users/user',
 	'models/users/session',
+	'collections/users/user-classes',
 	'views/users/registration/sign-aup-view',
 	'views/users/prompts/linked-account-link-prompt-view',
 	'views/users/registration/email-verification-view',
+	'views/users/classes/dialogs/class-enrollment-view',
 	'views/dialogs/notify-view',
 	'views/dialogs/error-view'
-], function($, _, Backbone, Marionette, Tooltip, Popover, Template, LinkedAccountPolicyTemplate, Registry, Config, PasswordPolicy, User, Session, SignAupView, LinkedAccountLinkPromptView, EmailVerificationView, NotifyView, ErrorView) {
+], function($, _, Backbone, Marionette, Tooltip, Popover, Template, LinkedAccountPolicyTemplate, Registry, Config, PasswordPolicy, User, Session, UserClasses, SignAupView, LinkedAccountLinkPromptView, EmailVerificationView, ClassEnrollmentView, NotifyView, ErrorView) {
 	return Backbone.Marionette.LayoutView.extend({
 
 		//
@@ -51,6 +53,102 @@ define([
 			'click #register-new': 'onClickRegisterNew',
 			'click #link-existing': 'onClickLinkExisting',
 			'click #cancel': 'onClickCancel'
+		},
+
+		//
+		// querying methods
+		//
+
+		isAcademicLinkedAccount: function() {
+			var authProvider = Registry.application.options.authProvider;
+			return authProvider && (
+				authProvider.contains('University', false) ||
+				authProvider.contains('College', false) || 
+				authProvider.contains('School', false) ||
+				authProvider.contains('Institute', false) ||
+				authProvider.contains('Academic', false));
+		},
+
+		//
+		// methods
+		//
+
+		checkClassEnrollment: function(callback) {
+			var self = this;
+
+			// fetch user classes
+			//
+			new UserClasses().fetch({
+
+				// callbacks
+				//
+				success: function(collection) {
+					if (collection && collection.length > 0) {
+
+						// display class enrollment dialog
+						//
+						Registry.application.modal.show(
+							new ClassEnrollmentView({
+								collection: collection,
+
+								// callbacks
+								//
+								accept: function(userClass) {
+									callback(userClass);
+								}
+							})
+						);
+					} else {
+
+						// no classes available
+						//
+						callback();
+					}
+				},
+
+				error: function() {
+
+					// show error dialog
+					//
+					Registry.application.modal.show(
+						new ErrorView({
+							message: "Could not fetch user classes."
+						})
+					);
+				}
+			});
+		},
+
+		registerLinkedAccount: function(options) {
+			this.registerLinkedAccountUser({
+				data: {
+					'class_code': options && options['user-class']? options['user-class'].get('class_code') : null,
+				},
+
+				// callbacks
+				//
+				success: function(response) {
+					if (response.primary_verified) {
+						Registry.application.modal.show(
+							new NotifyView({
+								message: "Your Account has successfuly been linked to the SWAMP!",
+								
+								// callbacks
+								//
+								accept: function() {
+									window.location = Registry.application.getURL();
+								}
+							})
+						);
+					} else {
+						Registry.application.showMain(
+							new EmailVerificationView({
+								model: new User(response.user)
+							})
+						);
+					}
+				}
+			});
 		},
 
 		//
@@ -194,39 +292,39 @@ define([
 			// check validation
 			//
 			if (this.isValid()) {
-				self.undelegateEvents();
+				this.undelegateEvents();
 				Registry.application.showMain(
 					new SignAupView({
 
 						// callbacks
 						//
-						accept: function(){
-							self.registerLinkedAccountUser({
+						accept: function() {
+							if (Registry.application.config['classes_enabled'] &&
+								self.isAcademicLinkedAccount()) {
 
-								// callbacks
+								// check class enrollment
 								//
-								success: function(response) {
-									if (response.primary_verified) {
-										Registry.application.modal.show(
-											new NotifyView({
-												message: "Your Account has successfuly been linked to the SWAMP!",
-												
-												// callbacks
-												//
-												accept: function() {
-													window.location = Registry.application.getURL();
-												}
-											})
-										);
+								self.checkClassEnrollment(function(userClass) {
+									if (userClass) {
+
+										// user class was selected
+										//
+										self.registerLinkedAccount({
+											'user-class': userClass
+										});
 									} else {
-										Registry.application.showMain(
-											new EmailVerificationView({
-												model: new User(response.user)
-											})
-										);
+
+										// no class selected - register with no class enrollment
+										//
+										self.registerLinkedAccount();	
 									}
-								}
-							});
+								});
+							} else {
+
+								// register with no class enrollment
+								//
+								self.registerLinkedAccount();
+							}
 						}
 					})
 				);

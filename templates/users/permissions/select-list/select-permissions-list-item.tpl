@@ -8,7 +8,7 @@
 </td>
 
 <td class="expiration">
-	<span class="expiration"><%- permission.expiration_date %></span>
+	<span class="expiration"><%= dateToSortableHTML(permission.expiration_date) %></span>
 </td>
 
 <td class="status">

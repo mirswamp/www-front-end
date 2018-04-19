@@ -72,6 +72,7 @@ define([
 			'my-account/permissions': 'showMyPermissions',
 			'my-account/accounts': 'showMyLinkedAccounts',
 			'my-account/passwords': 'showMyPasswords',
+			'my-account/classes': 'showMyClasses',
 			'my-account/edit': 'showEditMyAccount',
 
 			// administration routes
@@ -85,6 +86,7 @@ define([
 			'accounts/:user_uid/permissions': 'showUserAccountPermissions',
 			'accounts/:user_uid/accounts': 'showUserLinkedAccounts',
 			'accounts/:user_uid/passwords': 'showUserPasswords',
+			'accounts/:user_uid/classes': 'showUserClasses',
 			'accounts/:user_uid/edit': 'showEditUserAccount',
 
 			// user event routes
@@ -691,6 +693,12 @@ define([
 			}));
 		},
 
+		showMyClasses: function(options) {
+			this.showMyAccount(_.extend(options || {}, {
+				nav: 'classes'
+			}));
+		},
+
 		//
 		// user account route handlers
 		//
@@ -831,6 +839,12 @@ define([
 		showUserPasswords: function(userUid, options) {
 			this.showUserAccount(userUid, _.extend(options || {}, {
 				nav: 'passwords'
+			}));
+		},
+
+		showUserClasses: function(userUid, options) {
+			this.showUserAccount(userUid, _.extend(options || {}, {
+				nav: 'classes'
 			}));
 		},
 
@@ -1050,10 +1064,9 @@ define([
 			var self = this;
 			require([
 				'registry',
-				'models/users/session',
 				'views/admin/status/review-status-view',
 				'views/dialogs/error-view',
-			], function (Registry, Session, ReviewStatusView, ErrorView) {
+			], function (Registry, ReviewStatusView, ErrorView) {
 
 				// show content view
 				//
@@ -1064,36 +1077,10 @@ define([
 					// callbacks
 					//
 					done: function(view) {
-						Session.fetchStatus({
 
-							// callbacks
-							//
-							success: function(data) {
-
-								// show review status view
-								//
-								view.content.show(
-									new ReviewStatusView({
-										data: data
-									})
-								);
-
-								if (options && options.done) {
-									options.done();
-								}
-							},
-
-							error: function() {
-
-								// show error dialog
-								//
-								Registry.application.modal.show(
-									new ErrorView({
-										message: "Could not fetch status."
-									})
-								);
-							}
-						});
+						// show review status view
+						//
+						view.content.show(new ReviewStatusView());
 					}
 				});
 			});

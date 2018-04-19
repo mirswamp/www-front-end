@@ -21,7 +21,7 @@
 </td>
 
 <td class="create-date last">
-	<%- create_date %>
+	<%= dateToSortableHTML(create_date) %>
 </td>
 
 <% if (showDelete) { %>

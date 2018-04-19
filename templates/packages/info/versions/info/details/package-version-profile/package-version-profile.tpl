@@ -33,28 +33,28 @@
 		<% if (model.hasCreateDate()) { %>
 		<div class="form-group">
 			<label class="form-label">Creation date</label>
-			<div class="controls"><%= dateToHTML(model.getCreateDate()) %></div>
+			<div class="controls"><%= datetimeToHTML(model.getCreateDate()) %></div>
 		</div>
 		<% } %>
 
 		<% if (model.hasUpdateDate()) { %>
 		<div class="form-group">
 			<label class="form-label">Last modified date</label>
-			<div class="controls"><%= dateToHTML(model.getUpdateDate()) %></div>
+			<div class="controls"><%= datetimeToHTML(model.getUpdateDate()) %></div>
 		</div>
 		<% } %>
 
 		<% if (model.has('release_date')) { %>
 		<div class="form-group">
 			<label class="form-label">Release date</label>
-			<div class="controls"><%= dateToHTML(model.get('release_date')) %></div>
+			<div class="controls"><%= datetimeToHTML(model.get('release_date')) %></div>
 		</div>
 		<% } %>
 
 		<% if (model.has('retire_date')) { %>
 		<div class="form-group">
 			<label class="form-label">Retire date</label>
-			<div class="controls"><%= dateToHTML(model.get('retire_date')) %></div>
+			<div class="controls"><%= datetimeToHTML(model.get('retire_date')) %></div>
 		</div>
 		<% } %>
 	</fieldset>

@@ -15,19 +15,16 @@
 			<% var showBuild = build_dir || build_file || build_opt || build_target; %>
 			<% var showAdvanced = showBuildSystem || showAndroid || showConfigure || showBuild; %>
 			
-			<div class="panel" id="advanced-settings-accordion">
+			<div id="advanced-settings" class="panel">
 				<div class="panel-group">
-					<div class="panel-heading">
-						<label>
-						<a class="accordion-toggle" data-toggle="collapse" data-parent="#advanced-settings-accordion" href="#advanced-settings">
-							<i class="fa fa-minus-circle"></i>
-							Advanced settings
-						</a>
-						</label>
-					</div>
-					<div id="advanced-settings" class="nested accordion-body collapse in">
-						<% if (showAdvanced) { %>
 
+					<div class="panel-heading">
+						<label>Advanced settings</label>
+					</div>
+
+					<div class="nested">
+						<% if (showAdvanced) { %>
+						
 						<% if (showBuildSystem) { %>
 						<div id="build-system-settings" class="well">
 							<h3><i class="fa fa-tasks"></i>Build system settings</h3>

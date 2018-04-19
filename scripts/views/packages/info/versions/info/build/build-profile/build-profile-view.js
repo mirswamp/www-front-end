@@ -89,6 +89,15 @@ define([
 							parent: self
 						})
 					);
+				},
+
+				error: function() {
+
+					// show error dialog
+					//
+					Registry.application.error({
+						message: "Could not fetch package dependencies."
+					});
 				}
 			});
 		},

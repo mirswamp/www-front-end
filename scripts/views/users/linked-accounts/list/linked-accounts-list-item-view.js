@@ -47,7 +47,7 @@ define([
 
 		template: function(data) {
 			return _.template(Template, { 
-				admin: Registry.application.session.user.get('admin_flag') == '1',
+				admin: Registry.application.session.user.get('admin_flag'),
 				account: data,
 				showStatus: this.options.showStatus,
 				showDelete: this.options.showDelete

@@ -100,7 +100,7 @@
 	<div class="form-group">
 		<label class="form-label">Create date</label>
 		<div class="controls">
-			<%= dateToDetailedHTML(new Date(AnalyzerReport.create_date)) %>
+			<%= datetimeToHTML(new Date(AnalyzerReport.create_date.replace(/-/g, '/'))) %>
 		</div>
 	</div>
 	<% } %>

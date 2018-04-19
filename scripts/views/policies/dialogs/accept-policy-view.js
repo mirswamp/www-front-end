@@ -33,7 +33,8 @@ define([
 		events: {
 			'click .alert .close': 'onClickAlertClose',
 			'click input': 'onClickInput',
-			'click #ok': 'onClickOk'
+			'click #ok': 'onClickOk',
+			'click #cancel': 'onClickCancel'
 		},
 
 		//
@@ -120,6 +121,12 @@ define([
 			} else {
 				event.stopPropagation();
 			}
+		},
+
+		onClickCancel: function(event) {
+			if (this.options.reject) {
+				this.options.reject();
+			}		
 		}
 	});
 });

@@ -40,6 +40,15 @@
 		}
 	}
 
+	#banner {
+		max-width: 350px;
+		margin: auto;
+
+		table td {
+			text-align: center;
+		}
+	}
+
 	//
 	// buttons
 	//
@@ -52,30 +61,34 @@
 	// horizontal rows
 	//
 
-	.row  {
-		margin-left: -15px;
-		margin-right: -15px;
+	.rows {
+		> .row  {
+			margin-left: -15px;
+			margin-right: -15px;
 
-		> .content {
-			padding-top: 0;
-			padding-bottom: 0;
-			padding-left: 20px;
-			padding-right: 20px;
+			> .content {
+				padding-top: 0;
+				padding-bottom: 0;
+				padding-left: 15px;
+				padding-right: 15px;
+			}
 		}
-	}
 
-	.column {
-		.make-sm-column(4);
-		.make-xs-column(6);
+		.column {
+			.make-sm-column(4);
+			.make-xs-column(6);
 
-		.well {
-			width: 100%;
+			.well {
+				width: 100%;
+			}
 		}
 	}
 
 	@media (max-width: @screen-xs) {
-		.column {
-			width: 100%;
+		.rows {
+			.column {
+				width: 100%;
+			}
 		}
 	}
 
@@ -96,16 +109,23 @@
 	// horizontal wells
 	//
 
-	.row:nth-child(odd) {
-		background-color: veryVeryLightGrey;
-		.well {
-			background-color: @veryLightGrey;
+	.rows {
+		> .row:nth-child(odd) {
+			background-color: veryVeryLightGrey;
+			.well {
+				background-color: white;
+			}
 		}
-	}
 
-	.row:first-child {
-		background-color: white;
-		border-bottom: 4px solid @primaryColor;
+		> .row:first-child {
+			border-top: 4px solid @primaryColor;
+		}
+
+		#banner {
+			td {
+				background: #eeeeee;
+			}
+		}
 	}
 
 	//

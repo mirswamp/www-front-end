@@ -96,7 +96,7 @@
 
 	<div class="badge-group">
 		<% if (resultsUrl) { %>
-		<a href="<%= resultsUrl %>" target="_blank" data-toggle="tooltip" data-content="Click to download results in SCARF format." data-placement="top">
+		<a class="scarf-results" href="<%= resultsUrl %>" target="_blank" data-toggle="tooltip" data-content="Click to download results in SCARF format." data-placement="top">
 		<% } %>
 
 		<% if (weakness_cnt > 0) { %>

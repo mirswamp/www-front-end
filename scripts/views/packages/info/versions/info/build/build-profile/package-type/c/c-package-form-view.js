@@ -235,11 +235,11 @@ define([
 		},
 
 		showAdvancedSettings: function() {
-			this.$el.find('#advanced-settings-accordion').show();
+			this.$el.find('#advanced-settings').show();
 		},
 
 		hideAdvancedSettings: function() {
-			this.$el.find('#advanced-settings-accordion').hide();
+			this.$el.find('#advanced-settings').hide();
 		},
 
 		showBuildSystem: function(buildSystem) {

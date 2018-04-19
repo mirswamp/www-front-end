@@ -1,5 +1,5 @@
 <table>
-	<thead>
+	<thead<% if (collection.length > 0) { %> style="display:none"<% } %>>
 		<tr>
 			<th class="password-label first">
 				<i class="fa fa-font"></i>
@@ -16,6 +16,7 @@
 			<% } %>
 		</tr>
 	</thead>
+
 	<tbody>
 	</tbody>
 </table>

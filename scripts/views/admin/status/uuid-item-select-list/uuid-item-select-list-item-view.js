@@ -55,7 +55,7 @@ define([
 		template: function(data) {
 			return _.template(Template, {
 				index: this.options.index + 1, 
-				data: data,	
+				data: this.getData(data),	
 				urls: this.getUrls(data),	
 				fieldnames: this.options.fieldnames,
 				showNumbering: this.options.showNumbering,

@@ -23,14 +23,20 @@ define([
 	'text!templates/welcome.tpl',
 	'config',
 	'registry',
+	'models/utilities/usage',
 	'collections/tools/tools',
-	'collections/platforms/platforms'
-], function($, _, Backbone, Marionette, Template, Config, Registry, Tools, Platforms) {
+	'collections/platforms/platforms',
+	'views/banner/usage-view'
+], function($, _, Backbone, Marionette, Template, Config, Registry, Usage, Tools, Platforms, UsageView) {
 	return Backbone.Marionette.LayoutView.extend({
 
 		//
 		// attributes
 		//
+
+		regions: {
+			'banner': '#banner'
+		},
 
 		events: {
 			'click #sign-in': 'onClickSignIn',
@@ -53,12 +59,17 @@ define([
 		onRender: function() {
 			this.showLightBox();
 
-			// populate tool and platform lists
+			// sub child views
 			//
 			this.showOpenToolsList();
 			this.showCommercialToolsList();
 			this.showPlatformsList();
 
+			// show optional child views
+			//
+			if (Registry.application.config['stats_enabled']) {
+				this.showBanner();
+			}
 			if (this.options.showSignIn) {
 				this.showSignIn();
 			}
@@ -87,6 +98,21 @@ define([
 					'onClosed' : function(){},
 					'onError' : function(){}
 				});
+			});
+		},
+
+		showBanner: function() {
+			var self = this;
+			new Usage.fetch({ 
+				'which': 'latest',
+
+				// callbacks
+				//
+				success: function(data) {
+					self.banner.show(new UsageView({
+						data: data
+					}))	
+				}
 			});
 		},
 

@@ -8,9 +8,7 @@
 <div class="modal-body">
 	<p>Your new password is:</p>
 
-	<div class="well">
-		<span id="password"><%= password %></span>
-	</div>
+	<div class="well"><span id="password"><%= password %></span></div>
 
 	<p>Please store this password is a safe place since it can not be retrieved once this dialog box is dismissed.</p>
 </div>

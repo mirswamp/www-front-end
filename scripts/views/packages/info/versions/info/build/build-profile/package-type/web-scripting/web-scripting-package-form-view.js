@@ -190,17 +190,31 @@ define([
 			this.validator = this.validate();
 		},
 
-		showAdvancedSettings: function() {
-			this.$el.find('#advanced-settings-accordion').show();
+		expandBuildSettings: function() {
+			this.$el.find('.tags .accordion-toggle[href="#build-settings"]').removeClass('collapsed');
+			this.$el.find('#build-settings').collapse('show');
 		},
 
-		hideAdvancedSettings: function() {
-			this.$el.find('#advanced-settings-accordion').hide();
+		collapseBuildSettings: function() {
+			this.$el.find('.tags .accordion-toggle[href="#build-settings"]').addClass('collapsed');
+			this.$el.find('#build-settings').collapse('hide');
 		},
-
+		
 		showBuildSystem: function(buildSystem) {
 
-			// show / hide build settings
+			// expand / collapse build settings
+			//
+			if (buildSystem && buildSystem != 'no-build') {
+				this.$el.find('.tag[href="#configure-settings"]').show();
+				this.$el.find('.tag[href="#build-settings"]').show();
+				this.expandBuildSettings();
+			} else {
+				this.$el.find('.tag[href="#configure-settings"]').hide();
+				this.$el.find('.tag[href="#build-settings"]').hide();
+				this.collapseBuildSettings();
+			}
+
+			// show appropriate fields
 			//
 			if (buildSystem == 'other') {
 				this.$el.find('#other-build-command').closest('.form-group').show();
@@ -251,6 +265,7 @@ define([
 			// build settings
 			//
 			var buildPath = this.$el.find('#build-path').val();
+			var excludePaths = this.$el.find('#exclude-paths').val();
 			var buildFile = this.$el.find('#build-file').val();
 			var buildOptions = this.$el.find('#build-options').val();
 			var buildTarget = this.$el.find('#build-target').val();
@@ -273,6 +288,7 @@ define([
 				// build attributes
 				//
 				'build_dir': buildPath != ''? buildPath : null,
+				'exclude_paths': excludePaths != ''? excludePaths : null,
 				'build_file': buildFile != ''? buildFile : null,
 				'build_opt': buildOptions != ''? buildOptions : null,
 				'build_target': buildTarget != ''? buildTarget : null
@@ -316,14 +332,6 @@ define([
 			// set defaults
 			//
 			this.setBuildSystemDefaults(buildSystem);
-
-			// show / hide advanced settings
-			//
-			if (hasBuildSettings) {
-				this.showAdvancedSettings();
-			} else {
-				this.hideAdvancedSettings();
-			}
 
 			// show / hide build system info
 			//

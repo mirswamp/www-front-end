@@ -16,9 +16,11 @@
 \******************************************************************************/
 
 define([
+	'moment',
 	'utilities/time/time-utils',
-	'utilities/time/date-format'
-], function() {
+	'utilities/time/date-format',
+	'library/moment/moment-timezone-with-data'
+], function(Moment) {
 
 	//
 	// add functions to global scope
@@ -28,6 +30,15 @@ define([
 		if (!date) {
 			return;
 		}
+
+		// parse date if necessary
+		//
+		if (typeof date == 'string') {
+			date = Date.parseIso8601(date.replace(/-/g, '/'));
+		} else if (date.date) {
+			date = Date.parseIso8601(date.date.replace(/-/g, '/'));
+		}
+
 		return new Date(
 			date.getTime() - 
 			(new Date()).getTimezoneOffset() * 60 * 1000
@@ -38,6 +49,15 @@ define([
 		if (!date) {
 			return;
 		}
+
+		// parse date if necessary
+		//
+		if (typeof date == 'string') {
+			date = Date.parseIso8601(date.replace(/-/g, '/'))
+		} else if (date.date) {
+			date = Date.parseIso8601(date.date.replace(/-/g, '/'));
+		}
+
 		return new Date(
 			date.getTime() + 
 			(new Date()).getTimezoneOffset() * 60 * 1000
@@ -101,31 +121,57 @@ define([
 	//
 
 	window.dateToHTML = function(date) {
-		var html = '<div class="date">';
-		if (date) {
-			html += UTCDateToLocalDate(date).format('mm/dd/yyyy');
+		if (!date) {
+			return;
 		}
+
+		// parse date, if necessary
+		//
+		if (typeof date == 'string') {
+			date = Date.parseIso8601(date.replace(/-/g, '/'));
+		} else if (date.date) {
+			date = Date.parseIso8601(date.date.replace(/-/g, '/'));
+		}
+
+		// create formatted HTML
+		//
+		var html = '<div class="date">';
+		var timezone = Moment.tz(Moment.tz.guess()).format('z');
+		html += UTCDateToLocalDate(date).format('mm/dd/yyyy');
+		html += ' ' + timezone;
 		html += '</div>';
 		return html;	
 	}
 
-	window.dateToDetailedHTML = function(date) {
+	window.datetimeToHTML = function(date) {
+		if (!date) {
+			return;
+		}
+
+		// parse date, if necessary
+		//
+		if (typeof date == 'string') {
+			date = Date.parseIso8601(date.replace(/-/g, '/'));
+		} else if (date.date) {
+			date = Date.parseIso8601(date.date.replace(/-/g, '/'));
+		}
+
+		// create formatted HTML
+		//
 		var html = '<div class="datetime">';
 
 		// add date
 		//
 		html += '<div class="date">';
-		if (date) {
-			html += UTCDateToLocalDate(date).format('mm/dd/yyyy');
-		}
+		html += UTCDateToLocalDate(date).format('mm/dd/yyyy');
 		html += '</div>';
 
 		// add time
 		//
 		html += '<div class="time">';
-		if (date) {
-			html += UTCDateToLocalDate(date).format('HH:MM:ss');
-		}
+		var timezone = Moment.tz(Moment.tz.guess()).format('z');
+		html += UTCDateToLocalDate(date).format('HH:MM:ss');
+		html += ' ' + timezone;
 		html += '</div>';
 
 		html += '</div>';	
@@ -133,13 +179,25 @@ define([
 	}
 
 	window.dateToSortableHTML = function(date) {
+		if (!date) {
+			return;
+		}
 
-		// add non-displayable sorting datetime
+		// parse date, if necessary
+		//
+		if (typeof date == 'string') {
+			date = Date.parseIso8601(date.replace(/-/g, '/'));
+		} else if (date.date) {
+			date = Date.parseIso8601(date.date.replace(/-/g, '/'));
+		}
+
+		// create formatted HTML
 		//
 		var html = '<div class="datetime">';
-		if (date) {
-			html += UTCDateToLocalDate(date).format('mm/dd/yyyy HH:MM');
-		}
+		var timezone = Moment.tz(Moment.tz.guess()).format('z');
+		var date = UTCDateToLocalDate(date);
+		html += date? date.format('mm/dd/yyyy HH:MM') : '';
+		html += ' ' + timezone;
 		html += '</div>';
 		
 		return html;

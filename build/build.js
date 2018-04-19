@@ -117,7 +117,7 @@
 
 		// config paths
 		//
-		config: 'config',
+		config:'empty:',
 
 		// template paths
 		//
@@ -134,6 +134,7 @@
 		'backbone.babysitter': 'library/backbone/babysitter/backbone.babysitter',
 		marionette: 'library/backbone/marionette/backbone.marionette',
 		clipboard: 'library/clipboard/clipboard.min',
+		moment: 'library/moment/moment.min',
 
 		// jquery paths
 		//

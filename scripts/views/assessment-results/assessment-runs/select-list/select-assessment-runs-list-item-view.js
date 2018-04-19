@@ -25,10 +25,11 @@ define([
 	'text!templates/assessment-results/assessment-runs/select-list/select-assessment-runs-list-item.tpl',
 	'config',
 	'registry',
+	'models/packages/package',
 	'models/tools/tool',
 	'views/assessment-results/assessment-runs/list/assessment-runs-list-item-view',
 	'utilities/time/date-utils'
-], function($, _, Backbone, Marionette, Tooltip, Template, Config, Registry, Tool, AssessmentRunsListItemView) {
+], function($, _, Backbone, Marionette, Tooltip, Template, Config, Registry, Package, Tool, AssessmentRunsListItemView) {
 	return AssessmentRunsListItemView.extend({
 
 		//
@@ -40,6 +41,7 @@ define([
 		events: _.extend(AssessmentRunsListItemView.prototype.events, {
 			'click .select input': 'onClickSelectInput',
 			'click .select-group input': 'onClickSelectGroupInput',
+			'click .scarf-results': 'onClickScarfResults'
 			// 'dblclick .select input': 'onDoubleClickSelectInput'
 		}),
 
@@ -101,7 +103,8 @@ define([
 				toolVersionUrl: data.tool.tool_version_uuid? Registry.application.getURL() + '#tools/versions/' + data.tool.tool_version_uuid : undefined,
 				platformUrl: data.platform.platform_uuid? Registry.application.getURL() + '#platforms/' + data.platform.platform_uuid : undefined,
 				platformVersionUrl: data.platform.platform_version_uuid? Registry.application.getURL() + '#platforms/versions/' + data.platform.platform_version_uuid : undefined,
-				resultsUrl: data.tool && !data.tool.is_restricted? this.getResultsUrl() : null,
+				// resultsUrl: data.tool && !data.tool.is_restricted? this.getResultsUrl() : null,
+				resultsUrl: this.getResultsUrl(),
 				errorUrl: this.options.showErrors? this.getErrorUrl() : undefined,
 				isChecked: this.options.selected? this.options.selected.contains(this.model) : false,
 				showSelect: this.options.editable || this.isViewable(),
@@ -166,6 +169,38 @@ define([
 			var checked = $(event.target).prop('checked');
 			this.options.parent.setSelectedContiguous(index, checked);
 			this.options.parent.onSelect();
+		},
+
+		onClickScarfResults: function(event) {
+			var self = this;
+			var tool = new Tool(this.model.get('tool'));
+			var package = new Package(this.model.get('package'));
+
+			if (tool.isRestricted() && tool.get('permission') != 'granted') {
+
+				// cancel event
+				//
+				event.stopPropagation();
+				event.preventDefault();
+
+				// ensure the user has permission and has accepted any pertinent EULAs
+				//
+				tool.confirmPolicy({
+
+					// callbacks
+					//
+					success: function() {
+
+						// update tool permission
+						//
+						var tool = self.model.get('tool');
+						tool.permission = 'granted';
+						self.model.set({
+							tool: tool
+						});
+					}
+				});
+			}
 		}
 
 		/*

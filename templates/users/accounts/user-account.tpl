@@ -27,6 +27,12 @@
 		<a><i class="fa fa-link"></i>Linked Accounts</a>
 	</li>
 	<% } %>
+
+	<% if (config['classes_enabled']) { %>
+	<li id="classes">
+		<a><i class="fa fa-mortar-board"></i>Classes</a>
+	</li>
+	<% } %>
 </ul>
 
 <div id="user-profile"></div>

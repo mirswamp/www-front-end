@@ -44,7 +44,8 @@ define([
 		events: {
 			'change #username': 'onChangeUsername',
 			'change #promo-code': 'onChangePromoCode',
-			'change #email': 'onChangeEmail'
+			'change #email': 'onChangeEmail',
+			'change #class-code': 'onChangeClassCode'
 		},
 
 		showPasswordMeter: false,
@@ -117,6 +118,7 @@ define([
 		template: function(data) {
 			return _.template(Template, _.extend(data, {
 				model: this.model,
+				classes: this.options.classes,
 				config: Registry.application.config
 			}));
 		},
@@ -261,6 +263,7 @@ define([
 			var email = this.$el.find('#email').val();
 			var username = this.$el.find('#username').val();
 			var password = this.$el.find('#password').val();
+			var classCode = this.$el.find('#class-code').val();
 			
 			// update model
 			//
@@ -272,7 +275,8 @@ define([
 				'promo': promo,
 				'email': email,
 				'username': username,
-				'password': password
+				'password': password,
+				'class_code': classCode != 'none'? classCode : null
 			});
 
 			//this.updateAddress(model);
@@ -487,6 +491,18 @@ define([
 						element.addClass('ignore');
 					}
 				});
+			}
+		},
+
+		onChangeClassCode: function() {
+
+			// hide / show alert info
+			//
+			var classCode = this.$el.find('#class-code').val();
+			if (classCode != 'none') {
+				this.$el.find('.alert-info').show();
+			} else {
+				this.$el.find('.alert-info').hide();
 			}
 		}
 	});

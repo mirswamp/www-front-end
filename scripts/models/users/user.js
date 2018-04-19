@@ -66,19 +66,19 @@ define([
 		},
 
 		isVerified: function() {
-			return this.get('email_verified_flag') == 1;
+			return this.get('email_verified_flag');
 		},
 
 		isPending: function() {
-			return this.get('email_verified_flag') == 0;
+			return !this.get('email_verified_flag');
 		},
 
 		isEnabled: function() {
-			return this.get('enabled_flag') == 1;
+			return this.get('enabled_flag');
 		},
 
 		isDisabled: function() {
-			return this.get('enabled_flag') == 0;
+			return !this.isEnabled();
 		},
 
 		isSameAs: function(user) {
@@ -90,19 +90,19 @@ define([
 		},
 
 		hasSshAccess: function() {
-			return this.get('ssh_access_flag') == '1';
+			return this.get('ssh_access_flag');
 		},
 
 		isPasswordResetRequired: function() {
-			return this.get('forcepwreset_flag') == '1';
+			return this.get('forcepwreset_flag');
 		},
 
 		isActive: function() {
-			return this.get('hibernate_flag') != '1';
+			return !this.isHibernating();
 		},
 
 		isHibernating: function() {
-			return this.get('hibernate_flag') == '1';
+			return this.get('hibernate_flag');
 		},
 
 		//
@@ -125,18 +125,18 @@ define([
 			switch (status) {
 				case 'pending':
 					this.set({
-						'enabled_flag': 0
+						'enabled_flag': false
 					});
 					break;
 				case 'enabled':
 					this.set({
-						'enabled_flag': 1,
-						'email_verified_flag': 1
+						'enabled_flag': true,
+						'email_verified_flag': true
 					});
 					break;
 				case 'disabled':
 					this.set({
-						'enabled_flag': 0
+						'enabled_flag': false
 					});
 					break;
 			}
@@ -144,13 +144,13 @@ define([
 
 		setForcePasswordReset: function(forcePasswordReset) {
 			this.set({
-				'forcepwreset_flag': forcePasswordReset? 1 : 0
+				'forcepwreset_flag': forcePasswordReset
 			});
 		},
 
 		setHibernating: function(hibernating) {
 			this.set({
-				'hibernate_flag': hibernating? 1 : 0
+				'hibernate_flag': hibernating
 			});
 		},
 
@@ -159,23 +159,17 @@ define([
 		//
 
 		isAdmin: function() {
-			return this.get('admin_flag') == 1;
+			return this.get('admin_flag');
 		},
 
 		isOwner: function() {
-			return this.get('owner_flag') == 1;
+			return this.get('owner_flag');
 		},
 
 		setAdmin: function(isAdmin) {
-			if (isAdmin) {
-				this.set({
-					'admin_flag': 1
-				});
-			} else {
-				this.set({
-					'admin_flag': 0
-				});
-			}
+			this.set({
+				'admin_flag': isAdmin
+			});
 		},
 
 

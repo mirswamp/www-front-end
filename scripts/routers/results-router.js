@@ -114,8 +114,8 @@ define([
 				'text!templates/viewers/progress.tpl',
 				'registry',
 				'models/assessments/assessment-results',
-				'views/dialogs/error-view'
-			], function ($, _, Template, Registry, AssessmentResults, ErrorView) {
+				'views/dialogs/notify-view'
+			], function ($, _, Template, Registry, AssessmentResults, NotifyView) {
 
 				// get assessment results
 				//
@@ -141,7 +141,7 @@ define([
 								// display results in new window
 								//
 								self.showResultsData(data);
-							} else if(data.results_status === 'LOADING') {
+							} else if (data.results_status === 'LOADING') {
 
 								// don't redraw if same status
 								//
@@ -158,13 +158,36 @@ define([
 								setTimeout(function() {
 									getInstanceStatus(data.viewer_instance);
 								}, refreshInterval);
-							}
-							else {
+							} else if (data.results_status === 'FAILED') {
+
+								// show error report
+								//
+								self.showJsonErrors(data.results);
+							} else if (data.results_status === 'TRYAGAIN') {
+			
+								// display try again message
+								//
+								Registry.application.modal.show(
+									new NotifyView({
+										message: "Can not launch viewer at this time.  Please wait and try again soon."
+									})
+								);
+							} else if (data.results_status == 'NOLAUNCH') {
+								
+								// display viewer error message
+								//
+								Registry.application.modal.show(
+									new NotifyView({
+										message: "Can not launch viewer.  Viewer has stopped. "
+									})
+								);	
+							} else {
+
 								// display results status error message
 								//
 								Registry.application.modal.show(
-									new ErrorView({
-										message: "Error fetching assessment results: " + data.results_status
+									new NotifyView({
+										message: "Error viewing results: " + data.results_viewer_status
 									})
 								);
 							}
@@ -178,7 +201,27 @@ define([
 								// allow user to sign the EULA
 								//
 								var runRequest = new RunRequest({});
-								runRequest.handleError(response);
+								runRequest.handleError(response, {
+
+									// callbacks
+									//
+									success: function() {
+
+										// start refreshing
+										//
+										getResults();
+									},
+
+									reject: function() {
+
+										// update view
+										//
+										self.showProgress({
+											title: 'Preparing Results',
+											status: 'Results can not be shown until the tool policy is accepted.'
+										});
+									}
+								});
 							});
 						}
 					};
@@ -215,13 +258,18 @@ define([
 								setTimeout(function() {
 									getInstanceStatus(data.viewer_instance)
 								}, refreshInterval);
-							}
-							else {
+							} else if(data.results_status === 'CLOSED') {
+									self.showProgress({
+										title: 'Viewer Closed',
+										status: data.results_viewer_status
+									});
+							} else {
+
 								// display results status error message
 								//
 								Registry.application.modal.show(
-									new ErrorView({
-										message: "Error fetching assessment results: " + data.results_status
+									new NotifyView({
+										message: "Error viewing results: " + data.results_viewer_status
 									})
 								);
 							}
@@ -287,42 +335,22 @@ define([
 						model: new Backbone.Model(json)
 					})
 				);
+			});
+		},
 
-				/*
-				Registry.application.showContent({
-					nav1: 'home',
-					nav2: 'results', 
+		showJsonErrors: function(json) {
+			require([
+				'registry',
+				'views/assessment-results/error-report/error-report-view'
+			], function (Registry, ErrorReportView) {
 
-					// callbacks
-					//
-					done: function(view) {
-
-						// insert results into DOM
-						//
-						view.$el.find('.content').append('JSON!!');
-
-						// add handler for anchor clicks
-						//
-						view.$el.find('.content').find('a').on('click', function(event) {
-							var target = $(event.target).attr('href');
-							if (target.startsWith('#')) {
-								var element = view.$el.find('.content').find(target);
-								event.preventDefault();
-								var offset = element.position().top - 60;
-								$(document.body).animate({
-									'scrollTop': offset
-								}, 500);
-							}
-						});
-
-						// call window onload, if there is one
-						//
-						if (window.onload) {
-							window.onload();
-						}
-					}
-				});
-				*/
+				// show error report
+				//
+				Registry.application.showMain(
+					new ErrorReportView({
+						model: new Backbone.Model(json)
+					})
+				);
 			});
 		},
 

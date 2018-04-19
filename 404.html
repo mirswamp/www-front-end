@@ -10,18 +10,26 @@
 
 		<!-- styles -->
 		<link rel="stylesheet" type="text/css" href="styles/styles.css" />
-		<link rel="stylesheet" type="text/css" href="scripts/library/fancybox/jquery.fancybox.css" media="screen" />
+		<script>
+
+			// trigger the button using the keyboard
+			//
+			document.addEventListener("keydown", function(event) {
+				if (event.keyCode === 13) {
+					document.getElementById("button").focus();
+				}
+			});
+		</script>
 	</head>
 
 	<body>
 		<div align="center">
 			<br />
 			<br />
-			<image src="images/other/gator.gif" />
+			<a href="index.html"><image href="index.html" src="images/other/gator.gif" /></a>
 			<br />
-			<span style="font-size:100px">404</span><br />
-			<span style="font-size:24px">Error - Not Found</span>
-			<p><a href="/">SWAMP - Software Assurance Marketplace</a></p>
+			<h2 style="font-size:30px">Whoops,<br/> The Page You're Looking For Can Not Be Found!</h2>
+			<a href="index.html"><button id="button" type="submit" class="btn btn-lg btn-primary">Return to SWAMP</button></a>
 		</div>
 	</body>
 </html>

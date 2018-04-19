@@ -52,7 +52,7 @@
 		<label class="form-label">Creation date</label>
 		<div class="controls">
 			<% if (model.hasCreateDate()) { %>
-			<%= dateToHTML( model.getCreateDate() ) %>
+			<%= datetimeToHTML( model.getCreateDate() ) %>
 			<% } %>
 		</div>
 	</div>
@@ -61,7 +61,7 @@
 	<div class="form-group">
 		<label class="form-label">Last modified date</label>
 		<div class="controls">
-			<%= dateToHTML( model.getUpdateDate() ) %>
+			<%= datetimeToHTML( model.getUpdateDate() ) %>
 		</div>
 	</div>
 	<% } %>

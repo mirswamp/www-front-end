@@ -66,7 +66,7 @@
 			<label class="form-label">Creation date</label>
 			<span id="owner">
 				<% if (model.hasCreateDate()) { %>
-				<%= dateToHTML(model.getCreateDate()) %>
+				<%= datetimeToHTML(model.getCreateDate()) %>
 				<% } %>
 			</span>
 		</div>
@@ -74,7 +74,7 @@
 			<label class="form-label">Last modified</label>
 			<span id="owner">
 				<% if (model.hasUpdateDate()) { %>
-				<%= dateToHTML(model.getUpdateDate()) %>
+				<%= datetimeToHTML(model.getUpdateDate()) %>
 				<% } %>
 			</span>
 		</label>

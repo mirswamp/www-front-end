@@ -7,7 +7,7 @@
 			<div class="controls">
 				<select id="build-system" name="build-system" data-toggle="popover" data-placement="right" title="Build System" data-content="This is the name of the system used to build the package (i.e. 'ant' etc)." >
 					<option value="none"></option>
-					<option <% if (build_system == 'no-build') { %> selected <% } %> 
+					<option <% if (!build_system || build_system == 'no-build') { %> selected <% } %> 
 						value="no-build">No build</option>
 					<option <% if (build_system == 'ant') { %> selected <% } %>
 						value="ant">Ant</option>
@@ -15,47 +15,38 @@
 						value="ivy">Ant+Ivy</option>
 					<option <% if (build_system == 'maven') { %> selected <% } %>
 						value="maven">Maven</option>
-					<option <% if (build_system == 'gradle') { %> selected <% } %>
+					<option <% if (build_system == 'gradle' || build_system == 'gradle-wrapper') { %> selected <% } %>
 						value="gradle">Gradle</option>
 				</select>
 			</div>
 		</div>
 
 		<div class="form-group">
-			<% var showBuildSystem = build_system == 'gradle'; %>
+			<% var showBuildSystem = build_system == 'gradle' || build_system == 'gradle-wrapper'; %>
 			<% var showConfigure = config_dir || config_cmd || config_opt; %>
-			<% var showBuild = build_dir || build_file || build_opt || build_target || model.isNew(); %>
+			<% var showBuild = build_dir || build_file || build_opt || build_target; %>
 			<% var showAdvanced = showBuildSystem || showConfigure || showBuild; %>
 
-			<div class="panel" id="advanced-settings-accordion"<% if (!build_system || build_system == 'no-build') { %> style="display:none" <% } %>>
+			<div id="advanced-settings" class="panel"<% if (!build_system || build_system == 'no-build') { %> style="display:none" <% } %>>
 				<div class="panel-group">
-					<div class="panel-heading">
-						<label>
-						<a class="accordion-toggle" data-toggle="collapse" data-parent="#advanced-settings-accordion" href="#advanced-settings">
-							<% if (showAdvanced) { %>
-							<i class="fa fa-minus-circle"></i>
-							<% } else { %>
-							<i class="fa fa-plus-circle"></i>
-							<% } %>
-							Advanced settings
-						</a>
-						</label>
 
+					<div class="panel-heading">
+						<label>Advanced settings</label>
 						<span class="tags">
 							<span class="<% if (!showBuildSystem) { %>collapsed <% } %>toggle build-system tag accordion-toggle" data-toggle="collapse" data-parent="#filters" href="#build-system-settings" data-toggle="button" <% if (!showBuildSystem) { %> style="display:none"<% } %>><i class="fa fa-tasks"></i>Build system</span>
 							<span class="<% if (!showConfigure) { %>collapsed <% } %>toggle configure tag accordion-toggle" data-toggle="collapse" data-parent="#filters" href="#configure-settings"><i class="fa fa-tasks"></i>Configure</span>
 							<span class="<% if (!showBuild) { %>collapsed <% } %>toggle build tag accordion-toggle" data-toggle="collapse" data-parent="#filters" href="#build-settings"><i class="fa fa-puzzle-piece"></i>Build</span>
 						</span>
 					</div>
-					<div id="advanced-settings" class="nested accordion-body collapse<% if (showAdvanced) { %> in<% } %>">
 
+					<div class="nested">
 						<div id="build-system-settings" class="well collapse<% if (showBuildSystem) { %> in<% } %>"<% if (!showBuildSystem) { %> style="display:none"<% } %>>
 							<h3><i class="fa fa-tasks"></i>Build system settings<i class="fa fa-minus-circle close accordion-toggle" data-toggle="collapse" href="#build-system-settings" /></h3>
 
-							<div class="gradle-settings form-group" <% if (build_system != 'gradle') { %>style="display:none"<% } %>>
+							<div class="gradle-settings form-group" <% if (!(build_system == 'gradle'|| build_system == 'gradle-wrapper')) { %>style="display:none"<% } %>>
 								<label class="control-label">Use Gradle wrapper</label>
 								<div class="controls">
-									<input type="checkbox" id="use-gradle-wrapper" <% if (typeof use_gradle_wrapper !== 'undefined' && use_gradle_wrapper) { %>checked<% } %>>
+									<input type="checkbox" id="use-gradle-wrapper" <% if (typeof use_gradle_wrapper !== 'undefined' && use_gradle_wrapper || build_system == 'gradle-wrapper') { %>checked<% } %>>
 									<i class="active fa fa-question-circle" data-toggle="popover" data-placement="right" data-container="body" title="Use Gradle wrapper" data-content="The gradle wrapper is a standard way of making a gradle package use a specific version of gradle, which it may require. Some packages will work with any gradle, some only with the gradle wrapper mechanism. Check the documentation"></i>
 								</div>
 							</div>

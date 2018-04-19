@@ -18,19 +18,15 @@
 		<div class="form-group">
 			<% var showConfigure = config_dir || config_cmd || config_opt; %>
 			<% var showBuild = build_dir || build_file || build_opt || build_target; %>
-			<% var showAdvanced = showBuild; %>
+			<% var showAdvanced = true; %>
 
-			<div class="panel" id="advanced-settings-accordion" <% if (build_system == 'no-build') { %>style="display:none" <% } %> >
+			<div id="advanced-settings" class="panel"<% if (build_system == 'no-build') { %>style="display:none" <% } %> >
 				<div class="panel-group">
 					<div class="panel-heading">
-						<label>
-						<a class="accordion-toggle" data-toggle="collapse" data-parent="#advanced-settings-accordion" href="#advanced-settings">
-							<i class="fa fa-minus-circle"></i>
-							Advanced settings
-						</a>
-						</label>
+						<label>Advanced settings</label>
 					</div>
-					<div id="advanced-settings" class="nested accordion-body collapse in">
+
+					<div class="nested">
 						<% if (showAdvanced) { %>
 
 						<% if (showConfigure) { %>
@@ -70,7 +66,7 @@
 								<div class="controls"><%- build_dir %></div>
 							</div>
 							<% } %>
-
+							
 							<% if (build_file) { %>
 							<div class="form-group">
 								<label class="form-label">Build file</label>
@@ -91,6 +87,13 @@
 								<div class="controls"><%- build_target %></div>
 							</div>
 							<% } %>
+						</div>
+						<% } %>
+
+						<% if (exclude_paths) { %>
+						<div class="form-group">
+							<label class="form-label">Exclude paths</label>
+							<div class="controls"><%- exclude_paths %></div>
 						</div>
 						<% } %>
 

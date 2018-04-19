@@ -3,7 +3,7 @@
 </td>
 
 <td class="project first">
-	<a href="#projects/<%- project_uid %>"><%- full_name %></a>
+	<a href="#projects/<%- project_uid %>" target="_blank"><%- full_name %></a>
 </td>
 
 <td class="description last">
