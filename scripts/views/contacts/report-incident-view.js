@@ -70,7 +70,7 @@ define([
 			
 			// show new contact profile form
 			//
-			if (Registry.application.config['email_enabled']) {
+			if (Registry.application.config['email_enabled'] && Registry.application.config['contact_form_enabled']) {
 				this.newContactProfileForm.show(
 					new NewContactProfileFormView({
 						model: this.model

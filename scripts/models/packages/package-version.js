@@ -200,6 +200,16 @@ define([
 		//
 
 		upload: function(data, options) {
+
+			// remove empty file to avoid Safari bug
+			//
+			if (data.has('file')) {
+				var file = data.get('file');
+				if (file.size == 0 || file.name == '') {
+					data.delete('file');
+				}
+			}
+
 			$.ajax(_.extend(options, {
 				url: this.urlRoot + '/upload',
 				type: 'POST',
