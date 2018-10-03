@@ -77,7 +77,7 @@ define([
 						//
 						self.setSelectedName('Any', options);
 					}
-				})
+				});
 			} else {
 
 				// reset selection
@@ -394,6 +394,7 @@ define([
 							initialValue: self.options.initialVersion,
 							defaultOptions: self.options.versionDefaultOptions,
 							selectedOptions: self.options.versionSelectedOptions,
+							searchable: true,
 
 							// callbacks
 							//

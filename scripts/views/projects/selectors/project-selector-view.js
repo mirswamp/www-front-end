@@ -43,7 +43,7 @@ define([
 					options.initialValue.name = 'None';
 				} else {
 					options.initialValue.set({
-						'name': options.initialValue.get('short_name')
+						'name': options.initialValue.get('full_name')
 					});
 				}
 			}
@@ -74,12 +74,12 @@ define([
 					//
 					for (var i = 0; i < ownedProjects.length; i++) {
 						ownedProjects.at(i).set({
-							'name': ownedProjects.at(i).get('short_name')
+							'name': ownedProjects.at(i).get('full_name')
 						});
 					}
 					for (var i = 0; i < joinedProjects.length; i++) {
 						joinedProjects.at(i).set({
-							'name': joinedProjects.at(i).get('short_name')
+							'name': joinedProjects.at(i).get('full_name')
 						});
 					}
 
@@ -120,7 +120,7 @@ define([
 		setSelected: function(project, options) {
 			this.selected = project;
 			if (project) {
-				this.setSelectedName(project.get('short_name'), options);
+				this.setSelectedName(project.get('full_name'), options);
 			} else {
 				this.setSelectedName('Any', options);
 			}

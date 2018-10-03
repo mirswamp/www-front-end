@@ -9,7 +9,7 @@
 			if (!model.isTrialProject()) {
 		%>
 		<li class="project<%- model.get('project_uid') %>">
-			<a href="#projects/<%- model.get('project_uid') %>"><i class="fa fa-folder-open"></i><%- model.get('short_name') %></a>
+			<a href="#projects/<%- model.get('project_uid') %>"><i class="fa fa-folder-open"></i><%- model.get('full_name') %></a>
 		</li>
 		<%
 			}
@@ -30,7 +30,7 @@
 			if (!model.isTrialProject()) {
 		%>
 		<li class="project<%- model.get('project_uid') %>">
-			<a href="#projects/<%- model.get('project_uid') %>"><i class="fa fa-folder-open"></i><%- model.get('short_name') %></a>
+			<a href="#projects/<%- model.get('project_uid') %>"><i class="fa fa-folder-open"></i><%- model.get('full_name') %></a>
 		</li>
 		<%
 			}

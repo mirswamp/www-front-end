@@ -126,7 +126,9 @@ define([
 		template: function(data) {
 			return _.template(Template, _.extend(data, {
 				model: this.model,
+				index: this.options.index,
 				url: Registry.application.session.user? Registry.application.getURL() + '#packages/versions/' + this.model.get('package_version_uuid') : undefined,
+				showNumbering: this.options.showNumbering,
 				showDelete: this.options.package.isOwned()
 			}));
 		},

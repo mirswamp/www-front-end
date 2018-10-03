@@ -31,7 +31,6 @@ define([
 
 		defaults: {
 			'full_name': undefined,
-			'short_name': undefined,
 			'project_type_code': undefined,
 			'affiliation': undefined,
 			'description': undefined
@@ -74,7 +73,7 @@ define([
 
 		getName: function() {
 			if (!this.isTrialProject()) {
-				return this.get('short_name');
+				return this.get('full_name');
 			} else {
 				return '';
 			}

@@ -83,16 +83,19 @@ define([
 			return _.template(Template, _.extend(data, {
 				model: this.model,
 				collection: this.collection,
+				showNumbering: this.options.showNumbering,
 				showDelete: this.model.isOwned()
 			}));
 		},
 
-		childViewOptions: function(model) {
+		childViewOptions: function(model, index) {
 			return {
 				model: model,
+				index: index,
 				package: this.model,
-				collection: this.collection
-			}   
+				collection: this.collection,
+				showNumbering: this.options.showNumbering
+			};
 		}
 	});
 });

@@ -1,3 +1,9 @@
+<% if (showNumbering) { %>
+<td class="prepend number">
+	<%- index %>
+</td>
+<% } %>
+
 <td class="version-string first">
 	<% if (url) { %>
 	<a href="<%- url %>"><%- version_string %></a>

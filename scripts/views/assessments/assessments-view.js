@@ -80,7 +80,7 @@ define([
 				if (project.isTrialProject()) {
 					return 'My Assessments';
 				} else {
-					return project.get('short_name') + ' Assessments';
+					return project.get('full_name') + ' Assessments';
 				}
 			} else {
 				return 'Assessments';

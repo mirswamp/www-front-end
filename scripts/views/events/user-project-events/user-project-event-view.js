@@ -47,8 +47,7 @@ define([
 				// callbacks
 				//
 				success: function() {
-					self.$el.find('.project-short-name').html(project.get('short_name'));
-					self.$el.find('.project-full-name').html(project.get('full_name'));
+					self.$el.find('.project-name').html(project.get('full_name'));
 				}
 			});	
 		}

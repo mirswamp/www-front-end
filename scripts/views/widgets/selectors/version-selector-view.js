@@ -36,6 +36,17 @@ define([
 			}));
 		},
 
+		onRender: function() {
+
+			// apply select2 selector
+			//
+			if (this.options.searchable) {
+				this.$el.find('select').select2({
+					dropdownAutoWidth: 'true'
+				});
+			}
+		},
+
 		//
 		// methods
 		//

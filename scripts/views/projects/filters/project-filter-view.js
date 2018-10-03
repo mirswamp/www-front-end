@@ -85,7 +85,7 @@ define([
 				if (project == null || project.isTrialProject()) {
 					return "no project";
 				} else {
-					return this.getSelected().get('short_name');
+					return this.getSelected().get('full_name');
 				}
 			} else {
 				return "any project";

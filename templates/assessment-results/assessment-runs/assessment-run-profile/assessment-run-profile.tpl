@@ -99,6 +99,17 @@
 		<legend>Statistics</legend>
 
 		<div class="form-group">
+			<label class="form-label">Execution node</label>
+			<div class="controls">
+				<% if (typeof execute_node_architecture_id !== 'undefined' && execute_node_architecture_id != null) { %>
+				<%- execute_node_architecture_id %>
+				<% } else { %>
+				unknown
+				<% } %>
+			</div>
+		</div>
+		
+		<div class="form-group">
 			<label class="form-label">Execution duration</label>
 			<div class="controls">
 				<% if (typeof execution_duration !== 'undefined' && execution_duration != null) { %>

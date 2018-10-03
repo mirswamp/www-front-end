@@ -29,6 +29,11 @@
 		<li><%- versionStrings[i] %></li>
 	<% } %>
 	</ul>
+	<% if (num_versions == model.get('version_strings').length + 1) { %>
+	and 1 other
+	<% } else if (num_versions > model.get('version_strings').length) { %>
+	and <%= num_versions - model.get('version_strings').length %> others
+	<% } %>
 </td>
 
 <% if (showDelete) { %>

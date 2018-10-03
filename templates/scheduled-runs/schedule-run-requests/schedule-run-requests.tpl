@@ -3,7 +3,7 @@
 	<% if (model.isTrialProject()) { %>
 	Schedule Assessment Runs
 	<% } else { %>
-	Schedule <span class="name"><%- short_name %></span> Assessment Runs
+	Schedule <span class="name"><%- full_name %></span> Assessment Runs
 	<% } %>
 </h1>
 
@@ -14,7 +14,7 @@
 	<% if (model.isTrialProject()) { %>
 	<li><a href="#assessments"><i class="fa fa-check"></i>Assessments</a></li>
 	<% } else { %>
-	<li><a href="#assessments?project=<%- model.get('project_uid') %>"><i class="fa fa-check"></i><%- model.get('short_name') %> Assessments</a></li>
+	<li><a href="#assessments?project=<%- model.get('project_uid') %>"><i class="fa fa-check"></i><%- model.get('full_name') %> Assessments</a></li>
 	<% } %>
 	<% } else { %>
 	<li><a href="#assessments?project=all"><i class="fa fa-bus"></i>All Assessments</a></li>
@@ -23,7 +23,7 @@
 	<% if (model.isTrialProject()) { %>
 	<li><i class="fa fa-bus"></i>Schedule Assessment Runs</li>
 	<% } else { %>
-	<li><i class="fa fa-bus"></i>Schedule <span class="name"><%- short_name %></span> Assessment Runs</li>
+	<li><i class="fa fa-bus"></i>Schedule <span class="name"><%- full_name %></span> Assessment Runs</li>
 	<% } %>
 </ol>
 

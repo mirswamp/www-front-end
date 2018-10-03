@@ -28,8 +28,7 @@ define([
 
 		event_type: undefined,
 		project_uid: undefined,
-		project_full_name: undefined,
-		project_short_name: undefined,
+		project_name: undefined,
 
 		//
 		// overridden Backbone methods

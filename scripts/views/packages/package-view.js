@@ -177,6 +177,6 @@ define([
 			Backbone.history.navigate('#packages/' + this.model.get('package_uuid') + '/compatibility', {
 				trigger: true
 			});
-		},
+		}
 	});
 });

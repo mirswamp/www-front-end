@@ -4,7 +4,7 @@
 	<% if (project.isTrialProject()) { %>
 	Review My Assessment Results
 	<% } else { %>
-	Review Project <span class="name"><%- project.get('short_name') %></span> Assessment Results
+	Review Project <span class="name"><%- project.get('full_name') %></span> Assessment Results
 	<% } %>
 	<% } else { %>
 	Review Assessment Results
@@ -43,7 +43,7 @@
 	<% if (project.isTrialProject()) { %>
 	<li><i class="fa fa-bug"></i>Review Assessment Results</li>
 	<% } else { %>
-	<li><i class="fa fa-bug"></i>Review <%- project.get('short_name') %> Assessment Results</li>
+	<li><i class="fa fa-bug"></i>Review <%- project.get('full_name') %> Assessment Results</li>
 	<% } %>
 	<% } else { %>
 	<li><i class="fa fa-bug"></i>Review Assessment Results</li>

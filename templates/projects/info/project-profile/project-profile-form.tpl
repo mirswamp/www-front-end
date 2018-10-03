@@ -1,33 +1,21 @@
 <form action="/" class="form-horizontal">
 	<div class="form-group">
-		<label class="required control-label">Full name</label>
+		<label class="required control-label">Name</label>
 		<div class="controls">
 			<div class="input-group">
-				<input type="text" class="required form-control" name="full-name" id="full-name" value="<%- full_name %>">
+				<input type="text" class="required form-control" name="name" id="name" maxlength="100" value="<%- full_name %>">
 				<div class="input-group-addon">
-					<i class="active fa fa-question-circle" data-toggle="popover" data-placement="top" data-container="body" title="Full name" data-content="The project full name is the long version of your project's name."></i>
-				</div>
-			</div>
-		</div>
-	</div>
-	
-	<div class="form-group">
-		<label class="required control-label">Short name</label>
-		<div class="controls">
-			<div class="input-group">
-				<input type="text" class="required form-control" name="short-name" id="short-name" value="<%- short_name %>">
-				<div class="input-group-addon">
-					<i class="active fa fa-question-circle" data-toggle="popover" data-placement="top" data-container="body" title="Short name" data-content="The project short name or alias is the short version of your project's name."></i>
+					<i class="active fa fa-question-circle" data-toggle="popover" data-placement="top" data-container="body" title="Name" data-content="The project name is a way for you to identify your project."></i>
 				</div>
 			</div>
 		</div>
 	</div>
 
 	<div class="form-group">
-		<label class="required control-label">Description</label>
+		<label class="control-label">Description</label>
 		<div class="controls">
 			<div class="input-group">
-				<textarea rows="6" class="required form-control" name="description" maxlength="500" id="description"><%- description %></textarea>
+				<textarea rows="6" class="form-control" name="description" maxlength="500" id="description"><%- description %></textarea>
 				<div class="input-group-addon">
 					<i class="active fa fa-question-circle" data-toggle="popover" data-placement="top" data-container="body" title="Description" data-content="Please include a short description of your project."></i>
 				</div>

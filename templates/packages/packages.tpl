@@ -4,7 +4,7 @@
 	<% if (project.isTrialProject()) { %>
 	My
 	<% } else { %>
-	Project <span class="name"><%- project.get('short_name') %></span>
+	Project <span class="name"><%- project.get('full_name') %></span>
 	<% } %>
 	<% } %>
 
@@ -22,7 +22,7 @@
 	<% if (project.isTrialProject()) { %>
 	My
 	<% } else { %>
-	Project <span class="name"><%- project.get('short_name') %></span>
+	Project <span class="name"><%- project.get('full_name') %></span>
 	<% } %>
 	<% } %>
 	<% if (packageType) { %>

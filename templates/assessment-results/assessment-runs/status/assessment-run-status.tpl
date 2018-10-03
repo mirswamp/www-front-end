@@ -3,7 +3,7 @@
 	<% if (project.isTrialProject()) { %>
 	Assessment Run Status
 	<% } else { %>
-	<span class="name"><%- project.get('short_name') %></span> Assessment Run Status
+	<span class="name"><%- project.get('full_name') %></span> Assessment Run Status
 	<% } %>
 </h1>
 
@@ -14,7 +14,7 @@
 	<% if (project.isTrialProject()) { %>
 	<li><a href="#results<%- queryString? '?' + queryString : ''%>"><i class="fa fa-bug"></i>Assessment Results</a></li>
 	<% } else { %>
-	<li><a href="#results<%- queryString? '?' + queryString : ''%>"><i class="fa fa-bug"></i><%- project.get('short_name') %> Assessment Results</a></li>
+	<li><a href="#results<%- queryString? '?' + queryString : ''%>"><i class="fa fa-bug"></i><%- project.get('full_name') %> Assessment Results</a></li>
 	<% } %>
 	<% } else { %>
 	<li><a href="#results<%- queryString? '?' + queryString : ''%>"><i class="fa fa-bug"></i>All Assessment Results</a></li>

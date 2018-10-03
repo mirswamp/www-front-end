@@ -69,7 +69,7 @@ define([
 				if (project.isTrialProject()) {
 					return 'My Scheduled Runs';
 				} else {
-					return project.get('short_name') + ' Scheduled Runs';
+					return project.get('full_name') + ' Scheduled Runs';
 				}
 			} else {
 				return 'Scheduled Runs';

@@ -2,6 +2,10 @@
 <table>
 	<thead>
 		<tr>
+			<% if (showNumbering) { %>
+			<th class="prepend number"></th>
+			<% } %>
+			
 			<th class="version-string first">
 				<i class="fa fa-list-ol"></i>
 				<span>Version</span>

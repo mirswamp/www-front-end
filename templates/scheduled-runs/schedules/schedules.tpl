@@ -4,7 +4,7 @@
 	<% if (project.isTrialProject()) { %>
 	Run Request Schedules
 	<% } else { %>
-	<span class="name"><%- project.get('short_name') %></span> Run Request Schedules
+	<span class="name"><%- project.get('full_name') %></span> Run Request Schedules
 	<% } %>
 	<% } else { %>
 	All Run Request Schedules
@@ -18,7 +18,7 @@
 	<% if (project.isTrialProject()) { %>
 	<li><a href="#run-requests?project=none"><i class="fa fa-bus"></i>Scheduled Runs</a></li>
 	<% } else { %>
-	<li><a href="#run-requests?project=<%- project.get('project_uid') %>"><i class="fa fa-bus"></i><%- project.get('short_name') %> Scheduled Runs</a></li>
+	<li><a href="#run-requests?project=<%- project.get('project_uid') %>"><i class="fa fa-bus"></i><%- project.get('full_name') %> Scheduled Runs</a></li>
 	<% } %>
 	<% } else { %>
 	<li><a href="#run-requests"><i class="fa fa-bus"></i>All Scheduled Runs</a></li>
@@ -28,7 +28,7 @@
 	<% if (project.isTrialProject()) { %>
 	<li><i class="fa fa-calendar"></i>Schedules</li>
 	<% } else { %>
-	<li><i class="fa fa-calendar"></i><%- project.get('short_name') %> Schedules</li>
+	<li><i class="fa fa-calendar"></i><%- project.get('full_name') %> Schedules</li>
 	<% } %>
 	<% } else { %>
 	<li><i class="fa fa-calendar"></i>All Schedules</li>

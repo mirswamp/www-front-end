@@ -22,9 +22,9 @@ define([
 	'marionette',
 	'text!templates/widgets/selectors/version-filter-selector.tpl',
 	'utilities/scripting/string-utils',
-	'views/widgets/selectors/name-selector-view'
-], function($, _, Backbone, Marionette, Template, StringUtils, NameSelectorView) {
-	var Class = NameSelectorView.extend({
+	'views/widgets/selectors/version-selector-view'
+], function($, _, Backbone, Marionette, Template, StringUtils, VersionSelectorView) {
+	var Class = VersionSelectorView.extend({
 
 		//
 		// methods
@@ -41,7 +41,7 @@ define([
 
 			// call superclass method
 			//
-			NameSelectorView.prototype.reset.call(this);
+			VersionSelectorView.prototype.reset.call(this);
 
 			// hide form group
 			//

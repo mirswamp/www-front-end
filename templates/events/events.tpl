@@ -4,7 +4,7 @@
 	<% if (model.isTrialProject()) { %>
 	Events
 	<% } else { %>
-	Project <span class="name"><%- model.get('short_name') %></span> Events
+	Project <span class="name"><%- model.get('full_name') %></span> Events
 	<% } %>
 	<% } else { %>
 	All Events
@@ -18,7 +18,7 @@
 	<% if (model.isTrialProject()) { %>
 	<li><i class="fa fa-bullhorn"></i>Events</li>
 	<% } else { %>
-	<li><i class="fa fa-bullhorn"></i><%- model.get('short_name') %> Events</li>
+	<li><i class="fa fa-bullhorn"></i><%- model.get('full_name') %> Events</li>
 	<% } %>
 	<% } else { %>
 	<li><i class="fa fa-bullhorn"></i>All Events</li>

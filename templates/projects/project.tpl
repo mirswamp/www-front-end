@@ -1,9 +1,9 @@
-<h1><div class="icon"><i class="fa fa-folder-open"></i></div>Project <span class="name"><%- short_name %></span></h1>
+<h1><div class="icon"><i class="fa fa-folder-open"></i></div>Project <span class="name"><%- full_name %></span></h1>
 
 <ol class="breadcrumb">
 	<li><a href="#home"><i class="fa fa-home"></i>Home</a></li>
 	<li><a href="#projects"><i class="fa fa-folder-open"></i>Projects</a></li>
-	<li><i class="fa fa-folder-open"></i>Project <%- model.get('short_name') %></li>
+	<li><i class="fa fa-folder-open"></i>Project <%- model.get('full_name') %></li>
 </ol>
 
 <ul class="well nav nav-pills">

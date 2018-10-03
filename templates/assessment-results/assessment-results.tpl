@@ -3,7 +3,7 @@
 	<% if (project.isTrialProject()) { %>
 	Assessment Results
 	<% } else { %>
-	Project <span class="name"><%- project.get('short_name') %> %></span> Assessment Results
+	Project <span class="name"><%- project.get('full_name') %> %></span> Assessment Results
 	<% } %>
 </h1>
 

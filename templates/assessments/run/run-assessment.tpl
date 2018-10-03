@@ -3,7 +3,7 @@
 	<% if (project.isTrialProject()) { %>
 	Run New Assessment
 	<% } else { %>
-	Run New <span class="name"><%- project.get('short_name') %></span> Assessment
+	Run New <span class="name"><%- project.get('full_name') %></span> Assessment
 	<% } %>
 
 	<% if (package) { %>
@@ -37,13 +37,13 @@
 	<% if (project.isTrialProject()) { %>
 	<li><a href="#assessments"><i class="fa fa-check"></i>Assessments</a></li>
 	<% } else { %>
-	<li><a href="#assessments?project=<%- project.get('project_uid') %>"><i class="fa fa-check"></i><%- project.get('short_name') %> Assessments</a></li>
+	<li><a href="#assessments?project=<%- project.get('project_uid') %>"><i class="fa fa-check"></i><%- project.get('full_name') %> Assessments</a></li>
 	<% } %>
 
 	<% if (project.isTrialProject()) { %>
 	<li><i class="fa fa-plus"></i>Run New Assessment</li>
 	<% } else { %>
-	<li><i class="fa fa-plus"></i>Run New <span class="name"><%- project.get('short_name') %></span> Assessment</li>
+	<li><i class="fa fa-plus"></i>Run New <span class="name"><%- project.get('full_name') %></span> Assessment</li>
 	<% } %>
 </ol>
 

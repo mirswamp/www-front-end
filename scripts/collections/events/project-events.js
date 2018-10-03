@@ -73,8 +73,7 @@ define([
 					'event_type': data[i].event_type,
 					'date': item.event_date,
 					'project_uid': item.project_uid,
-					'project_full_name': item.full_name,
-					'project_short_name': item.short_name
+					'project_name': item.full_name
 				}));
 			}
 			return events;

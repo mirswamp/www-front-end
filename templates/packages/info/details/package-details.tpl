@@ -16,6 +16,11 @@
 	<div align="center"><i class="fa fa-spinner fa-spin fa-2x"></i><br/>Loading package versions...</div>
 </div>
 
+<label>
+	<input type="checkbox" id="show-numbering" <% if (showNumbering) { %>checked<% } %>>
+	Show numbering
+</label>
+
 <div class="bottom buttons">
 	<% if (isOwned || isPublic) { %>
 	<button id="run-new-assessment" class="btn btn-primary btn-lg"><i class="fa fa-play"></i>Run New Assessment</button>

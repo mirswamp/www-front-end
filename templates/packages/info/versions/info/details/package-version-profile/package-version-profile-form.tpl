@@ -16,7 +16,7 @@
 		<label class="control-label">Version notes</label>
 		<div class="controls">
 			<div class="input-group">
-				<textarea class="form-control" id="notes" name="notes" rows="3" maxlength="200"><%- model.get('notes') %></textarea>
+				<textarea class="form-control" id="notes" name="notes" rows="3" maxlength="1000"><%- model.get('notes') %></textarea>
 				<div class="input-group-addon">
 					<i class="active fa fa-question-circle" data-toggle="popover" data-placement="top" data-container="body" title="Description" data-content="Please include any version specific notes here."></i>
 				</div>

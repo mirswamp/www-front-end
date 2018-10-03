@@ -101,7 +101,7 @@ define([
 			return this.$el.find('form').validate({
 				rules: {
 					'description': {
-						required: true
+						required: false
 					}
 				},
 				messages: {
@@ -124,8 +124,7 @@ define([
 
 			// get values from form
 			//
-			var fullName = this.$el.find('#full-name').val();
-			var shortName = this.$el.find('#short-name').val();
+			var name = this.$el.find('#name').val();
 			var description = this.$el.find('#description').val();
 			var viewer = this.$el.find('#viewer').val();
 			var usePublicTools = this.$el.find('#use-public-tools').is(':checked');
@@ -133,8 +132,7 @@ define([
 			// update model
 			//
 			model.set({
-				'full_name': fullName,
-				'short_name': shortName,
+				'full_name': name,
 				'description': description,
 				'viewer_uuid': viewer,
 				'exclude_public_tools_flag': usePublicTools? 0 : 1

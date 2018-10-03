@@ -41,6 +41,7 @@ define([
 
 		events: {
 			'click #add-new-version': 'onClickAddNewVersion',
+			'click #show-numbering': 'onClickShowNumbering',
 			'click #run-new-assessment': 'onClickRunNewAssessment',
 			'click #delete-package': 'onClickDeletePackage'
 		},
@@ -136,7 +137,9 @@ define([
 		template: function(data) {
 			return _.template(Template, _.extend(data, {
 				isOwned: this.model.isOwned(),
-				isPublic: this.model.isPublic()
+				isPublic: this.model.isPublic(),
+				showNumbering: Registry.application.options.showNumbering
+
 			}));
 		},
 
@@ -165,7 +168,9 @@ define([
 			this.packageVersionsList.show(
 				new PackageVersionsListView({
 					model: this.model,
-					collection: this.collection
+					collection: this.collection,
+					showNumbering: Registry.application.options.showNumbering
+
 				})
 			);
 		},
@@ -181,6 +186,11 @@ define([
 			Backbone.history.navigate('#packages/' + this.model.get('package_uuid') + '/versions/add', {
 				trigger: true
 			});
+		},
+
+		onClickShowNumbering: function(event) {
+			Registry.application.setShowNumbering($(event.target).is(':checked'));
+			this.showPackageVersions();
 		},
 
 		onClickRunNewAssessment: function() {

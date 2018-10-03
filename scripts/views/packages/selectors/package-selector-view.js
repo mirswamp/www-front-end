@@ -72,7 +72,7 @@ define([
 						//
 						self.setSelectedName('Any', options);
 					}
-				})
+				});
 			} else {
 
 				// reset selection
@@ -239,6 +239,7 @@ define([
 					new VersionSelectorView({
 						collection: collection,
 						parentSelector: self,
+						searchable: true,
 
 						// callbacks
 						//
@@ -277,6 +278,7 @@ define([
 								collection: collection,
 								parentSelector: self,
 								initialValue: self.options.initialVersion,
+								searchable: true,
 
 								// callbacks
 								//

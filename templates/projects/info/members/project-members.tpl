@@ -1,4 +1,4 @@
-<h1><span class="name"><%- short_name %></span> Project Members</h1>
+<h1><span class="name"><%- full_name %></span> Project Members</h1>
 
 <div id="members-list">
 	<div align="center"><i class="fa fa-spinner fa-spin fa-2x"></i><br/>Loading project members...</div>

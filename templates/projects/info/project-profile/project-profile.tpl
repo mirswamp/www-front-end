@@ -1,13 +1,8 @@
 <div id="project-profile" class="form-horizontal">
 
 	<div class="form-group">
-		<label class="form-label">Full name</label>
+		<label class="form-label">Name</label>
 		<div class="controls"><%- full_name %></div>
-	</div>
-	
-	<div class="form-group">
-		<label class="form-label">Short name</label>
-		<div class="controls"><%- short_name %></div>
 	</div>
 
 	<div class="form-group" style="display:none">
