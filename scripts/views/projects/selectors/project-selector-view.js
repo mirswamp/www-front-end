@@ -12,7 +12,7 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2018 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2019 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 define([
@@ -32,15 +32,14 @@ define([
 		// methods
 		//
 
-		initialize: function(attributes, options) {
+		initialize: function(options) {
 			var self = this;
-			this.collection = new Projects();
 			
 			// set name attribute of initially selected project
 			//
 			if (options.initialValue) {
 				if (options.initialValue.isTrialProject()) {
-					options.initialValue.name = 'None';
+					options.initialValue.name = 'Default';
 				} else {
 					options.initialValue.set({
 						'name': options.initialValue.get('full_name')
@@ -58,63 +57,80 @@ define([
 
 			// fetch projects
 			//
-			this.collection.fetch({
+			if (!this.collection) {
+				this.collection = new Projects();
+				this.collection.fetch({
 
-				// callbacks
-				//
-				success: function(data) {
-					var ownedProjects = self.collection.getProjectsOwnedBy(Registry.application.session.user);
-					var joinedProjects = self.collection.getProjectsNotOwnedBy(Registry.application.session.user);
-
-					// remove trial project from list
+					// callbacks
 					//
-					ownedProjects = ownedProjects.getNonTrialProjects();
+					success: function(collection) {
+						self.setProjects(collection);
+					},
 
-					// get names to display
-					//
-					for (var i = 0; i < ownedProjects.length; i++) {
-						ownedProjects.at(i).set({
-							'name': ownedProjects.at(i).get('full_name')
-						});
+					error: function() {
+
+						// show error dialog
+						//
+						Registry.application.modal.show(
+							new ErrorView({
+								message: "Could not fetch projects."
+							})
+						);			
 					}
-					for (var i = 0; i < joinedProjects.length; i++) {
-						joinedProjects.at(i).set({
-							'name': joinedProjects.at(i).get('full_name')
-						});
-					}
+				});
+			} else {
+				this.setProjects(this.collection);
+			}
+		},
 
-					// set attributes
-					//
-					self.collection = new Backbone.Collection([{
-						'name': 'Any',
-						'model': null
-					}, {
-						'name': 'None',
-						'model': options.model
-					}, {
-						'name': 'Projects I Own',
-						'group': ownedProjects
-					}, {
-						'name': 'Projects I Joined',
-						'group': joinedProjects
-					}]);
-					
-					// render
-					//
-					self.render();
-				},
+		setProjects: function(collection, options) {
+			var currentUser = Registry.application.session.user;
+			var ownedProjects = collection.getOwnedBy(currentUser);
+			var joinedProjects = collection.getNotOwnedBy(currentUser);
 
-				error: function() {
+			// remove trial project from list
+			//
+			// ownedProjects = ownedProjects.getNonTrialProjects();
 
-					// show error dialog
-					//
-					Registry.application.modal.show(
-						new ErrorView({
-							message: "Could not fetch projects."
-						})
-					);			
-				}
-			});
+			// get names to display
+			//
+			for (var i = 0; i < ownedProjects.length; i++) {
+				ownedProjects.at(i).set({
+					'name': ownedProjects.at(i).get('full_name')
+				});
+			}
+			for (var i = 0; i < joinedProjects.length; i++) {
+				joinedProjects.at(i).set({
+					'name': joinedProjects.at(i).get('full_name')
+				});
+			}
+
+			// set attributes
+			//
+			if (this.options.allowAny) {
+				this.collection = new Backbone.Collection([{
+					'name': 'Any',
+					'model': null
+				}, {
+					'name': 'Projects I Own',
+					'group': ownedProjects
+				}, {
+					'name': 'Projects I Joined',
+					'group': joinedProjects
+				}]);
+			} else {
+				this.collection = new Backbone.Collection([{
+					'name': 'Projects I Own',
+					'group': ownedProjects
+				}, {
+					'name': 'Projects I Joined',
+					'group': joinedProjects
+				}]);
+			}
+			
+			// render
+			//
+			this.render();
 		},
 
 		setSelected: function(project, options) {
@@ -134,6 +150,25 @@ define([
 			return _.template(Template, _.extend(data, {
 				selected: this.options.initialValue
 			}));
+		},
+
+		//
+		// event handling methods
+		//
+
+		onChange: function(options) {
+
+			// update selected
+			//
+			this.selected = this.getItemByIndex(this.getSelectedIndex());
+
+			// perform callback
+			//
+			if (this.options && this.options.onChange && (!options || !options.silent)) {
+				this.options.onChange({
+					'project': this.selected
+				});
+			}
 		}
 	});
 });

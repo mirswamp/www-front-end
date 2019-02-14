@@ -13,7 +13,7 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2018 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2019 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 define([
@@ -40,12 +40,51 @@ define([
 		},
 
 		events: {
-			'change input': 'onChangeInput',
+			'input input': 'onChangeInput',
 			'keyup input': 'onChangeInput',
 			'click .alert .close': 'onClickAlertClose',
 			'click #save': 'onClickSave',
 			'click #show-file-types': 'onClickShowFileTypes',
 			'click #cancel': 'onClickCancel'
+		},
+
+		//
+		// methods
+		//
+
+		save: function() {
+			var self = this;
+
+			// disable save button
+			//
+			this.$el.find('#save').prop('disabled', true);
+		
+			// save changes
+			//
+			this.model.save(undefined, {
+
+				// callbacks
+				//
+				success: function() {
+
+					// return to package version source view
+					//
+					Backbone.history.navigate('#packages/versions/' + self.model.get('package_version_uuid') + '/source', {
+						trigger: true
+					});
+				},
+
+				error: function() {
+
+					// show error dialog
+					//
+					Registry.application.modal.show(
+						new ErrorView({
+							message: "Could not save package version changes."
+						})
+					);
+				}
+			});
 		},
 
 		//
@@ -124,36 +163,40 @@ define([
 				//
 				this.packageVersionSourceProfileForm.currentView.update(this.model);
 
-				// disable save button
+				// check build system
 				//
-				this.$el.find('#save').prop('disabled', true);
-			
-				// save changes
-				//
-				this.model.save(undefined, {
+				this.model.checkBuildSystem({
 
 					// callbacks
 					//
 					success: function() {
-
-						// return to package version source view
+		
+						// save package version
 						//
-						Backbone.history.navigate('#packages/versions/' + self.model.get('package_version_uuid') + '/source', {
-							trigger: true
-						});
+						self.save();
 					},
 
-					error: function() {
+					error: function(data) {
+						Registry.application.confirm({
+							title: 'Build System Warning',
+							message: data.responseText + "  Would you like to continue anyway?",
 
-						// show error dialog
-						//
-						Registry.application.modal.show(
-							new ErrorView({
-								message: "Could not save package version changes."
-							})
-						);
+							// callbacks
+							//
+							accept: function() {
+
+								// save package version
+								//
+								self.save();
+							}
+						});
 					}
 				});
+			} else {
+
+				// show warning message bar
+				//
+				this.showWarning("This form contains errors.  Please correct and resubmit.");
 			}
 		},
 

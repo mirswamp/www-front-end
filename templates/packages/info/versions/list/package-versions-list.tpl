@@ -16,6 +16,13 @@
 				<span>Notes</span>
 			</th>
 
+			<% if (showProjects) { %>
+			<th class="projects">
+				<i class="fa fa-folder"></i>
+				<span class="hidden-xxs">Projects</span>
+			</th>
+			<% } %>
+			
 			<th class="date last">
 				<i class="fa fa-calendar"></i>
 				<span>Date Added</span>

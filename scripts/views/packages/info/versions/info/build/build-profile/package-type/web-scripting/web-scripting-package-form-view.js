@@ -13,7 +13,7 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2018 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2019 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 define([
@@ -21,20 +21,15 @@ define([
 	'underscore',
 	'backbone',
 	'marionette',
-	'bootstrap/collapse',
-	'bootstrap/dropdown',
-	'bootstrap/tooltip',
-	'bootstrap/popover',
-	'bootstrap.select',
-	'jquery.validate',
 	'text!templates/packages/info/versions/info/build/build-profile/package-type/web-scripting/web-scripting-package-form.tpl',
 	'registry',
 	'widgets/accordions',
 	'models/files/directory',
+	'views/packages/info/versions/info/build/build-profile/package-type/package-type-form-view',
 	'views/packages/info/versions/info/build/build-profile/dialogs/select-package-version-file-view',
 	'views/packages/info/versions/info/build/build-profile/dialogs/select-package-version-directory-view'
-], function($, _, Backbone, Marionette, Collapse, Dropdown, Tooltip, Popover, Select, Validate, Template, Registry, Accordions, Directory, SelectPackageVersionFileView, SelectPackageVersionDirectoryView) {
-	return Backbone.Marionette.ItemView.extend({
+], function($, _, Backbone, Marionette, Template, Registry, Accordions, Directory, PackageTypeFormView, SelectPackageVersionFileView, SelectPackageVersionDirectoryView) {
+	return PackageTypeFormView.extend({
 
 		//
 		// attributes
@@ -42,11 +37,11 @@ define([
 		
 		events: {
 			'blur input': 'onBlurInput',
-			'focus #build-system': 'onFocusBuildSystem',
-			'change #build-system': 'onChangeBuildSystem',
-			'click #select-configure-path': 'onClickSelectConfigurePath',
-			'click #select-build-path': 'onClickSelectBuildPath',
-			'click #select-build-file': 'onClickSelectBuildFile'
+			'focus #build-system select': 'onFocusBuildSystem',
+			'change #build-system select': 'onChangeBuildSystem',
+			'click #configure-path button': 'onClickSelectConfigurePath',
+			'click #build-path button': 'onClickSelectBuildPath',
+			'click #build-file button': 'onClickSelectBuildFile'
 		},
 
 		buildCommands: {
@@ -54,26 +49,6 @@ define([
 			'npm': 			'npm',
 			'composer':		'composer',
 			'pear': 		'make'
-		},
-
-		//
-		// message attributes
-		//
-
-		noBuildMessage: "This package does not appear to include a build file. You can set the build system and advanced settings if this is not correct. By selecting the no build option, analysis is limited to compilable files located in the package path (recursive).",
-		selectNoBuildMessage: "This package does not appear to include a build file. You can set the build system and advanced settings if this is not correct. By selecting the no build option, analysis is limited to compilable files located in the package path (recursive).",
-
-		//
-		// methods
-		//
-
-		initialize: function() {
-
-			// add custom validation rule
-			//
-			jQuery.validator.addMethod('buildSystemRequired', function (value) {
-				return (value != 'none');
-			}, "Please specify a build system.");
 		},
 
 		//
@@ -86,14 +61,14 @@ define([
 			//
 			switch (buildSystem) {
 				case 'no-build':
-					this.$el.find("#build-system").val('no-build');
+					this.$el.find('#build-system select').val('no-build');
 					this.onSetBuildSystem();	
 					break;
 
 				case 'npm':
 				case 'composer':
 				case 'pear':
-					this.$el.find("#build-system").val(buildSystem);
+					this.$el.find('#build-system select').val(buildSystem);
 					this.onSetBuildSystem();
 					break;
 				
@@ -102,10 +77,10 @@ define([
 					// select 'no build' or 'other' by default
 					//
 					if (this.hasBuildSystem('no-build')) {
-						this.$el.find("#build-system").val('no-build');
+						this.$el.find('#build-system select').val('no-build');
 						this.onSetBuildSystem();
 					} else {
-						this.$el.find("#build-system").val('other');
+						this.$el.find('#build-system select').val('other');
 						this.onSetBuildSystem();
 					}
 					break;			
@@ -116,7 +91,7 @@ define([
 
 			// set default commands
 			//
-			this.$el.find('#build-command').val(this.buildCommands[buildSystem]);
+			this.$el.find('#build-command input').val(this.buildCommands[buildSystem]);
 		},
 
 		//
@@ -124,26 +99,21 @@ define([
 		//
 
 		getBuildSystem: function() {
-			return this.$el.find('#build-system').val();
+			return this.$el.find('#build-system select').val();
 		},
 
 		getBuildSystemName: function(buildSystem) {
 			switch (buildSystem) {
 				case 'no-build':
 					return 'No Build';
-					break;
 				case 'npm':
 					return 'NPM';
-					break;
 				case 'composer':
 					return 'Composer';
-					break;
 				case 'pear':
 					return 'Pear';
-					break;
 				case 'other':
 					return 'Other';
-					break;			
 			}
 		},
 
@@ -157,9 +127,9 @@ define([
 
 		getBuildCommand: function(buildSystem) {
 			if (buildSystem == 'other') {
-				return this.$el.find('#other-build-command').val();
+				return this.$el.find('#other-build-command input').val();
 			} else {
-				return this.$el.find('#build-command').val();
+				return this.$el.find('#build-command input').val();
 			}
 		},
 
@@ -175,6 +145,10 @@ define([
 
 		onRender: function() {
 
+			// set initial build system state
+			//
+			this.onSetBuildSystem();
+			
 			// display popovers on hover
 			//
 			this.$el.find('[data-toggle="popover"]').popover({
@@ -184,10 +158,20 @@ define([
 			// change accordion icon
 			//
 			new Accordions(this.$el.find('.panel'));
-
+			
 			// validate the form
 			//
 			this.validator = this.validate();
+		},
+
+		expandConfigureSettings: function() {
+			this.$el.find('.tags .accordion-toggle[href="#configure-settings"]').removeClass('collapsed');
+			this.$el.find('#configure-settings').collapse('show');
+		},
+
+		collapseConfigureSettings: function() {
+			this.$el.find('.tags .accordion-toggle[href="#configure-settings"]').addClass('collapsed');
+			this.$el.find('#configure-settings').collapse('hide');
 		},
 
 		expandBuildSettings: function() {
@@ -202,97 +186,124 @@ define([
 		
 		showBuildSystem: function(buildSystem) {
 
-			// expand / collapse build settings
-			//
-			if (buildSystem && buildSystem != 'no-build') {
-				this.$el.find('.tag[href="#configure-settings"]').show();
-				this.$el.find('.tag[href="#build-settings"]').show();
-				this.expandBuildSettings();
-			} else {
-				this.$el.find('.tag[href="#configure-settings"]').hide();
-				this.$el.find('.tag[href="#build-settings"]').hide();
-				this.collapseBuildSettings();
-			}
-
 			// show appropriate fields
 			//
-			if (buildSystem == 'other') {
-				this.$el.find('#other-build-command').closest('.form-group').show();
-				this.$el.find('#build-command').closest('.form-group').hide();
-				this.$el.find('#build-file').closest('.form-group').hide();
-			} else {
-				this.$el.find('#other-build-command').closest('.form-group').hide();
-				this.$el.find('#build-command').closest('.form-group').show();
-				this.$el.find('#build-file').closest('.form-group').show();
+			switch (buildSystem) {
+
+				case 'pear':
+
+					// show / hide tags
+					//
+					//this.$el.find('.tags').hide();
+					this.$el.find('.tag[href="#configure-settings"]').hide();
+					this.$el.find('.tag[href="#build-settings"]').hide();
+
+					// expand / collapse panels
+					//
+					this.collapseConfigureSettings();
+					this.collapseBuildSettings();
+					break;
+
+				case 'npm':
+				case 'composer':
+
+					// show / hide tags
+					//
+					//this.$el.find('.tags').show();
+					this.$el.find('.tag[href="#configure-settings"]').removeAttr('style');
+					this.$el.find('.tag[href="#build-settings"]').hide();
+
+					// expand / collapse panels
+					//
+					this.expandConfigureSettings();
+					this.collapseBuildSettings();
+					break;
+
+				case 'none':
+				case 'no-build':
+
+					// show / hide tags
+					//
+					//this.$el.find('.tags').show();
+					this.$el.find('.tag[href="#configure-settings"]').removeAttr('style');
+					this.$el.find('.tag[href="#build-settings"]').hide();
+
+					// expand / collapse panels
+					//
+					this.expandConfigureSettings();
+					this.collapseBuildSettings();
+					break;
+
+				case 'other':
+
+					// show / hide tags
+					//
+					//this.$el.find('.tags').show();
+					this.$el.find('.tag[href="#configure-settings"]').removeAttr('style');
+					this.$el.find('.tag[href="#build-settings"]').removeAttr('style');
+
+					// expand / collapse panels
+					//
+					this.expandConfigureSettings();
+					this.expandBuildSettings();
+
+					// show / hide fields
+					//
+					this.$el.find('#other-build-command').show();
+					this.$el.find('#build-command').hide();
+					this.$el.find('#build-file').hide();
+					break;
+
+				default:
+
+					// show / hide tags
+					//
+					//this.$el.find('.tags').show();
+					this.$el.find('.tag[href="#configure-settings"]').removeAttr('style');
+					this.$el.find('.tag[href="#build-settings"]').removeAttr('style');
+
+					// expand / collapse panels
+					//
+					this.expandConfigureSettings();
+					this.expandBuildSettings();
+
+					// show / hide fields
+					//
+					this.$el.find('#other-build-command').hide();
+					this.$el.find('#build-command').show();
+					this.$el.find('#build-file').show();
+					break;
 			}
-		},
-
-		//
-		// form validation methods
-		//
-
-		validate: function() {
-			return this.$el.find('form').validate({
-				rules: {
-					'build-system': {
-						buildSystemRequired: true
-					}
-				}
-			});
-		},
-
-		isValid: function() {
-			return this.validator.form();
 		},
 
 		//
 		// form methods
 		//
 
-		update: function(model) {
-
-			// build system settings
-			//
+		getValues: function() {
 			var buildSystem = this.getBuildSystem();
-			var buildCommand = this.getBuildCommand(buildSystem);
 
-			// configuration settings
-			//
-			var configurePath = this.$el.find('#configure-path').val();
-			var configureCommand = this.$el.find('#configure-command').val();
-			var configureOptions = this.$el.find('#configure-options').val();
-
-			// build settings
-			//
-			var buildPath = this.$el.find('#build-path').val();
-			var excludePaths = this.$el.find('#exclude-paths').val();
-			var buildFile = this.$el.find('#build-file').val();
-			var buildOptions = this.$el.find('#build-options').val();
-			var buildTarget = this.$el.find('#build-target').val();
-
-			// set model attributes
-			//
-			model.set({
+			return {
 
 				// build system attributes
 				//
-				'build_system': buildSystem != ''? buildSystem : null,
-				'build_cmd': buildCommand != ''? buildCommand : null,
+				'build_system': buildSystem,
+				'build_cmd': this.getBuildCommand(buildSystem),
 
 				// configuration attributes
 				//
-				'config_dir': configurePath != ''? configurePath : null,
-				'config_cmd': configureCommand != ''? configureCommand : null,
-				'config_opt': configureOptions != ''? configureOptions : null,
+				'config_dir': this.$el.find('#configure-path input:visible').val(),
+				'config_cmd': this.$el.find('#configure-command input:visible').val(),
+				'config_opt': this.$el.find('#configure-options input:visible').val(),
 
 				// build attributes
 				//
-				'build_dir': buildPath != ''? buildPath : null,
-				'exclude_paths': excludePaths != ''? excludePaths : null,
-				'build_file': buildFile != ''? buildFile : null,
-				'build_opt': buildOptions != ''? buildOptions : null,
-				'build_target': buildTarget != ''? buildTarget : null
-			});
+				'build_dir': this.$el.find('#build-path input:visible').val(),
+				'exclude_paths': this.$el.find('#exclude-paths input:visible').val(),
+				'build_file': this.$el.find('#build-file input:visible').val(),
+				'build_opt': this.$el.find('#build-options input:visible').val(),
+				'build_target': this.$el.find('#build-target input:visible').val()
+			};
 		},
 
 		//
@@ -316,18 +327,11 @@ define([
 
 			// remove empty menu item
 			//
-			if (this.$el.find("#build-system option[value='none']").length !== 0) {
-				this.$el.find("#build-system option[value='none']").remove();
-			}
+			this.$el.find("#build-system option:empty").remove();
 		},
 
 		onSetBuildSystem: function() {
-			this.onChangeBuildSystem();
-		},
-
-		onChangeBuildSystem: function(event) {
 			var buildSystem = this.getBuildSystem();
-			var hasBuildSettings = this.hasBuildSettings(buildSystem);
 
 			// set defaults
 			//
@@ -337,29 +341,79 @@ define([
 			//
 			this.showBuildSystem(buildSystem);
 
-			// show / hide build script
+			// show / hide no build notice
 			//
-			if (hasBuildSettings) {
-				this.options.parent.options.parent.showBuildScript();
+			if (buildSystem == 'no-build') {
+				this.options.parent.options.parent.showNotice(this.notices['none']);
 			} else {
-				this.options.parent.options.parent.hideBuildScript();
-			}
-
-			// show / hide notice
-			//
-			if (hasBuildSettings) {
 				this.options.parent.options.parent.hideNotice();
+			}
+		},
+
+		onChangeBuildSystem: function() {
+			var buildSystem = this.getBuildSystem();
+
+			// update build system state
+			//
+			this.onSetBuildSystem();
+
+			// show / hide no build notice
+			//
+			if (buildSystem == 'no-build') {
+				this.options.parent.options.parent.showNotice(this.notices['select-none']);
 			} else {
-				if (event) {
-					this.options.parent.options.parent.showNotice(this.selectNoBuildMessage);
-				} else {
-					this.options.parent.options.parent.showNotice(this.noBuildMessage);
-				}		
+				this.options.parent.options.parent.hideNotice();	
 			}
 
 			// perform calllback
 			//
 			this.onChange();
+		},
+
+		onClickSelectConfigurePath: function(event) {
+			var self = this;
+
+			// get paths
+			//
+			var sourcePath = this.model.get('source_path');
+			var configurePath = this.$el.find('#configure-path').val();
+
+			// create directories
+			//
+			var sourceDirectory = new Directory({
+				name: sourcePath
+			});
+
+			// show select package version directory dialog
+			//
+			Registry.application.modal.show(
+				new SelectPackageVersionDirectoryView({
+					model: this.model,
+					title: "Select Configure Path",
+					selectedDirectoryName: sourceDirectory.getPathTo(configurePath),
+
+					// callbacks
+					//
+					accept: function(selectedDirectoryName) {
+
+						// make path relative to package path
+						//
+						selectedDirectoryName = sourceDirectory.getRelativePathTo(selectedDirectoryName);
+
+						// set build path input
+						//
+						self.$el.find('#configure-path input').val(selectedDirectoryName);
+						self.onChange();
+					}
+				}), {
+					size: 'large'
+				}
+			);
+
+			// prevent event defaults
+			//
+			event.stopPropagation();
+			event.preventDefault();
 		},
 
 		onClickSelectBuildPath: function(event) {
@@ -394,7 +448,7 @@ define([
 
 						// set build path input
 						//
-						self.$el.find('#build-path').val(selectedDirectoryName);
+						self.$el.find('#build-path input').val(selectedDirectoryName);
 						self.onChange();
 					}
 				}), {
@@ -444,7 +498,7 @@ define([
 
 						// set build file input
 						//
-						self.$el.find('#build-file').val(selectedFileName);
+						self.$el.find('#build-file input').val(selectedFileName);
 						self.onChange();
 					}
 				}), {

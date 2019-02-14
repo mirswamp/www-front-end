@@ -4,8 +4,13 @@
 </td>
 <% } %>
 
-<td class="package first">
+<td class="package first>
+	<% if (packageUrl) { %>
 	<a href="<%- packageUrl %>"><span class="name"><%= stringToHTML(package_name) %></span></a>
+	<% } else { %>
+	<%= stringToHTML(package_name) %>
+	<% } %>
+
 	<% if (packageVersionUrl) { %>
 	<a href="<%- packageVersionUrl %>"><span class="version"><%= stringToHTML(package_version_string) %></span></a>
 	<% } else { %>
@@ -14,7 +19,12 @@
 </td>
 
 <td class="tool">
+	<% if (toolUrl) { %>
 	<a href="<%- toolUrl %>"><span class="name"><%= stringToHTML(tool_name) %></span></a>
+	<% } else { %>
+	<%= stringToHTML(tool_name) %>
+	<% } %>
+
 	<% if (toolVersionUrl) { %>
 	<a href="<%- toolVersionUrl %>"><span class="version"><%= stringToHTML(tool_version_string) %></span></a>
 	<% } else { %>
@@ -22,14 +32,29 @@
 	<% } %>
 </td>
 
-<td class="platform<% if (!showSchedule) { %> last<% } %>">
+<td class="platform<% if (!showSchedule && !showProjects) { %> last<% } %>">
+	<% if (platformUrl) { %>
 	<a href="<%- platformUrl %>"><span class="name"><%= stringToHTML(platform_name) %></span></a>
+	<% } else { %>
+	<%= stringToHTML(platform_name) %>
+	<% } %>
+
 	<% if (platformVersionUrl) { %>
 	<a href="<%- platformVersionUrl %>"><span class="version"><%= stringToHTML(platform_version_string) %></span></a>
 	<% } else { %>
 	<span class="version"><%= stringToHTML(platform_version_string) %></span>
 	<% } %>
 </td>
+
+<% if (showProjects) { %>
+<td class="project<% if (!showSchedule) { %> last<% } %>">
+	<% if (projectUrl) { %>
+	<a href="<%- projectUrl %>"><span class="name"><%= stringToHTML(project_name) %></span></a>
+	<% } else { %>
+	<%= stringToHTML(project_name) %>
+	<% } %>
+</td>
+<% } %>
 
 <% if (showSchedule) { %>
 <td class="schedule last">

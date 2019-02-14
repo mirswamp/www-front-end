@@ -15,6 +15,13 @@
 				<span class="hidden-xxs">Description</span>
 			</th>
 
+			<% if (showProjects) { %>
+			<th class="projects">
+				<i class="fa fa-folder"></i>
+				<span class="hidden-xxs">Projects</span>
+			</th>
+			<% } %>
+			
 			<th class="type">
 				<i class="fa fa-code"></i>
 				<span class="hidden-xxs">Type</span>

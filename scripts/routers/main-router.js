@@ -12,7 +12,7 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2018 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2019 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 define([
@@ -125,8 +125,9 @@ define([
 			var self = this;
 			require([
 				'registry',
+				'config',
 				'views/welcome-view'
-			], function (Registry, WelcomeView) {
+			], function (Registry, Config, WelcomeView) {
 				var user = Registry.application.session.user;
 
 				// check if user is logged in
@@ -147,6 +148,15 @@ define([
 				Registry.application.showPage(
 					new WelcomeView()
 				);
+
+				// show welcome message
+				//
+				if (Config.notifications && Config.notifications.welcome) {
+					Registry.application.notify({
+						title: Config.notifications.welcome.title,
+						message: Config.notifications.welcome.message
+					});
+				}
 			});
 		},
 
@@ -664,7 +674,9 @@ define([
 						// show edit user account view
 						//
 						view.content.show(
-							new EditMyAccountView()
+							new EditMyAccountView({
+								parent: view
+							})
 						);
 
 						if (options && options.done) {
@@ -996,7 +1008,7 @@ define([
 				//
 				Registry.application.showContent({
 					nav1: 'home',
-					nav1: 'settings', 
+					nav2: 'settings', 
 
 					// callbacks
 					//

@@ -12,7 +12,7 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2018 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2019 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 define([
@@ -267,6 +267,7 @@ define([
 				title: this.getTitle(),
 				shortTitle: this.getShortTitle(),
 				showNavigation: Object.keys(this.options.data).length > 0,
+				showProjects: Registry.application.session.user.get('has_projects'),
 				showNumbering: Registry.application.options.showNumbering,
 				showGrouping: Registry.application.options.showGrouping
 			}));
@@ -349,6 +350,7 @@ define([
 					collection: this.collection,
 					sortList: this.options.sortList,
 					selectedAssessments: this.options.selectedAssessments,
+					showProjects: Registry.application.session.user.get('has_projects'),
 					showNumbering: Registry.application.options.showNumbering,
 					showGrouping: Registry.application.options.showGrouping,
 					showDelete: true

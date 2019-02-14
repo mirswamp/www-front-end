@@ -12,7 +12,7 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2018 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2019 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 define([
@@ -24,26 +24,6 @@ define([
 	'views/dialogs/error-view'
 ], function($, _, Config, Registry, SharedVersion, ErrorView) {
 	var Class = SharedVersion.extend({
-
-		//
-		// attributes
-		//
-
-		allowedExtensions: [
-			'.zip',
-			'.tar',
-			'.tar.gz',
-			'.tgz',
-			'.tar.bz2',
-			'.tar.xz',
-			'.tar.Z',
-			'.jar',
-			'.war',
-			'.ear',
-			'.gem',
-			'.whl',
-			'.apk'
-		],
 
 		//
 		// Backbone attributes
@@ -116,7 +96,12 @@ define([
 				'android_sdk_target': attributes['android_sdk_target'],
 				'android_lint_target': attributes['android_lint_target'],
 				'android_redo_build': attributes['android_redo_build'],
-				'android_maven_plugin': attributes['android_maven_plugin']
+				'android_maven_plugin': attributes['android_maven_plugin'],
+
+				// dot net attributes
+				//
+				'package_info': attributes['package_info'],
+				'package_build_settings': attributes['package_build_settings'],
 			});
 		},
 
@@ -161,21 +146,6 @@ define([
 			}
 		},
 
-		isAllowedFilename: function(fileName) {
-
-			// check allowed extensions
-			//
-			if (fileName) {
-				for (var i = 0; i < this.allowedExtensions.length; i++) {
-					if (fileName.endsWith(this.allowedExtensions[i])) {
-						return true;
-					}
-				}
-			}
-
-			return false;
-		},
-
 		isBuildNeeded: function() {
 			return (this.has('build_system') &&
 				this.get('build_system') != 'no-build' &&
@@ -190,9 +160,18 @@ define([
 			// this specifies whether a package's versions can specify 
 			// a package path within the top level directory.
 			//
-			var isWheel = filename.endsWith('.whl');
+			return filename.endsWith('.whl') ||
+				filename.endsWith('.apk') || 
+				filename.endsWith('.gem');
+		},
+
+		hasBuildScript: function() {
+			filename = this.getFilename();
+
 			var isApk = filename.endsWith('.apk');
-			return isWheel || isApk;
+			var isGem = filename.endsWith('.gem');
+
+			return !isApk && !isGem;
 		},
 
 		//
@@ -457,148 +436,17 @@ define([
 		// package inspection methods
 		//
 
-		getNumCFiles: function(data) {
+		getNumFiles: function(data, extensions) {
 			var count = 0;
 
-			// add counts for c file types
+			// add counts for file types
 			//
-			if (data['c']) {
-				count += data['c'];
+			for (var i = 0; i < extensions.length; i++) {
+				var extension = extensions[i];
+				if (data[extension]) {
+					count += data[extension];
+				}
 			}
-			if (data['cpp']) {
-				count += data['cpp'];
-			}
-
-			return count;
-		},
-
-		getNumJavaSourceFiles: function(data) {
-			var count = 0;
-
-			// add counts for c file types
-			//
-			if (data['java']) {
-				count += data['java'];
-			}
-
-			return count;
-		},
-
-		getNumJavaBytecodeFiles: function(data) {
-			var count = 0;
-
-			// add counts for c file types
-			//
-			if (data['class']) {
-				count += data['class'];
-			}
-			if (data['jar']) {
-				count += data['jar'];
-			}
-
-			return count;
-		},
-
-		getNumPythonFiles: function(data) {
-			var count = 0;
-
-			// add counts for python file types
-			//
-			if (data['py']) {
-				count += data['py'];
-			}
-
-			return count;
-		},
-
-		getNumRubyFiles: function(data) {
-			var count = 0;
-
-			// add counts for ruby file types
-			//
-			if (data['rb']) {
-				count += data['rb'];
-			}
-
-			return count;
-		},
-
-		getNumHTMLFiles: function(data) {
-			var count = 0;
-
-			// add counts for html file types
-			//
-			if (data['htm']) {
-				count += data['htm'];
-			}
-			if (data['html']) {
-				count += data['html'];
-			}
-			if (data['tpl']) {
-				count += data['tpl'];
-			}
-
-			return count;
-		},
-
-		getNumJavascriptFiles: function(data) {
-			var count = 0;
-
-			// add counts for javascript file types
-			//
-			if (data['js']) {
-				count += data['js'];
-			}
-
-			return count;
-		},
-
-		getNumCSSFiles: function(data) {
-			var count = 0;
-
-			// add counts for CSS file types
-			//
-			if (data['css']) {
-				count += data['css'];
-			}
-
-			return count;
-		},
-
-		getNumPHPFiles: function(data) {
-			var count = 0;
-
-			// add counts for PHP file types
-			//
-			if (data['php']) {
-				count += data['php'];
-			}
-
-			return count;
-		},
-
-		getNumXMLFiles: function(data) {
-			var count = 0;
-
-			// add counts for PHP file types
-			//
-			if (data['xml']) {
-				count += data['xml'];
-			}
-
-			return count;
-		},
-
-		getNumWebScriptingFiles: function(data) {
-			var count = 0;
-
-			// add counts for web scripting file types
-			//
-			count += this.getNumHTMLFiles(data);
-			count += this.getNumJavascriptFiles(data);
-			count += this.getNumCSSFiles(data);
-			count += this.getNumPHPFiles(data);
-			count += this.getNumXMLFiles(data);
 
 			return count;
 		},
@@ -609,22 +457,25 @@ define([
 			//
 			var packageFileCounts = [{
 					packageType: 'c-source',
-					numFiles: this.getNumCFiles(data)
+					numFiles: this.getNumFiles(data, ['c', 'cc', 'cp', 'cxx', 'cpp', 'c++'])
 				}, {
 					packageType: 'java-source',
-					numFiles: this.getNumJavaSourceFiles(data)
+					numFiles: this.getNumFiles(data, ['java'])
 				}, {
 					packageType: 'java-bytecode',
-					numFiles: this.getNumJavaBytecodeFiles(data)
+					numFiles: this.getNumFiles(data, ['class', 'jar'])
 				}, {
 					packageType: 'python',
-					numFiles: this.getNumPythonFiles(data)
+					numFiles: this.getNumFiles(data, ['py'])
 				}, {
 					packageType: 'ruby',
-					numFiles: this.getNumRubyFiles(data)
+					numFiles: this.getNumFiles(data, ['rb'])
 				}, {
 					packageType: 'web-scripting',
-					numFiles: this.getNumWebScriptingFiles(data)
+					numFiles: this.getNumFiles(data, ['htm', 'html', 'tpl', 'js', 'css', 'php', 'xml'])
+				}, {
+					packageType: '.net',
+					numFiles: this.getNumFiles(data, ['cs', 'vb'])	
 				}
 			];
 
@@ -811,23 +662,19 @@ define([
 		//
 
 		checkBuildSystem: function(options) {
-			if (this.has('build_system') && this.get('build_system') != 'no-build') {
-				
-				// check package version build system
-				//
-				$.ajax(_.extend(options, {
-					url: this.urlRoot + '/build-system/check',
-					type: 'POST',
-					data: this.toJSON()
-				}));
-			} else {
+			
+			// check package version build system
+			//
+			$.ajax(_.extend(options, {
+				url: this.urlRoot + '/build-system/check',
+				type: 'POST',
 
-				// if no build system, then return success
+				// send model data except for no build command
 				//
-				if (options && options.success) {
-					options.success();
-				}
-			}
+				data: _.extend(this.toJSON(), {
+					no_build_cmd: null
+				})
+			}));
 		},
 
 		//
@@ -862,7 +709,16 @@ define([
 
 			// call superclass method
 			//
-			var response = SharedVersion.prototype.parse.call(this, response);
+			response = SharedVersion.prototype.parse.call(this, response);
+
+			// convert json
+			//
+			if (response.package_info) {
+				response.package_info = JSON.parse(response.package_info);
+			}
+			if (response.package_build_settings) {
+				response.package_build_settings = JSON.parse(response.package_build_settings);
+			}
 
 			// convert dates
 			//

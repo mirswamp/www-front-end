@@ -12,7 +12,7 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2018 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2019 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 define([
@@ -37,7 +37,7 @@ define([
 			// disable sorting on delete column
 			//
 			headers: {
-				3: { 
+				4: { 
 					sorter: false 
 				}
 			},
@@ -60,13 +60,24 @@ define([
 		},
 
 		//
+		// querying methods
+		//
+
+		getRunRequestUrl: function() {
+			if (this.model && this.model.get('project_uuid') != null) {
+				return '#run-requests/schedules/' + this.model.get('run_request_uuid');
+			}
+		},
+
+		//
 		// rendering methods
 		//
 
 		template: function(data) {
 			return _.template(Template, _.extend(data, {
 				collection: this.collection,
-				runRequestUrl: this.model? '#run-requests/schedules/' + this.model.get('run_request_uuid') : undefined,
+				runRequestUrl: this.getRunRequestUrl(),
+				showProjects: this.options.showProjects,
 				showNumbering: this.options.showNumbering,
 				showSchedule: this.options.showSchedule,
 				showDelete: this.options.showDelete
@@ -77,9 +88,10 @@ define([
 			return {
 				index: index,
 				collection: this.collection,
-				showDelete: this.options.showDelete,
-				showSchedule: this.options.showSchedule,
+				showProjects: this.options.showProjects,
 				showNumbering: this.options.showNumbering,
+				showSchedule: this.options.showSchedule,
+				showDelete: this.options.showDelete,
 				parent: this
 			}
 		}

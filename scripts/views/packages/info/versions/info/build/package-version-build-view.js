@@ -13,7 +13,7 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2018 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2019 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 define([
@@ -24,10 +24,11 @@ define([
 	'text!templates/packages/info/versions/info/build/package-version-build.tpl',
 	'registry',
 	'widgets/accordions',
+	'models/packages/package-version',
 	'collections/packages/package-version-dependencies',
 	'views/packages/info/versions/info/build/build-profile/build-profile-view',
 	'views/packages/info/versions/info/build/build-script/build-script-view'
-], function($, _, Backbone, Marionette, Template, Registry, Accordions, PackageVersionDependencies, BuildProfileView, BuildScriptView) {
+], function($, _, Backbone, Marionette, Template, Registry, Accordions, PackageVersion, PackageVersionDependencies, BuildProfileView, BuildScriptView) {
 	return Backbone.Marionette.LayoutView.extend({
 
 		//
@@ -35,13 +36,14 @@ define([
 		//
 
 		regions: {
-			buildProfile: '#build-profile',
-			buildScript: '#build-script'
+			buildProfile: '#build-profile'
 		},
 
 		events: {
 			'click .alert .close': 'onClickAlertClose',
 			'click #edit': 'onClickEdit',
+			'click #show-source-files': 'onClickShowSourceFiles',
+			'click #show-build-script': 'onClickShowBuildScript',
 			'click #cancel': 'onClickCancel',
 			'click #prev': 'onClickPrev',
 			'click #next': 'onClickNext',
@@ -55,7 +57,9 @@ define([
 		template: function(data) {
 			return _.template(Template, _.extend(data, {
 				package: this.options.package,
-				showNavigation: this.options.showNavigation
+				show_navigation: this.options.showNavigation,
+				show_source_files: !this.options.package.isBuildable() && !this.model.isAtomic(),
+				show_build_script: this.model.hasBuildScript() && this.options.package.hasBuildScript()
 			}));
 		},
 
@@ -64,7 +68,6 @@ define([
 			// show subviews
 			//
 			this.showBuildProfile();
-			this.showBuildScript();
 
 			// change accordion icon
 			//
@@ -93,27 +96,88 @@ define([
 			});
 		},
 
-		showBuildScript: function(focusedInput) {
-			if (this.model.isBuildNeeded()) {
+		showSourceFiles: function() {
+			var self = this;
 
-				// unhide build script accordion
-				//
-				this.$el.find('#build-script-accordion').show();
+			// get current model
+			//
+			var model = new PackageVersion(this.model.attributes);
+
+			// fetch build info
+			//
+			model.fetchBuildInfo({
+				data: {
+					'package_type_id': this.options.package.get('package_type_id'),
+					'build_dir': this.model.get('build_dir') || '.'
+				},
 				
-				// show build script view
+				// callbacks
 				//
-				this.buildScript.show(
-					new BuildScriptView({
-						model: this.model,
-						package: this.options.package
+				success: function(data) {
+					model.set({
+						'source_files': data.source_files
+					});
+
+					self.showSourceFilesDialog(model);
+				}
+			});
+		},
+		
+		showSourceFilesDialog: function(packageVersion) {
+			var self = this;
+			require([
+				'views/packages/dialogs/source-files-dialog-view'
+			], function (SourceFilesDialogView) {
+				Registry.application.modal.show(
+					new SourceFilesDialogView({
+						model: packageVersion,
+						package: self.options.package
 					})
 				);
-			} else {
+			});
+		},
 
-				// hide build script accordion
+		showBuildScript: function() {
+			var self = this;
+
+			// get current model
+			//
+			var model = new PackageVersion(this.model.attributes);
+
+			// fetch build info
+			//
+			model.fetchBuildInfo({
+				data: {
+					'package_type_id': this.options.package.get('package_type_id'),
+					'build_dir': model.get('build_dir') || '.'
+				},
+				
+				// callbacks
 				//
-				this.$el.find('#build-script-accordion').hide();	
-			}
+				success: function(data) {
+					model.set({
+						'no_build_cmd': data.no_build_cmd
+					});
+
+					// show build script dialog
+					//
+					self.showBuildScriptDialog(model);
+				}
+			});
+		},
+
+		showBuildScriptDialog: function(packageVersion) {
+			var self = this;
+			require([
+				'views/packages/dialogs/build-script-dialog-view'
+			], function (BuildScriptDialogView) {
+				Registry.application.modal.show(
+					new BuildScriptDialogView({
+						model: packageVersion,
+						package: self.options.package
+					})
+				);
+			});
 		},
 
 		hideBuildScript: function() {
@@ -167,6 +231,14 @@ define([
 			Backbone.history.navigate('#packages/versions/' + this.model.get('package_version_uuid') + '/build/edit', {
 				trigger: true
 			});
+		},
+
+		onClickShowSourceFiles: function() {
+			this.showSourceFiles();
+		},
+
+		onClickShowBuildScript: function() {
+			this.showBuildScript();
 		},
 
 		onClickCancel: function() {

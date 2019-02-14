@@ -12,7 +12,7 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2018 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2019 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 define([
@@ -135,18 +135,13 @@ define([
 						// parse and fetch query string data
 						//
 						QueryStringParser.fetch(QueryStringParser.parse(queryString, view.model), function(data) {
-							
-							// use trial project by default
-							//
-							if (!data['project']) {
-								data['project'] = view.model;
-							}
 
 							// show run assessment view
 							//
 							view.content.show(
 								new RunAssessmentView({
-									data: data
+									data: data,
+									project: view.model
 								})
 							);
 						});

@@ -12,7 +12,7 @@
 
 <div class="modal-body">
 	<i class="error-icon fa fa-3x fa-exclamation-circle" style="float:left; margin-left:10px; margin-right:20px"></i>
-	<p><%= message %></p>
+	<p class="vertically scrollable" style="max-height:250px"><%= message %></p>
 </div>
 
 <div class="modal-footer">

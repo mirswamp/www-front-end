@@ -12,7 +12,7 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2018 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2019 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 define([
@@ -48,7 +48,11 @@ define([
 			'click #auto-refresh': 'onClickAutoRefresh',
 			'click a[role="tab"]': 'onClickTab',
 			'click #show-numbering': 'onClickShowNumbering',
-			'click #kill-runs': 'onClickKillRuns'
+			'click #kill-runs': 'onClickKillRuns',
+			// 'click #kill-viewers': 'onClickKillViewers',
+			'click #shutdown-viewers': 'onClickShutdownViewers',
+			'click .tab-pane input[name="select"]': 'onClickSelect',
+			'click input.select-all': 'onClickSelect' 
 		},
 
 		//
@@ -57,6 +61,10 @@ define([
 		
 		initialize: function(options) {
 			this.tabState = [];
+			
+			if (this.options.activeTab == undefined) {
+				this.options.activeTab = "Condor Queue";
+			}
 		},
 
 		//
@@ -79,16 +87,21 @@ define([
 
 					// store sorting order for each tab
 					//
-					if (this[tab] && this[tab].currentView) {
-						this.tabState[tab].sortList = this[tab].currentView.getSortList();
+					var detailsView = this.getRegion('details').currentView;
+					if (detailsView) {
+						if (detailsView[tab].currentView) {
+							this.tabState[tab].sortList = detailsView[tab].currentView.getSortList();
+						}
 					}
 				}
 
 				// save selected checkboxes
 				//
 				var detailsView = this.getRegion('details').currentView;
-				if (detailsView['Condor Queue'] && detailsView['Condor Queue'].currentView) { 
-					this.tabState['Condor Queue'].selected = detailsView['Condor Queue'].currentView.getSelected();
+				if (detailsView) {
+					if (detailsView[this.options.activeTab] && detailsView[this.options.activeTab].currentView && detailsView[this.options.activeTab].currentView.getSelected) { 
+						this.tabState[this.options.activeTab].selected = detailsView[this.options.activeTab].currentView.getSelected();
+					}
 				}
 			}
 		},
@@ -131,6 +144,42 @@ define([
 		},
 
 		//
+		// job killing methods
+		//
+
+		killRuns: function(runs, options) {
+			var self = this;
+			var collection = new ExecutionRecords();
+			for (var i = 0; i < runs.length; i++) {
+				var execrunuuid = runs.at(i).get('EXECRUNUID');
+				var start = execrunuuid.indexOf('{') + 1;	
+				var end = execrunuuid.indexOf('}', start) - 1;
+				var type = runs.at(i).get('type');
+				var uuid = execrunuuid.replace(/{.*}/, '');
+				collection.add(new ExecutionRecord({
+					execution_record_uuid: uuid,
+					type: type	
+				}));
+			}
+			collection.killAll(_.extend({
+				async: true,
+				
+				// callbacks
+				//
+				success: function() {
+					self.fetchAndShow();
+				},
+				error: function() {
+					Registry.application.modal.show(
+				    	new ErrorView({
+							message: "Could not kill all selected assessment runs."
+						})  
+					);
+				}
+			}, options));
+		},
+
+		//
 		// querying methods
 		//
 
@@ -153,30 +202,14 @@ define([
 			this.showRefreshingStatus();
 		},
 
-		isEmptyCondorQueue: function() {
-			var queueTab = this.options.data["Condor Queue"];
+		isEmptyQueue: function(queueName) {
+			var queueTab = this.options.data[queueName];
 			if (queueTab) {
 				var queueKeys = Object.keys(queueTab);
 				if (queueKeys) {
 					var queueData = queueTab[queueKeys[0]];
 					return !queueData || !queueData.data.length;
 				}				
-			}
-		},
-
-		update: function() {
-
-			// show / hide kill-runs button
-			//
-			if ((!this.options.activeTab || this.options.activeTab == "Condor Queue")) {
-
-				this.$el.find('#kill-runs').show();
-			} else {
-				this.$el.find('#kill-runs').hide();
-			}
-
-			if (this.isEmptyCondorQueue()) {
-				this.$el.find('#kill-runs').attr('disabled', true);
 			}
 		},
 
@@ -211,10 +244,6 @@ define([
 			//
 			this.showRunQueueSummary(data["Condor Queue"]);
 			this.showDetails(data);	
-
-			if (this.isEmptyCondorQueue()) {
-				this.$el.find('#kill-runs').attr('disabled', true);
-			}
 		},
 
 		showDetails: function(data) {
@@ -269,43 +298,70 @@ define([
 			}
 		},
 
-		onClickTab: function(event) {
-			this.options.activeTab = $(event.target).html();
-			this.update();
+		onClickTab: function() {
+
+			// show / hide kill-runs button
+			//
+			if ((this.options.activeTab == "Assessment Queue") || (this.options.activeTab == "Metric Queue")) {
+				this.$el.find('#kill-runs').show();
+			} else {
+				this.$el.find('#kill-runs').hide();
+			}
+
+			// show / hide viewer buttons
+			//
+			if (this.options.activeTab == "Viewer Queue") {
+				// this.$el.find('#kill-viewers').show();
+				this.$el.find('#shutdown-viewers').show();
+			} else {
+				// this.$el.find('#kill-viewers').hide();
+				this.$el.find('#shutdown-viewers').hide();
+			}
+
+			// enable / disable buttons
+			//
+			var currentView = this.getRegion('details').currentView[this.options.activeTab].currentView;
+			var checkboxesSelected = (currentView.$el.find('input[name="select"]:checked').length > 0);
+			this.$el.find('#kill-runs').attr('disabled', !selected);
+			// this.$el.find('#kill-viewers').attr('disabled', !selected);
+			this.$el.find('#shutdown-viewers').attr('disabled', !selected);
 		},
 
 		onClickShowNumbering: function(event) {
 			Registry.application.setShowNumbering($(event.target).is(':checked'));
-			this.update();
+			this.showDetails(this.options.data);
 		},
 
 		onClickKillRuns: function(event) {
-			var self = this;
-			var selected = this.getRegion('details').currentView['Condor Queue'].currentView.getSelected()
-			var collection = new ExecutionRecords();
-			for (var i = 0; i < selected.length; i++) {
-				var execrunuuid = selected.at(i).get('EXECRUNUID');
-				var start = execrunuuid.indexOf('{') + 1;	
-				var end = execrunuuid.indexOf('}', start) - 1;
-				var type = selected.at(i).get('type');
-				var uuid = execrunuuid.replace(/{.*}/, '');
-				collection.add(new ExecutionRecord({
-					execution_record_uuid: uuid,
-					type: type	
-				}));
-			}
-			collection.killAll({
-				success: function() {
-					self.fetchAndShow();
-				},
-				error: function() {
-					Registry.application.modal.show(
-				    	new ErrorView({
-							message: "Could not kill all selected assessment runs."
-						})  
-					);
-				}
+			var selected = this.getRegion('details').currentView[this.options.activeTab].currentView.getSelected();
+			this.killRuns(selected, {
+				hard: true
 			});
+		},
+
+		onClickKillViewers: function(event) {
+			var selected = this.getRegion('details').currentView['Viewer Queue'].currentView.getSelected();
+			this.killRuns(selected, {
+				hard: true
+			});
+		},
+
+		onClickShutdownViewers: function(event) {
+			var selected = this.getRegion('details').currentView['Viewer Queue'].currentView.getSelected();
+			this.killRuns(selected, {
+				hard: false
+			});
+		},
+
+		onClickSelect: function() {
+			var currentView = this.getRegion('details').currentView[this.options.activeTab].currentView;
+			if (currentView.$el.find('input[name="select"]:checked').length > 0) {
+				this.$el.find('#kill-runs').removeAttr('disabled');
+				this.$el.find('#shutdown-viewers').removeAttr('disabled');
+			} else {
+				this.$el.find('#kill-runs').attr('disabled', true);
+				this.$el.find('#shutdown-viewers').attr('disabled', true);
+			}
 		}
 	});
 });

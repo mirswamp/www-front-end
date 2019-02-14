@@ -12,7 +12,7 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2018 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2019 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 define([
@@ -88,7 +88,7 @@ define([
 		},
 
 		isTrialProject: function() {
-			return (this.has('trial_project_flag') && this.get('trial_project_flag') == '1');
+			return (this.has('trial_project_flag') && this.get('trial_project_flag') == true);
 		},
 
 		isSameAs: function(project) {

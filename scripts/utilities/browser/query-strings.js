@@ -13,7 +13,7 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2018 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2019 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 //
@@ -132,10 +132,10 @@ function hasQueryVariable(queryString, variable) {
 
 function getQueryVariables(queryString, variable) {
 	if (!queryString) {
-		return new Array();
+		return [];
 	}
 
-	var queryVariables = new Array();
+	var queryVariables = [];
 	var vars = queryString.split('&');
 	var count = 0;
 	

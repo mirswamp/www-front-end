@@ -12,7 +12,7 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2018 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2019 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 define([
@@ -62,6 +62,12 @@ define([
 			}));
 		},
 
+		setVersionString: function(versionString) {
+			if (this.versionSelector) {
+				this.versionSelector.currentView.setSelectedName(versionString);
+			}
+		},
+
 		reset: function(options) {
 			if (options.update) {
 				var self = this;
@@ -70,19 +76,29 @@ define([
 
 						// reset selection
 						//
-						self.setSelectedName('Any', options);
+						if (options.package) {
+							self.options.initialVersion = options.packageVersion;
+							self.setSelectedName(options.package.get('name'));
+						}
+						//self.setSelectedName('Any', options);
 					}
 				});
 			} else {
 
 				// reset selection
 				//
-				this.setSelectedName('Any', options);
+				self.options.initialVersion = options.packageVersion;
+				this.setSelectedName(options.package.get('name'));
+				//this.setSelectedName('Any', options);
 			}
 		},
 
 		update: function(options) {
 			var self = this;
+
+			// remove existing options
+			//
+			this.clear();
 			
 			// fetch packages
 			//
@@ -211,7 +227,7 @@ define([
 		getSelectedName: function() {
 			var selected = this.getSelected();
 			if (selected) {
-				return selected.get('name')
+				return selected.get('name');
 			} else {
 				return undefined;
 			}
@@ -282,7 +298,9 @@ define([
 
 								// callbacks
 								//
-								onChange: self.options.onChange
+								onChange: function(options) {
+									self.onChangeVersion(options);
+								}
 							})
 						);
 					},
@@ -310,13 +328,24 @@ define([
 			// update selected
 			//
 			this.selected = this.getItemByIndex(this.getSelectedIndex());
-			this.options.initialVersion = undefined;
 			
 			// update version selector
 			//
 			if (this.options.versionSelector) {
 				this.showVersion(this.options.versionSelector);
 			}
+
+			// perform callback
+			//
+			if (this.options && this.options.onChange && (!options || !options.silent)) {
+				this.options.onChange({
+					'package': this.selected
+				});
+			}
+		},
+
+		onChangeVersion: function(options) {
+			this.selected = this.getItemByIndex(this.getSelectedIndex());
 
 			// perform callback
 			//

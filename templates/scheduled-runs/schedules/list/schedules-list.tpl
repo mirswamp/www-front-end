@@ -6,7 +6,14 @@
 			<th class="prepend number"></th>
 			<% } %>
 			
-			<th class="schedule first">
+			<% if (showProjects) { %>
+			<th class="project first">
+				<i class="fa fa-folder"></i>
+				<span class="hidden-xxs">Project</span>
+			</th>
+			<% } %>
+
+			<th class="schedule"<% if (!showProjects) { %> first<% } %>>
 				<i class="fa fa-calendar"></i>
 				<span class="hidden-xxs">Schedule</span>
 			</th>

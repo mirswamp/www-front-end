@@ -108,7 +108,7 @@
 				<% } %>
 			</div>
 		</div>
-		
+
 		<div class="form-group">
 			<label class="form-label">Execution duration</label>
 			<div class="controls">

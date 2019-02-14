@@ -18,6 +18,7 @@
 	<div id="project-profile"></div>
 </div>
 
+<% if (!isTrialProject) { %>
 <h2>Members</h2>
 <div class="top buttons">
 	<button id="invite" class="btn"><i class="fa fa-envelope"></i>Invite New Members</button>
@@ -32,10 +33,11 @@
 	<input type="checkbox" id="show-numbering" <% if (showNumbering) { %>checked<% } %>>
 	Show numbering
 </label>
+<% } %>
 
 <div class="bottom buttons">
 	<button id="run-new-assessment" class="btn btn-primary btn-lg"><i class="fa fa-play"></i>Run New Assessment</button>
-	<% if (isOwned) { %>
+	<% if (isOwned && !isTrialProject) { %>
 	<button id="edit-project" class="btn btn-lg"><i class="fa fa-pencil"></i>Edit Project</button>
 	<button id="delete-project" class="btn btn-lg"><i class="fa fa-trash"></i>Delete Project</button>
 	<% } %>

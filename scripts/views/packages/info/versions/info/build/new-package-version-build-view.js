@@ -13,7 +13,7 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2018 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2019 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 define([
@@ -21,13 +21,14 @@ define([
 	'underscore',
 	'backbone',
 	'marionette',
+	'registry',
 	'text!templates/packages/info/versions/info/build/new-package-version-build.tpl',
 	'widgets/accordions',
 	'models/projects/project',
 	'collections/projects/projects',
 	'views/packages/info/versions/info/build/build-profile/build-profile-form-view',
 	'views/packages/info/versions/info/build/build-script/build-script-view'
-], function($, _, Backbone, Marionette, Template, Accordions, Project, Projects, BuildProfileFormView, BuildScriptView) {
+], function($, _, Backbone, Marionette, Registry, Template, Accordions, Project, Projects, BuildProfileFormView, BuildScriptView) {
 	return Backbone.Marionette.LayoutView.extend({
 
 		//
@@ -35,8 +36,7 @@ define([
 		//
 
 		regions: {
-			buildProfileForm: '#build-profile-form',
-			buildScript: '#build-script'
+			buildProfileForm: '#build-profile-form'
 		},
 
 		events: {
@@ -44,6 +44,8 @@ define([
 			'click #save': 'onClickSave',
 			'click #next': 'onClickNext',
 			'click #prev': 'onClickPrev',
+			'click #show-source-files': 'onClickShowSourceFiles',
+			'click #show-build-script': 'onClickShowBuildScript',
 			'click #cancel': 'onClickCancel'
 		},
 
@@ -148,13 +150,14 @@ define([
 		template: function(data) {
 			return _.template(Template, _.extend(data, {
 				package: this.options.package,
-				showSave: this.options.showSave
+				show_save: this.options.showSave,
+				show_source_files: !this.options.package.isBuildable() && !this.model.isAtomic(),
+				show_build_script: this.model.hasBuildScript() && this.options.package.hasBuildScript()
 			}));
 		},
 
 		onRender: function() {
 			this.showBuildProfileForm();
-			this.showBuildScript();
 
 			// change accordion icon
 			//
@@ -173,46 +176,97 @@ define([
 					packageVersionDependencies: this.options.packageVersionDependencies,
 					parent: this,
 
-					// update build script upon change
+					// callbacks
 					//
 					onChange: function() {
-						self.showBuildScript(self.buildProfileForm.currentView.focusedInput);
-					}	
+						self.onChange();	
+					}
 				})
 			);
 		},
 
-		showBuildScript: function(focusedInput) {
+		showSourceFiles: function() {
+			var self = this;
 
 			// get current model
 			//
-			if (this.buildProfileForm.currentView) {
-				var currentModel = this.buildProfileForm.currentView.getCurrentModel();
-			} else {
-				var currentModel = this.model;
-			}
+			var model = this.buildProfileForm.currentView.getCurrentModel();
 
-			if (currentModel.isBuildNeeded()) {
+			// fetch build info
+			//
+			model.fetchBuildInfo({
+				data: {
+					'package_type_id': this.options.package.get('package_type_id'),
+					'build_dir': this.model.get('build_dir') || '.'
+				},
 
-				// unhide build script accordion
+				// callbacks
 				//
-				this.$el.find('#build-script-accordion').show();
+				success: function(data) {
+					model.set({
+						'source_files': data.source_files
+					});
 
-				// show build script view
-				//
-				this.buildScript.show(
-					new BuildScriptView({
-						model: currentModel,
-						package: this.options.package,
-						highlight: focusedInput
+					self.showSourceFilesDialog(model);
+				}
+			});
+		},
+
+		showSourceFilesDialog: function(packageVersion) {
+			var self = this;
+			require([
+				'views/packages/dialogs/source-files-dialog-view'
+			], function (SourceFilesDialogView) {
+				Registry.application.modal.show(
+					new SourceFilesDialogView({
+						model: packageVersion,
+						package: self.options.package
 					})
 				);
-			} else {
+			});
+		},
 
-				// hide build script accordion
+		showBuildScript: function() {
+			var self = this;
+
+			// get current model
+			//
+			var model = this.buildProfileForm.currentView.getCurrentModel();
+
+			// fetch build info
+			//
+			model.fetchBuildInfo({
+				data: {
+					'package_type_id': this.options.package.get('package_type_id'),
+					'build_dir': model.get('build_dir') || '.'
+				},
+				
+				// callbacks
 				//
-				this.$el.find('#build-script-accordion').hide();
-			}
+				success: function(data) {
+					model.set({
+						'no_build_cmd': data.no_build_cmd
+					});
+
+					// show build script dialog
+					//
+					self.showBuildScriptDialog(model);
+				}
+			});
+		},
+		
+		showBuildScriptDialog: function(packageVersion) {
+			var self = this;
+			require([
+				'views/packages/dialogs/build-script-dialog-view'
+			], function (BuildScriptDialogView) {
+				Registry.application.modal.show(
+					new BuildScriptDialogView({
+						model: packageVersion,
+						package: self.options.package
+					})
+				);
+			});
 		},
 
 		hideBuildScript: function() {
@@ -254,22 +308,59 @@ define([
 		},
 
 		onClickSave: function() {
-
-			// update package version
-			//
-			this.buildProfileForm.currentView.update(this.model);
+			var self = this;
 
 			// check validation
 			//
 			if (this.buildProfileForm.currentView.isValid()) {
 
-				// disable save button
+				// update package version
 				//
-				this.$el.find('#save').prop('disabled', true);
-				
-				// save package version
+				this.buildProfileForm.currentView.update(this.model);
+			
+				// check build system
 				//
-				this.save();
+				this.model.checkBuildSystem({
+
+					// callbacks
+					//
+					success: function() {
+		
+						// save package version
+						//
+						self.save(function() {
+
+							// go to package view
+							//
+							Backbone.history.navigate('#packages/' + self.model.get('package_uuid'), {
+								trigger: true
+							});
+						});
+					},
+
+					error: function(data) {
+						Registry.application.confirm({
+							title: 'Build System Warning',
+							message: data.responseText + "  Would you like to continue anyway?",
+
+							// callbacks
+							//
+							accept: function() {
+
+								// show next view
+								//
+								self.save(function() {
+								
+									// go to package view
+									//
+									Backbone.history.navigate('#packages/' + self.model.get('package_uuid'), {
+										trigger: true
+									});
+								});
+							}
+						});
+					}
+				});
 			} else {
 
 				// show warning message bar
@@ -279,6 +370,7 @@ define([
 		},
 
 		onClickNext: function() {
+			var self = this;
 
 			// update package version
 			//
@@ -288,9 +380,35 @@ define([
 			//
 			if (this.buildProfileForm.currentView.isValid()) {
 
-				// show next view
+				// check build system
 				//
-				this.options.parent.showSharing();
+				this.model.checkBuildSystem({
+
+					// callbacks
+					//
+					success: function() {
+
+						// show next view
+						//
+						self.options.parent.showSharing();
+					},
+
+					error: function(data) {
+						Registry.application.confirm({
+							title: 'Build System Warning',
+							message: data.responseText + "  Would you like to continue anyway?",
+
+							// callbacks
+							//
+							accept: function() {
+
+								// show next view
+								//
+								self.options.parent.showSharing();
+							}
+						});
+					}
+				});
 			} else {
 
 				// show warning message bar
@@ -301,6 +419,14 @@ define([
 
 		onClickPrev: function() {
 			this.options.parent.showSource();
+		},
+
+		onClickShowSourceFiles: function() {
+			this.showSourceFiles();
+		},
+
+		onClickShowBuildScript: function() {
+			this.showBuildScript();
 		},
 
 		onClickCancel: function() {

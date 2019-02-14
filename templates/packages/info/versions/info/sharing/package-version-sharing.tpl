@@ -23,7 +23,7 @@
 	<button id="save" class="btn btn-primary btn-lg" disabled><i class="fa fa-save"></i>Save Sharing</button>
 	<% if (showNavigation) { %>
 	<button id="cancel" class="btn btn-lg"><i class="fa fa-times"></i>Cancel</button>
-	<button id="prev" class="btn btn-lg"><i class="fa fa-arrow-left"></i>Prev</button>
+	<button id="prev" class="btn btn-lg" style="display:none"><i class="fa fa-arrow-left"></i>Prev</button>
 	<button id="start" class="btn btn-lg"><i class="fa fa-fast-backward"></i>Start</button>
 	<% } %>
 </div>

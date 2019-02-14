@@ -1,11 +1,17 @@
+<% if (isOwned) { %>
+<button id="edit-package" class="btn" style="float:right"><i class="fa fa-pencil"></i>Edit</button>
+<% } %>
+
 <div id="package-profile" class="form-horizontal">
-	<% if (isOwned) { %>
-	<button id="edit-package" class="btn" style="float:right"><i class="fa fa-pencil"></i>Edit</button>
-	<% } %>
 
 	<div class="form-group">
 		<label class="form-label">Name</label>
 		<div class="controls"><%- name %></div>
+	</div>
+
+	<div class="form-group">
+		<label class="form-label">Description</label>
+		<div class="controls"><%- description? description : 'none' %></div>
 	</div>
 
 	<% if (package_type) { %>
@@ -39,8 +45,12 @@
 		<div class="controls"><%- external_url? external_url : 'none' %></div>
 	</div>
 
-	<div class="form-group">
-		<label class="form-label">Description</label>
-		<div class="controls"><%- description? description : 'none' %></div>
-	</div>
+	<fieldset>
+		<legend>GitHub Webhook Callback</legend>
+
+		<div class="form-group">
+			<label class="form-label">Secret Token</label>
+			<div class="controls"><%- secret_token %></div>
+		</div>
+	</fieldset>
 </div>

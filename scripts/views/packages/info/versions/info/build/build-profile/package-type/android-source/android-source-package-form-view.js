@@ -13,7 +13,7 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2018 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2019 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 define([
@@ -21,21 +21,20 @@ define([
 	'underscore',
 	'backbone',
 	'marionette',
-	'bootstrap/collapse',
-	'bootstrap/dropdown',
+	'jquery.validate',
 	'bootstrap/tooltip',
 	'bootstrap/popover',
-	'bootstrap.select',
-	'jquery.validate',
+	'config',
 	'text!templates/packages/info/versions/info/build/build-profile/package-type/android-source/android-source-package-form.tpl',
 	'registry',
 	'widgets/accordions',
 	'models/files/directory',
 	'views/dialogs/error-view',
+	'views/packages/info/versions/info/build/build-profile/package-type/package-type-form-view',
 	'views/packages/info/versions/info/build/build-profile/dialogs/select-package-version-file-view',
 	'views/packages/info/versions/info/build/build-profile/dialogs/select-package-version-directory-view'
-], function($, _, Backbone, Marionette, Collapse, Dropdown, Tooltip, Popover, Select, Validate, Template, Registry, Accordions, Directory, ErrorView, SelectPackageVersionFileView, SelectPackageVersionDirectoryView) {
-	return Backbone.Marionette.ItemView.extend({
+], function($, _, Backbone, Marionette, Validate, Tooltip, Popover, Config, Template, Registry, Accordions, Directory, ErrorView, PackageTypeFormView, SelectPackageVersionFileView, SelectPackageVersionDirectoryView) {
+	return PackageTypeFormView.extend({
 
 		//
 		// attributes
@@ -58,37 +57,8 @@ define([
 		},
 
 		//
-		// message attributes
-		//
-
-		noBuildMessage: "This package does not appear to include a build file. You can set the build system and advanced settings if this is not correct. By selecting the no build option, analysis is limited to compilable files located in the package path (nonrecursive).",
-		selectNoBuildMessage: "By selecting the no build option, analysis is limited to compilable files located in the package path (nonrecursive).",
-
-		//
 		// methods
 		//
-
-		initialize: function() {
-			var self = this;
-
-			// add custom validation rule
-			//
-			jQuery.validator.addMethod('buildSystemRequired', function (value) {
-				return (value != 'none');
-			}, "Please specify a build system.");
-
-			jQuery.validator.addMethod('buildTargetRequired', function (value) {
-				var hasBuildTarget = self.getBuildTarget() != '';
-
-				// show build settings, if target not specified
-				//
-				if (!hasBuildTarget) {
-					self.$el.find("#build-settings").collapse('show');
-				}
-				
-				return hasBuildTarget;
-			}, "Please specify a build target.");
-		},
 
 		checkForGradleWrapper: function(done) {
 			var self = this;
@@ -142,6 +112,11 @@ define([
 					break;
 				case 'android+gradle':
 					this.$el.find("#build-system").val('gradle');
+					this.onSetBuildSystem();
+					break;
+				case 'android+gradle-wrapper':
+					this.$el.find("#build-system").val('gradle');
+					this.$el.find("#use-gradle-wrapper input").prop("checked", true);
 					this.onSetBuildSystem();
 					break;
 				default:
@@ -198,26 +173,24 @@ define([
 		},
 
 		getBuildTarget: function() {
+			var buildSystem = this.getBuildSystem();
+			var buildTarget;
 
-			// get build target from selctor or input field
-			//
-			if (this.$el.find('#build-target input').is(':visible')) {
-				var buildTarget = this.$el.find('#build-target input').val();
-			} else {
-				var buildTarget = this.$el.find('#build-target select').val();
-			}
-			
-			// get build target from other field
-			//
-			if (buildTarget == 'other') {
-				buildTarget = this.$el.find('#other-build-target').val();
+			switch (buildSystem) {
+				case 'android+ant':
+				case 'android+gradle':
+					buildTarget = this.$el.find('#build-target select').val();
+					if (buildTarget == 'other') {
+						buildTarget = this.$el.find('#other-build-target input:visible').val();
+					}
+					break;
+
+				case 'android+maven':
+					buildTarget = this.$el.find('#build-target input:visible').val();
+					break;
 			}
 
 			return buildTarget;
-		},
-
-		hasBuildSettings: function(buildSystem) {
-			return (buildSystem != 'no-build');
 		},
 
 		hasBuildSystemSettings: function(buildSystem) {
@@ -237,6 +210,10 @@ define([
 		onRender: function() {
 			var self = this;
 
+			// set initial build system state
+			//
+			this.onSetBuildSystem();
+			
 			// check for gradle wrapper
 			//
 			if (this.model.isNew()) {
@@ -279,7 +256,7 @@ define([
 			// show / hide build system tags
 			//
 			if (this.hasBuildSystemSettings(buildSystem)) {
-				this.$el.find('.build-system.tag').show();
+				this.$el.find('.build-system.tag').removeAttr('style');
 			} else {
 				this.$el.find('.build-system.tag').hide();
 			}
@@ -300,11 +277,12 @@ define([
 				// show ant build target
 				//
 				buildTarget = this.getBuildTarget();
-				if (buildTarget != 'release' && buildTarget != 'debug') {
-					buildTarget = 'other';
-					this.$el.find('#other-build-target').closest('.form-group').show();
+				if (buildTarget == 'other') {
+					this.$el.find('#other-build-target').show();
 				}
-				$("#build-target option").each(function() { this.selected = (this.text == buildTarget); });
+				$("#build-target option").each(function() {
+					this.selected = (this.text == buildTarget);
+				});
 			} else {
 				this.$el.find('.ant-settings').hide();
 			}
@@ -316,7 +294,7 @@ define([
 
 				// show maven build target
 				//
-				this.$el.find('#other-build-target').closest('.form-group').hide();
+				this.$el.find('#other-build-target').hide();
 			} else {
 				this.$el.find('.maven-settings').hide();
 			}
@@ -329,29 +307,18 @@ define([
 				// show gradle build target
 				//
 				buildTarget = this.getBuildTarget();
+				if (!buildTarget || buildTarget == '') {
+					buildTarget = 'compileReleaseSources';
+				}
 				if (buildTarget != 'compileReleaseSources' && buildTarget != 'compileDebugSources') {
 					buildTarget = 'other';
-					this.$el.find('#other-build-target').closest('.form-group').show();
+					this.$el.find('#other-build-target').show();
 				}
-				$("#build-target option").each(function() { this.selected = (this.text == buildTarget); });
+				$("#build-target option").each(function() {
+					this.selected = (this.text == buildTarget);
+				});
 			} else {
 				this.$el.find('.gradle-settings').hide();
-			}
-
-			// expand build system
-			//
-			if (buildSystem == 'android+maven' || buildSystem == 'android+gradle') {
-				this.$el.find("#build-system-settings").collapse('show');
-			} else {
-				this.$el.find("#build-system-settings").collapse('hide');
-			}
-
-			// show / hide other build command
-			//
-			if (buildSystem === 'other') {
-				this.$el.find('#build-cmd-field').closest('.form-group').show();
-			} else {
-				this.$el.find('#build-cmd-field').closest('.form-group').hide();
 			}
 
 			// show build target select or input
@@ -361,7 +328,7 @@ define([
 				this.$el.find('#build-target .input-group').hide();
 			} else {
 				this.$el.find('#build-target select').hide();
-				this.$el.find('#build-target .input-group').show();
+				this.$el.find('#build-target .input-group').css('display', '');
 			}
 		},
 
@@ -369,99 +336,40 @@ define([
 		// form validation methods
 		//
 
-		validate: function() {
-			return this.$el.find('form').validate({
-
-				// don't ignore hidden fields
-				//
-				ignore: [],
-
-				rules: {
-					'build-system': {
-						buildSystemRequired: true
-					},
-
-					'build-target': {
-						buildTargetRequired: true
-					}
-				}
-			});
-		},
-
-		isValid: function() {
-			return this.validator.form();
-		},
-
-		//
-		// form methods
-		//
-
-		update: function(model) {
-
-			// build system settings
-			//
+		getValues: function() {
 			var buildSystem = this.getBuildSystem();
-			var mavenVersion = this.$el.find('#maven-version').val();
-			var useGradleWrapper = buildSystem == 'android+gradle'? this.$el.find('#use-gradle-wrapper').prop('checked') : undefined;
-
-			// android settings
-			//
-			var androidSDKTarget = this.$el.find('#android-sdk-target').val();
-			var androidLintTarget = this.$el.find('#android-lint-target').val();
-			var androidRedoBuild = buildSystem == 'android+ant'? this.$el.find('#android-redo-build').prop('checked') : undefined;
-			var androidMavenPlugin = this.$el.find('#android-maven-plugin').val();
-
-			// configuration settings
-			//
-			var configurePath = this.$el.find('#configure-path').val();
-			var configureCommand = this.$el.find('#configure-command').val();
-			var configureOptions = this.$el.find('#configure-options').val();
-
-			// build settings
-			//
-			var buildPath = this.$el.find('#build-path').val();
-			var buildFile = this.$el.find('#build-file').val();
-			var buildOptions = this.$el.find('#build-options').val();
-			var buildTarget = this.getBuildTarget();
-
-			// unset maven specific parameters, if necessary
-			//
-			if (buildSystem != 'android+maven') {
-				mavenVersion = undefined;
-				androidMavenPlugin = undefined;
-			}
 
 			// set model attributes
 			//
-			model.set({
+			return {
 
 				// build system attributes
 				//
-				'build_system': buildSystem != ''? buildSystem : null,
+				'build_system': buildSystem,
 				'build_cmd': null,
-				'maven_version': mavenVersion != ''? mavenVersion : null,
-				'use_gradle_wrapper': useGradleWrapper,
+				'maven_version': buildSystem == 'android+maven'? this.$el.find('#maven-version input:visible').val() : undefined,
+				'use_gradle_wrapper': buildSystem == 'android+gradle'? this.$el.find('#use-gradle-wrapper input:visible').prop('checked') : undefined,
 
 				// android settings
 				//
-				'android_sdk_target': androidSDKTarget != ''? androidSDKTarget : null,
-				'android_lint_target': androidLintTarget != ''? androidLintTarget : null,
-				'android_redo_build': androidRedoBuild,
-				'android_maven_plugin': androidMavenPlugin != ''? androidMavenPlugin : null,
+				'android_sdk_target': this.$el.find('#android-sdk-target input:visible').val(),
+				'android_lint_target': this.$el.find('#android-lint-target input:visible').val(),
+				'android_redo_build': buildSystem == 'android+ant'? this.$el.find('#android-redo-build input:visible').prop('checked') : undefined,
+				'android_maven_plugin': buildSystem == 'android+maven'? this.$el.find('#android-maven-plugin input:visible').val() : undefined,
 				
 				// configuration attributes
 				//
-				'config_dir': configurePath != ''? configurePath : null,
-				'config_cmd': configureCommand != ''? configureCommand : null,
-				'config_opt': configureOptions != ''? configureOptions : null,
+				'config_dir': this.$el.find('#configure-path input:visible').val(),
+				'config_cmd': this.$el.find('#configure-command input:visible').val(),
+				'config_opt': this.$el.find('#configure-options input:visible').val(),
 
 				// build attributes
 				//
-				'build_dir': buildPath != ''? buildPath : null,
-				'build_file': buildFile != ''? buildFile : null,
-				'build_opt': buildOptions != ''? buildOptions : null,
-				'build_target': buildTarget != ''? buildTarget : null
-			});
+				'build_dir': this.$el.find('#build-path input:visible').val(),
+				'build_file': this.$el.find('#build-file input:visible').val(),
+				'build_opt': this.$el.find('#build-options').val(),
+				'build_target': this.getBuildTarget()
+			};	
 		},
 
 		//
@@ -485,50 +393,60 @@ define([
 
 			// remove empty menu item
 			//
-			if (this.$el.find("#build-system option[value='none']").length !== 0) {
-				this.$el.find("#build-system option[value='none']").remove();
-			}
+			this.$el.find("#build-system option:empty").remove();
 		},
 
 		onSetBuildSystem: function() {
-			this.onChangeBuildSystem();
-		},
-
-		onChangeBuildSystem: function(event) {
 			var buildSystem = this.getBuildSystem();
-			var hasBuildSettings = this.hasBuildSettings(buildSystem);
 
-			// show / hide advanced settings
+			// set build system selector defaults
 			//
-			if (hasBuildSettings) {
-				this.showAdvancedSettings();
-			} else {
-				this.hideAdvancedSettings();
+			switch (buildSystem) {
+				case 'android+ant':
+					this.$el.find('#build-target select').val('release');
+					break;
+				case 'android+gradle':
+					this.$el.find('#build-target select').val('compileReleaseSources');
+					break;
 			}
 
 			// show / hide build system info
 			//
 			this.showBuildSystem(buildSystem);
 
-			// show / hide build script
+			// show / hide notice
 			//
-			if (hasBuildSettings) {
-				this.options.parent.options.parent.showBuildScript();
+			if (buildSystem == 'no-build') {
+				this.options.parent.options.parent.showNotice(this.notices['no-build']);		
+			} else if (buildSystem == 'none') {
+				this.options.parent.options.parent.showNotice(this.notices['none']);
 			} else {
-				this.options.parent.options.parent.hideBuildScript();
+				this.options.parent.options.parent.hideNotice();
+			}
+		},
+
+		onChangeBuildSystem: function() {
+			var buildSystem = this.getBuildSystem();
+
+			// update build system state
+			//
+			this.onSetBuildSystem();
+
+			// show / hide notice
+			//
+			if (buildSystem == 'no-build') {
+				this.options.parent.options.parent.showNotice(this.notices['select-no-build']);		
+			} else if (buildSystem == 'none') {
+				this.options.parent.options.parent.showNotice(this.notices['select-none']);
+			} else {
+				this.options.parent.options.parent.hideNotice();
 			}
 
-			// show / hide no build notice
+			// clear errors
 			//
-			if (hasBuildSettings) {
-				this.options.parent.options.parent.hideNotice();
-			} else {
-				if (event) {
-					this.options.parent.options.parent.showNotice(this.selectNoBuildMessage);
-				} else {
-					this.options.parent.options.parent.showNotice(this.noBuildMessage);
-				}	
-			}
+			this.$el.find('#build-target-error').remove();
+			this.$el.find('#other-build-target-error').remove();
+			this.$el.find('.error').removeClass('error');
 
 			// perform callback
 			//
@@ -541,9 +459,9 @@ define([
 			// show / hide other build target input field
 			//
 			if (buildTarget == 'other') {
-				this.$el.find('#other-build-target').closest('.form-group').show();
+				this.$el.find('#other-build-target').show();
 			} else {
-				this.$el.find('#other-build-target').closest('.form-group').hide();
+				this.$el.find('#other-build-target').hide();
 			}
 		},
 
@@ -605,7 +523,7 @@ define([
 			//
 			var sourceDirectory = new Directory({
 				name: sourcePath
-			})
+			});
 
 			// show select package version directory dialog
 			//

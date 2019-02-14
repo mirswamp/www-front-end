@@ -12,7 +12,7 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2018 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2019 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 define([
@@ -37,7 +37,7 @@ define([
 		// querying methods
 		//
 
-		hasProjectsOwnedBy: function(user) {
+		hasOwnedBy: function(user) {
 			for (var i = 0; i < this.length; i++) {
 				var model = this.at(i);
 				if (model.isOwnedBy(user) && !model.isDeactivated()) {
@@ -47,7 +47,7 @@ define([
 			return false;
 		},
 
-		hasProjectsNotOwnedBy: function(user) {
+		hasNotOwnedBy: function(user) {
 			for (var i = 0; i < this.length; i++) {
 				var model = this.at(i);
 				if (!model.isOwnedBy(user) && !model.isDeactivated()) {
@@ -57,7 +57,7 @@ define([
 			return false;
 		},
 
-		getProjectsOwnedBy: function(user) {
+		getOwnedBy: function(user) {
 			var collection = new Class();
 			for (var i = 0; i < this.length; i++) {
 				var model = this.at(i);
@@ -68,7 +68,7 @@ define([
 			return collection;
 		},
 
-		getProjectsNotOwnedBy: function(user) {
+		getNotOwnedBy: function(user) {
 			var collection = new Class();
 			for (var i = 0; i < this.length; i++) {
 				var model = this.at(i);
@@ -142,8 +142,20 @@ define([
 
 		fetchByUser: function(user, options) {
 			return Backbone.Collection.prototype.fetch.call(this, _.extend(options, {
-				url: Config.servers.web + '/users/' + user.get('user_uid') + '/projects'
+				url: user.url() + '/projects'
 			}));
+		},
+
+		fetchByPackage: function(package, options) {
+			return Backbone.Collection.prototype.fetch.call(this, _.extend(options, {
+				url: package.url() + '/projects',
+			}));	
+		},
+
+		fetchByPackageVersion: function(packageVersion, options) {
+			return Backbone.Collection.prototype.fetch.call(this, _.extend(options, {
+				url: packageVersion.url() + '/projects',
+			}));	
 		},
 
 		fetchAll: function(options) {

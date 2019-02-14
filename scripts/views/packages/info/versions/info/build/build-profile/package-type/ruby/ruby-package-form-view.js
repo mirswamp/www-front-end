@@ -13,7 +13,7 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2018 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2019 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 define([
@@ -21,20 +21,15 @@ define([
 	'underscore',
 	'backbone',
 	'marionette',
-	'bootstrap/collapse',
-	'bootstrap/dropdown',
-	'bootstrap/tooltip',
-	'bootstrap/popover',
-	'bootstrap.select',
-	'jquery.validate',
 	'text!templates/packages/info/versions/info/build/build-profile/package-type/ruby/ruby-package-form.tpl',
 	'registry',
 	'widgets/accordions',
 	'models/files/directory',
+	'views/packages/info/versions/info/build/build-profile/package-type/package-type-form-view',
 	'views/packages/info/versions/info/build/build-profile/dialogs/select-package-version-file-view',
 	'views/packages/info/versions/info/build/build-profile/dialogs/select-package-version-directory-view'	
-], function($, _, Backbone, Marionette, Collapse, Dropdown, Tooltip, Popover, Select, Validate, Template, Registry, Accordions, Directory, SelectPackageVersionFileView, SelectPackageVersionDirectoryView) {
-	return Backbone.Marionette.ItemView.extend({
+], function($, _, Backbone, Marionette, Template, Registry, Accordions, Directory, PackageTypeFormView, SelectPackageVersionFileView, SelectPackageVersionDirectoryView) {
+	return PackageTypeFormView.extend({
 
 		//
 		// attributes
@@ -42,11 +37,11 @@ define([
 		
 		events: {
 			'blur input': 'onBlurInput',
-			'focus #build-system': 'onFocusBuildSystem',
-			'change #build-system': 'onChangeBuildSystem',
-			'click #select-configure-path': 'onClickSelectConfigurePath',
-			'click #select-build-path': 'onClickSelectBuildPath',
-			'click #select-build-file': 'onClickSelectBuildFile'
+			'focus #build-system select': 'onFocusBuildSystem',
+			'change #build-system select': 'onChangeBuildSystem',
+			'click #configure-path button': 'onClickConfigurePathButton',
+			'click #build-path button': 'onClickBuildPathButton',
+			'click #build-file button': 'onClickBuildFileButton'
 		},
 
 		buildCommands: {
@@ -55,28 +50,8 @@ define([
 			'bundler+other': 	undefined,
 			'rake':				'rake',
 			'other': 			undefined,
-			'no-build': 		undefined, 
+			'none': 			undefined, 
 			'ruby-gem':  		'gem'
-		},
-
-		//
-		// message attributes
-		//
-
-		noBuildMessage: "This package does not appear to include a build file. You can set the build system and advanced settings if this is not correct. By selecting the no build option, no configuration or build steps will be performed prior to assessment of files in the package path (recursive).",
-		selectNoBuildMessage: "By selecting the no build option, no configuration or build steps will be performed prior to assessment of files in the package path (recursive).",
-
-		//
-		// methods
-		//
-
-		initialize: function() {
-
-			// add custom validation rule
-			//
-			jQuery.validator.addMethod('buildSystemRequired', function (value) {
-				return (value != 'none');
-			}, "Please specify a build system.");
 		},
 
 		//
@@ -108,8 +83,8 @@ define([
 					this.$el.find("#build-system").val('other');
 					this.onSetBuildSystem();	
 					break;
-				case 'no-build':
-					this.$el.find("#build-system").val('no-build');
+				case 'none':
+					this.$el.find("#build-system").val('none');
 					this.onSetBuildSystem();	
 					break;
 				case 'ruby-gem':
@@ -120,7 +95,7 @@ define([
 
 					// select 'no build' by default
 					//
-					this.$el.find("#build-system").val('no-build');
+					this.$el.find("#build-system").val('none');
 					this.onSetBuildSystem();
 					break;			
 			}
@@ -161,28 +136,21 @@ define([
 		//
 
 		getBuildSystem: function() {
-			switch (this.$el.find('#build-system').val()) {
+			switch (this.$el.find('#build-system select').val()) {
 				case 'bundler':
 					return 'bundler';
-					break;
 				case 'bundler-rake':
 					return 'bundler+rake';
-					break;
 				case 'bundler-other':
 					return 'bundler+other';
-					break;
 				case 'rake':
 					return 'rake';
-					break;
 				case 'other':
 					return 'other';
-					break;
 				case 'no-build':
 					return 'no-build';
-					break;
 				case 'ruby-gem':
 					return 'ruby-gem';
-					break;
 			}
 		},
 
@@ -190,25 +158,18 @@ define([
 			switch (buildSystem) {
 				case 'bundler':
 					return 'Bundler';
-					break;
 				case 'bundler+rake':
 					return 'Bundler + Rake';
-					break;
 				case 'bundler+other':
 					return 'Bundler + Other';
-					break;
 				case 'rake':
 					return 'Rake';
-					break;
 				case 'other':
 					return 'Build (Other)';
-					break;	
 				case 'no-build':
-					return 'No Build';
-					break;
+					return 'None';
 				case 'ruby-gem':
 					return 'Ruby Gem';
-					break;		
 			}
 		},
 
@@ -216,15 +177,11 @@ define([
 			return this.$el.find('#build-system option[value=' + buildSystem + ']').length != 0;
 		},
 
-		hasBuildSettings: function(buildSystem) {
-			return (buildSystem != 'no-build' && buildSystem != 'ruby-gem');
-		},
-
 		getBuildCommand: function(buildSystem) {
-			if (buildSystem == 'other') {
-				return this.$el.find('#other-build-command').val();
+			if (buildSystem == 'other' || buildSystem == 'bundler+other') {
+				return this.$el.find('#other-build-command input').val();
 			} else {
-				return this.$el.find('#build-command').val();
+				return this.$el.find('#build-command input').val();
 			}
 		},
 
@@ -239,6 +196,10 @@ define([
 		},
 
 		onRender: function() {
+
+			// set initial build system state
+			//
+			this.onSetBuildSystem();
 
 			// display popovers on hover
 			//
@@ -255,6 +216,16 @@ define([
 			this.validator = this.validate();
 		},
 
+		expandConfigSettings: function() {
+			this.$el.find('.tags .accordion-toggle[href="#config-settings"]').removeClass('collapsed');
+			this.$el.find('#config-settings').collapse('show');
+		},
+
+		collapseConfigSettings: function() {
+			this.$el.find('.tags .accordion-toggle[href="#config-settings"]').addClass('collapsed');
+			this.$el.find('#config-settings').collapse('hide');
+		},
+
 		expandBuildSettings: function() {
 			this.$el.find('.tags .accordion-toggle[href="#build-settings"]').removeClass('collapsed');
 			this.$el.find('#build-settings').collapse('show');
@@ -267,97 +238,78 @@ define([
 
 		showBuildSystem: function(buildSystem) {
 
-			// expand / collapse build settings
+			// expand / collapse advanced settings
 			//
-			if (buildSystem && buildSystem != 'no-build' && buildSystem != 'ruby-gem') {
-				this.$el.find('.tag[href="#configure-settings"]').show();
-				this.$el.find('.tag[href="#build-settings"]').show();
-				this.expandBuildSettings();
-			} else {
+			if (buildSystem == 'ruby-gem') {
 				this.$el.find('.tag[href="#configure-settings"]').hide();
 				this.$el.find('.tag[href="#build-settings"]').hide();
+				this.$el.find('#configure-settings').hide();
+				this.$el.find('#build-settings').hide();
+			} else if (!buildSystem || buildSystem == 'none' || buildSystem == 'no-build' || buildSystem == 'bundler') {
+				this.$el.find('.tag[href="#configure-settings"]').show();
+				this.$el.find('.tag[href="#build-settings"]').hide();
+				this.expandConfigSettings();
 				this.collapseBuildSettings();
+			} else {
+				this.$el.find('.tag[href="#configure-settings"]').show();
+				this.$el.find('.tag[href="#build-settings"]').show();
+				this.expandConfigSettings();
+				this.expandBuildSettings();
 			}
 
-			// show appropriate fields
+			// show / hide build command
 			//
 			if (buildSystem == 'other' || buildSystem == 'bundler+other') {
-				this.$el.find('#other-build-command').closest('.form-group').show();
-				this.$el.find('#build-command').closest('.form-group').hide();
-				this.$el.find('#build-file').closest('.form-group').hide();
+				this.$el.find('#other-build-command').show();
+				this.$el.find('#build-command').hide();
+				this.$el.find('#build-file').hide();
 			} else {
-				this.$el.find('#other-build-command').closest('.form-group').hide();
-				this.$el.find('#build-command').closest('.form-group').show();
-				this.$el.find('#build-file').closest('.form-group').show();
+				this.$el.find('#other-build-command').hide();
+				this.$el.find('#build-command').show();
+				this.$el.find('#build-file').show();
 			}
-		},
 
-		//
-		// form validation methods
-		//
-
-		validate: function() {
-			return this.$el.find('form').validate({
-				rules: {
-					'build-system': {
-						buildSystemRequired: true
-					}
-				}
-			});
-		},
-
-		isValid: function() {
-			return this.validator.form();
+			// show / hide build settings
+			//
+			if (!buildSystem || buildSystem == 'none') {
+				this.$el.find('#build-path').hide();
+				this.$el.find('#build-options').hide();
+				this.$el.find('#build-target').hide();
+			} else {
+				this.$el.find('#build-path').show();
+				this.$el.find('#build-options').show();
+				this.$el.find('#build-target').show();
+			}
 		},
 
 		//
 		// form methods
 		//
 
-		update: function(model) {
-
-			// build system settings
-			//
+		getValues: function() {
 			var buildSystem = this.getBuildSystem();
-			var buildCommand = this.getBuildCommand(buildSystem);
 
-			// configuration settings
-			//
-			var configurePath = this.$el.find('#configure-path').val();
-			var configureCommand = this.$el.find('#configure-command').val();
-			var configureOptions = this.$el.find('#configure-options').val();
+			return {
 
-			// build settings
-			//
-			var buildPath = this.$el.find('#build-path').val();
-			var excludePaths = this.$el.find('#exclude-paths').val();
-			var buildFile = this.$el.find('#build-file').val();
-			var buildOptions = this.$el.find('#build-options').val();
-			var buildTarget = this.$el.find('#build-target').val();
-
-			// set model attributes
-			//
-			model.set({
-
-				// configuration attributes
+				// configuration settings
 				//
-				'config_dir': configurePath != ''? configurePath : null,
-				'config_cmd': configureCommand != ''? configureCommand : null,
-				'config_opt': configureOptions != ''? configureOptions : null,
-				
-				// build system attributes
-				//
-				'build_system': buildSystem != ''? buildSystem : null,
-				'build_cmd': buildCommand != ''? buildCommand : null,
+				'config_dir': this.$el.find('#configure-path input:visible').val(),
+				'config_cmd': this.$el.find('#configure-command input:visible').val(),
+				'config_opt': this.$el.find('#configure-options input:visible').val(),
 
-				// build attributes
+				// build system settings
 				//
-				'build_dir': buildPath != ''? buildPath : null,
-				'exclude_paths': excludePaths != ''? excludePaths : null,
-				'build_file': buildFile != ''? buildFile : null,
-				'build_opt': buildOptions != ''? buildOptions : null,
-				'build_target': buildTarget != ''? buildTarget : null
-			});
+				'build_system': buildSystem,
+				'build_cmd': this.getBuildCommand(buildSystem),
+
+				// build settings
+				//
+				'build_dir': this.$el.find('#build-path input:visible').val(),
+				'exclude_paths': this.$el.find('#exclude-paths input:visible').val(),
+				'build_file': this.$el.find('#build-file input:visible').val(),
+				'build_opt': this.$el.find('#build-options input:visible').val(),
+				'build_target': this.$el.find('#build-target input:visible').val()
+			};
 		},
 
 		//
@@ -381,18 +333,11 @@ define([
 
 			// remove empty menu item
 			//
-			if (this.$el.find("#build-system option[value='none']").length !== 0) {
-				this.$el.find("#build-system option[value='none']").remove();
-			}
+			this.$el.find("#build-system option:empty").remove();
 		},
 
 		onSetBuildSystem: function() {
-			this.onChangeBuildSystem();
-		},
-
-		onChangeBuildSystem: function(event) {
 			var buildSystem = this.getBuildSystem();
-			var hasBuildSettings = this.hasBuildSettings(buildSystem);
 
 			// set defaults
 			//
@@ -402,24 +347,28 @@ define([
 			//
 			this.showBuildSystem(buildSystem);
 
-			// show / hide build script
+			// show / hide no build notice
 			//
-			if (hasBuildSettings) {
-				this.options.parent.options.parent.showBuildScript();
+			if (buildSystem == 'no-build') {
+				this.options.parent.options.parent.showNotice(this.notices['none']);
 			} else {
-				this.options.parent.options.parent.hideBuildScript();
+				this.options.parent.options.parent.hideNotice();
 			}
+		},
+
+		onChangeBuildSystem: function() {
+			var buildSystem = this.getBuildSystem();
+
+			// update build system state
+			//
+			this.onSetBuildSystem();
 
 			// show / hide no build notice
 			//
-			if (hasBuildSettings) {
-				this.options.parent.options.parent.hideNotice();
+			if (buildSystem == 'no-build') {
+				this.options.parent.options.parent.showNotice(this.notices['select-none']);
 			} else {
-				if (event) {
-					this.options.parent.options.parent.showNotice(this.selectNoBuildMessage);
-				} else {
-					this.options.parent.options.parent.showNotice(this.noBuildMessage);
-				}
+				this.options.parent.options.parent.hideNotice();	
 			}
 
 			// perform callback
@@ -427,13 +376,13 @@ define([
 			this.onChange();
 		},
 
-		onClickSelectConfigurePath: function(event) {
+		onClickConfigurePathButton: function(event) {
 			var self = this;
 
 			// get paths
 			//
 			var sourcePath = this.model.get('source_path');
-			var configurePath = this.$el.find('#configure-path').val();
+			var configurePath = this.$el.find('#configure-path input').val();
 
 			// create directories
 			//
@@ -459,7 +408,7 @@ define([
 
 						// set configure path input
 						//
-						self.$el.find('#configure-path').val(selectedDirectoryName);
+						self.$el.find('#configure-path input').val(selectedDirectoryName);
 						self.onChange();
 					}
 				}), {
@@ -473,13 +422,13 @@ define([
 			event.preventDefault();
 		},
 
-		onClickSelectBuildPath: function(event) {
+		onClickBuildPathButton: function(event) {
 			var self = this;
 
 			// get paths
 			//
 			var sourcePath = this.model.get('source_path');
-			var buildPath = this.$el.find('#build-path').val();
+			var buildPath = this.$el.find('#build-path input').val();
 
 			// create directories
 			//
@@ -505,7 +454,7 @@ define([
 
 						// set build path input
 						//
-						self.$el.find('#build-path').val(selectedDirectoryName);
+						self.$el.find('#build-path input').val(selectedDirectoryName);
 						self.onChange();
 					}
 				}), {
@@ -519,14 +468,14 @@ define([
 			event.preventDefault();
 		},
 			
-		onClickSelectBuildFile: function(event) {
+		onClickBuildFileButton: function(event) {
 			var self = this;
 
 			// get paths
 			//
 			var sourcePath = this.model.get('source_path');
-			var buildPath = this.$el.find('#build-path').val();
-			var buildFile = this.$el.find('#build-file').val();
+			var buildPath = this.$el.find('#build-path input').val();
+			var buildFile = this.$el.find('#build-file input').val();
 
 			// create directories
 			//
@@ -555,7 +504,7 @@ define([
 
 						// set build file input
 						//
-						self.$el.find('#build-file').val(selectedFileName);
+						self.$el.find('#build-file input').val(selectedFileName);
 						self.onChange();
 					}
 				}), {

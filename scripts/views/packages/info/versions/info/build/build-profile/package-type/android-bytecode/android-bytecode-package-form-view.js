@@ -13,7 +13,7 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2018 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2019 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 define([
@@ -21,17 +21,11 @@ define([
 	'underscore',
 	'backbone',
 	'marionette',
-	'bootstrap/collapse',
-	'bootstrap/dropdown',
-	'bootstrap/tooltip',
-	'bootstrap/popover',
-	'bootstrap.select',
-	'jquery.validate',
 	'text!templates/packages/info/versions/info/build/build-profile/package-type/android-bytecode/android-bytecode-package-form.tpl',
-	'registry',
-	'widgets/accordions'
-], function($, _, Backbone, Marionette, Collapse, Dropdown, Tooltip, Popover, Select, Validate, Template, Registry, Accordions) {
-	return Backbone.Marionette.ItemView.extend({
+	'widgets/accordions',
+	'views/packages/info/versions/info/build/build-profile/package-type/package-type-form-view'
+], function($, _, Backbone, Marionette, Template, Accordions, PackageTypeFormView) {
+	return PackageTypeFormView.extend({
 
 		//
 		// attributes
@@ -116,47 +110,13 @@ define([
 		},
 
 		//
-		// form validation methods
-		//
-
-		validate: function() {
-			return this.$el.find('form').validate({
-
-				// don't ignore hidden fields
-				//
-				ignore: [],
-
-				rules: {
-					'build-system': {
-						buildSystemRequired: true
-					}
-				}
-			});
-		},
-
-		isValid: function() {
-			//return this.validator.form();
-			return true;
-		},
-
-		//
 		// form methods
 		//
 
-		update: function(model) {
-
-			// build system settings
-			//
-			var buildSystem = this.getBuildSystem();
-
-			// set model attributes
-			//
-			model.set({
-
-				// build system attributes
-				//
-				'build_system': buildSystem != ''? buildSystem : null
-			});
+		getValues: function() {
+			return {
+				'build_system': this.getBuildSystem()
+			};
 		}
 	});
 });

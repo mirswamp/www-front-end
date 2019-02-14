@@ -4,32 +4,32 @@
 </td>
 <% } %>
 
-<% if (typeof BugLocations != 'undefined') { %>
+<% if (typeof bugLocation != 'undefined') { %>
 <td class="file first">
-	<%= stringToHTML(BugLocations[0].SourceFile) %>
+	<%= stringToHTML(bugLocation.SourceFile) %>
 </td>
 <% } %>
 
-<% if (typeof BugLocations != 'undefined') { %>
+<% if (typeof bugLocation != 'undefined') { %>
 <td class="line-number">
-	<% if (BugLocations[0].StartLine ==  BugLocations[0].EndLine) { %>
-	<%= BugLocations[0].StartLine %>
-	<% } else if (BugLocations[0].StartLine && BugLocations[0].EndLine) { %>
-	<%= BugLocations[0].StartLine %> - <%= BugLocations[0].EndLine %>
+	<% if (bugLocation.StartLine ==  bugLocation.EndLine) { %>
+	<%= bugLocation.StartLine %>
+	<% } else if (bugLocation.StartLine && bugLocation.EndLine) { %>
+	<%= bugLocation.StartLine %> - <%= bugLocation.EndLine %>
 	<% } else { %>
-	<%= BugLocations[0].StartLine %>
+	<%= bugLocation.StartLine %>
 	<% } %>
 </td>
 <% } %>
 
-<% if (typeof BugLocations != 'undefined') { %>
+<% if (typeof bugLocation != 'undefined') { %>
 <td class="column-number">
-	<% if (BugLocations[0].StartColumn ==  BugLocations[0].EndColumn) { %>
-	<%= BugLocations[0].StartColumn %>
-	<% } else if (BugLocations[0].StartColumn && BugLocations[0].EndColumn) { %>
-	<%= BugLocations[0].StartColumn %> - <%= BugLocations[0].EndColumn %>
+	<% if (bugLocation.StartColumn ==  bugLocation.EndColumn) { %>
+	<%= bugLocation.StartColumn %>
+	<% } else if (bugLocation.StartColumn && bugLocation.EndColumn) { %>
+	<%= bugLocation.StartColumn %> - <%= bugLocation.EndColumn %>
 	<% } else { %>
-	<%= BugLocations[0].StartColumn %>
+	<%= bugLocation.StartColumn %>
 	<% } %>
 </td>
 <% } %>
@@ -50,10 +50,10 @@
 <td class="code last">
 	<%= stringToHTML(BugCode) %>
 
-	<a class="message" data-toggle="popover" data-original-title="Message" data-html="true" data-placement="top" data-content="<%= unquotateHTML(BugMessage) %>"><i class="fa fa fa-info-circle" style="margin-left:15px;"></i></a>
+	<a class="message" data-toggle="popover" data-original-title="Message" data-html="true" data-placement="top" data-content="<%= unquotateHTML(BugMessage) %>"><i class="fa fa fa-info-circle" data-toggle="tooltip" title="Click for bug info" data-placement="left" style="margin-left:15px;"></i></a>
 
 	<% if (typeof ResolutionSuggestion != 'undefined') { %>
-	<a class="suggestion" data-toggle="popover" data-original-title="Suggestion" data-html="true" data-placement="top" data-content="<%= unquotateHTML(ResolutionSuggestion) %>"><i class="fa fa fa-lightbulb-o" style="margin-left:15px;"></i></a>
+	<a class="suggestion" data-toggle="popover" data-original-title="Suggestion" data-html="true" data-placement="top" data-content="<%= unquotateHTML(ResolutionSuggestion) %>"><i class="fa fa fa-lightbulb-o" data-toggle="tooltip" title="Click for suggestions" data-placement="left" style="margin-left:15px;"></i></a>
 </td>
 	<% } %>
 <% } %>

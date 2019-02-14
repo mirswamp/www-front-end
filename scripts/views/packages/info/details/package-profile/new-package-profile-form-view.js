@@ -13,7 +13,7 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2018 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2019 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 define([
@@ -26,8 +26,9 @@ define([
 	'bootstrap/popover',
 	'text!templates/packages/info/details/package-profile/new-package-profile-form.tpl',
 	'config',
+	'models/packages/package',
 	'views/packages/info/versions/info/details/package-version-profile/new-package-version-profile-form-view',
-], function($, _, Backbone, Marionette, Validate, Tooltip, Popover, Template, Config, NewPackageVersionProfileFormView) {
+], function($, _, Backbone, Marionette, Validate, Tooltip, Popover, Template, Config, Package, NewPackageVersionProfileFormView) {
 	return Backbone.Marionette.LayoutView.extend({
 
 		//
@@ -48,7 +49,20 @@ define([
 		//
 
 		useExternalUrl: function() {
-			return this.$el.find('input[value="use-external-url"]').is(':checked');
+			return this.$el.find('input[value="use-external-url"]').is(':checked') ||
+				this.$el.find('input[value="use-external-git-url"]').is(':checked');
+		},
+
+		useExternalGitUrl: function() {
+			return this.$el.find('input[value="use-external-git-url"]').is(':checked');
+		},
+
+		getExternalUrl: function() {
+			if (!this.useExternalGitUrl()) {
+				return this.$el.find('#external-url input').val();
+			} else {
+				return this.$el.find('#external-git-url input').val();
+			}
 		},
 
 		//
@@ -66,17 +80,13 @@ define([
 
 			// add external url validation rule
 			//
-			$.validator.addMethod('external-url', function(value) {
-				self.model.set('external_url', value);
-				if (value === '') { 
-					return true; 
-				}
-				if (self.model.hasValidExternalUrl()) { 
-					var file = self.$el.find('#archive').val('');
-					return true;
-				}
-				return false;
-			}, "Not a valid GitHub HTTPS url.");
+			$.validator.addMethod('external_url', function(value) {
+				return Package.isValidArchiveName(value);
+			}, "Not a valid external archive URL.");
+
+			$.validator.addMethod('external_git_url', function(value) {
+				return Package.isValidGitUrl(value);
+			}, "Not a valid GitHub HTTPS URL.");
 
 			// add file validation rule
 			//
@@ -103,9 +113,9 @@ define([
 			//
 			this.newPackageVersionProfileForm.show(
 				new NewPackageVersionProfileFormView({
-					parent:	this,
+					model: this.options.packageVersion,
 					package: this.model,
-					model: this.options.packageVersion
+					parent:	this
 				})
 			);
 
@@ -132,7 +142,12 @@ define([
 						file: true
 					},
 					'external-url': {
-						url: true
+						url: true,
+						external_url: true
+					},
+					'external-git-url': {
+						url: true,
+						external_git_url: true
 					}
 				}
 			});
@@ -148,7 +163,7 @@ define([
 			//
 			var name = this.$el.find('#name input').val();
 			var description = this.$el.find('#description textarea').val();
-			var externalURL = this.useExternalUrl()? this.$el.find('#external-url input').val() : null;
+			var externalURL = this.useExternalUrl()? this.getExternalUrl(): null;
 
 			// update model
 			//
@@ -173,12 +188,24 @@ define([
 				case 'use-local-file':
 					this.$el.find('#git-message').hide();
 					this.$el.find('#external-url').hide();
+					this.$el.find('#external-git-url').hide();
+					this.$el.find('#webhook-callback').hide();
 					this.$el.find('#checkout-argument').hide();
 					this.$el.parent().find('#file').show();
 					break;
 				case 'use-external-url':
-					this.$el.find('#git-message').show();
+					this.$el.find('#git-message').hide();
 					this.$el.find('#external-url').show();
+					this.$el.find('#external-git-url').hide();
+					this.$el.find('#webhook-callback').hide();
+					this.$el.find('#checkout-argument').hide();
+					this.$el.parent().find('#file').hide();
+					break;
+				case 'use-external-git-url':
+					this.$el.find('#git-message').show();
+					this.$el.find('#external-url').hide();
+					this.$el.find('#external-git-url').show();
+					this.$el.find('#webhook-callback').show();
 					this.$el.find('#checkout-argument').show();
 					this.$el.parent().find('#file').hide();
 					break;

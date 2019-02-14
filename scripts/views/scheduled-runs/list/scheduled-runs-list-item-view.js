@@ -12,7 +12,7 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2018 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2019 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 define([
@@ -48,6 +48,52 @@ define([
 		},
 
 		//
+		// querying methods
+		//
+
+		getProjectUrl: function(data) {
+			if (data.project_uuid) {
+				return Registry.application.getURL() + '#projects/' + data.project_uuid;
+			}
+		},
+
+		getPackageUrl: function(data) {
+			if (data.package_uuid) {
+				return Registry.application.getURL() + '#packages/' + data.package_uuid;
+			}
+		},
+
+		getPackageVersionUrl: function(data) {
+			if (data.package_version_uuid) {
+				return Registry.application.getURL() + '#packages/versions/' + data.package_version_uuid;
+			}
+		},
+
+		getToolUrl: function(data) {
+			if (data.tool_uuid) {
+				return Registry.application.getURL() + '#tools/' + data.tool_uuid;
+			}
+		},
+
+		getToolVersionUrl: function(data) {
+			if (data.tool_version_uuid) {
+				return Registry.application.getURL() + '#tools/versions/' + data.tool_version_uuid;
+			}
+		},
+
+		getPlatformUrl: function(data) {
+			if (data.platform_uuid) {
+				return Registry.application.getURL() + '#platforms/' + data.platform_uuid;
+			}
+		},
+
+		getPlatformVersionUrl: function(data) {
+			if (data.platform_version_uuid) {
+				return Registry.application.getURL() + '#platforms/versions/' + data.platform_version_uuid;
+			}
+		},
+
+		//
 		// rendering methods
 		//
 
@@ -58,12 +104,14 @@ define([
 				index: this.options.index + 1,
 				runRequest: runRequest,
 				runRequestUrl: '#run-requests/schedules/' + runRequest.get('run_request_uuid'),
-				packageUrl: Registry.application.getURL() + '#packages/' + data.package_uuid,
-				packageVersionUrl: data.package_version_uuid? Registry.application.getURL() + '#packages/versions/' + data.package_version_uuid : undefined,
-				toolUrl: Registry.application.getURL() + '#tools/' + data.tool_uuid,
-				toolVersionUrl: data.tool_version_uuid? Registry.application.getURL() + '#tools/versions/' + data.tool_version_uuid : undefined,
-				platformUrl: Registry.application.getURL() + '#platforms/' + data.platform_uuid,
-				platformVersionUrl: data.platform_version_uuid? Registry.application.getURL() + '#platforms/versions/' + data.platform_version_uuid : undefined,
+				projectUrl: this.getProjectUrl(data),
+				packageUrl: this.getPackageUrl(data),
+				packageVersionUrl: this.getPackageVersionUrl(data),
+				toolUrl: this.getToolUrl(data),
+				toolVersionUrl: this.getToolVersionUrl(data),
+				platformUrl: this.getPlatformUrl(data),
+				platformVersionUrl: this.getPlatformVersionUrl(data),
+				showProjects: this.options.showProjects,
 				showNumbering: this.options.showNumbering,
 				showSchedule: this.options.showSchedule,
 				showDelete: this.options.showDelete

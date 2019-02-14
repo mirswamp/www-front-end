@@ -13,7 +13,7 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2018 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2019 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 var passwordPolicy = "Passwords must be at least 10 characters long and include at least three of the following character types: uppercase, lowercase, number, or symbol. Common and simple passwords will be rejected. Maximum length is 200 characters (additional characters will be truncated). Characters outside of the ASCII range of 32 to 126 are not allowed.";
@@ -72,7 +72,7 @@ define([
 		// case 3: invalid characters
 		//
 		if (containsInvalidChars(password)) {
-			return rating(1, "invalid")
+			return rating(1, "invalid");
 		}
 
 		// case 4: insufficient mix of characters
@@ -91,13 +91,13 @@ define([
 			numTypes++;
 		}
 		if (numTypes < 3) {
-			return rating(1, "insufficient")
+			return rating(1, "insufficient");
 		}
 
 		// case 5: passed!
 		//
 		return rating(3, "strong");
-	}
+	};
 
 	$.validator.passwordRating.messages = {
 		"too-short": "Too short",
@@ -105,5 +105,5 @@ define([
 		"invalid": "Contains invalid characters",
 		"insufficient": "Contains an insufficient mix of characters",
 		"strong": "Strong"
-	}
+	};
 });

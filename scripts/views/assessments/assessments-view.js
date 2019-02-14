@@ -12,7 +12,7 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2018 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2019 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 define([
@@ -397,6 +397,7 @@ define([
 					collection: this.collection,
 					sortList: this.options.sortList,
 					selectedAssessments: this.options.selectedAssessments,
+					showProjects: Registry.application.session.user.get('has_projects'),
 					showNumbering: Registry.application.options.showNumbering,
 					showGrouping: Registry.application.options.showGrouping,
 					showDelete: false,
@@ -601,34 +602,41 @@ define([
 		},
 
 		onClickScheduleAssessments: function() {
-			if (this.options.data['project']) {
-				var self = this;
-				var selectedAssessments = this.selectAssessmentsList.currentView.getSelected();
-				if (selectedAssessments.length > 0) {
-					var queryString = this.getSelectedQueryString();
+			var self = this;
 
-					// go to run requests schedule view
-					//
-					Backbone.history.navigate('/run-requests/add' + (queryString != ''? '?' + queryString : ''), {
-						trigger: true
-					});	
-				} else {
-
-					// show no assessments selected notify view
-					//
-					Registry.application.modal.show(
-						new NotifyView({
-							message: "No assessments were selected.  To schedule an assessment, please select at least one item from the list of assessments."
-						})
-					);
-				}
-			} else {
+			// prompt user to select a project first
+			//
+			/*
+			if (!this.options.data['project']) {
 
 				// show select project notify view
 				//
 				Registry.application.modal.show(
 					new NotifyView({
 						message: "No project was selected.  To schedule an assessment, please select a project (or no project) from the project filter."
+					})
+				);
+
+				return;
+			}
+			*/
+
+			var selectedAssessments = this.selectAssessmentsList.currentView.getSelected();
+			if (selectedAssessments.length > 0) {
+				var queryString = this.getSelectedQueryString();
+
+				// go to run requests schedule view
+				//
+				Backbone.history.navigate('/run-requests/add' + (queryString != ''? '?' + queryString : ''), {
+					trigger: true
+				});	
+			} else {
+
+				// show no assessments selected notify view
+				//
+				Registry.application.modal.show(
+					new NotifyView({
+						message: "No assessments were selected.  To schedule an assessment, please select at least one item from the list of assessments."
 					})
 				);
 			}

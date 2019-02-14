@@ -12,6 +12,6 @@
 
 <div class="bottom buttons">
 	<button id="next" class="btn btn-primary btn-lg"><i class="fa fa-arrow-right"></i>Next</button>
-	<button id="prev" class="btn btn-lg"><i class="fa fa-arrow-left"></i>Prev</button>
+	<button id="prev" class="btn btn-lg" style="display:none"><i class="fa fa-arrow-left"></i>Prev</button>
 	<button id="cancel" class="btn btn-lg"><i class="fa fa-times"></i>Cancel</button>
 </div>

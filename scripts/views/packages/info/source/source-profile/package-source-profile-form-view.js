@@ -13,7 +13,7 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2018 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2019 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 define([
@@ -122,7 +122,6 @@ define([
 			switch (this.getLanguageType()) {
 				case 'c':
 					return 'c-source';
-					break;
 				case 'java':
 					switch (this.getJavaType()) {
 						case 'java-source':
@@ -153,13 +152,12 @@ define([
 					break;
 				case 'python':
 					return this.getPythonVersion();
-					break;
 				case 'ruby':
 					return this.getRubyType();
-					break;
 				case 'web-scripting':
 					return 'web-scripting';
-					break;
+				case '.net':
+					return '.net';
 			}
 		},
 
@@ -202,6 +200,33 @@ define([
 			this.onFocusLanguageType();
 			this.$el.find("#language-type option[value='" + languageType + "']").prop('selected', true);
 			this.onChangeLanguageType();
+		},
+
+		setLanguageTypes: function(languages, packageTypes) {
+			var self = this;
+			
+			// configure user interface
+			//
+			if (languages.contains('Java')) {
+				this.setJavaTypes(packageTypes);
+			}
+			if (languages.contains('Ruby')) {
+				this.setRubyTypes(packageTypes);
+			}
+			if (languages.contains('Python')) {
+				this.setPythonTypes(packageTypes);
+			}
+			if (languages.contains('Web Scripting')) {
+				// self.setWebScriptingTypes(packageTypes);
+			}
+
+			// set defaults for new packages
+			//
+			if (this.model.isNew() && !this.model.has('source_path')) {
+				this.setDefaultPackagePath(function() {
+					self.setDefaultPackageType();
+				});
+			}
 		},
 
 		setJavaType: function(javaType) {
@@ -328,29 +353,7 @@ define([
 			// display language selector
 			//
 			this.showLanguageSelector(function(languages, packageTypes) {
-
-				// configure user interface
-				//
-				if (languages.contains('Java')) {
-					self.setJavaTypes(packageTypes);
-				}
-				if (languages.contains('Ruby')) {
-					self.setRubyTypes(packageTypes);
-				}
-				if (languages.contains('Python')) {
-					self.setPythonTypes(packageTypes);
-				}
-				if (languages.contains('Web Scripting')) {
-					// self.setWebScriptingTypes(packageTypes);
-				}
-
-				// set defaults for new packages
-				//
-				if (self.model.isNew()) {
-					self.setDefaultPackagePath(function() {
-						self.setDefaultPackageType();
-					});
-				}
+				self.setLanguageTypes(languages, packageTypes);
 			});
 
 
@@ -386,7 +389,8 @@ define([
 					for (var i = 0; i < languages.length; i++) {
 						var language = languages[i];
 						var value = (language != 'C/C++'? language.toLowerCase() : 'c').replace(' ', '-');
-						languageSelector.append('<option value="' + value + '">' + language + (self.options.package.getLanguageType() == language? 'selected' : '') + '</option>');
+						var selected = self.options.package.getLanguageType() == language;
+						languageSelector.append('<option value="' + value + '"' + (selected? 'selected' : '') + '>' + language + '</option>');
 					}
 
 					// apply select2 selector
@@ -415,56 +419,56 @@ define([
 
 		setJavaTypes: function(packageTypes) {
 
-			// remove java7 / java8 options
+			// hide java7 / java8 options
 			//
 			if (!packageTypes.supports('Java 7 Source Code') &&
 				!packageTypes.supports('Java 7 Bytecode')) {
-				this.$el.find('#java7').remove();
+				this.$el.find('#java7').hide();
 			}
 			if (!packageTypes.supports('Java 8 Source Code') &&
 				!packageTypes.supports('Java 8 Bytecode')) {
-				this.$el.find('#java8').remove();
+				this.$el.find('#java8').hide();
 			}
 
-			// remove java source / bytecode options
+			// hide java source / bytecode options
 			//
 			if (!packageTypes.supports('Java 7 Source Code') &&
 				!packageTypes.supports('Java 8 Source Code')) {
-				this.$el.find('#java-source').remove();
+				this.$el.find('#java-source').hide();
 			}
 			if (!packageTypes.supports('Java 7 Bytecode') &&
 				!packageTypes.supports('Java 8 Bytecode')) {
-				this.$el.find('#java-bytecode').remove();
+				this.$el.find('#java-bytecode').hide();
 			}
 
-			// remove android source option
+			// hide android source option
 			//
 			if (!packageTypes.supports('Android Java Source Code')) {
-				this.$el.find('#android-source').remove();
+				this.$el.find('#android-source').hide();
 			}
 
-			// remove android bytecode option
+			// hide android bytecode option
 			//
 			if (!packageTypes.supports('Android .apk')) {
-				this.$el.find('#android-bytecode').remove();
+				this.$el.find('#android-bytecode').hide();
 			}
 		},
 
 		setRubyTypes: function(packageTypes) {
 
-			// remove ruby framework options
+			// hide ruby framework options
 			//
 			if (!packageTypes.supports('Ruby')) {
-				this.$el.find('#ruby').remove();
+				this.$el.find('#ruby').hide();
 			}
 			if (!packageTypes.supports('Ruby Sinatra')) {
-				this.$el.find('#ruby-sinatra').remove();
+				this.$el.find('#ruby-sinatra').hide();
 			}
 			if (!packageTypes.supports('Ruby on Rails')) {
-				this.$el.find('#ruby-rails').remove();
+				this.$el.find('#ruby-rails').hide();
 			}
 			if (!packageTypes.supports('Ruby Padrino')) {
-				this.$el.find('#ruby-padrino').remove();
+				this.$el.find('#ruby-padrino').hide();
 			}
 		},
 
@@ -473,10 +477,10 @@ define([
 			// remove python version options
 			//
 			if (!packageTypes.supports('Python2')) {
-				this.$el.find('#python2').remove();
+				this.$el.find('#python2').hide();
 			}
 			if (!packageTypes.supports('Python3')) {
-				this.$el.find('#python3').remove();
+				this.$el.find('#python3').hide();
 			}
 		},
 
@@ -634,16 +638,27 @@ define([
 							self.setRubyType('padrino');
 							self.options.parent.showNotice("This appears to be a " + Package.packageTypesToString(packageTypes) + " package. You can set the language type if this is not correct. ");
 							break;
-						default:
-							self.options.parent.showWarning("This does not appear to be a package written in one of the allowed programming language types. ");
-							self.options.parent.hideNotice();
-							break;
 
 						// web package types
 						//
 						case 'web-scripting':
 							self.setLanguageType('web-scripting');
 							self.setWebScriptingTypes(fileTypes);
+							self.options.parent.showNotice("This appears to be a " + Package.packageTypesToString(packageTypes) + " package. You can set the language type if this is not correct. ");
+							break;
+
+						// Microsoft .NET
+						//
+						case '.net':
+							self.setLanguageType('.net');
+							self.options.parent.showNotice("This appears to be a " + Package.packageTypesToString(packageTypes) + " package. You can set the language type if this is not correct. ");
+							break;
+
+						// language not found
+						//
+						default:
+							self.options.parent.showWarning("This does not appear to be a package written in one of the allowed programming language types. ");
+							self.options.parent.hideNotice();
 							break;
 					}
 					self.onChangeLanguageType();
@@ -867,7 +882,8 @@ define([
 
 			// check specified package type against list of inferred package types
 			//
-			if ((this.defaultPackageTypes.indexOf(packageType) == -1) &&
+			if (this.defaultPackageTypes && 
+				(this.defaultPackageTypes.indexOf(packageType) == -1) &&
 				(this.defaultPackageTypes.indexOf(Package.getTypeAlias(packageType)) == -1)) {
 				this.options.parent.showWarning("This package does not appear to contain the right type of files for a " + Package.packageTypeToName(packageType) + " package.");
 				return false;

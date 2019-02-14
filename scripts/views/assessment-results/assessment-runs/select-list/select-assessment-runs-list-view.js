@@ -12,7 +12,7 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2018 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2019 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 define([
@@ -50,17 +50,17 @@ define([
 				1: { 
 					sorter: false 
 				},
-				8: {
+				9: {
 					sorter: false
 				},
-				9: {
+				10: {
 					sorter: false
 				}
 			},
 
 			// sort on date column in descending order
 			//
-			sortList: [[5, 1]]
+			sortList: [[6, 1]]
 		},
 
 		//
@@ -74,6 +74,10 @@ define([
 			//
 			if (options.sortList) {
 				this.sorting.sortList = options.sortList;
+			} else if (this.options.showProjects) {
+				this.sorting.sortList = [[6, 1]];
+			} else {
+				this.sorting.sortList = [[5, 1]];
 			}
 
 			// set attributes
@@ -245,6 +249,7 @@ define([
 		template: function(data) {
 			return _.template(Template, _.extend(data, {
 				collection: this.collection,
+				showProjects: this.options.showProjects,
 				showNumbering: this.options.showNumbering,
 				showGrouping: this.options.showGrouping,
 				showStatus: this.options.showStatus,
@@ -264,6 +269,7 @@ define([
 				editable: this.options.editable,
 				selected: this.options.selected,
 				queryString: this.options.queryString,
+				showProjects: this.options.showProjects,
 				showNumbering: this.options.showNumbering,
 				showGrouping: this.options.showGrouping,
 				showStatus: this.options.showStatus,
@@ -271,7 +277,7 @@ define([
 				showDelete: this.options.showDelete,
 				showSsh: this.options.showSsh,
 				parent: this
-			}
+			};
 		},
 
 		onRender: function() {

@@ -13,7 +13,7 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2018 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2019 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 define([
@@ -226,6 +226,7 @@ define([
 		template: function(data) {
 			return _.template(Template, _.extend(data, {
 				collection: this.collection,
+				showProjects: this.options.showProjects,
 				showNumbering: this.options.showNumbering,
 				showGrouping: this.options.showGrouping,
 				showDelete: this.options.showDelete
@@ -235,6 +236,7 @@ define([
 		childViewOptions: function(model, index) {
 			return {
 				index: index,
+				showProjects: this.options.showProjects,
 				showNumbering: this.options.showNumbering,
 				showGrouping: this.options.showGrouping,
 				showDelete: this.options.showDelete,

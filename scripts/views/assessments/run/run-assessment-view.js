@@ -12,7 +12,7 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2018 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2019 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 define([
@@ -24,6 +24,7 @@ define([
 	'registry',
 	'models/assessments/assessment-run',
 	'models/run-requests/run-request',
+	'views/projects/selectors/project-selector-view',
 	'views/packages/selectors/package-selector-view',
 	'views/tools/selectors/tool-selector-view',
 	'views/platforms/selectors/platform-selector-view',
@@ -31,7 +32,7 @@ define([
 	'views/dialogs/error-view',
 	'views/dialogs/notify-view',
 	'views/assessments/dialogs/confirm-run-request-view'
-], function($, _, Backbone, Marionette, Template, Registry, AssessmentRun, RunRequest, PackageSelectorView, ToolSelectorView, PlatformSelectorView, ConfirmView, ErrorView, NotifyView, ConfirmRunRequestView) {
+], function($, _, Backbone, Marionette, Template, Registry, AssessmentRun, RunRequest, ProjectSelectorView, PackageSelectorView, ToolSelectorView, PlatformSelectorView, ConfirmView, ErrorView, NotifyView, ConfirmRunRequestView) {
 	return Backbone.Marionette.LayoutView.extend({
 
 		//
@@ -39,6 +40,7 @@ define([
 		//
 
 		regions: {
+			projectSelector: '#project-selector',
 			packageSelector: '#package-selector',
 			packageVersionSelector: '#package-version-selector',
 			toolSelector: '#tool-selector',
@@ -63,7 +65,7 @@ define([
 			// create new assessment run
 			//
 			this.model = new AssessmentRun({
-				'project_uuid': self.options.data['project'].get('project_uid')
+				'project_uuid': (self.options.data['project'] || this.options.project).get('project_uid')
 			});
 
 			// check for platform independent packages
@@ -72,55 +74,6 @@ define([
 				this.options.data['platform'] = undefined;
 				this.options.data['platform-version'] = undefined;
 			}
-
-			// create sub views
-			//
-			this.packageSelectorView = new PackageSelectorView([], {
-				project: this.options.data['project'],
-				initialValue: this.options.data['package'],
-				initialVersion: this.options.data['package-version'] != 'latest'? this.options.data['package-version'] : undefined,
-				versionSelector: this.packageVersionSelector,
-				showPlatformDependent: (this.options.data['platform'] != undefined
-					|| this.options.data['platform'] != undefined),
-
-				// callbacks
-				//
-				onChange: function(changes) {
-					if (changes.package) {
-						self.toolSelectorView.setPackage(changes.package);
-						self.platformSelectorView.setPackage(changes.package);
-					}
-				}
-			});
-			this.toolSelectorView = new ToolSelectorView([], {
-				project: this.options.data['project'],
-				initialValue: this.options.data['tool'],
-				initialVersion: this.options.data['tool-version'] != 'latest'? this.options.data['tool-version'] : undefined,
-				packageSelected: this.options.data['package'],
-				platformSelected: this.options.data['platform'],
-				versionSelector: this.toolVersionSelector,
-				addAssessmentView: this,
-
-				// callbacks
-				//
-				onChange: function(changes) {
-					self.platformSelectorView.setTool(changes.tool);
-				}
-			});
-			this.platformSelectorView = new PlatformSelectorView([], {
-				project: self.options.data['project'],
-				initialValue: this.options.data['platform'],
-				initialVersion: this.options.data['platform-version'] != 'latest'? this.options.data['platform-version'] : undefined,
-				packageSelected: this.options.data['package'],
-				toolSelected: this.options.data['tool'],
-				versionSelector: this.platformVersionSelector,
-
-				// callbacks
-				//
-				onChange: function(changes) {
-					self.onChange();
-				}
-			});
 		},
 
 		//
@@ -141,6 +94,7 @@ define([
 
 			// get triplet information
 			//
+			var selectedProject = this.getProject();
 			var selectedPackage = this.getPackage();
 			var selectedPackageVersion = this.getPackageVersion();
 			var selectedTool = this.getTool();
@@ -152,6 +106,7 @@ define([
 			//
 			assessmentRun.set({
 				'assessment_run_uuid': undefined,
+				'project_uuid': selectedProject.get('project_uid'),
 
 				'package_uuid': selectedPackage.get('package_uuid'),
 				'package_version_uuid': selectedPackageVersion? selectedPackageVersion.get('package_version_uuid') : null,
@@ -453,50 +408,105 @@ define([
 		// triplet querying methods
 		//
 
+		getProject: function() {
+			if (this.options.data['project']) {
+
+				// return fixed project
+				//
+				return this.options.data['project'];
+			} else if (this.projectSelector.currentView) {
+
+				// return selected project
+				//
+				return this.projectSelector.currentView.getSelected();
+			} else {
+
+				// return default project
+				//
+				return this.options.project;
+			}
+		},
+
 		getPackage: function() {
 			if (this.options.data['package']) {
+
+				// return fixed package
+				//
 				return this.options.data['package'];
-			} else {
+			} else if (this.packageSelector.currentView) {
+
+				// return selected package
+				//
 				return this.packageSelector.currentView.getSelected();
 			}
 		},
 
 		getPackageVersion: function() {
 			if (this.options.data['package-version']) {
+
+				// return fixed package version
+				//
 				return this.options.data['package-version'] != 'latest'? this.options.data['package-version'] : undefined;
-			} else {
+			} else if (this.packageVersionSelector.currentView) {
+
+				// return selected package version
+				//
 				return this.packageVersionSelector.currentView.getSelected();
 			}
 		},
 
 		getTool: function() {
 			if (this.options.data['tool']) {
+
+				// return fixed tool
+				//
 				return this.options.data['tool']
-			} else {
+			} else if (this.toolSelector.currentView) {
+
+				// return selected tool
+				//
 				return this.toolSelector.currentView.getSelected();
 			}
 		},
 
 		getToolVersion: function() {
 			if (this.options.data['tool-version']) {
+
+				// return fixed tool version
+				//
 				return this.options.data['tool-version'] != 'latest'? this.options.data['tool-version'] : undefined;
-			} else {
+			} else if (this.toolVersionSelector.currentView) {
+
+				// return selected tool version
+				//
 				return this.toolVersionSelector.currentView.getSelected();
 			}
 		},
 
 		getPlatform: function() {
 			if (this.options.data['platform']) {
+
+				// return fixed platform
+				//
 				return this.options.data['platform']
-			} else {
+			} else if (this.platformSelector.currentView) {
+
+				// return selected platform
+				//
 				return this.platformSelector.currentView.getSelected();
 			}
 		},
 
 		getPlatformVersion: function() {
 			if (this.options.data['platform-version']) {
+
+				// return fixed platform version
+				//
 				return this.options.data['platform-version'] != 'latest'? this.options.data['platform-version'] : undefined;
-			} else {
+			} else if (this.platformVersionSelector.currentView) {
+
+				// return selected platform version
+				//
 				return this.platformVersionSelector.currentView.getSelected();
 			}
 		},
@@ -506,10 +516,11 @@ define([
 		//
 
 		getProjectQueryString: function() {
-			if (!this.options.data['project'].isTrialProject()) {
-				return 'project=' + this.options.data['project'].get('project_uid');
+			var project = this.getProject();
+			if (!project.isTrialProject()) {
+				return 'project=' + project.get('project_uid');
 			} else {
-				return 'project=none';
+				return 'project=default';
 			}		
 		},
 
@@ -589,6 +600,7 @@ define([
 
 		template: function(data) {
 			return _.template(Template, _.extend(data, {
+				hasProjects: Registry.application.session.user.get('has_projects'),
 				project: this.options.data['project'],
 				package: this.options.data['package'],
 				packageVersion: this.options.data['package-version'],
@@ -601,15 +613,89 @@ define([
 
 		onRender: function() {
 
-			// show subviews
+			// show child views
 			//
-			this.platformSelector.show(this.platformSelectorView);
+			this.showSelectors();
+		},
+
+		showSelectors: function() {
+			var self = this;
+
+			// create selectors
+			//
+			if (Registry.application.session.user.get('has_projects')) {
+				this.projectSelectorView = new ProjectSelectorView({
+					collection: self.options.projects,
+					initialValue: this.options.data['project'] || this.options.project,
+
+					// callbacks
+					//
+					onChange: function(changes) {
+						if (changes.project) {
+							self.$el.find('#package-selection').show();
+						}
+						self.packageSelectorView.setProject(changes.project, {
+							package: self.getPackage(),
+							packageVersion: self.getPackageVersion()
+						});
+					}
+				});
+			}
+			this.packageSelectorView = new PackageSelectorView([], {
+				project: this.getProject(),
+				initialValue: this.options.data['package'],
+				initialVersion: this.options.data['package-version'] != 'latest'? this.options.data['package-version'] : undefined,
+				versionSelector: this.packageVersionSelector,
+				showPlatformDependent: (this.options.data['platform'] != undefined
+					|| this.options.data['platform'] != undefined),
+
+				// callbacks
+				//
+				onChange: function(changes) {
+					if (changes.package) {
+						self.$el.find('#tool-selection').show();
+					}
+					self.toolSelectorView.setPackage(changes.package);
+					self.platformSelectorView.setPackage(changes.package);
+				}
+			});
+			this.toolSelectorView = new ToolSelectorView([], {
+				project: this.getProject(),
+				initialValue: this.options.data['tool'],
+				initialVersion: this.options.data['tool-version'] != 'latest'? this.options.data['tool-version'] : undefined,
+				packageSelected: this.options.data['package'],
+				platformSelected: this.options.data['platform'],
+				versionSelector: this.toolVersionSelector,
+				addAssessmentView: this,
+
+				// callbacks
+				//
+				onChange: function(changes) {
+					self.$el.find('#platform-selection').show();
+					self.platformSelectorView.setTool(changes.tool);
+				}
+			});
+			this.platformSelectorView = new PlatformSelectorView([], {
+				project: this.getProject(),
+				initialValue: this.options.data['platform'],
+				initialVersion: this.options.data['platform-version'] != 'latest'? this.options.data['platform-version'] : undefined,
+				packageSelected: this.options.data['package'],
+				toolSelected: this.options.data['tool'],
+				versionSelector: this.platformVersionSelector,
+
+				// callbacks
+				//
+				onChange: function(changes) {
+					self.onChange();
+				}
+			});
+
+			// show selectors
+			//
+			this.projectSelector.show(this.projectSelectorView);
 			this.packageSelector.show(this.packageSelectorView);
 			this.toolSelector.show(this.toolSelectorView);
-
-			// set / check initial state
-			//
-			this.onChange();
+			this.platformSelector.show(this.platformSelectorView);
 		},
 
 		//
@@ -617,6 +703,7 @@ define([
 		//
 
 		onChange: function() {
+			var selectedProject = this.getProject();
 			var selectedPackage = this.getPackage();
 			var selectedTool = this.getTool();
 			var selectedPlatform = this.getPlatform();
@@ -630,7 +717,15 @@ define([
 				this.disableButtons();
 			}
 
-			// show / hide platform selector
+			// show / hide package selector
+			//
+			if (selectedProject) {
+				this.$el.find('#package-selection').show();
+			} else if (selectedTool) {
+				this.$el.find('#package-selection').hide();
+			}
+
+			// show / hide tool selector
 			//
 			if (selectedPackage) {
 				this.$el.find('#tool-selection').show();
@@ -714,6 +809,9 @@ define([
 		},
 
 		onClickCancel: function() {
+			history.back();
+			
+			/*
 			var queryString = this.getQueryString();
 
 			// go assessments view
@@ -721,6 +819,7 @@ define([
 			Backbone.history.navigate('#assessments' + (queryString != ''? '?' + queryString : ''), {
 				trigger: true
 			});
+			*/
 		}
 	});
 });

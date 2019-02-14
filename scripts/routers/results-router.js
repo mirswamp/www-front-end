@@ -12,7 +12,7 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2018 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2019 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 define([
@@ -256,11 +256,22 @@ define([
 								// re-fetch without launching the viewer
 								//
 								setTimeout(function() {
-									getInstanceStatus(data.viewer_instance)
+									getInstanceStatus(data.viewer_instance);
 								}, refreshInterval);
 							} else if(data.results_status === 'CLOSED') {
+
+									// report viewer closed
+									//
 									self.showProgress({
 										title: 'Viewer Closed',
+										status: data.results_viewer_status
+									});
+							} else if(data.results_status === 'TIMEOUT') {
+
+									// report viewer launch timeout
+									//
+									self.showProgress({
+										title: 'Viewer Launch Timeout',
 										status: data.results_viewer_status
 									});
 							} else {
@@ -729,5 +740,3 @@ define([
 		}
 	});
 });
-
-

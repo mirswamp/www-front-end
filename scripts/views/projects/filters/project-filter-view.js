@@ -12,7 +12,7 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2018 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2019 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 define([
@@ -72,7 +72,7 @@ define([
 			var selectedName = this.projectSelector.currentView.getSelectedName();
 			if (selectedName == 'Any') {
 				return undefined;
-			} else if (selectedName == 'None') {
+			} else if (selectedName == 'Default') {
 				return this.model;
 			} else {
 				return this.selected;
@@ -81,12 +81,15 @@ define([
 
 		getDescription: function() {
 			if (this.hasSelected()) {
+				return this.getSelected().get('full_name');
+				/*
 				var project = this.getSelected();
 				if (project == null || project.isTrialProject()) {
-					return "no project";
+					return 'default project';
 				} else {
 					return this.getSelected().get('full_name');
 				}
+				*/
 			} else {
 				return "any project";
 			}
@@ -133,15 +136,15 @@ define([
 
 			if (selectedName == 'Any') {
 				return;
-			} else if (selectedName == 'None') {
-				return 'project=none';
+			} else if (selectedName == 'Default') {
+				return 'project=default';
 			} else {
 
 				// add project uuid
 				//
 				if (this.hasSelected()) {
 					if (this.getSelected().isTrialProject()) {
-						queryString = 'project=none';
+						queryString = 'project=default';
 					} else {
 						queryString = 'project=' + this.getSelected().get('project_uid');
 					}
@@ -176,9 +179,10 @@ define([
 			// show subviews
 			//
 			this.projectSelector.show(
-				new ProjectSelectorView([], {
+				new ProjectSelectorView({
 					model: this.model,
 					initialValue: this.options.initialValue,
+					allowAny: true,
 
 					// callbacks
 					//

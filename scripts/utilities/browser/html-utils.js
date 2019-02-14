@@ -12,7 +12,7 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2018 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2019 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 function stringToHTML(string) {
@@ -26,7 +26,7 @@ function stringToHTML(string) {
 
 	// allow strings to break after slashes
 	//
-	string = string.replace(/\//g, '/<wbr>')
+	string = string.replace(/\//g, '/<wbr>');
 
 	// allow strings to break before dots
 	//
@@ -38,7 +38,7 @@ function stringToHTML(string) {
 
 	// replace carriage returns
 	//
-	string = string.replace(/(?:\r\n|\r|\n)/g, '<br />')
+	string = string.replace(/(?:\r\n|\r|\n)/g, '<br />');
 
 	// allow double quotation marks
 	//
@@ -120,22 +120,22 @@ function camelCaseToHTML(string) {
 }
 
 function emailToHTML(email) {
+	var html;
 	if (email) {
 		var substrings = email.split('@');
 		if (substrings.length > 1) {
 			var user = substrings[0];
 			var domain = substrings[1]; 
 
-			var html = '<div class="email">';
-			html += '<span class="user">' + _.escape(user); + '</span>';
+			html = '<div class="email">';
+			html += '<span class="user">' + _.escape(user) + '</span>';
 			html += '<span class="domain">' + _.escape(domain) + '</span>';
 			html += '</div>';
-			return html;
 		} else {
-			var html = '<div class="email">';
+			html = '<div class="email">';
 			html += _.escape(email);
 			html += '</div>';
-			return html;
 		}
 	}
+	return html;
 }

@@ -20,7 +20,7 @@
 <td class="package first">
 	<div class="name">
 		<% if (packageUrl) { %>
-		<a href="<%- packageUrl %>"><%= stringToHTML(package_name) %></a>
+		<a href="<%- packageUrl %>" target="_blank"><%= stringToHTML(package_name) %></a>
 		<% } else { %>
 		<%= stringToHTML(package_name) %>
 		<% } %>
@@ -28,7 +28,7 @@
 
 	<div class="version">
 		<% if (packageVersionUrl) { %>
-		<a href="<%- packageVersionUrl %>"><%= stringToHTML(package_version_string) %></a>
+		<a href="<%- packageVersionUrl %>" target="_blank"><%= stringToHTML(package_version_string) %></a>
 		<% } else { %>
 		<%= stringToHTML(package_version_string) %>
 		<% } %>
@@ -38,7 +38,7 @@
 <td class="tool">
 	<div class="name">
 		<% if (toolUrl) { %>
-		<a href="<%- toolUrl %>"><%= stringToHTML(tool_name) %></a>
+		<a href="<%- toolUrl %>" target="_blank"><%= stringToHTML(tool_name) %></a>
 		<% } else { %>
 		<%= stringToHTML(tool_name) %>
 		<% } %>
@@ -46,7 +46,7 @@
 
 	<div class="version">
 		<% if (toolVersionUrl) { %>
-		<a href="<%- toolVersionUrl %>"><%= stringToHTML(tool_version_string) %></a>
+		<a href="<%- toolVersionUrl %>" target="_blank"><%= stringToHTML(tool_version_string) %></a>
 		<% } else { %>
 		<%= stringToHTML(tool_version_string) %>
 		<% } %>
@@ -56,7 +56,7 @@
 <td class="platform">
 	<div class="name">
 		<% if (platformUrl) { %>
-		<a href="<%- platformUrl %>"><%= stringToHTML(platform_name) %></a>
+		<a href="<%- platformUrl %>" target="_blank"><%= stringToHTML(platform_name) %></a>
 		<% } else { %>
 		<%= stringToHTML(platform_name) %>
 		<% } %>
@@ -64,12 +64,24 @@
 
 	<div class="version">
 		<% if (platformVersionUrl) { %>
-		<a href="<%- platformVersionUrl %>"><%= stringToHTML(platform_version_string) %></a>
+		<a href="<%- platformVersionUrl %>" target="_blank"><%= stringToHTML(platform_version_string) %></a>
 		<% } else { %>
 		<%= stringToHTML(platform_version_string) %>
 		<% } %>
 	</div>
 </td>
+
+<% if (showProjects) { %>
+<td class="project">
+	<div class="project">
+		<% if (projectUrl) { %>
+		<a href="<%- projectUrl %>" target="_blank"><%= stringToHTML(project_name) %></a>
+		<% } else { %>
+		<%= stringToHTML(project_name) %>
+		<% } %>
+	</div>
+</td>
+<% } %>
 
 <td class="results last" style="text-align:center;font-weight:normal">
 	<% if (num_execution_records > 0) { %>

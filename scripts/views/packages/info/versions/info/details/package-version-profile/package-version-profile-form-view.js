@@ -12,7 +12,7 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2018 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2019 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 define([
@@ -33,7 +33,8 @@ define([
 
 		template: function(data) {
 			return _.template(Template, _.extend(data, {
-				model: this.model
+				model: this.model,
+				package: this.options.package
 			}));
 		},
 
@@ -83,12 +84,14 @@ define([
 
 			// get values from form
 			//
+			var checkoutArgument = this.$el.find('#checkout-argument input').val();
 			var versionString = this.$el.find('#version-string').val();
 			var notes = this.$el.find('#notes').val();
 
 			// update model
 			//
 			model.set({
+				'checkout_argument': checkoutArgument != ''? checkoutArgument : null,
 				'version_string': versionString != ''? versionString : null,
 				'notes': notes != ''? notes : null
 			});

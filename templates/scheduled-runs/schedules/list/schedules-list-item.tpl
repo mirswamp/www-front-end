@@ -4,9 +4,19 @@
 </td>
 <% } %>
 
-<td class="name first">
+<% if (showProjects) { %>
+<td class="project first">
+	<% if (projectUrl) { %>
+	<a href="<%- projectUrl %>" target="_blank"><%- project_name %></a>
+	<% } else { %>
+		<%- project_name %>
+	<% } %>
+</td>
+<% } %>
+
+<td class="name"<% if (!showProjects) { %> first<% } %>>
 	<% if (url) { %>
-	<a href="<%- url %>"><%- name %></a>
+	<a href="<%- url %>" target="_blank"><%- name %></a>
 	<% } else { %>
 		<%- name %>
 	<% } %>

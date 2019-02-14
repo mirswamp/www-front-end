@@ -12,7 +12,7 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2018 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2019 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 define([
@@ -167,7 +167,7 @@ define([
 					//
 					Backbone.history.stop();
 					Backbone.history.start();
-				};				
+				}
 			});
 
 			// create regions
@@ -270,7 +270,7 @@ define([
 					'double-click': new Sound({
 						url: 'sounds/double-click.wav'
 					})
-				}
+				};
 			});
 		},
 
@@ -637,7 +637,7 @@ define([
 			});
 		},
 
-		showMain: function(view, options) {
+		showMain: function(view, options) {	
 			var self = this;
 			require([
 				'registry',

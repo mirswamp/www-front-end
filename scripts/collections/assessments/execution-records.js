@@ -12,7 +12,7 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2018 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2019 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 define([
@@ -70,15 +70,16 @@ define([
 
 			// destroy models individually
 			//
-			function kill(item) {
+			function kill(item, options) {
 				item.kill({
+					hard: options? options.hard : false,
 
 					// callbacks
 					//
 					success: function() {
 						successes++;
 						if (self.length > 0) {
-							kill(self.pop());
+							kill(self.pop(), options);
 						} else {
 							finish();	
 						}
@@ -87,7 +88,7 @@ define([
 					error: function() {
 						failures++;
 						if (self.length > 0) {
-							kill(self.pop());
+							kill(self.pop(), options);
 						} else {
 							finish();
 						}	
@@ -117,6 +118,7 @@ define([
 				for (var i = 0; i < count; i++) {
 					var item = this.pop();
 					item.kill({
+						hard: options.hard,
 
 						// callbacks
 						//
@@ -133,11 +135,11 @@ define([
 						},
 
 						error: function() {
-							errors++;
+							failures++;
 
 							// report first error
 							//
-							if (errors === 1 && options.error) {
+							if (failures === 1 && options.error) {
 								options.error();
 							}
 						}
@@ -149,7 +151,9 @@ define([
 				// before proceeding to the next item
 				//
 				if (this.length > 0) {
-					kill(this.pop());
+					kill(this.pop(), {
+						hard: options.hard
+					});
 				}
 			}
 		},

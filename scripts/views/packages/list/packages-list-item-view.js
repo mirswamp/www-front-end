@@ -13,7 +13,7 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2018 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2019 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 define([
@@ -23,9 +23,10 @@ define([
 	'marionette',
 	'text!templates/packages/list/packages-list-item.tpl',
 	'registry',
+	'collections/projects/projects',
 	'utilities/time/date-format',
 	'views/dialogs/confirm-view',
-], function($, _, Backbone, Marionette, Template, Registry, DateFormat, ConfirmView) {
+], function($, _, Backbone, Marionette, Template, Registry, Projects, DateFormat, ConfirmView) {
 	return Backbone.Marionette.ItemView.extend({
 
 		//
@@ -47,10 +48,47 @@ define([
 				model: this.model,
 				index: this.options.index + 1,
 				url: Registry.application.session.user? '#packages/' + this.model.get('package_uuid'): undefined,
-				showDelete: this.options.showDelete,
+				showDeactivatedPackages: this.options.showDeactivatedPackages,
 				showNumbering: this.options.showNumbering,
-				showDeactivatedPackages: this.options.showDeactivatedPackages
+				showProjects: this.options.showProjects,
+				showDelete: this.options.showDelete
 			}));
+		},
+
+		projectsToHtml: function(collection) {
+			var html = '';
+			for (var i = 0; i < collection.length; i++) {
+				var project = collection.at(i);
+				if (i > 0) {
+					html += ', <br />';
+				}
+				html += '<a href="#projects/' + project.get('project_uid') + '" target="blank">' + project.get('full_name') +'</a>';
+			}
+			return html;
+		},
+
+		onRender: function() {
+			if (this.options.showProjects) {
+				this.showProjects();
+			}
+		},
+
+		showProjects: function() {
+			var self = this;
+
+			// fetch projects shared with package
+			//
+			new Projects().fetchByPackage(this.model, {
+
+				// callbacks
+				//
+				success: function(collection) {
+
+					// add projects to list item
+					//
+					self.$el.find('.projects').html(self.projectsToHtml(collection));
+				}
+			});	
 		},
 
 		//

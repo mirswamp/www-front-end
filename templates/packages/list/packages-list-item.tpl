@@ -6,7 +6,7 @@
 </td>
 <% } %>
 
-<td class="package first">
+<td class="package">
 	<% if (url) { %>
 	<a href="<%- url %>"><%= stringToHTML(model.get('name')) %></a>
 	<% } else { %>
@@ -17,6 +17,10 @@
 <td class="description hidden-xs">
 	<%- description %>
 </td>
+
+<% if (showProjects) { %>
+<td class="projects"></td>
+<% } %>
 
 <td class="package-type">
 	<%- package_type %>

@@ -12,7 +12,7 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2018 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2019 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 define([
@@ -75,7 +75,7 @@ define([
 			//
 			this.collection.on('destroy', function() {
 				self.onSortEnd();
-			})
+			});
 		},
 
 		update: function() {
@@ -138,6 +138,7 @@ define([
 		},
 
 		getNumberedSorting: function(sorting) {
+			var sortList;
 
 			// disable sorting on number column
 			//
@@ -153,7 +154,7 @@ define([
 				for (var key in sorting.headers) {
 					headers[parseInt(key) + 1] = {
 						sorter: sorting.headers[key].sorter
-					}
+					};
 				}
 			}
 
@@ -162,7 +163,7 @@ define([
 			if (sorting.sortList) {
 				var column = sorting.sortList[0][0];
 				var direction = sorting.sortList[0][1];
-				var sortList = [[column + 1, direction]];
+				sortList = [[column + 1, direction]];
 			}
 
 			// return sorting info
@@ -170,7 +171,7 @@ define([
 			return {
 				headers: headers,
 				sortList: sortList
-			}
+			};
 		},
 
 		getSortColumnIndex: function() {
@@ -224,7 +225,7 @@ define([
 						// always show first row
 						//
 						if ($(cell).hasClass('duplicate')) {
-							$(cell).removeClass('duplicate')
+							$(cell).removeClass('duplicate');
 						}
 					} else {
 

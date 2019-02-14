@@ -15,5 +15,12 @@
 			"allow_multiple_tool_selection": true,
 			"allow_viewing_zero_weaknesses": true
 		}
+	},
+
+	"notifications": {
+		"welcome": {
+			"title": "Message Title",
+			"message": "Your message here!"
+		}
 	}
 }

@@ -13,7 +13,7 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2018 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2019 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 define([
@@ -32,8 +32,9 @@ define([
 	'views/packages/info/versions/info/build/build-profile/package-type/android-bytecode/android-bytecode-package-view',
 	'views/packages/info/versions/info/build/build-profile/package-type/python/python-package-view',
 	'views/packages/info/versions/info/build/build-profile/package-type/ruby/ruby-package-view',
-	'views/packages/info/versions/info/build/build-profile/package-type/web-scripting/web-scripting-package-view'
-], function($, _, Backbone, Marionette, PlatformVersions, Template, Accordions, PackageDependenciesListView, CPackageView, JavaSourcePackageView, JavaBytecodePackageView, AndroidSourcePackageView, AndroidBytecodePackageView, PythonPackageView, RubyPackageView, WebScriptingPackageView) {
+	'views/packages/info/versions/info/build/build-profile/package-type/web-scripting/web-scripting-package-view',
+	'views/packages/info/versions/info/build/build-profile/package-type/dot-net/dot-net-package-view'
+], function($, _, Backbone, Marionette, PlatformVersions, Template, Accordions, PackageDependenciesListView, CPackageView, JavaSourcePackageView, JavaBytecodePackageView, AndroidSourcePackageView, AndroidBytecodePackageView, PythonPackageView, RubyPackageView, WebScriptingPackageView, DotNetPackageView) {
 	return Backbone.Marionette.LayoutView.extend({
 
 		//
@@ -187,6 +188,17 @@ define([
 				case 'web-scripting':
 					this.packageType.show(
 						new WebScriptingPackageView({
+							model: this.model,
+							parent: this
+						})
+					);
+					break;
+
+				// .net package type
+				//
+				case '.net':
+					this.packageType.show(
+						new DotNetPackageView({
 							model: this.model,
 							parent: this
 						})

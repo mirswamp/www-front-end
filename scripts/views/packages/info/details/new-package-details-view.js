@@ -12,7 +12,7 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2018 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2019 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 define([
@@ -202,7 +202,7 @@ define([
 						//
 						Registry.application.modal.show(new NotifyView({
 							title: 'Package Upload Error',
-							message: response.statusText
+							message: "Package upload failed.  Please make sure that the file size of your package is smaller than the maximum upload size (" + Registry.application.config['max_upload_size'] + ")."
 						}));
 
 						self.resetProgressBar();

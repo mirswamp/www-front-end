@@ -13,7 +13,7 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2018 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2019 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 define([
@@ -21,17 +21,14 @@ define([
 	'underscore',
 	'backbone',
 	'marionette',
-	'bootstrap/collapse',
-	'jquery.validate',
-	'bootstrap/tooltip',
-	'bootstrap/popover',
 	'text!templates/packages/info/versions/info/build/build-profile/package-type/java-bytecode/java-bytecode-package-form.tpl',
 	'registry',
 	'widgets/accordions',
 	'models/files/directory',
+	'views/packages/info/versions/info/build/build-profile/package-type/package-type-form-view',
 	'views/packages/info/versions/info/build/build-profile/dialogs/select-package-version-item-view'
-], function($, _, Backbone, Marionette, Collapse, Validate, Tooltip, Popover, Template, Registry, Accordions, Directory, SelectPackageVersionItemView) {
-	return Backbone.Marionette.ItemView.extend({
+], function($, _, Backbone, Marionette,Template, Registry, Accordions, Directory, PackageTypeFormView, SelectPackageVersionItemView) {
+	return PackageTypeFormView.extend({
 		
 		//
 		// attributes
@@ -41,6 +38,14 @@ define([
 			'click #add-class-path': 'onClickAddClassPath',
 			'click #add-aux-class-path': 'onClickAddAuxClassPath',
 			'click #add-source-path': 'onClickAddSourcePath'
+		},
+
+		//
+		// querying methods
+		//
+
+		getBuildSystem: function() {
+			return 'java-bytecode';
 		},
 
 		//
@@ -69,44 +74,26 @@ define([
 			//
 			this.validator = this.validate();
 		},
-
-		//
-		// form validation methods
-		//
-
-		validate: function() {
-			return this.$el.find('form').validate();
-		},
-
-		isValid: function() {
-			return this.validator.form();
-		},
-
+		
 		//
 		// form methods
 		//
 
-		update: function(model) {
-
-			// paths
-			//
-			var classPath = this.$el.find('#class-path').val();
-			var auxClassPath = this.$el.find('#aux-class-path').val();
-			var sourcePath = this.$el.find('#source-path').val();
+		getValues: function() {
 
 			// set model attributes
 			//
-			model.set({
+			return {
 
 				// java bytecode attributes
 				//
-				'bytecode_class_path': classPath != ''? classPath : null,
-				'bytecode_aux_class_path': auxClassPath != ''? auxClassPath : null,
-				'bytecode_source_path': sourcePath != ''? sourcePath : null,
+				'bytecode_class_path': this.$el.find('#class-path:visible').val(),
+				'bytecode_aux_class_path': this.$el.find('#aux-class-path:visible').val(),
+				'bytecode_source_path': this.$el.find('#source-path:visible').val(),
 
 				// build system attributes
 				//
-				'build_system': null,
+				'build_system': 'java-bytecode',
 				'build_cmd': null,
 
 				// configuration attributes
@@ -121,7 +108,7 @@ define([
 				'build_file': null,
 				'build_opt': null,
 				'build_target': null
-			});
+			};
 		},
 
 		//

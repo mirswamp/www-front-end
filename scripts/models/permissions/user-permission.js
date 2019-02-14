@@ -12,7 +12,7 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2018 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2019 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 define([
@@ -58,7 +58,7 @@ define([
 		},
 
 		isAutoApprove: function() {
-			return this.get('auto_approve_flag') == '1';
+			return this.get('auto_approve_flag') == true;
 		},
 
 		//

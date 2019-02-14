@@ -30,6 +30,13 @@
 				<span class="hidden-xxs">Platform</span>
 			</th> 
 
+			<% if (showProjects) { %>
+			<th class="project">
+				<i class="fa fa-folder"></i>
+				<span class="hidden-xxs">Project</span>
+			</th>
+			<% } %>
+
 			<th class="results last">
 				<i class="fa fa-check"></i>
 				<span class="hidden-xxs">Results</span>

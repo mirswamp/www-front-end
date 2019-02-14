@@ -13,7 +13,7 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2018 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2019 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 define([
@@ -63,7 +63,7 @@ define([
 
 			// apply select2 selector
 			//
-			this.$el.find('select').select2({
+			this.selector = this.$el.find('select').select2({
 				dropdownAutoWidth: 'true'
 			});
 		},
@@ -91,11 +91,17 @@ define([
 
 		reset: function(options) {
 			this.selected = undefined;
-			this.$el.find('select').select2('val', null);
+			this.clear();
 
 			// update
 			//
 			this.onChange(options);
+		},
+
+		clear: function() {
+			if (this.selector) {
+				this.selector.find('option').remove();
+			}
 		},
 
 		//

@@ -12,7 +12,7 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2018 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2019 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 define([
@@ -173,7 +173,7 @@ define([
 				new SelectProjectsListView({
 					collection: this.collection,
 					enabled: this.getSharingStatus() === 'protected',
-					showTrialProjects: false
+					showTrialProjects: true
 				})
 			);
 

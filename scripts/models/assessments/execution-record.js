@@ -12,7 +12,7 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2018 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2019 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 define([
@@ -64,6 +64,10 @@ define([
 			return _.isEqual(this.attributes, model.attributes);
 		},
 
+		isComplete: function() {
+			return this.get('complete_flag') == true;
+		},
+
 		hasErrors: function() {
 			return this.has('status') && this.get('status').toLowerCase().indexOf('errors') != -1;
 		},
@@ -81,7 +85,7 @@ define([
 		},
 
 		isVmReady: function() {
-			return this.get('vm_ready_flag') == '1';
+			return this.get('vm_ready_flag') == true;
 		},
 
 		getProjectExecutionRecordsUrl: function(project) {
@@ -101,7 +105,8 @@ define([
 				type: 'PUT',
 				url: Config.servers.web + '/execution_records/' + this.get('execution_record_uuid') + '/kill',
 				data: {
-					type: this.get('type')
+					type: this.get('type'),
+					hard: options? options.hard : false
 				}
 			}));
 		},

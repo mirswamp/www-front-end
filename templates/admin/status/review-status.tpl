@@ -27,5 +27,9 @@
 </label>
 
 <div class="bottom buttons">
-	<button id="kill-runs" class="btn btn-primary btn-lg"><i class="fa fa-times"></i>Kill Execution Runs</button>
+	<button id="kill-runs" class="btn btn-primary btn-lg" style="display:none" disabled><i class="fa fa-times"></i>Kill Execution Runs</button>
+
+	<button id="kill-viewers" class="btn btn-primary btn-lg" style="display:none" disabled><i class="fa fa-times"></i>Kill Viewer Runs</button>
+
+	<button id="shutdown-viewers" class="btn btn-lg" style="display:none" disabled><i class="fa fa-times"></i>Shutdown Viewer Runs</button>
 </div>

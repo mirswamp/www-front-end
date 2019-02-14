@@ -13,7 +13,7 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2018 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2019 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 define([
@@ -21,11 +21,13 @@ define([
 	'underscore',
 	'backbone',
 	'marionette',
+	'config',
 	'jquery.validate',
 	'bootstrap/tooltip',
 	'bootstrap/popover',
-	'text!templates/packages/info/details/package-profile/package-profile-form.tpl'
-], function($, _, Backbone, Marionette, Validate, Tooltip, Popover, Template) {
+	'text!templates/packages/info/details/package-profile/package-profile-form.tpl',
+	'utilities/browser/address-bar'
+], function($, _, Backbone, Marionette, Config, Validate, Tooltip, Popover, Template, AddressBar) {
 	return Backbone.Marionette.ItemView.extend({
 
 		//
@@ -34,7 +36,8 @@ define([
 
 		events: {
 			'focus #language-type': 'onFocusLanguageType',
-			'change #language-type': 'onChangeLanguageType'
+			'change #language-type': 'onChangeLanguageType',
+			'click #generate-token': 'onClickGenerateToken'
 		},
 
 		//
@@ -46,10 +49,10 @@ define([
 
 			$.validator.addMethod('external-url', function(value) {
 				self.model.set('external_url', value);
-				if( value === '' ){
+				if (value === '') {
 					return true;
 				}
-				if( self.model.hasValidExternalUrl() ){
+				if (self.model.hasValidExternalUrl()) {
 					var file = $(document).find('#archive').val('');
 					return true;
 				}
@@ -87,16 +90,33 @@ define([
 			switch (this.getLanguageType()) {
 				case 'c':
 					return 'c-source';
-					break;
 				case 'java':
 					return this.getJavaType();
-					break;
 				case 'python':
 					return this.getPythonType();
-					break;
 				case 'ruby':
 					return 'ruby';
-					break;
+			}
+		},
+
+		getSecretToken: function() {
+			return this.$el.find('#secret-token input').val();
+		},
+
+		getSuggestedSecretToken: function() {
+			function s4() {
+				return Math.floor((1 + Math.random()) * 0x10000).toString(16).substring(1);
+			}
+			return s4() + s4() + '-' + s4() + '-' + s4() + '-' + s4() + '-' + s4() + s4() + s4();
+		},
+
+		getPayloadUrl: function() {
+			var url = Config.servers.web + '/packages/github';
+
+			if (url.startsWith('/')) {
+				return AddressBar.get('base') + url.substring(1);
+			} else {
+				return url;
 			}
 		},
 
@@ -106,7 +126,9 @@ define([
 
 		template: function(data) {
 			return _.template(Template, _.extend(data, {
-				model: this.model
+				model: this.model,
+				payload_url: this.getPayloadUrl(),
+				suggested_secret_token: this.getSuggestedSecretToken()
 			}));
 		},
 
@@ -121,6 +143,17 @@ define([
 			// validate form
 			//
 			this.validator = this.validate();
+		},
+
+		showLanguageType: function() {
+			
+			// show / hide java type
+			//
+			if (this.getLanguageType() == 'java') {
+				this.$el.find('#java-type').show();
+			} else {
+				this.$el.find('#java-type').hide();
+			}
 		},
 
 		//
@@ -148,21 +181,20 @@ define([
 		// form methods
 		//
 
-		update: function(package) {
+		getValues: function() {
+			return {
+				'name': this.$el.find('#name input').val(),
+				'description': this.$el.find('#description input').val(),
+				'external_url': this.$el.find('#external-url input').val(),
+				'secret_token': this.$el.find('#secret-token input').val()
+			};
+		},
 
-			// get values from form
-			//
-			var name = this.$el.find('#name').val();
-			var description = this.$el.find('#description').val();
-			var external_url = this.$el.find('#external-url').val();
+		update: function(package) {
 
 			// update model
 			//
-			package.set({
-				'name': name,
-				'description': description,
-				'external_url': external_url
-			});
+			package.set(this.getValues());
 
 			// update package type, if shown
 			//
@@ -187,14 +219,13 @@ define([
 		},
 
 		onChangeLanguageType: function() {
+			this.showLanguageType();
+		},
 
-			// show / hide java type
-			//
-			if (this.getLanguageType() == 'java') {
-				this.$el.find('#java-type').show();
-			} else {
-				this.$el.find('#java-type').hide();
-			}
+		onClickGenerateToken: function() {
+			var secretToken = this.getSuggestedSecretToken();
+			this.$el.find('#secret-token input').val(secretToken);
+			this.$el.find('#secret-token input').trigger('change');
 		}
 	});
 });

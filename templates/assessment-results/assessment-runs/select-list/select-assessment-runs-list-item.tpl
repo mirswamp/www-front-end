@@ -72,6 +72,18 @@
 	</div>
 </td>
 
+<% if (showProjects) { %>
+<td class="project">
+	<div class="name">
+		<% if (projectUrl) { %>
+		<a href="<%- projectUrl %>"><%= stringToHTML(project.name) %></a>
+		<% } else { %>
+		<%= stringToHTML(project.name) %>
+		<% } %>
+	</div>
+</td>
+<% } %>
+
 <td class="datetime hidden-xs<% if (!showStatus) { %> last<% } %>">
 <%= dateToSortableHTML(model.get('create_date')) %>
 </td>
@@ -83,6 +95,7 @@
 <% } %>
 
 <td class="results last">
+	<% if (model.isComplete()) { %>
 
 	<% if (showErrors) { %>
 	<% if (model.hasErrors() && errorUrl) { %>
@@ -114,6 +127,7 @@
 		<% } %>
 	</div>
 	
+	<% } %>
 	<% } %>
 
 	<% if (showSsh) { %>

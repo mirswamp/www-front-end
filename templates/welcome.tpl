@@ -39,7 +39,7 @@
 				<h2>Get results in just three steps:</h2>
 				<div class="col-sm-3">
 					<h3>1) Upload your package</h3>
-					<p>First, upload your code.  Rest assured that it will  remain <a href="https://www.swampinabox.org/doc/SWAMP-WP004-Privacy.pdf" target="_blank">private and secure</a>.</p>
+					<p>First, upload your code. Rest assured that it will remain secure. See our <a href="https://www.swampinabox.org/doc/SWAMP-WP004-Privacy.pdf" target="_blank">privacy policy</a>.</p>
 					<a href="images/screen-shots/upload-new-package-small.png" target="_blank" class="lightbox" title="Create and Upload a New Package"><image class="photo" src="images/screen-shots/upload-new-package-thumb.png" alt="upload new package screen shot" /></a>
 				</div>
 				<div class="col-sm-1"></div>

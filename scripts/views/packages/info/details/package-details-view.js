@@ -1,6 +1,6 @@
 /******************************************************************************\
 |                                                                              |
-|                             package-details-view.js                          |
+|                            package-details-view.js                           |
 |                                                                              |
 |******************************************************************************|
 |                                                                              |
@@ -12,7 +12,7 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2018 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2019 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 define([
@@ -169,8 +169,8 @@ define([
 				new PackageVersionsListView({
 					model: this.model,
 					collection: this.collection,
+					showProjects: Registry.application.session.user.get('has_projects'),
 					showNumbering: Registry.application.options.showNumbering
-
 				})
 			);
 		},

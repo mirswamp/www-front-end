@@ -13,7 +13,7 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2018 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2019 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 define([
@@ -280,6 +280,7 @@ define([
 			this.scheduledRunsList.show(
 				new ScheduledRunsListView({
 					collection: this.collection,
+					showProjects: Registry.application.session.user.get('has_projects'),
 					showNumbering: Registry.application.options.showNumbering,
 					showDelete: true,
 					parent: this
@@ -291,6 +292,7 @@ define([
 			this.scheduledRunsLists.show(
 				new ScheduledRunsListsView({
 					collection: this.collection.getByRunRequests(this.collection.getRunRequests()),
+					showProjects: Registry.application.session.user.get('has_projects'),
 					showNumbering: Registry.application.options.showNumbering,
 					showDelete: true,
 					parent: this

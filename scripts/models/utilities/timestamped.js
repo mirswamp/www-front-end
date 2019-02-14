@@ -7,7 +7,7 @@
 |        This defines a model of a base time stamped base model.               |
 |                                                                              |
 |        Author(s): Abe Megahed                                                |
-|        Copyright (C) 2012-2018 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2019 Software Assurance Marketplace (SWAMP)        |
 |                                                                              |
 |******************************************************************************|
 |                           Do It Early. Do It Often.                          |
@@ -30,7 +30,7 @@ define([
 			if (this.has('created_at')) {
 				return this.get('created_at');
 			} else if (this.has('create_date')) {
-				return this.get('create_date')
+				return this.get('create_date');
 			}
 		},
 
@@ -38,7 +38,7 @@ define([
 			if (this.has('updated_at')) {
 				return this.get('updated_at');
 			} else if (this.has('update_date')) {
-				return this.get('update_date')
+				return this.get('update_date');
 			}
 		},
 
@@ -46,7 +46,7 @@ define([
 			if (this.has('deleted_at')) {
 				return this.get('deleted_at');
 			} else if (this.has('delete_date')) {
-				return this.get('delete_date')
+				return this.get('delete_date');
 			}
 		},
 

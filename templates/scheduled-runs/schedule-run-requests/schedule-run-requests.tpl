@@ -40,7 +40,7 @@
 <% if (config['email_enabled']) { %>
 <br />
 <div class="well">
-	<label class="checkbox">
+	<label class="checkbox-inline">
 		<input type="checkbox" name="notify" id="notify" />
 		Notify me via email when these assessment runs are completed.
 	</label>

@@ -12,7 +12,7 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2018 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2019 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 define([
@@ -25,9 +25,10 @@ define([
 	'bootstrap/popover',
 	'registry',
 	'text!templates/packages/info/versions/info/details/package-version-profile/new-package-version-profile-form.tpl',
+	'models/packages/package',
 	'views/packages/info/versions/info/details/package-version-profile/package-version-profile-form-view',
 	'views/dialogs/notify-view'
-], function($, _, Backbone, Marionette, Validate, Tooltip, Popover, Registry, Template, PackageVersionProfileFormView, NotifyView) {
+], function($, _, Backbone, Marionette, Validate, Tooltip, Popover, Registry, Template, Package, PackageVersionProfileFormView, NotifyView) {
 	return Backbone.Marionette.LayoutView.extend({
 
 		//
@@ -54,7 +55,7 @@ define([
 			//
 			$.validator.addMethod('archive', function(value) {
 				if (!self.useExternalUrl() && !self.hasValidFilename()) {
-					return "This file is not a recognized archive file format."
+					return "This file is not a recognized archive file format.";
 				}
 				return true;
 			});
@@ -62,7 +63,7 @@ define([
 			// add file validation rule
 			//
 			$.validator.addMethod('file', function(value) {
-				return (value != '' && self.model.isAllowedFilename(value)) || (self.hasExternalUrl() && self.getExternalUrl() != '') || self.useExternalUrl();
+				return (value != '' && Package.isValidArchiveName(value)) || (self.hasExternalUrl() && self.getExternalUrl() != '') || self.useExternalUrl();
 			}, "Please select an archive file.");
 		},
 
@@ -84,7 +85,7 @@ define([
 
 		hasValidFilename: function() {
 			var fileName = this.model.getFilenameFromPath(value);
-			return this.model.isAllowedFilename(fileName);
+			return Package.protoype.isValidArchiveName(fileName);
 		},
 
 		//
@@ -159,14 +160,23 @@ define([
 			var source = $(event.target).val();
 			switch (source) {
 				case 'use-local-file':
-					this.$el.find('#git-message').hide();
 					this.$el.find('#external-url').hide();
+					this.$el.find('#external-git-url').hide();
+					this.$el.find('#git-message').hide();
 					this.$el.find('#checkout-argument').hide();
 					this.$el.parent().find('#file').show();
 					break;
 				case 'use-external-url':
-					this.$el.find('#git-message').show();
 					this.$el.find('#external-url').show();
+					this.$el.find('#external-git-url').hide();
+					this.$el.find('#git-message').hide();
+					this.$el.find('#checkout-argument').hide();
+					this.$el.parent().find('#file').hide();
+					break;
+				case 'use-git-url':
+					this.$el.find('#external-url').hide();
+					this.$el.find('#external-git-url').show();
+					this.$el.find('#git-message').show();
 					this.$el.find('#checkout-argument').show();
 					this.$el.parent().find('#file').hide();
 					break;

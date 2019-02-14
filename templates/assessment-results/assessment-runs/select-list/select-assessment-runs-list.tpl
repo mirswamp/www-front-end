@@ -30,6 +30,13 @@
 				<span class="hidden-xxs">Platform</span>
 			</th>
 
+			<% if (showProjects) { %>
+			<th class="project">
+				<i class="fa fa-folder"></i>
+				<span class="hidden-xxs">Project</span>
+			</th>
+			<% } %>
+
 			<th class="datetime hidden-xs<% if (!showStatus) { %> last<% } %>">
 				<i class="fa fa-calendar"></i>
 				<span class="hidden-xxs">Date</span>

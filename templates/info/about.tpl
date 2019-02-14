@@ -52,6 +52,6 @@
 <p>The SWAMP is funded by the Department of Homeland Security (DHS) Science and Technology Directorate, Homeland Security Advanced Research Projects Agency, Cyber Security Division (DHS S&T/HSARPA/CSD)</p>
 
 <p>
-	<label>Version:</label><span id="version"><%= Version.release %> build <%= Version.build %></span><br />
-	<label>API Base URL:</label><span id="server"><%= Config.servers.web %></span>
+	<label>Version:</label><span id="version"><%= version_string %></span><br />
+	<label>API Base URL:</label><span id="server"><%= api_url %></span>
 </p>

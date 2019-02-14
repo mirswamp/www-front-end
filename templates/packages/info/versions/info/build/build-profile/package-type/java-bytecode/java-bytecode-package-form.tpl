@@ -6,7 +6,7 @@
 			<label class="required control-label">Class path</label>
 			<div class="controls">
 				<div class="input-group">
-					<textarea class="form-control" id="class-path" rows="3" class="required"><%- (bytecode_class_path? bytecode_class_path : '.')%></textarea>
+					<textarea class="required form-control" id="class-path" rows="3" class="required"><%- (bytecode_class_path? bytecode_class_path : '.')%></textarea>
 					<div class="input-group-addon">
 						<i class="active fa fa-question-circle" data-toggle="popover" data-placement="top" data-container="body" title="Class path" data-content="A ‘:’ separated list of paths to Java archive files (jar, zip, war, ear files), class files or directories containing class files that are to be assessed. For a directory, all the class files in the directory tree are assessed. Additionally, a directory path can end with a wildcard character ‘*’, in that case all the jar files in the directory are assessed. These paths are relative to the package path."></i>
 					</div>
@@ -18,8 +18,6 @@
 		</div>
 
 		<div class="form-group">
-			<% var showAdvanced = bytecode_aux_class_path || bytecode_source_path; %>
-
 			<div id="advanced-settings" class="panel">
 				<div class="panel-group">
 
@@ -68,3 +66,7 @@
 		</div>
 	</fieldset>
 </form>
+
+<div align="right">
+	<label><span class="required"></span>Fields are required</label>
+</div>

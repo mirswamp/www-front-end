@@ -12,7 +12,7 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2018 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2019 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 define([
@@ -56,7 +56,9 @@ define([
 
 			// add tags
 			//
-			tags += this.projectFilter.currentView.getTag();
+			if (Registry.application.session.user.get('has_projects')) {
+				tags += this.projectFilter.currentView.getTag();
+			}
 			tags += this.limitFilter.currentView.getTag();
 
 			return tags;
@@ -138,15 +140,15 @@ define([
 
 		onRender: function() {
 			var self = this;
-			
+			var hasProject = this.options.data['project'] && this.options.data['project'].constructor == Project;
+			var hasProjects = this.options.data['project'] && this.options.data['project'].constructor == Projects;
+
 			// show subviews
 			//
 			this.projectFilter.show(new ProjectFilterView({
-				model: this.model,
-				collection: this.options.data['projects'],
-				//defaultValue: this.model,
+				collection: hasProjects? this.options.data['project'] : undefined,
 				defaultValue: undefined,
-				initialValue: this.options.data['project'],
+				initialValue: !hasProjects? this.options.data['project'] : undefined,
 
 				// callbacks
 				//
@@ -155,7 +157,6 @@ define([
 				}
 			}));
 			this.limitFilter.show(new LimitFilterView({
-				model: this.model,
 				defaultValue: undefined,
 				initialValue: this.options.data['limit'],
 

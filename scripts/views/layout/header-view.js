@@ -12,7 +12,7 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2018 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2019 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 define([
@@ -151,17 +151,19 @@ define([
 		},
 
 		addBadge: function(selector, number) {
+			var badge;
+
 			if (number > 0) {
-				var badge = this.$el.find(selector).append('<span class="badge">' + number + '</span>');
+				badge = this.$el.find(selector).append('<span class="badge">' + number + '</span>');
 			} else {
-				var badge = this.$el.find(selector).append('<span class="badge badge-important">' + number + '</span>');
+				badge = this.$el.find(selector).append('<span class="badge badge-important">' + number + '</span>');
 			}
 
 			badge.attr({
 				'data-toggle': 'popover',
 				'title': 'Notifications',
 				'data-content': 'You have pending notifications.'
-			})
+			});
 
 			// display popovers on hover
 			//

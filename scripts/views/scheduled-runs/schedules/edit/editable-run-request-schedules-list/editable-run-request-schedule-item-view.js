@@ -13,7 +13,7 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2018 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2019 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 define([
@@ -43,8 +43,8 @@ define([
 		events: {
 			'change .type select': 'onChangeTypeSelect',
 			'change select.day-of-the-week': 'onChangeSelectDayOfTheWeek',
-			'change input.day-of-the-month': 'onChangeInputDayOfTheMonth',
-			'change .time .time_input': 'onChangeTimeInput',
+			'input input.day-of-the-month': 'onChangeInputDayOfTheMonth',
+			'input .time .time_input': 'onChangeTimeInput',
 			'click .delete button': 'onClickDelete'
 		},
 

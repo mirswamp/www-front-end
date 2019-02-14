@@ -12,7 +12,7 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2018 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2019 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 define([
@@ -39,6 +39,10 @@ define([
 			'jar': 						'jar -xf'
 		},
 
+		packageManagers: [
+			'pear'
+		],
+
 		buildCommands: {
 			'make': 					'make',
 			'configure+make':			'make',
@@ -54,10 +58,12 @@ define([
 			'distutils': 				'python',
 			'python-setuptools': 		'python',
 			'wheels': 					'pip',
-			'rake': 					'pip install',
-			'bundler': 					'bundle install',
+			'rake': 					'rake',
+			'bundler': 					undefined,
 			'bundler+rake': 			'bundle exec rake',
-			'bundler+other': 			'bundle install',
+			'bundler+other': 			'bundle exec',
+			'npm':						'npm install',
+			'composer':					'php /mnt/in/composer.phar install --no-interaction --no-progress',
 			'other': 					undefined
 		},
 
@@ -143,16 +149,39 @@ define([
 
 		getBuildCommand: function(packageVersion) {
 			var buildSystem = packageVersion.get('build_system');
+			var sourcePath = packageVersion.get('source_path');
+			var buildFile = packageVersion.get('build_file');
+			var buildDir = packageVersion.get('build_dir');
+			var buildOptions = packageVersion.get('build_opt');
+			var buildTarget = packageVersion.get('build_target');
+			var buildCommand = '';
+			var buildFileOption = '';
+			var filename;
 
 			// create build command
 			//
 			if (buildSystem == 'other') {
-				var buildCommand = packageVersion.get('build_cmd');
+				buildCommand = packageVersion.get('build_cmd');
+			} else if (buildSystem == 'bundler+other') {
+				buildCommand = 'bundle exec ' + packageVersion.get('build_cmd');
 			} else if (buildSystem.indexOf('+other') != -1) {
-				var buildCommand = this.buildCommands[buildSystem] +
+				buildCommand = this.buildCommands[buildSystem] +
 					'; ' + (packageVersion.has('build_cmd')? packageVersion.get('build_cmd') : '');
 			} else {
-				var buildCommand = this.buildCommands[buildSystem];
+				buildCommand = this.buildCommands[buildSystem];
+			}
+
+			if (buildSystem == 'pear') {
+				filename = packageVersion.getFilename();
+				buildCommand = "pear config-set php_dir ~/build/user_lib && \ " +
+     				"pear install --alldeps --register-only /mnt/in/" + filename;
+			}
+
+			// set python version
+			//
+			if (buildCommand == 'python') {
+				buildCommand = this.options.package.getPackageType();
+				buildCommand += ' ' + buildFile;
 			}
 
 			if (buildCommand) {
@@ -160,13 +189,12 @@ define([
 				// add default build options
 				//
 				if (buildCommand == 'pip') {
-					var filename = this.model.getFilename();
+					filename = this.model.getFilename();
 					buildCommand += ' install ' + filename + " && wheel unpack " + filename;
 				}
 
 				// add build file
 				//
-				var buildFile = packageVersion.get('build_file');
 				if (buildFile && buildFile != '') {
 
 					// add highlighting
@@ -181,7 +209,7 @@ define([
 						//
 						case 'make':
 						case 'gmake':
-							var buildFileOption = '-f ' + buildFile;
+							buildFileOption = '-f ' + buildFile;
 							break;
 
 						// java build systems
@@ -196,13 +224,17 @@ define([
 
 						// python build systems
 						//
-						case 'python':
+						case 'python2':
+						case 'python3':
 							buildFileOption = buildFile;
+							break;
 
 						// ruby build systems
 						//
 						case 'rake':
-							buildFileOption = buildFile;
+						case 'bundle exec rake':
+							buildFileOption = ' --rakefile ' + buildFile;
+							break;
 
 						// gradle build systems
 						//
@@ -218,6 +250,38 @@ define([
 					}
 				}
 
+				/*
+				if (buildCommand == 'bundle install') {
+					var buildCmd;
+
+					// find build command
+					//
+					if (buildFile) {
+						if (buildDir && !buildDir.endsWith('/')) {
+							buildDir += '/';
+						}
+						buildCmd = (buildDir || '') + buildFile;
+					} else if (buildSystem == 'bundler+rake') {
+						buildCmd = 'rake';
+					}
+
+					// add build options
+					//
+					if (buildCmd) {
+						buildFileOption = ' (cd ' + sourcePath + ';';
+						buildFileOption += ' ' + 'bundle exec ' + buildCmd;
+
+						if (buildOptions) {
+							buildFileOption += ' ' + buildOptions;
+						}
+						if (buildTarget) {
+							buildFileOption += ' ' + buildTarget;
+						}
+						buildFileOption += ')';
+					}
+				}
+				*/
+
 				// add highlighting
 				//
 				if (this.options.highlight == 'build-command' || this.options.highlight == 'other-build-command') {
@@ -227,50 +291,53 @@ define([
 				// add build file options
 				//
 				if (buildFileOption) {
-					buildCommand += ' ' + buildFileOption;
+					buildCommand += (' ' + buildFileOption);
 				}
 
-				// add options
-				//
-				var buildOptions = packageVersion.get('build_opt');
-				if (buildOptions && buildOptions != '') {
+				if (!this.packageManagers.contains(buildSystem)) {
 
-					// add highlighting
+					// add options
 					//
-					if (this.options.highlight == 'build-options') {
-						buildOptions = this.getHighlighted(buildOptions);
+					if (buildOptions && buildOptions != '') {
+
+						// add highlighting
+						//
+						if (this.options.highlight == 'build-options') {
+							buildOptions = this.getHighlighted(buildOptions);
+						}
+
+						buildCommand += (' ' + buildOptions);
 					}
 
-					buildCommand += ' ' + buildOptions;
-				}
-
-				// add target
-				//
-				var buildTarget = packageVersion.get('build_target');
-				if (buildTarget && buildTarget != '') {
-
-					// add highlighting
+					// add target
 					//
-					if (this.options.highlight == 'build-target' ||
-						this.options.highlight == 'other-build-target') {
-						buildTarget = this.getHighlighted(buildTarget);
+					if (buildSystem && !buildSystem.contains('bunder')) {
+						if (buildTarget && buildTarget != '') {
+
+							// add highlighting
+							//
+							if (this.options.highlight == 'build-target' ||
+								this.options.highlight == 'other-build-target') {
+								buildTarget = this.getHighlighted(buildTarget);
+							}
+
+							buildCommand += ' ' + buildTarget;
+						}
 					}
 
-					buildCommand += ' ' + buildTarget;
-				}
-
-				// add path
-				//
-				var buildPath = packageVersion.get('build_dir');
-				if (buildPath && buildPath != '') {
-
-					// add highlighting
+					// add path
 					//
-					if (this.options.highlight == 'build-path') {
-						buildPath = this.getHighlighted(buildPath);
-					}
+					var buildPath = packageVersion.get('build_dir');
+					if (buildPath && buildPath != '') {
 
-					buildCommand = '(cd ' + buildPath + '; ' + buildCommand + ')';
+						// add highlighting
+						//
+						if (this.options.highlight == 'build-path') {
+							buildPath = this.getHighlighted(buildPath);
+						}
+
+						buildCommand = '(cd ' + buildPath + '; ' + buildCommand + ')';
+					}
 				}
 			}
 	
@@ -279,21 +346,22 @@ define([
 
 		getBuildScript: function(packageVersion) {
 			var script = '';
-			var newline = '<br />'
+			var newline = '<br />';
+			var buildSystem = packageVersion.get('build_system');
 
 			// add unarchive command
 			//
-			var unarchiveCommand = this.getUnarchiveCommand(packageVersion);
-			if (unarchiveCommand) {
-				var packageArchive = '<archive>';
-				script += unarchiveCommand + ' ' + packageArchive;
-				script += newline;
+			if (!this.packageManagers.contains(buildSystem)) {
+				var unarchiveCommand = this.getUnarchiveCommand(packageVersion);
+				if (unarchiveCommand) {
+					script = unarchiveCommand + ';' + newline;
+				}
 			}
 
 			// add change directory
 			//
 			var sourcePath = packageVersion.get('source_path');
-			if (sourcePath && sourcePath != '') {
+			if (sourcePath && sourcePath != '' && !this.packageManagers.contains(buildSystem)) {
 
 				// add highlighting
 				//
@@ -303,8 +371,8 @@ define([
 
 				// add cd command
 				//
-				if (sourcePath != '.') {
-					script += 'cd \ ' + sourcePath;
+				if (sourcePath && sourcePath != '.' && sourcePath != './') {
+					script += 'cd \ ' + getDirectoryName(sourcePath) + ';';
 					script += newline;
 				}
 			}
@@ -364,17 +432,14 @@ define([
 
 			// add bundle command
 			//
-			/*
 			buildSystem = packageVersion.get('build_system');
-			if (buildSystem == 'bundler+rake' || buildSystem == 'bundler+other') {
+			if (buildSystem && buildSystem.contains('bundler')) {
 				script += 'bundle install';
 				script += newline;
 			}
-			*/
 
 			// add gradle wrapper command
 			//
-			var buildSystem = packageVersion.get('build_system');
 			if (buildSystem == 'gradle' || buildSystem == 'android+gradle') {
 				if (packageVersion.get('use_gradle_wrapper')) {
 					if (this.options.highlight == 'use-gradle-wrapper') {
@@ -386,12 +451,21 @@ define([
 				}
 			}
 
+			// add no build command
+			//
+			if (!buildSystem || buildSystem == 'no-build' || buildSystem == 'none') {
+				if (packageVersion.has('no_build_cmd')) {
+					script += packageVersion.get('no_build_cmd').replace(/;/g, '; <br />');
+				}
+				
 			// add build command
 			//
-			var buildCommand = this.getBuildCommand(packageVersion);
-			if (buildCommand && buildCommand != '') {
-				script += buildCommand;
-				script += newline;
+			} else {
+				var buildCommand = this.getBuildCommand(packageVersion);
+				if (buildCommand && buildCommand != '') {
+					script += buildCommand;
+					script += newline;
+				}
 			}
 
 			return script;

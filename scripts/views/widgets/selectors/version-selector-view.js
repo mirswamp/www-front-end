@@ -12,7 +12,7 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2018 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2019 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 define([
@@ -21,9 +21,10 @@ define([
 	'backbone',
 	'marionette',
 	'bootstrap/dropdown',
+	'select2',
 	'text!templates/widgets/selectors/version-selector.tpl',
 	'views/widgets/selectors/name-selector-view'
-], function($, _, Backbone, Marionette, Dropdown, Template, NameSelectorView) {
+], function($, _, Backbone, Marionette, Dropdown, Select2, Template, NameSelectorView) {
 	return NameSelectorView.extend({
 		
 		//

@@ -13,7 +13,7 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2018 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2019 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 define([
@@ -36,16 +36,18 @@ define([
 		//
 
 		regions: {
-			buildProfileForm: '#build-profile-form',
-			buildScript: '#build-script'
+			buildProfileForm: '#build-profile-form'
 		},
 
 		events: {
-			'change input, select': 'onChange',
+			'input input': 'onChange',
+			'change select': 'onChange',
 			'keyup input, select': 'onChange',
 			'click .alert-info .close': 'onClickAlertInfoClose',
 			'click .alert-warning .close': 'onClickAlertWarningClose',
 			'click #save': 'onClickSave',
+			'click #show-source-files': 'onClickShowSourceFiles',
+			'click #show-build-script': 'onClickShowBuildScript',
 			'click #cancel': 'onClickCancel'
 		},
 
@@ -60,6 +62,48 @@ define([
 		//
 		// methods
 		//
+
+		save: function() {
+			var self = this;
+			
+			// disable save button
+			//
+			this.$el.find('#save').prop('disabled', true);
+
+			// save changes
+			//
+			this.model.save(undefined, {
+
+				// callbacks
+				//
+				success: function() {
+					self.saveDependencies({
+
+						// callbacks
+						//
+						success: function() {
+
+							// return to package version build info view
+							//
+							Backbone.history.navigate('#packages/versions/' + self.model.get('package_version_uuid') + '/build', {
+								trigger: true
+							});
+						}
+					});
+				},
+
+				error: function() {
+
+					// show error dialog
+					//
+					Registry.application.modal.show(
+						new ErrorView({
+							message: "Could not save package version changes."
+						})
+					);
+				}
+			});
+		},
 
 		saveDependencies: function(options) {
 			var self = this;
@@ -98,8 +142,10 @@ define([
 
 		template: function(data) {
 			return _.template(Template, _.extend(data, {
-				model: this.options.model,
-				package: this.options.package
+				model: this.model,
+				package: this.options.package,
+				show_source_files: !this.options.package.isBuildable() && !this.model.isAtomic(),
+				show_build_script: this.model.hasBuildScript() && this.options.package.hasBuildScript()
 			}));
 		},
 
@@ -108,7 +154,6 @@ define([
 			// show subviews
 			//
 			this.showBuildProfileForm();
-			this.showBuildScript();
 
 			// change accordion icon
 			//
@@ -134,20 +179,7 @@ define([
 							// callbacks
 							//
 							onChange: function() {
-
-								// update build script
-								//
-								if (self.buildProfileForm.currentView.packageTypeForm.currentView.getBuildSystem) {
-									if (self.buildProfileForm.currentView.packageTypeForm.currentView.getBuildSystem() != 'no-build' &&
-										self.buildProfileForm.currentView.packageTypeForm.currentView.getBuildSystem() != 'none')
-									{
-										self.showBuildScript(self.buildProfileForm.currentView.focusedInput);
-									}
-								}
-
-								// enable save button
-								//
-								self.onChange();
+								self.onChange();	
 							}
 						})
 					);
@@ -155,37 +187,84 @@ define([
 			});
 		},
 
-		showBuildScript: function(focusedInput) {
-		
+		showSourceFiles: function() {
+			var self = this;
+
 			// get current model
 			//
-			if (this.buildProfileForm.currentView) {
-				var currentModel = this.buildProfileForm.currentView.getCurrentModel();
-			} else {
-				var currentModel = this.model;
-			}
+			var model = this.buildProfileForm.currentView.getCurrentModel();
 
-			if (currentModel.isBuildNeeded()) {
+			// fetch build info
+			//
+			model.fetchBuildInfo({
 
-				// unhide build script accordion
+				// callbacks
 				//
-				this.$el.find('#build-script-accordion').show();
+				success: function(data) {
+					model.set({
+						'source_files': data.source_files
+					});
 
-				// show build script view
-				//
-				this.buildScript.show(
-					new BuildScriptView({
-						model: currentModel,
-						package: this.options.package,
-						highlight: focusedInput
+					self.showSourceFilesDialog(model);
+				}
+			});
+		},
+
+		showSourceFilesDialog: function(packageVersion) {
+			var self = this;
+			require([
+				'views/packages/dialogs/source-files-dialog-view'
+			], function (SourceFilesDialogView) {
+				Registry.application.modal.show(
+					new SourceFilesDialogView({
+						model: packageVersion,
+						package: self.options.package
 					})
 				);
-			} else {
+			});
+		},
+		
+		showBuildScript: function() {
+			var self = this;
 
-				// hide build script accordion
+			// get current model
+			//
+			var model = this.buildProfileForm.currentView.getCurrentModel();
+
+			// fetch build info
+			//
+			model.fetchBuildInfo({
+				data: {
+					'package_type_id': this.model.get('package_type_id'),
+					'build_dir': model.get('build_dir')
+				},
+				
+				// callbacks
 				//
-				this.$el.find('#build-script-accordion').hide();	
-			}
+				success: function(data) {
+					model.set({
+						'no_build_cmd': data.no_build_cmd
+					});
+
+					// show build script dialog
+					//
+					self.showBuildScriptDialog(model);
+				}
+			});
+		},
+		
+		showBuildScriptDialog: function(packageVersion) {
+			var self = this;
+			require([
+				'views/packages/dialogs/build-script-dialog-view'
+			], function (BuildScriptDialogView) {
+				Registry.application.modal.show(
+					new BuildScriptDialogView({
+						model: packageVersion,
+						package: self.options.package
+					})
+				);
+			});
 		},
 
 		hideBuildScript: function() {
@@ -248,44 +327,44 @@ define([
 				//
 				this.buildProfileForm.currentView.update(this.model);
 
-				// disable save button
+				// check build system
 				//
-				this.$el.find('#save').prop('disabled', true);
-				
-				// save changes
-				//
-				this.model.save(undefined, {
+				this.model.checkBuildSystem({
 
 					// callbacks
 					//
 					success: function() {
-						self.saveDependencies({
+
+						// save new package
+						//
+						self.save();
+					},
+
+					error: function(data) {
+						Registry.application.confirm({
+							title: 'Build System Warning',
+							message: data.responseText + "  Would you like to continue anyway?",
 
 							// callbacks
 							//
-							success: function() {
+							accept: function() {
 
-								// return to package version build info view
+								// show next view
 								//
-								Backbone.history.navigate('#packages/versions/' + self.model.get('package_version_uuid') + '/build', {
-									trigger: true
-								});
+								self.save();
 							}
 						});
-					},
-
-					error: function() {
-
-						// show error dialog
-						//
-						Registry.application.modal.show(
-							new ErrorView({
-								message: "Could not save package version changes."
-							})
-						);
 					}
 				});
 			}
+		},
+
+		onClickShowSourceFiles: function() {
+			this.showSourceFiles();
+		},
+
+		onClickShowBuildScript: function() {
+			this.showBuildScript();
 		},
 
 		onClickCancel: function() {

@@ -12,7 +12,7 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2018 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2019 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 define([
@@ -23,11 +23,33 @@ define([
 	'models/utilities/timestamped',
 	'models/packages/package-version',
 	'collections/packages/package-versions',
+	'collections/projects/projects',
 	'collections/platforms/platforms',
 	'collections/platforms/platform-versions',
-	'views/dialogs/error-view'
-], function($, _, Config, Registry, Timestamped, PackageVersion, PackageVersions, Platforms, PlatformVersions, ErrorView) {
+	'views/dialogs/error-view',
+	'utilities/scripting/file-utils'
+], function($, _, Config, Registry, Timestamped, PackageVersion, PackageVersions, Projects, Platforms, PlatformVersions, ErrorView) {
 	var Class = Timestamped.extend({
+
+		//
+		// attributes
+		//
+
+		allowedExtensions: [
+			'.zip',
+			'.tar',
+			'.tar.gz',
+			'.tgz',
+			'.tar.bz2',
+			'.tar.xz',
+			'.tar.Z',
+			'.jar',
+			'.war',
+			'.ear',
+			'.gem',
+			'.whl',
+			'.apk'
+		],
 
 		//
 		// Backbone attributes
@@ -54,6 +76,10 @@ define([
 			return (this.hasDeleteDate());
 		},
 
+		hasValidArchiveUrl: function() {
+			return this.has('external_url') && this.constructor.isValidArchiveName(this.get('external_url'));
+		},
+
 		hasValidExternalUrl: function() {
 			var re = /^https:\/\/github.com\/.+\/.+.git$/;
 			var url = this.has('external_url') ? this.get('external_url').toLowerCase() : '';
@@ -69,7 +95,7 @@ define([
 		},
 
 		getLanguageType: function() {
-			return Class.toLanguageType(this.get('package_type_id'));
+			return Class.toLanguageType(this.getPackageType());
 		},
 
 		getPackageTypeName: function() {
@@ -78,6 +104,14 @@ define([
 
 		hasLanguageVersion: function() {
 			return this.getPackageType() == 'ruby';
+		},
+
+		isBuildable: function() {
+			return !['ruby', 'sinatra', 'rails', 'padrino', 'python', 'python2', 'python3', 'web-scripting'].contains(this.getPackageType());
+		},
+
+		hasBuildScript: function() {
+			return !['.net', 'java-bytecode', 'java7-bytecode', 'java8-bytecode'].contains(this.getPackageType());
 		},
 
 		//
@@ -220,6 +254,21 @@ define([
 			}));		
 		},
 
+		fetchProjects: function(options) {
+			$.ajax(_.extend(_.extend({}, options), {
+				url: this.urlRoot + '/' + this.get('package_uuid') + '/projects',
+				type: 'GET',
+
+				success: function(data) {
+					if (options.success) {
+						options.success(new Projects(data, {
+							parse: true
+						}));
+					}
+				}
+			}));		
+		},
+
 		//
 		// overridden Backbone methods
 		//
@@ -228,7 +277,7 @@ define([
 
 			// call superclass method
 			//
-			var response = Timestamped.prototype.parse.call(this, response);
+			response = Timestamped.prototype.parse.call(this, response);
 
 			// convert package type id to an integer
 			//
@@ -249,6 +298,30 @@ define([
 		//
 		// static methods
 		//
+
+		isValidArchiveName: function(fileName) {
+
+			// check allowed extensions
+			//
+			if (fileName) {
+				for (var i = 0; i < this.prototype.allowedExtensions.length; i++) {
+					if (fileName.endsWith(this.prototype.allowedExtensions[i])) {
+						return true;
+					}
+				}
+			}
+
+			return false;
+		},
+
+		isValidGitUrl: function(url) {
+			if (url) {
+				var extension = getFileExtension(url);
+				return (extension == 'git' || extension == null);
+			} else {
+				return false;
+			}
+		},
 
 		fetch: function(packageUuid, done) {
 
@@ -283,46 +356,34 @@ define([
 			switch (packageTypeId) {
 				case 1:
 					return 'c-source';
-					break;
 				case 2:
 					return 'java7-source';
-					break;
 				case 3:
 					return 'java7-bytecode';
-					break;
 				case 4:
 					return 'python2';
-					break;
 				case 5:
-					return 'python3'
-					break;
+					return 'python3';
 				case 6:
 					return 'android-source';
-					break;
 				case 7:
 					return 'ruby';
-					break;
 				case 8:
 					return 'sinatra';
-					break;
 				case 9:
 					return 'rails';
-					break;
 				case 10:
 					return 'padrino';
-					break;
 				case 11:
 					return 'android-bytecode';
-					break;
 				case 12:
 					return 'java8-source';
-					break;
 				case 13:
 					return 'java8-bytecode';
-					break;
 				case 14:
 					return 'web-scripting';
-					break;
+				case 15:
+					return '.net';
 			}
 		},
 
@@ -330,46 +391,34 @@ define([
 			switch (packageType) {
 				case 'c-source':
 					return 1;
-					break;
 				case 'java7-source':
 					return 2;
-					break;
 				case 'java7-bytecode':
 					return 3;
-					break;
 				case 'python2':
 					return 4;
-					break;
 				case 'python3':
-					return 5
-					break;
+					return 5;
 				case 'android-source':
 					return 6;
-					break;
 				case 'ruby':
 					return 7;
-					break;
 				case 'sinatra':
 					return 8;
-					break;
 				case 'rails':
 					return 9;
-					break;
 				case 'padrino':
 					return 10;
-					break;
 				case 'android-bytecode':
 					return 11;
-					break;
 				case 'java8-source':
 					return 12;
-					break;
 				case 'java8-bytecode':
 					return 13;
-					break;
 				case 'web-scripting':
 					return 14;
-					break;
+				case '.net':
+					return 15;
 			}
 		},
 
@@ -377,46 +426,34 @@ define([
 			switch (packageType) {
 				case 'c-source':
 					return 'C';
-					break;
 				case 'java7-source':
 					return 'Java';
-					break;
 				case 'java7-bytecode':
 					return 'Java';
-					break;
 				case 'python2':
 					return 'Python';
-					break;
 				case 'python3':
-					return 'Python'
-					break;
+					return 'Python';
 				case 'android-source':
 					return 'Java';
-					break;
 				case 'ruby':
 					return 'Ruby';
-					break;
 				case 'sinatra':
 					return 'Ruby';
-					break;
 				case 'rails':
 					return 'Ruby';
-					break;
 				case 'padrino':
 					return 'Ruby';
-					break;
 				case 'android-bytecode':
 					return 'Java';
-					break;
 				case 'java8-source':
 					return 'Java';
-					break;
 				case 'java8-bytecode':
 					return 'Java';
-					break;
 				case 'web-scripting':
 					return ['HTML', 'Javascript', 'PHP', 'CSS', 'XML'];
-					break;
+				case '.net':
+					return 'C#, VB';
 			}
 		},
 
@@ -424,55 +461,40 @@ define([
 			switch (packageType) {
 				case 'c-source':
 					return 'C/C++';
-					break;
 				case 'java-source':
 					return 'Java source';
-					break;
 				case 'java7-source':
 					return 'Java 7 source';
-					break;
 				case 'java-bytecode':
 					return 'Java bytecode';
-					break;
 				case 'java7-bytecode':
 					return 'Java 7 bytecode';
-					break;
 				case 'python':
 					return 'Python';
-					break;
 				case 'python2':
 					return 'Python2';
-					break;
 				case 'python3':
 					return 'Python3';
-					break;
 				case 'ruby':
 					return 'Ruby';
-					break;
 				case 'sinatra':
 					return 'Sinatra';
-					break;
 				case 'rails':
 					return 'Rails';
-					break;
 				case 'padrino':
 					return 'Padrino';
-					break;
 				case 'android-source':
 					return 'Android source';
-					break;
 				case 'android-bytecode':
 					return 'Android bytecode';
-					break;
 				case 'java8-source':
 					return 'Java 8 source';
-					break;
 				case 'java8-bytecode':
 					return 'Java 8 bytecode';
-					break;
 				case 'web-scripting':
 					return 'Web scripting';
-					break;
+				case '.net':
+					return '.NET';
 			}		
 		},
 
@@ -483,7 +505,7 @@ define([
 					if (i == packageTypes.length - 1) {
 						string += " or ";
 					} else {
-						string += ", "
+						string += ", ";
 					}
 				} 
 				string += Class.packageTypeToName(packageTypes[i]);

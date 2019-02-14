@@ -13,7 +13,7 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2018 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2019 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 define([
@@ -68,12 +68,13 @@ define([
 
 		send: function(options) {
 			var self = this;
+			var response;
 
 			if (this.has('email')) {
 
 				// find user associated with this email
 				//
-				var response = $.ajax({
+				response = $.ajax({
 					url: Config.servers.web + '/admin/email/user',
 					type: 'POST',
 						dataType: 'json',
@@ -108,7 +109,7 @@ define([
 
 				// find user associated with this username
 				//
-				var response = $.ajax({
+				response = $.ajax({
 					url: Config.servers.web + '/admin/username/user',
 					type: 'POST',
 						dataType: 'json',

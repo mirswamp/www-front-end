@@ -16,6 +16,10 @@
 	<%- notes %>
 </td>
 
+<% if (showProjects) { %>
+<td class="projects"></td>
+<% } %>
+
 <td class="date datetime last">
 	<%= dateToSortableHTML(model.get('create_date')) %>
 </td>

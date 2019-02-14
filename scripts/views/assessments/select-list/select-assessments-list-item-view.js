@@ -13,7 +13,7 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2018 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2019 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 define([
@@ -42,19 +42,67 @@ define([
 		}),
 
 		//
+		// querying methods
+		//
+
+		getProjectUrl: function(data) {
+			if (data.project_uuid && data.project_uuid != 'undefined') {
+				return Registry.application.getURL() + '#projects/' + data.project_uuid;	
+			}
+		},
+
+		getPackageUrl: function(data) {
+			if (data.package_uuid && data.package_uuid != 'undefined') {
+				return Registry.application.getURL() + '#packages/' + data.package_uuid;	
+			}
+		},
+
+		getPackageVersionUrl: function(data) {
+			if (data.package_version_uuid && data.package_version_uuid != 'undefined') {
+				return Registry.application.getURL() + '#packages/versions/' + data.package_version_uuid;
+			}
+		},
+
+		getToolUrl: function(data) {
+			if (data.tool_uuid && data.tool_uuid != 'undefined') {
+				return Registry.application.getURL() + '#tools/' + data.tool_uuid;
+			}
+		},
+
+		getToolVersionUrl: function(data) {
+			if (data.tool_version_uuid && data.tool_version_uuid != 'undefined') {
+				return Registry.application.getURL() + '#tools/versions/' + data.tool_version_uuid;
+			}
+		},
+
+		getPlatformUrl: function(data) {
+			if (data.platform_uuid && data.platform_uuid != 'undefined') {
+				return Registry.application.getURL() + '#platforms/' + data.platform_uuid;
+			}
+		},
+
+		getPlatformVersionUrl: function(data) {
+			if (data.platform_version_uuid && data.platform_version_uuid != 'undefined') {
+				return Registry.application.getURL() + '#platforms/versions/' + data.platform_version_uuid;
+			}
+		},
+
+		//
 		// rendering methods
 		//
 
 		template: function(data) {
 			return _.template(Template, _.extend(data, {
 				index: this.options.index + 1,
+				showProjects: this.options.showProjects,
 				showNumbering: this.options.showNumbering,
-				packageUrl: data.package_uuid && data.package_uuid != 'undefined'? Registry.application.getURL() + '#packages/' + data.package_uuid : undefined,
-				packageVersionUrl: data.package_version_uuid && data.package_version_uuid != 'undefined'? Registry.application.getURL() + '#packages/versions/' + data.package_version_uuid : undefined,
-				toolUrl: data.tool_uuid && data.tool_uuid != 'undefined'? Registry.application.getURL() + '#tools/' + data.tool_uuid : undefined,
-				toolVersionUrl: data.tool_version_uuid && data.tool_version_uuid != 'undefined'? Registry.application.getURL() + '#tools/versions/' + data.tool_version_uuid : undefined,
-				platformUrl: data.platform_uuid && data.platform_uuid != 'undefined'? Registry.application.getURL() + '#platforms/' + data.platform_uuid : undefined,
-				platformVersionUrl: data.platform_version_uuid && data.platform_version_uuid != 'undefined'? Registry.application.getURL() + '#platforms/versions/' + data.platform_version_uuid : undefined,
+				projectUrl: this.getProjectUrl(data),
+				packageUrl: this.getPackageUrl(data),
+				packageVersionUrl: this.getPackageVersionUrl(data),
+				toolUrl: this.getToolUrl(data),
+				toolVersionUrl: this.getToolVersionUrl(data),
+				platformUrl: this.getPlatformUrl(data),
+				platformVersionUrl: this.getPlatformVersionUrl(data),
 				showDelete: this.options.showDelete
 			}));
 		},

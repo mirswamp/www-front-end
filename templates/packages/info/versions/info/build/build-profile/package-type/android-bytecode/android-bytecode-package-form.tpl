@@ -13,3 +13,7 @@
 		</div>
 	</fieldset>
 </form>
+
+<div align="right">
+	<label><span class="required"></span>Fields are required</label>
+</div>

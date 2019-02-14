@@ -12,7 +12,7 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2018 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2019 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 define([
@@ -78,7 +78,7 @@ define([
 					var keys = Object.keys(object); 
 					if (keys.length > 0) {	
 						var item = object[keys[0]]; 
-						if (tab == "Condor Queue") {
+						if ((tab == "Assessment Queue") || (tab == "Metric Queue") || (tab == "Viewer Queue")) {
 							region.show(new UuidItemSelectListView({
 								fieldnames: item.fieldnames,
 								collection: new Backbone.Collection(item.data),
@@ -105,7 +105,6 @@ define([
 
 		onClickTab: function(event) {
 			this.options.parent.options.activeTab = $(event.target).closest('li').find('span').html();
-			this.options.parent.update();
 		}
 	});
 });

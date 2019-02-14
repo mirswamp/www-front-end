@@ -13,7 +13,7 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2018 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2019 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 define([
@@ -62,8 +62,6 @@ define([
 			'click #show-grouping': 'onClickShowGrouping',
 			'click #delete-results': 'onClickDeleteResults'
 		},
-
-		threadFixMessage: "SWAMP will run a private ThreadFix viewer, protected by SWAMP system security, for your project. The ThreadFix viewer has its own internal account that is independent from your SWAMP account. For this reason, please do not use the password change or logout functions in SWAMP's private ThreadFix viewer, because they are redundant when using ThreadFix in the SWAMP environment.",
 
 		//
 		// constructor
@@ -221,7 +219,7 @@ define([
 				// show info message
 				//
 				if (!executionRecords || executionRecords.length == 0) {
-					this.showInfo("No results have been selected - viewing results will display previously viewed results.")
+					this.showInfo("No results have been selected - viewing results will display previously viewed results.");
 				} else {
 					this.showInfo("Click the view assessment results button to view the selected results using the selected viewer.");
 				}
@@ -641,6 +639,7 @@ define([
 					selected: selected,
 					sortList: this.options.sortList,
 					queryString: this.getQueryString(),
+					showProjects: Registry.application.session.user.get('has_projects'),
 					showNumbering: Registry.application.options.showNumbering,
 					showGrouping: Registry.application.options.showGrouping,
 					showStatus: true,
@@ -848,7 +847,7 @@ define([
 					var runRequest = new RunRequest({});
 					runRequest.handleError(response);
 				}
-			})
+			});
 		},
 
 		showSelectedViewer: function() {
@@ -936,17 +935,6 @@ define([
 		},
 
 		onClickViewersRadioButton: function() {
-
-			// check for ThreadFix
-			//
-			var viewer = this.getSelectedViewer();
-			if (viewer.get('name') == 'ThreadFix') {
-				Registry.application.modal.show(
-					new NotifyView({
-						message: this.threadFixMessage
-					})
-				);
-			}
 
 			// update view results button
 			//

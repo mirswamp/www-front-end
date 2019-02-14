@@ -12,7 +12,7 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2018 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2019 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 define([
@@ -25,7 +25,7 @@ define([
 	return Backbone.Model.extend({
 
 		//
-		// methods
+		// querying methods
 		//
 
 		getClassName: function() {
@@ -38,6 +38,19 @@ define([
 
 		isSameAs: function(model) {
 			return model && this.get(this.idAttribute) == model.get(model.idAttribute);
+		},
+
+		//
+		// setting methods
+		//
+
+		update: function(attributes) {
+			for (var key in attributes) {
+				var value = attributes[key];
+				if (value != undefined && value != null) {
+					this.set(key, value);
+				}
+			}
 		},
 
 		//
@@ -62,7 +75,7 @@ define([
 							message: "Could not fetch " + self.getClassName() + "."
 						})
 					);
-				}
+				};
 			}
 
 			// call superclass method

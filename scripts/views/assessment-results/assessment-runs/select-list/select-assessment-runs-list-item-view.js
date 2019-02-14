@@ -13,7 +13,7 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2018 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2019 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 define([
@@ -73,6 +73,52 @@ define([
 			return !this.model.hasErrors() && this.model.hasResults() && this.model.hasWeaknesses();
 		},
 
+		getRunUrl: function(data) {
+			return Registry.application.getURL() + '#runs/' + data.execution_record_uuid + '/status' + (this.options.queryString != ''? '?' + this.options.queryString : '');
+		},
+
+		getProjectUrl: function(data) {
+			if (data.project.project_uuid) {
+				return Registry.application.getURL() + '#projects/' + data.project.project_uuid;
+			}
+		},
+
+		getPackageUrl: function(data) {
+			if (data.package.package_uuid) {
+				return Registry.application.getURL() + '#packages/' + data.package.package_uuid;
+			}
+		},
+
+		getPackageVersionUrl: function(data) {
+			if (data.package.package_version_uuid) {
+				return Registry.application.getURL() + '#packages/versions/' + data.package.package_version_uuid;
+			}
+		},
+
+		getToolUrl: function(data) {
+			if (data.tool.tool_uuid) {
+				return Registry.application.getURL() + '#tools/' + data.tool.tool_uuid;
+			}
+		},
+
+		getToolVersionUrl: function(data) {
+			if (data.tool.tool_version_uuid) {
+				return Registry.application.getURL() + '#tools/versions/' + data.tool.tool_version_uuid;
+			}
+		},
+
+		getPlatformUrl: function(data) {
+			if (data.platform.platform_uuid) {
+				return Registry.application.getURL() + '#platforms/' + data.platform.platform_uuid;
+			}
+		},
+
+		getPlatformVersionUrl: function(data) {
+			if (data.platform.platform_version_uuid) {
+				return Registry.application.getURL() + '#platforms/versions/' + data.platform.platform_version_uuid;
+			}
+		},
+
 		getErrorUrl: function() {
 			if (this.model.has('assessment_result_uuid') && this.model.has('project_uuid')) {
 				var assessmentResultUuid = this.model.get('assessment_result_uuid');
@@ -96,19 +142,20 @@ define([
 			return _.template(Template, _.extend(data, {
 				model: this.model,
 				index: this.options.index + 1,
-				runUrl: Registry.application.getURL() + '#runs/' + this.model.get('execution_record_uuid') + '/status' + (this.options.queryString != ''? '?' + this.options.queryString : ''),
-				packageUrl: data.package.package_uuid? Registry.application.getURL() + '#packages/' + data.package.package_uuid : undefined,
-				packageVersionUrl:  data.package.package_version_uuid? Registry.application.getURL() + '#packages/versions/' + data.package.package_version_uuid : undefined,
-				toolUrl: data.tool.tool_uuid? Registry.application.getURL() + '#tools/' + data.tool.tool_uuid : undefined,
-				toolVersionUrl: data.tool.tool_version_uuid? Registry.application.getURL() + '#tools/versions/' + data.tool.tool_version_uuid : undefined,
-				platformUrl: data.platform.platform_uuid? Registry.application.getURL() + '#platforms/' + data.platform.platform_uuid : undefined,
-				platformVersionUrl: data.platform.platform_version_uuid? Registry.application.getURL() + '#platforms/versions/' + data.platform.platform_version_uuid : undefined,
-				// resultsUrl: data.tool && !data.tool.is_restricted? this.getResultsUrl() : null,
+				runUrl: this.getRunUrl(data),
+				projectUrl: this.getProjectUrl(data),
+				packageUrl: this.getPackageUrl(data),
+				packageVersionUrl: this.getPackageVersionUrl(data),
+				toolUrl: this.getToolUrl(data),
+				toolVersionUrl: this.getToolVersionUrl(data),
+				platformUrl: this.getPlatformUrl(data),
+				platformVersionUrl: this.getPlatformVersionUrl(data),
 				resultsUrl: this.getResultsUrl(),
 				errorUrl: this.options.showErrors? this.getErrorUrl() : undefined,
 				isChecked: this.options.selected? this.options.selected.contains(this.model) : false,
 				showSelect: this.options.editable || this.isViewable(),
 				isSelectable: this.isSelectable(),
+				showProjects: this.options.showProjects,
 				showNumbering: this.options.showNumbering,
 				showStatus: this.options.showStatus,
 				showErrors: this.options.showErrors,

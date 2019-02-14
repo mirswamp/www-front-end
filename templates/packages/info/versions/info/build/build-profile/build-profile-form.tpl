@@ -1,10 +1,6 @@
 <form action="/" class="form-horizontal" onsubmit="return false;">
 	<div id="package-type-form"></div>
 
-	<div align="right">
-		<label><span class="required"></span>Fields are required</label>
-	</div>
-
 	<div class="panel" id="package-dependencies-accordion">
 		<div class="panel-group">
 			<div class="panel-heading">
