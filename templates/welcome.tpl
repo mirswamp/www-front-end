@@ -148,6 +148,7 @@
 							<li>HTML</li>
 							<li>CSS</li>
 							<li>XML</li>
+							<li>.NET</li>
 						</ul>
 					</div>
 				</div>
