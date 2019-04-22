@@ -75,7 +75,7 @@ function urlEncode(string) {
 function urlEncodeAll(strings) {
 	var URLs = new Array(strings.length);
 	for (var i = 0; i < strings.length; i++) {
-		URLs[i] = stringToURL(strings[i]);
+		URLs[i] = urlEncode(strings[i]);
 	}
 	return URLs;
 }

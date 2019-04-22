@@ -160,6 +160,7 @@ define([
 
 			// set resize handler to look for changes in number of columns
 			//
+			/*
 			this.onResizeHandler = $(window).resize(function() {
 				if (self.numColumns != undefined && self.numColumns != self.getNumColumns()) {
 
@@ -169,6 +170,7 @@ define([
 					Backbone.history.start();
 				}
 			});
+			*/
 
 			// create regions
 			//
@@ -288,8 +290,11 @@ define([
 				showGrouping: this.options.showGrouping,
 				autoRefresh: this.options.autoRefresh,
 				authProvider: this.options.authProvider
-			}), { 
-				expires: 7, 
+			}), {
+
+				// if not specified, the layout cookie will persist for 7 days
+				//
+				expires: Config.cookie.expires != 'undefined'? Config.cookie.expires : 7, 
 				domain: Config.cookie.domain, 
 				path: Config.cookie.path, 
 				secure: Config.cookie.secure 
@@ -319,8 +324,6 @@ define([
 		},
 
 		isMobile: function() {
-			return false;
-			/*
 			return (
 				navigator.userAgent.match(/Android/i) ||
 				navigator.userAgent.match(/webOS/i) ||
@@ -330,57 +333,52 @@ define([
 				navigator.userAgent.match(/BlackBerry/i) ||
 				navigator.userAgent.match(/Windows Phone/i)
 			);
-			*/
 		},
 
 		//
 		// layout methods
 		//
 
+		getLayout: function() {
+			if (this.isMobile()) {
+				return 'one-column-bottom-navbar';
+			} else {
+				return this.options.layout;
+			}
+		},
+
 		setLayout: function(layout) {
 			this.options.layout = layout;
 			this.saveOptions();
 		},
 
-		getNavbarOrientation: function() {
-			if (this.isMobile()) {
-				return 'bottom';
-			} else {
-				switch (this.options.layout) {
-					case 'one-column-top-navbar':
-						return 'top';
-						break;
-					case 'one-column-bottom-navbar':
-						return 'bottom'
-						break;
-					case 'two-columns-left-sidebar':
-					case 'two-columns-left-sidebar-large':
-						return 'left';
-						break;
-					case 'two-columns-right-sidebar':
-					case 'two-columns-right-sidebar-large':
-						return 'right';
-						break;
-				}
+		getLayoutOrientation: function(layout) {
+			switch (layout) {
+				case 'one-column-top-navbar':
+					return 'top';
+				case 'one-column-bottom-navbar':
+					return 'bottom';
+				case 'two-columns-left-sidebar':
+				case 'two-columns-left-sidebar-large':
+					return 'left';
+				case 'two-columns-right-sidebar':
+				case 'two-columns-right-sidebar-large':
+					return 'right';
+				default:
+					return 'left';
 			}
 		},
 
-		getNavbarSize: function() {
-			if (this.isMobile()) {
-				return 'small';
-			} else {
-				switch (this.options.layout) {
-					case 'two-columns-left-sidebar':
-					case 'two-columns-right-sidebar':
-						return 'small';
-						break;
-					case 'two-columns-left-sidebar-large':
-					case 'two-columns-right-sidebar-large':
-						return 'large';
-						break;
-					default:
-						return 'small';
-				}
+		getNavbarSize: function(layout) {			
+			switch (layout) {
+				case 'two-columns-left-sidebar':
+				case 'two-columns-right-sidebar':
+					return 'small';
+				case 'two-columns-left-sidebar-large':
+				case 'two-columns-right-sidebar-large':
+					return 'large';
+				default:
+					return 'small';
 			}
 		},
 
@@ -579,13 +577,23 @@ define([
 			$("body").html(this.template({}));
 		},
 
+		show: function(view) {
+			this.main.show(view);
+		},
+
 		showPage: function(view, options) {
-			this.main.show(
-				new PageView({
-					contentView: view,
-					nav: options && options.nav? options.nav : undefined
-				})
-			);
+			var pageView = new PageView({
+				contentView: view,
+				nav: options && options.nav? options.nav : undefined
+			});
+
+			this.show(pageView);
+
+			// add class for full (non-scrolling) pages
+			//
+			if (options && options.full) {
+				pageView.$el.addClass('full');
+			}
 
 			// store page content shown time
 			//
@@ -598,42 +606,24 @@ define([
 			var self = this;
 			require([
 				'registry',
-				'views/layout/one-column-view',
-				'views/layout/two-columns-view'
-			], function (Registry, OneColumnView, TwoColumnsView) {
-				if (self.getNumColumns() == 1) {
-					self.numColumns = 1;
+				'views/layout/multi-column-view'
+			], function (Registry, MultiColumnView) {
+				var layout = self.getLayout();
 
-					// show one column view
-					//
-					self.showPage(
-						new OneColumnView({
-							nav: options? options.nav2: 'home',
-							model: options? options.model: undefined,
-							done: options? options.done: undefined,
-							navbarOrientation: self.getNavbarOrientation(),
-							showChangeIcons: !self.isMobile()
-						}), {
-							nav: options? options.nav1: undefined
-						}
-					);
-				} else {
-					self.numColumns = 2;
-
-					// show two columns view
-					//
-					self.showPage(
-						new TwoColumnsView({
-							nav: options? options.nav2: 'home',
-							model: options? options.model: undefined,
-							done: options? options.done: undefined,
-							navbarOrientation: self.getNavbarOrientation(),
-							navbarSize: self.getNavbarSize()
-						}), {
-							nav: options? options.nav1: undefined
-						}
-					);
-				}
+				// show multi column view
+				//
+				self.showPage(
+					new MultiColumnView({
+						nav: options? options.nav2: 'home',
+						model: options? options.model: undefined,
+						done: options? options.done: undefined,
+						navbarOrientation: self.getLayoutOrientation(layout),
+						navbarSize: self.getNavbarSize(layout)
+					}), {
+						nav: options? options.nav1: undefined,
+						full: options.full
+					}
+				);
 			});
 		},
 
@@ -649,6 +639,8 @@ define([
 					//
 					Registry.application.showContent({
 						nav1: options? options.nav : undefined,
+						nav2: options? options.nav2 : undefined,
+						full: options? options.full : undefined,
 
 						// callbacks
 						//
@@ -657,7 +649,7 @@ define([
 						}
 					});
 				} else {
-					self.numColumns = undefined;
+					// self.numColumns = undefined;
 
 					// user is not logged in, show content only
 					//

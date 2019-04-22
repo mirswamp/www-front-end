@@ -42,7 +42,53 @@ body {
 //
 
 #main {
-	margin-top: 50px;
+	padding-top: 50px;
+	height: 100%;
+}
+
+#page {
+	height: 100%;
+	display: flex;
+	flex-direction: column;
+
+	&.full {
+		#content {
+			flex-grow: 1;
+
+			// Safari requires us to explicitly set the height
+			//
+			height: calc(~"100% - 60px");
+
+			> .container {
+				height: 100%;
+
+				> .row {
+					height: 100%;
+
+					> .main.column {
+						height: 100%;
+
+						> .content {
+							height: 100%;
+						}
+					}
+				}
+			}
+
+			> div {
+				height: 100%;
+			}
+		}
+	}
+}
+
+//
+// fix to ensure that ace scroll bars are visible
+//
+
+.ace_scrollbar-inner {
+	background-color: white;
+	opacity: 0.01;
 }
 
 //
@@ -91,6 +137,7 @@ body {
 
 #content {
 	.container {
+		height: 100%;
 		color: @darkGrey;
 		background-color: white;
 	}
@@ -181,55 +228,58 @@ body {
 }
 
 //
-// one column styles
-//
-
-.one-column {
-	.bottom.content {
-		padding-top: 50px
-	}
-}
-
-//
 // two column styles
 //
 
-.two-column .content {
-	width: 100%;
+.two-column {
+	display: flex;
+	margin-left: auto;
+	margin-right: auto;
+
+	&.left {
+		.side.column {
+			margin-right: 10px;
+		}
+	}
+
+	&.right {
+		flex-direction: row-reverse;
+
+		.side.column {
+			margin-left: 10px;
+		}
+	}
+
+	.side.column {
+		padding-top: 20px;
+	}
+
+	.main.column {
+		flex-grow: 1;
+	}
 }
 
-.side.column {
-	padding-top: 20px;
+.main.column {
+	.content {
+		width: 100%;
+		margin-top: 0;
+	}
 }
 
-.main.column .content {
-	margin-top: 0;
+.top .main.column {
+	height: 100%;
 }
 
-//
-// left side column styles
-//
+.bottom {
+	.main.column {
+		padding-bottom: 35px;
+	}
 
-.left.side.column {
-	float: left;
-	margin-right: 15px;
-}
-
-.right.main.column {
-	margin-left: 0;
-}
-
-//
-// right side column styles
-//
-
-.right.side.column {
-	float: right;
-	margin-left: 15px;
-}
-
-.left.main.column {
-	margin-right: 0;
+	.side.column {
+		#sidebar {
+			bottom: 0;
+		}
+	}
 }
 
 //

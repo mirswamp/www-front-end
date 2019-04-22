@@ -181,7 +181,7 @@ define([
 				},
 
 				error: function() {
-					self.$el.find('#gem-info').append("No information is available.")
+					self.$el.find('#gem-info').append("No information is available.");
 				}
 			});
 		},

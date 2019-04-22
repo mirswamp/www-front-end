@@ -117,12 +117,10 @@ define([
 			// find sorting column and direction
 			//
 			if (this.$el.find('table .headerSortUp').length > 0) {
-				var el = this.$el.find('table .headerSortUp')[0];
-				column = el.column;
+				column = this.$el.find('table .headerSortUp')[0].column;
 				direction = 1;
 			} else if (this.$el.find('table .headerSortDown').length > 0) {
-				var el = this.$el.find('table .headerSortDown')[0];
-				column = el.column;
+				column = this.$el.find('table .headerSortDown')[0].column;
 				direction = 0;
 			}
 
@@ -175,7 +173,6 @@ define([
 		},
 
 		getSortColumnIndex: function() {
-			var index = undefined;
 			var headerColumns = this.$el.find('thead th');
 			for (var i = 0; i < headerColumns.length; i++) {
 				if ($(headerColumns[i]).hasClass('headerSortDown') || 
@@ -195,7 +192,7 @@ define([
 				var cells = this.$el.find('td');
 				for (var i = 0; i < cells.length; i++) {
 					if (this.constructor.cellContainsClass(cells[i], exceptions)) {
-						$(cell).removeClass('duplicate');
+						$(cells[i]).removeClass('duplicate');
 					}
 				}
 			} else {
@@ -248,9 +245,12 @@ define([
 				}
 			}
 
-			// find sorting column
+			// show sorting
 			//
 			if (this.options.showSortingColumn) {
+
+				// find sorting column
+				//		
 				var sortColumnIndex = this.getSortColumnIndex();
 				if (sortColumnIndex) {
 

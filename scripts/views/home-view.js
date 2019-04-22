@@ -34,8 +34,7 @@ define([
 		template: _.template(Template),
 
 		regions: {
-			content: '.content',
-			dashboard: '#dashboard'
+			content: '.content'
 		},
 
 		//
@@ -68,8 +67,8 @@ define([
 
 		showDashboard: function(trialProject) {
 			if (this.options.nav === 'home') {
-				if (this.dashboard) {
-					this.dashboard.show(
+				if (this.content) {
+					this.content.show(
 						new DashboardView({
 							model: trialProject
 						})

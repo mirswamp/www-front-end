@@ -225,6 +225,13 @@ define([
 			window.location = this.urlRoot + '/' + this.get('package_version_uuid') + '/download';
 		},
 
+		fetchFile: function(filePath, options) {
+			$.ajax(_.extend(options, {
+				url: this.urlRoot + '/' + this.get('package_version_uuid') + '/file' + '?path=' + encodeURI(filePath),
+				type: 'GET'
+			}));	
+		},
+
 		add: function(options) {
 			$.ajax(_.extend(options, {
 				url: this.urlRoot + '/' + this.get('package_version_uuid') + '/add',
@@ -296,7 +303,7 @@ define([
 				if (!options.data) {
 					options.data = {};
 				}
-				options.data['package_path'] = this.get('package_path')
+				options.data['package_path'] = this.get('package_path');
 			}
 			$.ajax(_.extend(options, {
 				url: this.urlRoot + '/' + (this.isNew()? 'new': this.get('package_version_uuid')) + '/file-types',
@@ -309,7 +316,7 @@ define([
 				if (!options.data) {
 					options.data = {};
 				}
-				options.data['package_path'] = this.get('package_path')
+				options.data['package_path'] = this.get('package_path');
 			}
 			$.ajax(_.extend(options, {
 				url: this.urlRoot + '/' + (this.isNew()? 'new': this.get('package_version_uuid')) + '/file-list',
@@ -322,7 +329,7 @@ define([
 				if (!options.data) {
 					options.data = {};
 				}
-				options.data['package_path'] = this.get('package_path')
+				options.data['package_path'] = this.get('package_path');
 			}
 			$.ajax(_.extend(options, {
 				url: this.urlRoot + '/' + (this.isNew()? 'new': this.get('package_version_uuid')) + '/file-tree',
@@ -335,7 +342,7 @@ define([
 				if (!options.data) {
 					options.data = {};
 				}
-				options.data['package_path'] = this.get('package_path')
+				options.data['package_path'] = this.get('package_path');
 			}
 			$.ajax(_.extend(options, {
 				url: this.urlRoot + '/' + (this.isNew()? 'new': this.get('package_version_uuid')) + '/directory-list',

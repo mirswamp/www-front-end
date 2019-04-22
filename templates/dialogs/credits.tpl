@@ -12,32 +12,11 @@
 	</div>
 	<div class="header row">
 		<div class="col-md-4">
-			<div align="center"><h3>Software Development Team</h3></div>
-			<ul>
-				<li>Abe Megahed - web developer</li>
-				<li>Joe Johnson - developer</li>
-				<li>Tom Bricker - web developer</li>
-				<li>Mike Peterson - testing / QA</li>
-				<li>Peter Shell - database admin</li>
-				<li>Yas Siddineni - analysis</li>
-			</ul>
-		</div>
-		<div class="col-md-4">
 			<div align="center"><h3>Leadership Team</h3></div>
 			<ul>
 				<li>Irene Landrum - manager</li>
-				<li>Allison (Ally) Miller - admin</li>
+				<li>Allyson (Ally) Miller - admin</li>
 			</ul>
-			<div align="center"><h3>Software Infrastructure Team</h3></div>
-			<ul>
-				<li>Dan Creed - infrastructure</li>
-				<li>Jeff Gardner - infrastructure</li>
-				<li>Jeff Peterson - infrastructure</li>
-				<li>Mark Stokosa - infrastructure</li>
-				<li>Erik Lenters - infrastructure</li>
-			</ul>
-		</div>
-		<div class="col-md-4">
 			<div align="center"><h3>Principal Investigators</h3></div>
 			<ul>
 				<li>Miron Livny - head PI</li>
@@ -45,11 +24,25 @@
 				<li>Bart Miller - PI</li>
 				<li>Von Welch - PI</li>
 			</ul>
+		</div>
+		<div class="col-md-4">
+			<div align="center"><h3>Software Development Team</h3></div>
+			<ul>
+				<li>Abe Megahed - web developer</li>
+				<li>Tom Bricker - software developer</li>
+				<li>Mike Peterson - testing / QA</li>
+				<li>Peter Shell - database admin</li>	
+			</ul>
 			<div align="center"><h3>Framework / Usability Team</h3></div>
 			<ul>
 				<li>Jim Kupsch - SwA tools</li>
-				<li>Vamshi Basupalli - SwA tools</li>
-				<li>Kent Wenger - usability testing</li>
+			</ul>
+		</div>
+		<div class="col-md-4">
+			<div align="center"><h3>Software Infrastructure Team</h3></div>
+			<ul>
+				<li>Jeff Gardner - infrastructure</li>
+				<li>Jeff Peterson - infrastructure</li>
 			</ul>
 		</div>
 	</div>

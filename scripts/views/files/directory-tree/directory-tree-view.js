@@ -43,7 +43,7 @@ define([
 		expanderOpenIcon: 'fa-caret-down',
 
 		//
-		// methods
+		// querying methods
 		//
 
 		isSelectable: function() {
@@ -56,6 +56,10 @@ define([
 
 		isFileSelected: function(file) {
 			return file.get('name') == this.options.selectedFileName;
+		},
+
+		isRoot: function() {
+			return !this.options.parent;
 		},
 
 		//
@@ -101,6 +105,10 @@ define([
 				}
 			}
 
+			if (this.options.expanded || this.isRoot()) {
+				this.expand();
+			}
+
 			// apply callback
 			//
 			if (this.options.onrender) {
@@ -141,40 +149,52 @@ define([
 		},
 
 		//
+		// expand / collapse methods
+		//
+
+		expand: function() {
+
+			// switch icon
+			//
+			this.$el.find('> .directory > .info .expander').removeClass(this.expanderClosedIcon);
+			this.$el.find('> .directory > .info .expander').addClass(this.expanderOpenIcon);
+
+			// switch icon of folder icon
+			//
+			this.$el.find('> .directory > .info .expander + .icon').addClass('fa-folder-open');
+			this.$el.find('> .directory > .info .expander + .icon').removeClass('fa-folder');
+
+			// expand
+			//
+			this.showContents();			
+		},
+
+		collapse: function() {
+
+			// switch icon
+			//
+			this.$el.find('> .directory > .info .expander').removeClass(this.expanderOpenIcon);
+			this.$el.find('> .directory > .info .expander').addClass(this.expanderClosedIcon);
+
+			// switch icon of folder icon
+			//
+			this.$el.find('> .directory > .info .expander + .icon').addClass('fa-folder');
+			this.$el.find('> .directory > .info .expander + .icon').removeClass('fa-folder-open');
+
+			// unexpand
+			//
+			this.hideContents();
+		},
+
+		//
 		// event handling methods
 		//
 
 		onClickExpander: function(event) {
 			if ($(event.target).hasClass(this.expanderClosedIcon)) {
-
-				// switch icon
-				//
-				$(event.target).removeClass(this.expanderClosedIcon);
-				$(event.target).addClass(this.expanderOpenIcon);
-
-				// switch icon of folder icon
-				//
-				$(event.target).next('i').addClass('fa-folder-open');
-				$(event.target).next('i').removeClass('fa-folder');
-
-				// expand
-				//
-				this.showContents();
+				this.expand();
 			} else {
-
-				// switch icon
-				//
-				$(event.target).removeClass(this.expanderOpenIcon);
-				$(event.target).addClass(this.expanderClosedIcon);
-
-				// switch icon of folder icon
-				//
-				$(event.target).next('i').addClass('fa-folder');
-				$(event.target).next('i').removeClass('fa-folder-open');
-
-				// unexpand
-				//
-				this.hideContents();
+				this.collapse();
 			}
 
 			event.stopPropagation();

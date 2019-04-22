@@ -70,15 +70,37 @@ function toQueryString(data) {
 	return queryString;
 }
 
+function arrayToQueryString(name, array) {
+	var queryString = '';
+	for (var i = 0; i < array.length; i++) {
+		queryString += (i > 0? '&' : '') + name + '%5B%5D=' + urlEncode(array[i]);
+	}
+	return queryString;
+}
+
 function queryStringToData(queryString) {
 	var data = {};
 	if (queryString) {
 		var substrings = queryString.split('&');
 		for (var i = 0; i < substrings.length; i++) {
-			var pair = substrings[i].split('=');
-			var key = pair[0];
-			var value = pair[1];
-			data[key] = value;
+			var substring = substrings[i];
+
+			// parse key value pair
+			//
+			var equalSign = substring.indexOf('=');
+			var key = substring.substr(0, equalSign);
+			var value = substring.substr(equalSign + 1, substring.length);
+
+			if (key.endsWith('[]')) {
+				var array = key.substring(0, key.length - 2);
+				if (data[array]) {
+					data[array].push(value);
+				} else {
+					data[array] = [value];
+				}
+			} else {
+				data[key] = value;
+			}
 		}
 	}
 	return data;
@@ -115,11 +137,17 @@ function getQueryVariable(queryString, variable) {
 		return undefined;
 	}
 	
-	var vars = queryString.split('&');
-	for (var i = 0; i < vars.length; i++) {
-		var pair = vars[i].split('=');
-		if (pair[0] == variable) {
-			return pair[1];
+	var substrings = queryString.split('&');
+	for (var i = 0; i < substrings.length; i++) {
+		var substring = substrings[i];
+
+		// parse key value pair
+		//
+		var equalSign = substring.indexOf('=');
+		var key = substring.substr(0, equalSign);
+		var value = substring.substr(equalSign + 1, substring.length);
+		if (key == variable) {
+			return value;
 		}
 	}
 	
@@ -136,13 +164,20 @@ function getQueryVariables(queryString, variable) {
 	}
 
 	var queryVariables = [];
-	var vars = queryString.split('&');
+	var substrings = queryString.split('&');
 	var count = 0;
 	
-	for (var i = 0; i < vars.length; i++) {
-		var pair = vars[i].split('=');
-		if (pair[0] == variable) {
-			queryVariables[count] = pair[1];
+	for (var i = 0; i < substrings.length; i++) {
+		var substring = substrings[i];
+
+		// parse key value pair
+		//
+		var equalSign = substring.indexOf('=');
+		var key = substring.substr(0, equalSign);
+		var value = substring.substr(equalSign + 1, substring.length);
+
+		if (key == variable) {
+			queryVariables[count] = value;
 			count += 1;
 		}
 	} 

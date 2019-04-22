@@ -4,8 +4,9 @@
 	},
 
 	"cookie": {
-		"name": "swamp",
+		"name": "swamp_layout",
 		"domain": null,
+                "expires": 7,
 		"path": "/",
 		"secure": true
 	},

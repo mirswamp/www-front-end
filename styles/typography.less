@@ -37,13 +37,11 @@ h1, h2, h3, .brand, label, .nav, .navbar, th, legend, .tagline {
 	font-weight: normal;
 }
 
-h1, h2, h3 {
-	line-height: 1.25em;
-}
-
 h1 {
+	line-height: 1em;
 	color: @veryDarkGrey;
 	font-size: 250%;
+	padding-bottom: 5px;
 	border-bottom: 2px solid @primaryColor;
 	margin-bottom: 20px;
 
@@ -55,6 +53,10 @@ h1 {
 	}
 }
 
+h2, h3 {
+	line-height: 1.25em;
+}
+
 //
 // medium header font styles
 //
@@ -62,7 +64,6 @@ h1 {
 @media (max-width: 991px) {
 	h1 {
 		font-size: 225%;
-		line-height: 1.25em;
 		margin-bottom: 5px;
 	}
 }

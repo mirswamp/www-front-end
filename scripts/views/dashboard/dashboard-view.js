@@ -38,6 +38,8 @@ define([
 		// attributes
 		//
 
+		className: 'dashboard',
+		
 		events: {
 			'click #my-account': 'onClickMyAccount',
 			'click #sign-out': 'onClickSignOut'

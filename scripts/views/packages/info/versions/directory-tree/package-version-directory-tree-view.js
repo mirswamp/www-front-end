@@ -32,27 +32,8 @@ define([
 	var Class = DirectoryTreeView.extend({
 
 		//
-		// methods
+		// ajax methods
 		//
-
-		getChildView: function(item) {
-			if (item instanceof File) {
-				return new PackageVersionFileView({
-					model: item,
-					selectable: this.options.selectable,
-					selected: this.isFileSelected(item)
-				});
-			} else if (item instanceof Directory) {
-				return new Class(_.extend(this.options, {
-					model: item,
-					parent: this,
-					selectable: this.options.selectable,
-					selectedDirectoryName: this.options.selectedDirectoryName,
-					selectedFileName: this.options.selectedFileName,			
-					packageVersion: this.options.packageVersion
-				}));
-			}
-		},
 
 		fetchContents: function() {
 			var self = this;
@@ -61,7 +42,7 @@ define([
 			//
 			this.options.packageVersion.fetchFileList({
 				data: {
-					'dirname': this.model.get('name')
+					dirname: this.model.get('name')
 				},
 
 				// callbacks
@@ -85,6 +66,29 @@ define([
 					);	
 				}
 			});
+		},
+
+		//
+		// rendering methods
+		//
+
+		getChildView: function(item) {
+			if (item instanceof File) {
+				return new PackageVersionFileView({
+					model: item,
+					selectable: this.options.selectable,
+					selected: this.isFileSelected(item)
+				});
+			} else if (item instanceof Directory) {
+				return new Class(_.extend(this.options, {
+					model: item,
+					parent: this,
+					selectable: this.options.selectable,
+					selectedDirectoryName: this.options.selectedDirectoryName,
+					selectedFileName: this.options.selectedFileName,			
+					packageVersion: this.options.packageVersion
+				}));
+			}
 		},
 
 		showContents: function() {
@@ -111,7 +115,7 @@ define([
 							// set name of root directory
 							//
 							self.model.set({
-								'name': data
+								name: data
 							});
 
 							self.fetchContents();

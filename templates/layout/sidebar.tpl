@@ -76,14 +76,12 @@
 	<div class="tile well last">
 		<% if (typeof orientation !== 'undefined' && orientation == 'left') { %>
 		<div class="icons" align="center">
-			<i id="maximize-nav" class="active fa fa-search-plus" data-placement="right" data-content="Maximize navigation bar" data-container="body"></i>
 			<i id="top-nav" class="active fa fa-toggle-up" data-placement="right" data-content="Switch to top navigation bar" data-container="body"></i>
 			<i id="right-nav" class="active fa fa-toggle-right" data-placement="right" data-content="Switch to right navigation bar" data-container="body"></i>
 			<i id="bottom-nav" class="active fa fa-toggle-down" data-placement="right" data-content="Switch to bottom navigation bar" data-container="body" style="display:none"></i>
 		</div>
 		<% } else { %>
 		<div class="icons" align="center">
-			<i id="maximize-nav" class="active fa fa-search-plus" data-placement="left" data-content="Maximize navigation bar" data-container="body"></i>
 			<i id="left-nav" class="active fa fa-toggle-left" data-placement="left" data-content="Switch to left navigation bar" data-container="body"></i>
 			<i id="top-nav" class="active fa fa-toggle-up" data-placement="left" data-content="Switch to top navigation bar" data-container="body"></i>
 			<i id="bottom-nav" class="active fa fa-toggle-down" data-placement="left" data-content="Switch to bottom navigation bar" data-container="body" style="display:none"></i>

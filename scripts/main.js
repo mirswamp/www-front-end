@@ -80,6 +80,8 @@ require.config({
 		//
 		bootstrap: '../vendor/bootstrap/js',
 		fancybox: '../vendor/fancybox/jquery.fancybox',
+		ace: '../vendor/ace',
+		split: '../vendor/split-js',
 
 		// bootstrap plugin paths
 		//

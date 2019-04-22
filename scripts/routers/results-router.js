@@ -18,7 +18,8 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone'
+	'backbone',
+	'utilities/browser/query-strings'
 ], function($, _, Backbone) {
 
 	//
@@ -43,7 +44,8 @@ define([
 
 			// assessment results routes
 			//
-			'results/:assessment_results_uid/viewer/:viewer_uuid/project/:project_uuid': 'showAssessmentResultsViewer',
+			'results/:assessment_results_uid/viewer/:viewer_uuid/project/:project_uuid(?*query_string)': 'showAssessmentResultsViewer',
+			'results/:assessment_results_uid/projects/:project_uuid/source(?*query_string)': 'showAssessmentResultsSource',
 			'results/delete(?*query_string)': 'showDeleteAssessmentsResults',
 			'results(?*query_string)': 'showAssessmentsResults',
 			
@@ -61,7 +63,7 @@ define([
 			require([
 				'registry',
 				'routers/query-string-parser',
-				'views/assessment-results/assessment-runs/review/review-results-view'
+				'views/results/assessment-runs/review/review-results-view'
 			], function (Registry, QueryStringParser, ReviewResultsView) {
 				
 				// show content view
@@ -108,222 +110,38 @@ define([
 
 		showAssessmentResultsViewer: function(assessmentResultUuid, viewerUuid, projectUuid) {
 			var self = this;
-			require([
-				'jquery',
-				'underscore',
-				'text!templates/viewers/progress.tpl',
-				'registry',
-				'models/assessments/assessment-results',
-				'views/dialogs/notify-view'
-			], function ($, _, Template, Registry, AssessmentResults, NotifyView) {
+			var options = null;
 
-				// get assessment results
+			// strip query string
+			//
+			if (projectUuid.contains('?')) {
+				var pair = projectUuid.split("?");
+				projectUuid = pair[0];
+				options = queryStringToData(pair[1]);
+			}
+
+			// fetch results
+			//
+			this.fetchAssessmentResultsData(assessmentResultUuid, viewerUuid, projectUuid, _.extend({}, options, {
+
+				// callbacks
 				//
-				var assessmentResults = new AssessmentResults({
-					assessment_result_uuid: assessmentResultUuid
-				});
+				success: function(results, data) {
+					self.showResultsData(assessmentResultUuid, results, data, viewerUuid, projectUuid, options);
+				},
 
-				var lastStatus = '';
-
-				// call stored procedure
-				//
-				var getResults = function() {
-					var options = {
-						timeout: 0,
-
-						// callbacks
-						//
-						success: function(data) {
-							self.gotResults = true;
-
-							if (data.results_status === 'SUCCESS') {
-
-								// display results in new window
-								//
-								self.showResultsData(data);
-							} else if (data.results_status === 'LOADING') {
-
-								// don't redraw if same status
-								//
-								if (data.results_viewer_status != lastStatus) {
-									self.showProgress({
-										title: 'Preparing Results',
-										status: data.results_viewer_status
-									});
-									lastStatus = data.results_viewer_status;
-								}
-
-								// re-fetch without launching the viewer
-								//
-								setTimeout(function() {
-									getInstanceStatus(data.viewer_instance);
-								}, refreshInterval);
-							} else if (data.results_status === 'FAILED') {
-
-								// show error report
-								//
-								self.showJsonErrors(data.results);
-							} else if (data.results_status === 'TRYAGAIN') {
-			
-								// display try again message
-								//
-								Registry.application.modal.show(
-									new NotifyView({
-										message: "Can not launch viewer at this time.  Please wait and try again soon."
-									})
-								);
-							} else if (data.results_status == 'NOLAUNCH') {
-								
-								// display viewer error message
-								//
-								Registry.application.modal.show(
-									new NotifyView({
-										message: "Can not launch viewer.  Viewer has stopped. "
-									})
-								);	
-							} else {
-
-								// display results status error message
-								//
-								Registry.application.modal.show(
-									new NotifyView({
-										message: "Error viewing results: " + data.results_viewer_status
-									})
-								);
-							}
-						},
-
-						error: function(response) {
-							require([
-								'models/run-requests/run-request'
-							], function (RunRequest) {
-
-								// allow user to sign the EULA
-								//
-								var runRequest = new RunRequest({});
-								runRequest.handleError(response, {
-
-									// callbacks
-									//
-									success: function() {
-
-										// start refreshing
-										//
-										getResults();
-									},
-
-									reject: function() {
-
-										// update view
-										//
-										self.showProgress({
-											title: 'Preparing Results',
-											status: 'Results can not be shown until the tool policy is accepted.'
-										});
-									}
-								});
-							});
-						}
-					};
-
-					assessmentResults.fetchResults(viewerUuid, projectUuid, options);
-				};
-
-				var getInstanceStatus = function(viewerInstanceUuid) {
-					var options = {
-						timeout: 0,
-
-						// callbacks
-						//
-						success: function(data) {
-							if (data.results_status === 'SUCCESS') {
-
-								// display results in new window
-								//
-								self.showResultsData(data);
-							} else if(data.results_status === 'LOADING') {
-
-								// redraw if status changes
-								//
-								if (data.results_viewer_status != lastStatus) {
-									self.showProgress({
-										title: 'Preparing Results',
-										status: data.results_viewer_status
-									});
-									lastStatus = data.results_viewer_status;
-								}
-
-								// re-fetch without launching the viewer
-								//
-								setTimeout(function() {
-									getInstanceStatus(data.viewer_instance);
-								}, refreshInterval);
-							} else if(data.results_status === 'CLOSED') {
-
-									// report viewer closed
-									//
-									self.showProgress({
-										title: 'Viewer Closed',
-										status: data.results_viewer_status
-									});
-							} else if(data.results_status === 'TIMEOUT') {
-
-									// report viewer launch timeout
-									//
-									self.showProgress({
-										title: 'Viewer Launch Timeout',
-										status: data.results_viewer_status
-									});
-							} else {
-
-								// display results status error message
-								//
-								Registry.application.modal.show(
-									new NotifyView({
-										message: "Error viewing results: " + data.results_viewer_status
-									})
-								);
-							}
-						},
-
-						error: function() {
-
-							// show error dialog
-							//
-							Registry.application.modal.show(
-								new ErrorView({
-									message: "Could not fetch assessment results content."
-								})
-							);
-						}
-					};
-
-					assessmentResults.fetchInstanceStatus(viewerInstanceUuid, options);
-				};
-
-				// show loading page if results take longer than 1 second to load
-				//
-				window.setTimeout(function() {
-					if (!self.gotResults) {
-						self.showProgress({
-							title: 'Preparing Results',
-							status: 'fetching results...'
-						});
-					}
-				}, 1000);
-				
-				// start refreshing
-				//
-				getResults();
-			});
+				error: function(results, data) {
+					self.showJsonErrors(data.results);
+				}
+			}));
 		},
 
-		showResultsData: function(data) {
+		showResultsData: function(assessmentResultUuid, results, data, viewerUuid, projectUuid, options) {
 			if (data.results) {
 				if (typeof data.results == 'object') {
-					this.showJsonResults(data.results);
+					this.showJsonResults(assessmentResultUuid, results, data.results, viewerUuid, projectUuid, options);
 				} else {
-					this.showHtmlResults(data.results);
+					this.showHtmlResults(results, data.results, projectUuid);
 				}
 			} else if (data.results_url) {
 
@@ -333,18 +151,24 @@ define([
 			}
 		},
 
-		showJsonResults: function(json) {
+		showJsonResults: function(assessmentResultUuid, results, json, viewerUuid, projectUuid) {
 			require([
 				'registry',
-				'views/assessment-results/native-viewer/native-viewer-view'
+				'views/results/native-viewer/native-viewer-view'
 			], function (Registry, NativeViewerView) {
 
 				// show native viewer
 				//
 				Registry.application.showMain(
 					new NativeViewerView({
-						model: new Backbone.Model(json)
-					})
+						assessmentResultUuid: assessmentResultUuid,
+						results: results,
+						json: json,
+						viewerUuid: viewerUuid,
+						projectUuid: projectUuid
+					}), {
+						nav2: 'results'
+					}
 				);
 			});
 		},
@@ -352,7 +176,7 @@ define([
 		showJsonErrors: function(json) {
 			require([
 				'registry',
-				'views/assessment-results/error-report/error-report-view'
+				'views/results/error-report/error-report-view'
 			], function (Registry, ErrorReportView) {
 
 				// show error report
@@ -360,7 +184,9 @@ define([
 				Registry.application.showMain(
 					new ErrorReportView({
 						model: new Backbone.Model(json)
-					})
+					}), {
+						nav2: 'results'
+					}
 				);
 			});
 		},
@@ -408,6 +234,57 @@ define([
 			});
 		},
 
+		showAssessmentResultsSource: function(assessmentResultUuid, projectUuid, queryString) {
+			var self = this;
+			var params = queryStringToData(queryString);
+			require([
+				'models/assessments/assessment-results',
+				'utilities/browser/query-strings'
+			], function (AssessmentResults) {
+
+				// show results and source code
+				//
+				self.fetchNativeResultsData(assessmentResultUuid, projectUuid, {
+
+					// options
+					//
+					file: params.file? params.file : null,
+					include: params.include? params.include : null,
+					exclude: params.exclude? params.exclude : null,
+
+					// callbacks
+					//
+					success: function(results, data, options) {
+						var bugIndex = parseInt(params.bugindex);
+						var viewerUuid = options.viewer? options.viewer.get('viewer_uuid') : null;
+
+						// find source code file to display
+						//
+						var bugInstances = data.results.AnalyzerReport.BugInstances;
+						var bugInstance = bugIndex != undefined? bugInstances[bugIndex] : undefined;
+						var bugLocation = bugInstance? AssessmentResults.getPrimaryBugLocation(bugInstance.BugLocations) : undefined;
+						var filename = params.file? params.file : bugLocation.SourceFile;
+
+						// strip artificial dereference from file path
+						//
+						if (filename.startsWith('pkg1/')) {
+							filename = filename.replace('pkg1/', '');
+						}
+
+						self.showSourceCode(filename, data, {
+							results: results, 
+							projectUuid: projectUuid,
+							viewerUuid: viewerUuid,
+							bugIndex: bugIndex,
+							bugInstance: bugInstance,
+							bugLocation: bugLocation,
+							bugInstances: bugInstances
+						});
+					}
+				});
+			});
+		},
+
 		showAssessmentsResults: function(queryString) {
 			var self = this;
 			require([
@@ -415,7 +292,7 @@ define([
 				'routers/query-string-parser',
 				'collections/viewers/viewers',
 				'views/dialogs/error-view',
-				'views/assessment-results/assessments-results-view'
+				'views/results/assessments-results-view'
 			], function (Registry, QueryStringParser, Viewers, ErrorView, AssessmentsResultsView) {
 
 				// show content view
@@ -434,12 +311,11 @@ define([
 
 							// fetch viewers
 							//
-							var viewers = new Viewers();
-							viewers.fetchAll({
+							new Viewers().fetchAll({
 
 								// callbacks
 								//
-								success: function() {
+								success: function(collection) {
 
 									// show assessments results view
 									//
@@ -447,7 +323,7 @@ define([
 										new AssessmentsResultsView({
 											data: data,
 											model: view.model,
-											viewers: viewers
+											viewers: collection
 										})
 									);
 								},
@@ -475,7 +351,7 @@ define([
 				'registry',
 				'routers/query-string-parser',
 				'views/dialogs/error-view',
-				'views/assessment-results/delete/delete-assessments-results-view'
+				'views/results/delete/delete-assessments-results-view'
 			], function (Registry, QueryStringParser, ErrorView, DeleteAssessmentsResultsView) {
 
 				// show content view
@@ -516,7 +392,7 @@ define([
 				'registry',
 				'models/projects/project',
 				'models/assessments/execution-record',
-				'views/assessment-results/assessment-runs/status/assessment-run-status-view',
+				'views/results/assessment-runs/status/assessment-run-status-view',
 				'views/dialogs/error-view'
 			], function (Registry, Project, ExecutionRecord, AssessmentRunStatusView, ErrorView) {
 
@@ -604,39 +480,35 @@ define([
 				'registry',
 				'models/projects/project',
 				'models/assessments/assessment-results',
-				'views/assessment-results/assessment-results-view',
+				'views/results/assessment-results-view',
 				'views/dialogs/error-view'
 			], function (Registry, Project, AssessmentResults, AssessmentResultsView, ErrorView) {
 
-				// get assessment results
+				// fetch assessment results
 				//
-				var assessmentResults = new AssessmentResults({
+				new AssessmentResults({
 					assessment_result_uuid: assessmentResultUuid
-				});
-
-				assessmentResults.fetch({
+				}).fetch({
 
 					// callbacks
 					//
-					success: function() {
+					success: function(model) {
 
 						// fetch project
 						//
-						var project = new Project({
-							project_uid: assessmentResults.get('project_uuid')
-						});
-
-						project.fetch({
+						new Project({
+							project_uid: model.get('project_uuid')
+						}).fetch({
 
 							// callbacks
 							//
-							success: function() {
+							success: function(project) {
 
 								// show assessment results view
 								//
 								Registry.application.showPage(
 									new AssessmentResultsView({
-										model: assessmentResults,
+										model: model,
 										project: project
 									})
 								);
@@ -674,39 +546,35 @@ define([
 				'registry',
 				'models/projects/project',
 				'models/assessments/assessment-results',
-				'views/assessment-results/edit/edit-assessments-results-view',
+				'views/results/edit/edit-assessments-results-view',
 				'views/dialogs/error-view'
 			], function (Registry, Project, AssessmentResults, EditAssessmentResultsView, ErrorView) {
 
-				// get assessment results
+				// fetch assessment results
 				//
-				var assessmentResults = new AssessmentResults({
+				new AssessmentResults({
 					assessment_result_uuid: assessmentResultUuid
-				});
-
-				assessmentResults.fetch({
+				}).fetch({
 
 					// callbacks
 					//
-					success: function() {
+					success: function(model) {
 
 						// fetch project
 						//
-						var project = new Project({
-							project_uid: assessmentResults.get('project_uuid')
-						});
-
-						project.fetch({
+						new Project({
+							project_uid: model.get('project_uuid')
+						}).fetch({
 
 							// callbacks
 							//
-							success: function() {
+							success: function(project) {
 
 								// show assessment results view
 								//
 								Registry.application.show(
 									new EditAssessmentResultsView({
-										model: assessmentResults,
+										model: model,
 										project: project
 									})
 								);
@@ -737,6 +605,370 @@ define([
 					}
 				});
 			});	
+		},
+
+		showSourceCode: function(filename, data, options) {
+			require([
+				'registry',
+				'models/packages/package-version',
+				'models/assessments/assessment-results',
+				'views/results/native-viewer/source-code-view',
+				'views/dialogs/error-view',
+				'views/error-page-view'
+			], function (Registry, PackageVersion, AssessmentResults, SourceCodeView, ErrorView, ErrorPageView) {
+				var packageVersion = new PackageVersion({
+					package_version_uuid: data.results.AnalyzerReport.package.package_version_uuid
+				});
+
+				// fetch source code
+				//
+				packageVersion.fetchFile(filename, {
+
+					// callbacks
+					//
+					success: function(source) {
+						if (source) {
+
+							// show source code and results
+							//
+							Registry.application.showMain(
+								new SourceCodeView({
+									filename: filename,
+									source: source,
+									data: data,
+									projectUuid: options.projectUuid,
+									viewerUuid: options.viewerUuid,
+									bugIndex: options.bugIndex,
+									bugInstance: options.bugInstance,
+									bugLocation: options.bugLocation,
+									bugInstances: AssessmentResults.getBugInstancesByFile(options.bugInstances, 'pkg1/' + filename)
+								}),{
+									nav2: 'results',
+									full: true
+								}
+							);
+						} else {
+							Registry.application.showMain(
+								new ErrorPageView({
+									title: "404 - File not found",
+									message: "The file " + filename + " was not found in the original source code."
+								})
+							);
+						}
+					},
+
+					error: function() {
+
+						// show error dialog
+						//
+						Registry.application.modal.show(
+							new ErrorView({
+								message: "Could not fetch package source code."
+							})
+						);
+					}
+				});
+			});
+		},
+
+		//
+		// ajax methods
+		//
+
+		fetchNativeResultsData: function(assessmentResultUuid, projectUuid, options) {
+			var self = this;
+			require([
+				'registry',
+				'collections/viewers/viewers',
+				'views/dialogs/error-view'
+			], function (Registry, Viewers, ErrorView) {
+
+				// fetch viewers
+				//
+				new Viewers().fetchAll({
+
+					// callbacks
+					//
+					success: function(collection) {
+						var viewer = collection.where({
+							name: 'Native'
+						})[0];
+
+						if (viewer) {
+							self.fetchAssessmentResultsData(assessmentResultUuid, viewer.get('viewer_uuid'), projectUuid, _.extend(options, {
+								viewer: viewer,
+								file: options.file,
+								include: options.include,
+								exclude: options.exclude
+							}));
+						} else {
+
+							// show error dialog
+							//
+							Registry.application.modal.show(
+								new ErrorView({
+									message: "Could not find native viewer."
+								})
+							);
+						}
+					},
+
+					error: function() {
+
+						// show error dialog
+						//
+						Registry.application.modal.show(
+							new ErrorView({
+								message: "Could not fetch project viewers."
+							})
+						);
+					}
+				});
+			});
+		},
+
+		fetchAssessmentResultsData: function(assessmentResultUuid, viewerUuid, projectUuid, options) {
+			var self = this;
+			require([
+				'jquery',
+				'underscore',
+				'text!templates/viewers/progress.tpl',
+				'registry',
+				'models/assessments/assessment-results',
+				'views/dialogs/notify-view'
+			], function ($, _, Template, Registry, AssessmentResults, NotifyView) {
+
+				// get assessment results
+				//
+				var results = new AssessmentResults({
+					assessment_result_uuid: assessmentResultUuid
+				});
+				var lastStatus = '';
+
+				// call stored procedure
+				//
+				var getResults = function() {
+					var data = null;
+
+					// set filter data
+					//
+					if (options.include) {
+						data = {
+							include: options.include
+						};
+					} else if (options.exclude) {
+						data = {
+							exclude: options.exclude
+						};
+					}
+
+					results.fetchResults(viewerUuid, projectUuid, {
+						timeout: 0,
+						data: _.extend({
+							from: options.from,
+							to: options.to,
+							file: options.file? options.file : null
+						}, data),
+
+						// callbacks
+						//
+						success: function(data) {
+							self.gotResults = true;
+							switch (data.results_status) {
+
+								case 'SUCCESS':
+
+									// found results
+									//
+									options.success(results, data, options);
+									break;
+
+								case 'LOADING':
+
+									// don't redraw if same status
+									//
+									if (data.results_viewer_status != lastStatus) {
+										self.showProgress({
+											title: 'Preparing Results',
+											status: data.results_viewer_status
+										});
+										lastStatus = data.results_viewer_status;
+									}
+
+									// re-fetch without launching the viewer
+									//
+									setTimeout(function() {
+										getInstanceStatus(data.viewer_instance);
+									}, refreshInterval);
+									break;
+
+								case 'FAILED':
+
+									// could not find results
+									//
+									options.error(results, data);
+									break;
+
+								case 'TRYAGAIN':
+
+									// display try again message
+									//
+									Registry.application.modal.show(
+										new NotifyView({
+											message: "Can not launch viewer at this time.  Please wait and try again soon."
+										})
+									);
+									break;
+
+								case 'NOLAUNCH':
+
+									// display viewer error message
+									//
+									Registry.application.modal.show(
+										new NotifyView({
+											message: "Can not launch viewer.  Viewer has stopped. "
+										})
+									);
+									break;
+
+								default:
+
+									// display results status error message
+									//
+									self.showProgress({
+										title: 'Error Viewing Results',
+										status: data.results_viewer_status
+									});
+							}
+						},
+
+						error: function(response) {
+							require([
+								'models/run-requests/run-request'
+							], function (RunRequest) {
+
+								// allow user to sign the EULA
+								//
+								var runRequest = new RunRequest({});
+								runRequest.handleError(response, {
+
+									// callbacks
+									//
+									success: function() {
+
+										// start refreshing
+										//
+										getResults();
+									},
+
+									reject: function() {
+
+										// update view
+										//
+										self.showProgress({
+											title: 'Preparing Results',
+											status: 'Results can not be shown until the tool policy is accepted.'
+										});
+									}
+								});
+							});
+						}
+					});
+				};
+
+				var getInstanceStatus = function(viewerInstanceUuid) {
+					results.fetchInstanceStatus(viewerInstanceUuid, {
+						timeout: 0,
+
+						// callbacks
+						//
+						success: function(data) {
+							switch (data.results_status) {
+								case 'SUCCESS':
+
+									// found results
+									//
+									options.success(results, data);
+									break;
+
+								case 'LOADING':
+
+									// redraw if status changes
+									//
+									if (data.results_viewer_status != lastStatus) {
+										self.showProgress({
+											title: 'Preparing Results',
+											status: data.results_viewer_status
+										});
+										lastStatus = data.results_viewer_status;
+									}
+
+									// re-fetch without launching the viewer
+									//
+									setTimeout(function() {
+										getInstanceStatus(data.viewer_instance);
+									}, refreshInterval);
+									break;
+
+								case 'CLOSED':
+
+									// report viewer closed
+									//
+									self.showProgress({
+										title: 'Viewer Closed',
+										status: data.results_viewer_status
+									});
+									break;
+
+								case 'TIMEOUT':
+
+									// report viewer launch timeout
+									//
+									self.showProgress({
+										title: 'Viewer Launch Timeout',
+										status: data.results_viewer_status
+									});
+									break;
+
+								default:
+
+									// display results status error message
+									//
+									self.showProgress({
+										title: 'Error Viewing Results',
+										status: data.results_viewer_status
+									});
+							}
+						},
+
+						error: function() {
+
+							// show error dialog
+							//
+							Registry.application.modal.show(
+								new ErrorView({
+									message: "Could not fetch assessment results content."
+								})
+							);
+						}
+					});
+				};
+
+				// show loading page if results take longer than 1 second to load
+				//
+				window.setTimeout(function() {
+					if (!self.gotResults) {
+						self.showProgress({
+							title: 'Preparing Results',
+							status: 'fetching results...'
+						});
+					}
+				}, 1000);
+				
+				// start refreshing
+				//
+				getResults();
+			});
 		}
 	});
 });

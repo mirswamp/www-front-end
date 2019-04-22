@@ -55,6 +55,13 @@ define([
 			}));
 		},
 
+		fetchCatalog: function(viewerUuid, projectUuid, options) {
+			$.ajax(_.extend(options, {
+				type: 'GET',
+				url: this.urlRoot + '/' + this.get('assessment_result_uuid') + '/viewer/' + viewerUuid + '/project/' + projectUuid + '/catalog'
+			}));
+		},
+
 		// Refresh status for viewer while launching
 		//
 		fetchInstanceStatus: function(viewerInstanceUuid, options) {
@@ -62,6 +69,32 @@ define([
 				type: 'GET',
 				url: this.urlRoot + '/viewer_instance/' + viewerInstanceUuid
 			}));
+		}
+	}, {
+
+		//
+		// static methods
+		//
+
+		getPrimaryBugLocation: function(bugLocations) {
+			for (var i = 0; i < bugLocations.length; i++) {
+				if (bugLocations[i].primary) {
+					return bugLocations[i];
+				}
+			}
+		},
+
+		getBugInstancesByFile: function(bugInstances, path) {
+			var array = [];
+			for (var i = 0; i < bugInstances.length; i++) {
+				var bugInstance = bugInstances[i];
+				var bugLocation = this.getPrimaryBugLocation(bugInstance.BugLocations);
+				if (bugLocation.SourceFile == path) {
+					bugInstance.BugLocation = bugLocation;
+					array.push(bugInstance);
+				}
+			}
+			return array;
 		}
 	});
 });

@@ -78,9 +78,9 @@ define([
 							done();
 						}
 					}, function(error) {
-						alert("Error - could not decode audio: " + error)
+						alert("Error - could not decode audio: " + error);
 					});
-				}
+				};
 
 				request.send();
 			}

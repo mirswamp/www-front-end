@@ -9,53 +9,52 @@
 	}
 	%>
 
-	<% if (showChangeIcons) { %>
 	<div class="icons hidden-xxs">
 		<i id="side-nav" class="active fa fa-toggle-left pull-right" data-placement="<%- opposite(orientation) %>" data-content="Switch to side navigation bar" data-container="body"></i>
 	</div>
-	<% } %>
+
 	<ul class="nav nav-pills nav-justified">
 		<% if (showHome) { %>
 		<li<% if (nav == 'home') {%> class="active" <% } %>>
-			<a href="#home"><i class="fa fa-home"></i><label class="hidden-xxs">Home</label></a>
+			<a href="#home"><i class="fa fa-home"></i><label class="hidden-xs">Home</label></a>
 		</li>
 		<% } %>
 
 		<li<% if (nav == 'packages') {%> class="active" <% } %>>
-			<a href="#packages"><i class="fa fa-gift"></i><label class="hidden-xxs">Packages</label></a>
+			<a href="#packages"><i class="fa fa-gift"></i><label class="hidden-xs">Packages</label></a>
 		</li>
 
 		<li<% if (nav == 'tools') {%> class="active" <% } %> style="display:none">
-			<a href="#tools"><i class="fa fa-wrench"></i><label class="hidden-xxs">Tools</label></a>
+			<a href="#tools"><i class="fa fa-wrench"></i><label class="hidden-xs">Tools</label></a>
 		</li>
 
 		<li<% if (nav == 'assessments') {%> class="active" <% } %>>
-			<a href="#assessments"><i class="fa fa-check"></i><label class="hidden-xxs">Assessments</label></a>
+			<a href="#assessments"><i class="fa fa-check"></i><label class="hidden-xs">Assessments</label></a>
 		</li>
 
 		<li<% if (nav == 'results') {%> class="active" <% } %>>
-			<a href="#results"><i class="fa fa-bug"></i><label class="hidden-xxs">Results</label></a>
+			<a href="#results"><i class="fa fa-bug"></i><label class="hidden-xs">Results</label></a>
 		</li>
 
 		<li<% if (nav == 'runs') {%> class="active" <% } %>>
-			<a href="#run-requests"><i class="fa fa-bus"></i><label class="hidden-xxs">Runs</label></a>
+			<a href="#run-requests"><i class="fa fa-bus"></i><label class="hidden-xs">Runs</label></a>
 		</li>
 		
 		<li<% if (nav == 'projects') {%> class="active" <% } %>>
-			<a href="#projects"><i class="fa fa-folder-open"></i><label class="hidden-xxs">Projects</label></a>
+			<a href="#projects"><i class="fa fa-folder-open"></i><label class="hidden-xs">Projects</label></a>
 		</li>
 
 		<li<% if (nav == 'events') {%> class="active" <% } %>>
-			<a href="#events?project=any"><i class="fa fa-bullhorn"></i><label class="hidden-xxs">Events</label></a>
+			<a href="#events?project=any"><i class="fa fa-bullhorn"></i><label class="hidden-xs">Events</label></a>
 		</li>
 		
 		<% if (isAdmin) { %>
 		<li<% if (nav == 'settings') {%> class="active" <% } %>>
-			<a href="#settings"><i class="fa fa-gears"></i><label class="hidden-xxs">Settings</label></a>
+			<a href="#settings"><i class="fa fa-gears"></i><label class="hidden-xs">Settings</label></a>
 		</li>
 
 		<li<% if (nav == 'overview') {%> class="active" <% } %>>
-			<a href="#overview"><i class="fa fa-eye"></i><label class="hidden-xxs">Overview</label></a>
+			<a href="#overview"><i class="fa fa-eye"></i><label class="hidden-xs">Overview</label></a>
 		</li>
 		<% } %>
 	</ul>
