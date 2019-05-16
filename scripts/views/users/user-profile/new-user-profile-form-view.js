@@ -42,9 +42,9 @@ define([
 		},
 
 		events: {
-			'change #username': 'onChangeUsername',
+			// 'change #username': 'onChangeUsername',
+			// 'change #email': 'onChangeEmail',
 			'change #promo-code': 'onChangePromoCode',
-			'change #email': 'onChangeEmail',
 			'change #class-code': 'onChangeClassCode'
 		},
 
