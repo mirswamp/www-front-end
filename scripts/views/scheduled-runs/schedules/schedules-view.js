@@ -18,24 +18,23 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
 	'text!templates/scheduled-runs/schedules/schedules.tpl',
-	'registry',
 	'collections/run-requests/run-requests',
-	'views/dialogs/error-view',
+	'views/base-view',
 	'views/scheduled-runs/schedules/filters/schedule-filters-view',
 	'views/scheduled-runs/schedules/list/schedules-list-view'
-], function($, _, Backbone, Marionette, Template, Registry, RunRequests, ErrorView, ScheduleFiltersView, SchedulesListView) {
-	return Backbone.Marionette.LayoutView.extend({
+], function($, _, Template, RunRequests, BaseView, ScheduleFiltersView, SchedulesListView) {
+	return BaseView.extend({
 
 		//
 		// attributes
 		//
 
+		template: _.template(Template),
+
 		regions: {
-			scheduleFilters: '#schedule-filters',
-			schedulesList: '#schedules-list'
+			filters: '#schedule-filters',
+			list: '#schedules-list'
 		},
 
 		events: {
@@ -45,7 +44,7 @@ define([
 		},
 
 		//
-		// methods
+		// constructor
 		//
 
 		initialize: function() {
@@ -63,11 +62,11 @@ define([
 		//
 
 		getQueryString: function() {
-			return this.scheduleFilters.currentView.getQueryString();
+			return this.getChildView('filters').getQueryString();
 		},
 
 		getFilterData: function() {
-			return this.scheduleFilters.currentView.getData();
+			return this.getChildView('filters').getData();
 		},
 
 		//
@@ -80,7 +79,7 @@ define([
 			// fetch schedules for a single project
 			//
 			this.collection.fetchByProject(project, {
-				data: this.scheduleFilters.currentView.getAttrs(),
+				data: this.getChildView('filters').getAttrs(),
 
 				// callbacks
 				//
@@ -90,13 +89,11 @@ define([
 
 				error: function() {
 
-					// show error dialog
+					// show error message
 					//
-					Registry.application.modal.show(
-						new ErrorView({
-							message: "Could not get run requests for this project."
-						})
-					);
+					application.error({
+						message: "Could not get run requests for this project."
+					});
 				}
 			});
 		},
@@ -107,7 +104,7 @@ define([
 			// fetch schedules for multiple projects
 			//
 			this.collection.fetchByProjects(projects, {
-				data: this.scheduleFilters.currentView.getAttrs(),
+				data: this.getChildView('filters').getAttrs(),
 
 				// callbacks
 				//
@@ -117,13 +114,11 @@ define([
 
 				error: function() {
 
-					// show error dialog
+					// show error message
 					//
-					Registry.application.modal.show(
-						new ErrorView({
-							message: "Could not get run requests for all projects."
-						})
-					);
+					application.error({
+						message: "Could not get run requests for all projects."
+					});
 				}
 			});
 		},
@@ -155,11 +150,11 @@ define([
 		// rendering methods
 		//
 
-		template: function(data) {
-			return _.template(Template, _.extend(data, {
+		templateContext: function() {
+			return {
 				project: this.options.data['project'],
-				showNumbering: Registry.application.options.showNumbering
-			}));
+				showNumbering: application.options.showNumbering
+			};
 		},
 
 		onRender: function() {
@@ -179,51 +174,33 @@ define([
 			
 			// show schedule filters view
 			//
-			this.scheduleFilters.show(
-				new ScheduleFiltersView({
-					model: this.model,
-					data: this.options.data? this.options.data : {},
+			this.showChildView('filters', new ScheduleFiltersView({
+				model: this.model,
+				data: this.options.data? this.options.data : {},
 
-					// callbacks
+				// callbacks
+				//
+				onChange: function() {
+					// setQueryString(self.getChildView('filters').getQueryString());			
+				
+					// update filter data
 					//
-					onChange: function() {
-						// setQueryString(self.scheduleFilters.currentView.getQueryString());			
-					
-						// update filter data
-						//
-						var projects = self.options.data.projects;
-						self.options.data = self.getFilterData();
-						self.options.data.projects = projects;
+					var projects = self.options.data.projects;
+					self.options.data = self.getFilterData();
+					self.options.data.projects = projects;
 
-						// update url
-						//
-						var queryString = self.getQueryString();
-						var state = window.history.state;
-						var url = getWindowBaseLocation() + (queryString? ('?' + queryString) : '');
-						window.history.pushState(state, '', url);
+					// update url
+					//
+					var queryString = self.getQueryString();
+					var state = window.history.state;
+					var url = getWindowBaseLocation() + (queryString? ('?' + queryString) : '');
+					window.history.pushState(state, '', url);
 
-						// update view
-						//
-						self.onChange();
-					}
-				})
-			);
-		},
-
-		showList: function() {
-
-			// show schedules list view
-			//
-			this.schedulesList.show(
-				new SchedulesListView({
-					project: this.options.data['project'],
-					collection: this.collection,
-					selectedAssessmentRunUuids: this.options.selectedAssessmentRunUuids,
-					showProjects: Registry.application.session.user.get('has_projects'),
-					showNumbering: Registry.application.options.showNumbering,
-					showDelete: true
-				})
-			);
+					// update view
+					//
+					self.onChange();
+				}
+			}));
 		},
 
 		fetchAndShowList: function() {
@@ -231,6 +208,20 @@ define([
 			this.fetchSchedules(function(schedules) {
 				self.showList();
 			});
+		},
+		
+		showList: function() {
+
+			// show schedules list view
+			//
+			this.showChildView('list', new SchedulesListView({
+				project: this.options.data['project'],
+				collection: this.collection,
+				selectedAssessmentRunUuids: this.options.selectedAssessmentRunUuids,
+				showProjects: application.session.user.get('has_projects'),
+				showNumbering: application.options.showNumbering,
+				showDelete: true
+			}));
 		},
 
 		//
@@ -255,7 +246,7 @@ define([
 		},
 
 		onClickShowNumbering: function(event) {
-			Registry.application.setShowNumbering($(event.target).is(':checked'));
+			application.setShowNumbering($(event.target).is(':checked'));
 			this.showList();
 		},
 

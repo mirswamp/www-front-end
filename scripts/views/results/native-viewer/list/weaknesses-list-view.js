@@ -18,72 +18,56 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
 	'text!templates/results/native-viewer/list/weaknesses-list.tpl',
-	'views/widgets/lists/sortable-table-list-view',
+	'views/base-view',
+	'views/collections/tables/sortable-table-list-view',
 	'views/results/native-viewer/list/weaknesses-list-item-view'
-], function($, _, Backbone, Marionette, Template, SortableTableListView, WeaknessesListItemView) {
+], function($, _, Template, BaseView, SortableTableListView, WeaknessesListItemView) {
 	return SortableTableListView.extend({
 
 		//
 		// attributes
 		//
 
-		tagName: 'table',
 		className: 'results',
+		template: _.template(Template),
 		childView: WeaknessesListItemView,
+
+		emptyView: BaseView.extend({
+			template: _.template("No weaknesses have been found.")
+		}),
 
 		sorting: {
 
-			// sort on name column in ascending order 
+			// sort on filename column in ascending order 
 			//
-			sortList: [[0, 0]]
+			sortList: [[0, 0], [1, 0]]
 		},
 
-		//
-		// constructor
-		//
-
-		initialize: function(options) {
-
-			// use specified sort order 
-			//
-			if (options.sortList) {
-				this.sorting.sortList = options.sortList;
-			}
-
-			// call superclass method
-			//
-			SortableTableListView.prototype.initialize.call(this, _.extend(options, {
-				sorting: true,
-				showSortingColumn: true,
-				showGrouping: this.options.showGrouping,
-				groupExcept: ['line-number', 'column-number', 'group', 'code']
-			}));
-
-			// set line numbering start
-			//
-			this.start = this.options.start || 0;
-		},
+		groupExcept: ['group', 'code'],
 
 		//
 		// rendering methods
 		//
 
-		template: function(data) {
-			if (this.collection.length > 0) {
-				return _.template(Template, _.extend(this.collection.at(0).attributes, {
-					showNumbering: this.options.showNumbering
-				}));
-			} else {
-				return _.template("No weaknesses have been found.");
-			}
+		templateContext: function() {
+			return _.extend({
+				showNumbering: this.options.showNumbering
+			}, this.collection && this.collection.length > 0? this.collection.at(0).attributes : null);
 		},
 
-		childViewOptions: function(model, index) {
+		childViewOptions: function(model) {
+
+			// check if empty view
+			//
+			if (!model) {
+				return {};
+			}
+
+			// return view options
+			//
 			return {
-				index: index + this.start,
+				index: (this.options.start || 0) + this.collection.indexOf(model),
 				showNumbering: this.options.showNumbering,
 				filter_type: this.options.filter_type,
 				filter: this.options.filter,

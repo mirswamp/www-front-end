@@ -1,6 +1,6 @@
 /******************************************************************************\
 |                                                                              |
-|                            classes-list-item-view.js                         |
+|                           classes-list-item-view.js                          |
 |                                                                              |
 |******************************************************************************|
 |                                                                              |
@@ -18,21 +18,17 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
 	'text!templates/users/classes/list/classes-list-item.tpl',
-	'registry',
 	'models/users/user-class',
-	'views/dialogs/confirm-view',
-	'views/dialogs/error-view',
-], function($, _, Backbone, Marionette, Template, Registry, UserClass, ConfirmView, ErrorView) {
-	return Backbone.Marionette.ItemView.extend({
+	'views/collections/tables/table-list-item-view',
+], function($, _, Template, UserClass, TableListItemView) {
+	return TableListItemView.extend({
 
 		//
 		// attributes
 		//
 
-		tagName: 'tr',
+		template: _.template(Template),
 
 		events: {
 			'click a': 'onClickLabel',
@@ -43,10 +39,10 @@ define([
 		// rendering methods
 		//
 
-		template: function(data) {
-			return _.template(Template, _.extend(data, {
+		templateContext: function() {
+			return {
 				showDelete: this.options.showDelete
-			}));
+			};
 		},
 
 		//
@@ -56,55 +52,49 @@ define([
 		onClickLabel: function() {
 			var self = this;
 			require([
-				'views/users/classes/dialogs/edit-class-view',
-			], function (EditClassView) {
-				Registry.application.modal.show(
-					new EditClassView({
-						model: self.model
-					})
-				);
+				'views/users/classes/dialogs/edit-class-dialog-view',
+			], function (EditClassDialogView) {
+				application.show(new EditClassDialogView({
+					model: self.model
+				}));
 			});
 		},
 
 		onClickDelete: function() {
 			var self = this;
 
-			// show confirm dialog
+			// show confirmation
 			//
-			Registry.application.modal.show(
-				new ConfirmView({
-					title: "Delete Class",
-					message: "Are you sure you wish to delete this class?",
+			application.confirm({
+				title: "Delete Class",
+				message: "Are you sure you wish to delete this class?",
 
-					// callbacks
-					//
-					accept: function() {
-						self.model.removeMember(self.options.user, {
+				// callbacks
+				//
+				accept: function() {
+					self.model.removeMember(self.options.user, {
 
-							// callbacks
+						// callbacks
+						//
+						success: function() {
+
+							// remove item from list
 							//
-							success: function() {
+							self.model.collection.remove(self.model);
+							self.options.parent.update();
+						},
 
-								// remove item from list
-								//
-								self.model.collection.remove(self.model);
-								self.options.parent.update();
-							},
+						error: function() {
 
-							error: function() {
-
-								// show error dialog
-								//
-								Registry.application.modal.show(
-									new ErrorView({
-										message: "Could not delete this class."
-									})
-								);
-							}
-						});
-					}
-				})
-			);
+							// show error message
+							//
+							application.error({
+								message: "Could not delete this class."
+							});
+						}
+					});
+				}
+			});
 		}
 	});
 });

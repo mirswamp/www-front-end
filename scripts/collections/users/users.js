@@ -18,12 +18,10 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
 	'config',
-	'registry',
 	'models/users/user',
 	'collections/base-collection'
-], function($, _, Backbone, Config, Registry, User, BaseCollection) {
+], function($, _, Config, User, BaseCollection) {
 	return BaseCollection.extend({
 
 		//
@@ -34,38 +32,26 @@ define([
 		url: Config.servers.web + '/users',
 
 		//
-		// filtering methods
-		//
-
-		getEnabled: function() {
-			var collection = this.clone();
-
-			collection.reset();
-			this.each(function(item) {
-				if (item.isEnabled()) {
-					collection.add(item);
-				}
-			});
-
-			return collection;
-		},
-
-		getDisabled: function() {
-			var collection = this.clone();
-
-			collection.reset();
-			this.each(function(item) {
-				if (item.isDisabled()) {
-					collection.add(item);
-				}
-			});
-
-			return collection;
-		},
-
-		//
 		// ajax methods
 		//
+
+		fetchAll: function(options) {
+			return Backbone.Collection.prototype.fetch.call(this, _.extend(options, {
+				url: Config.servers.web + '/admin/users/all' 
+			}));
+		},
+
+		fetchEnabled: function(options) {
+			return Backbone.Collection.prototype.fetch.call(this, _.extend(options, {
+				url: Config.servers.web + '/admin/users/enabled'
+			}));
+		},
+
+		fetchSignedIn: function(options) {
+			return Backbone.Collection.prototype.fetch.call(this, _.extend(options, {
+				url: Config.servers.web + '/admin/users/signed-in'
+			}));
+		},
 
 		fetchByProject: function(project, options) {
 			return this.fetch(_.extend(options, {
@@ -75,7 +61,7 @@ define([
 
 		fetchAdmins: function(admin, options) {
 			return this.fetch(_.extend(options, {
-				url: Config.servers.web + '/admins/' + admin.get('user_uid') + '/admins'
+				url: Config.servers.web + '/admin/admins/all'
 			}));
 		},
 
@@ -88,12 +74,6 @@ define([
 		fetchByInviters: function(options) {
 			return this.fetch(_.extend(options, {
 				url: Config.servers.web + '/admin_invitations/inviters'
-			}));
-		},
-
-		fetchAll: function(options) {
-			return this.fetch(_.extend(options, {
-				url: Config.servers.web + '/admins/' + Registry.application.session.user.get('user_uid') + '/users'
 			}));
 		},
 

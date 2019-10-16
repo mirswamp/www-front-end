@@ -18,24 +18,23 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
 	'text!templates/scheduled-runs/schedules/schedule/schedule.tpl',
-	'registry',
 	'collections/run-requests/run-request-schedules',
-	'views/dialogs/error-view',
+	'views/base-view',
 	'views/scheduled-runs/schedules/profile/schedule-profile-view',
-	'views/scheduled-runs/schedules/schedule/run-request-schedules-list/run-request-schedules-list-view'
-], function($, _, Backbone, Marionette, Template, Registry, RunRequestSchedules, ErrorView, ScheduleProfileView, RunRequestSchedulesListView) {
-	return Backbone.Marionette.LayoutView.extend({
+	'views/scheduled-runs/schedules/schedule/run-request-schedule-list/run-request-schedule-list-view'
+], function($, _, Template, RunRequestSchedules, BaseView, ScheduleProfileView, RunRequestScheduleListView) {
+	return BaseView.extend({
 
 		//
 		// attributes
 		//
 
+		template: _.template(Template),
+
 		regions: {
-			scheduleProfile: '#schedule-profile',
-			scheduleItemsList: '#schedule-items-list'
+			profile: '#schedule-profile',
+			list: '#schedule-items-list'
 		},
 
 		events: {
@@ -44,7 +43,7 @@ define([
 		},
 
 		//
-		// methods
+		// constructor
 		//
 
 		initialize: function() {
@@ -55,20 +54,18 @@ define([
 		// rendering methods
 		//
 
-		template: function(data) {
-			return _.template(Template, _.extend(data, {
+		templateContext: function() {
+			return {
 				project: this.options.project
-			}));
+			};
 		},
 
 		onRender: function() {
 			var self = this;
 			
-			this.scheduleProfile.show(
-				new ScheduleProfileView({
-					model: this.model
-				})
-			);
+			this.showChildView('profile', new ScheduleProfileView({
+				model: this.model
+			}));
 
 			// get schedule items
 			//
@@ -80,28 +77,18 @@ define([
 
 					// show schedule items list
 					//
-					self.scheduleItemsList.show(
-						new RunRequestSchedulesListView({
-							collection: self.collection
-						})
-					);
-
-					// enable or disable save button
-					//
-					if (self.collection.length === 0) {
-						self.disableSaveButton();
-					}
+					self.showChildView('list', new RunRequestScheduleListView({
+						collection: self.collection
+					}));
 				},
 
 				error: function() {
 
-					// show error dialog
+					// show error message
 					//
-					Registry.application.modal.show(
-						new ErrorView({
-							message: "Could not fetch items for this schedule."
-						})
-					);
+					application.error({
+						message: "Could not fetch items for this schedule."
+					});
 				}
 			});
 		},

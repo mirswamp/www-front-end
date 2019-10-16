@@ -18,13 +18,12 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
 	'config',
 	'models/assessments/scheduled-run',
 	'collections/run-requests/run-requests',
 	'collections/assessments/assessment-runs'
-], function($, _, Backbone, Config, ScheduledRun, RunRequests, AssessmentRuns) {
-	var Class = AssessmentRuns.extend({
+], function($, _, Config, ScheduledRun, RunRequests, AssessmentRuns) {
+	return AssessmentRuns.extend({
 
 		//
 		// Backbone attributes
@@ -49,30 +48,44 @@ define([
 		},
 
 		getRunRequests: function() {
-			var runRequests = new RunRequests();
+			var collection = new RunRequests();
 			for (var i = 0; i < this.length; i++) {
 				var scheduledRun = this.at(i);
 				var runRequest = scheduledRun.get('run_request');
-				if (!runRequests.contains(runRequest)) {
-					runRequests.add(runRequest);
+				if (!collection.contains(runRequest)) {
+					collection.add(runRequest);
 				}
 			}
-			return runRequests;
+			return collection;
 		},
 
 		getByRunRequest: function(runRequest) {
-			var scheduledRuns = new Class();
+
+			// create empty collection
+			//
+			var collection = new this.constructor([], {
+				model: this.model,
+				comparator: this.comparator
+			});
+
 			for (var i = 0; i < this.length; i++) {
 				var scheduledRun = this.at(i);
 				if (runRequest.isSameAs(scheduledRun.get('run_request'))) {
-					scheduledRuns.add(scheduledRun);
+					collection.add(scheduledRun);
 				}
 			}
-			return scheduledRuns;
+			return collection;
 		},
 
 		getByRunRequests: function(runRequests) {
-			var collection = new Backbone.Collection();
+
+			// create empty collection
+			//
+			var collection = new this.constructor([], {
+				model: this.model,
+				comparator: this.comparator
+			});
+
 			for (var i = 0; i < runRequests.length; i++) {
 				collection.add(new Backbone.Model({
 					'run_request': runRequests.at(i),
@@ -111,8 +124,6 @@ define([
 
 		fetchNumByProjects: function(projects, options) {
 			return $.ajax(Config.servers.web + '/projects/' + projects.getUuidsStr() + '/assessment_runs/scheduled/num', options);
-		},
+		}
 	});
-
-	return Class;
 });

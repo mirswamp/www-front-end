@@ -18,11 +18,11 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
 	'config',
-	'models/events/event'
-], function($, _, Backbone, Config, Event) {
-	return Backbone.Collection.extend({
+	'models/events/event',
+	'collections/base-collection'
+], function($, _, Config, Event, BaseCollection) {
+	return BaseCollection.extend({
 
 		//
 		// Backbone attributes

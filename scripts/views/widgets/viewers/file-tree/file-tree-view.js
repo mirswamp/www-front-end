@@ -18,20 +18,25 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
 	'text!templates/widgets/viewers/file-tree/file-tree.tpl',
-], function($, _, Backbone, Marionette, Template) {
-	return Backbone.Marionette.ItemView.extend({
+	'views/base-view'
+], function($, _, Template, BaseView) {
+	return BaseView.extend({
+
+		//
+		// attributes
+		//
+
+		template: _.template(Template),
 
 		//
 		// rendering methods
 		//
 
-		template: function(data) {
-			return _.template(Template, _.extend(data, {
-				'model': this.model
-			}));
+		templateContext: function(data) {
+			return {
+				model: this.model
+			};
 		}
 	});
 });

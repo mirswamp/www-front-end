@@ -18,23 +18,28 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
 	'text!templates/projects/info/project-profile/project-profile.tpl',
-	'registry',
 	'models/viewers/viewer',
+	'views/base-view',
 	'utilities/time/date-utils'
-], function($, _, Backbone, Marionette, Template, Registry, Viewer) {
-	return Backbone.Marionette.ItemView.extend({
+], function($, _, Template, Viewer, BaseView) {
+	return BaseView.extend({
+
+		//
+		// attributes
+		//
+
+		template: _.template(Template),
 
 		//
 		// rendering methods
 		//
-		template: function(data) {
-			return _.template(Template, _.extend(data, {
+
+		templateContext: function() {
+			return {
 				model: this.model,
-				config: Registry.application.config
-			}));
+				config: application.config
+			};
 		}
 	});
 });

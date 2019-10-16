@@ -18,14 +18,10 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
 	'config',
-	'registry',
 	'models/base-model',
-	'models/tools/tool',
-	'views/dialogs/notify-view',
-	'views/dialogs/error-view',
-], function($, _, Backbone, Config, Registry, BaseModel, Tool, NotifyView, ErrorView) {
+	'models/permissions/user-policy'
+], function($, _, Config, BaseModel, UserPolicy) {
 	return BaseModel.extend({
 
 		//
@@ -103,124 +99,60 @@ define([
 
 				case 'owner_no_permission':
 
-					// show notify dialog
+					// show notification
 					//
-					Registry.application.modal.show(
-						new NotifyView({
-							message: "The owner of this project must request permission to use \"" + response.tool_name + ".\""
-						})
-					);
+					application.notify({
+						message: "The owner of this project must request permission to use \"" + response.tool_name + ".\""
+					});
 					break;
 
 				case 'tool_no_permission':
 
-					// show notify dialog
+					// show notification
 					//
-					Registry.application.modal.show(
-						new NotifyView({
-							message: "You do not have permission to use \"" + response.tool_name + ".\""
-						})
-					);
+					application.notify({
+						message: "You do not have permission to use \"" + response.tool_name + ".\""
+					});
 					break;
 
 				case 'no_project':
 
-					// show notify dialog
+					// show notification
 					//
-					Registry.application.modal.show(
-						new NotifyView({
-							message: "The project owner has not designated \"" + response.project_name + "\" for use with \"" + response.tool_name + ".\" To do so the project owner must add an assessment which uses \"" + response.tool_name + ".\""
-						})
-					);
+					application.notify({
+						message: "The project owner has not designated \"" + response.project_name + "\" for use with \"" + response.tool_name + ".\" To do so the project owner must add an assessment which uses \"" + response.tool_name + ".\""
+					});
 					break;
 
 				case 'no_policy':
-					var tool = new Tool(response.tool);
 
-					// fetch tool policy text
+					// ensure the user has permission and has accepted any pertinent EULAs
 					//
-					tool.fetchPolicy({
-
-						// callbacks
-						//
-						success: function(policy) {
-
-							// show confirm tool policy dialog
-							//
-							tool.confirmToolPolicy({
-								policy_code: response.policy_code,
-								policy: policy,
-
-								// callbacks
-								//
-								success: function() {
-
-									// perform callback
-									//
-									if (options && options.success) {
-										options.success();
-									}
-								},
-
-								reject: function() {
-
-									// perform callback
-									//
-									if (options && options.reject) {
-										options.reject();
-									}		
-								},
-
-								error: function(response) {
-
-									// show error dialog
-									//
-									Registry.application.modal.show(
-										new ErrorView({
-											message: "Error saving policy acknowledgement."
-										})
-									);
-								}
-							});
-						},
-
-						error: function() {
-
-							// show error dialog
-							//
-							Registry.application.modal.show(
-								new ErrorView({
-									message: "Could not fetch tool policy."
-								})
-							);
-						}
-					});
+					new UserPolicy({
+						policy_code: response.policy_code
+					}).confirm(options);
 					break;
 
 				case 'NO_SESSION':
 
 					// log in
 					//
-					Registry.application.sessionExpired();
+					application.sessionExpired();
 					break;
 
 				case 403:
-					Registry.application.modal.show(
-						new NotifyView({
-							message: "Permissions error.  You do not have permissions to view information from this project."
-						})
-					);	
+					application.notify({
+						message: "Permissions error.  You do not have permissions to view information from this project."
+					});	
 					break;
 
 				default:
 
-					// show error dialog
+					// show error message
 					//
-					Registry.application.modal.show(
-						new NotifyView({
-							message: "Could not fetch run request."
-						})
-					);
+					application.notify({
+						message: "Could not fetch run request."
+					});
 					break;
 			}
 		},

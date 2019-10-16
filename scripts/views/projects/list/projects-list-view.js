@@ -18,19 +18,23 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
 	'text!templates/projects/list/projects-list.tpl',
-	'views/widgets/lists/sortable-table-list-view',
+	'views/base-view',
+	'views/collections/tables/sortable-table-list-view',
 	'views/projects/list/projects-list-item-view'
-], function($, _, Backbone, Marionette, Template, SortableTableListView, ProjectsListItemView) {
+], function($, _, Template, BaseView, SortableTableListView, ProjectsListItemView) {
 	return SortableTableListView.extend({
 
 		//
 		// attributes
 		//
 
+		template: _.template(Template),
 		childView: ProjectsListItemView,
+
+		emptyView: BaseView.extend({
+			template: _.template("No projects.")
+		}),
 
 		sorting: {
 
@@ -51,17 +55,26 @@ define([
 		// rendering methods
 		//
 
-		template: function(data) {
-			return _.template(Template, _.extend(data, {
+		templateContext: function() {
+			return {
 				collection: this.collection,
 				showNumbering: this.options.showNumbering,
 				showDelete: this.options.showDelete
-			}));
+			};
 		},
 
-		childViewOptions: function(model, index) {
+		childViewOptions: function(model) {
+
+			// check if empty view
+			//
+			if (!model) {
+				return {};
+			}
+
+			// return view options
+			//
 			return {
-				index: index,
+				index: this.collection.indexOf(model),
 				showNumbering: this.options.showNumbering,
 				showDelete: this.options.showDelete,
 				parent: this

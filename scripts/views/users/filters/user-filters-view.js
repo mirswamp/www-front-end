@@ -18,30 +18,33 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
 	'jquery.validate',
 	'bootstrap/collapse',
-	'modernizr',
 	'text!templates/users/filters/user-filters.tpl',
-	'registry',
-	'utilities/browser/query-strings',
-	'utilities/browser/url-strings',
+	'views/base-view',
+	'views/users/filters/username-filter-view',
+	'views/users/filters/user-name-filter-view',
 	'views/users/filters/user-type-filter-view',
 	'views/widgets/filters/date-filter-view',
-	'views/widgets/filters/limit-filter-view'
-], function($, _, Backbone, Marionette, Validate, Collapse, Modernizr, Template, Registry, QueryStrings, UrlStrings, UserTypeFilterView, DateFilterView, LimitFilterView) {
-	return Backbone.Marionette.LayoutView.extend({
+	'views/widgets/filters/limit-filter-view',
+	'utilities/web/query-strings',
+	'utilities/web/url-strings'
+], function($, _, Validate, Collapse, Template, BaseView,  UsernameFilterView, UserNameFilterView, UserTypeFilterView, DateFilterView, LimitFilterView, QueryStrings, UrlStrings) {
+	return BaseView.extend({
 
 		//
 		// attributes
 		//
 
+		template: _.template(Template),
+
 		regions: {
-			typeFilter: '#user-type-filter',
-			dateFilter: '#date-filter',
-			lastLoginDateFilter: '#last-login-date-filter',
-			limitFilter: '#limit-filter'
+			username: '#username-filter',
+			name: '#user-name-filter',
+			type: '#user-type-filter',
+			date: '#date-filter',
+			last_login: '#last-login-date-filter',
+			limit: '#limit-filter'
 		},
 
 		events: {
@@ -57,10 +60,12 @@ define([
 
 			// add tags
 			//
-			tags += this.typeFilter.currentView.getTag();
-			tags += this.dateFilter.currentView.getTags();
-			tags += this.lastLoginDateFilter.currentView.getTags();
-			tags += this.limitFilter.currentView.getTag();
+			tags += this.getChildView('username').getTag();
+			tags += this.getChildView('name').getTag();	
+			tags += this.getChildView('type').getTag();
+			tags += this.getChildView('date').getTags();
+			tags += this.getChildView('last_login').getTags();
+			tags += this.getChildView('limit').getTag();
 
 			return tags;
 		},
@@ -70,17 +75,23 @@ define([
 
 			// add info for filters
 			//
+			if (!attributes || _.contains(attributes, 'username')) {
+				_.extend(data, this.getChildView('username').getData());
+			}
+			if (!attributes || _.contains(attributes, 'name')) {
+				_.extend(data, this.getChildView('name').getData());
+			}
 			if (!attributes || _.contains(attributes, 'type')) {
-				_.extend(data, this.typeFilter.currentView.getData());
+				_.extend(data, this.getChildView('type').getData());
 			}
 			if (!attributes || _.contains(attributes, 'date')) {
-				_.extend(data, this.dateFilter.currentView.getData());
+				_.extend(data, this.getChildView('date').getData());
 			}
 			if (!attributes || _.contains(attributes, 'last_login_date')) {
-				_.extend(data, this.lastLoginDateFilter.currentView.getData());
+				_.extend(data, this.getChildView('last_login').getData());
 			}
 			if (!attributes || _.contains(attributes, 'limit')) {
-				_.extend(data, this.limitFilter.currentView.getData());
+				_.extend(data, this.getChildView('limit').getData());
 			}
 
 			return data;
@@ -95,10 +106,12 @@ define([
 
 			// add info for filters
 			//
-			queryString = addQueryString(queryString, this.typeFilter.currentView.getQueryString());
-			queryString = addQueryString(queryString, this.dateFilter.currentView.getQueryString());
-			queryString = addQueryString(queryString, this.lastLoginDateFilter.currentView.getQueryString());
-			queryString = addQueryString(queryString, this.limitFilter.currentView.getQueryString());
+			queryString = addQueryString(queryString, this.getChildView('username').getQueryString());
+			queryString = addQueryString(queryString, this.getChildView('name').getQueryString());
+			queryString = addQueryString(queryString, this.getChildView('type').getQueryString());
+			queryString = addQueryString(queryString, this.getChildView('date').getQueryString());
+			queryString = addQueryString(queryString, this.getChildView('last_login').getQueryString());
+			queryString = addQueryString(queryString, this.getChildView('limit').getQueryString());
 
 			return queryString;
 		},
@@ -111,16 +124,22 @@ define([
 
 			// reset sub filters
 			//
-			this.typeFilter.currentView.reset({
+			this.getChildView('username').reset({
 				silent: true
 			});
-			this.dateFilter.currentView.reset({
+			this.getChildView('name').reset({
 				silent: true
 			});
-			this.lastLoginDateFilter.currentView.reset({
+			this.getChildView('type').reset({
 				silent: true
 			});
-			this.limitFilter.currentView.reset({
+			this.getChildView('date').reset({
+				silent: true
+			});
+			this.getChildView('last_login').reset({
+				silent: true
+			});
+			this.getChildView('limit').reset({
 				silent: true
 			});
 
@@ -133,15 +152,17 @@ define([
 		// rendering methods
 		//
 
-		template: function(data) {
-			return _.template(Template, _.extend(data, {
+		templateContext: function() {
+			return {
 				highlighted: {
+					'username-filter': this.options.data['name'] != undefined,
+					'name-filter': this.options.data['name'] != undefined,
 					'type-filter': this.options.data['type'] != undefined,
 					'date-filter': this.options.data['after'] != undefined || this.options.data['before'] != undefined,
 					'last-login-date-filter': this.options.data['login-after'] != undefined || this.options.data['login-before'] != undefined,
 					'limit-filter': this.options.data['limit'] != undefined
 				}
-			}));
+			};
 		},
 
 		onRender: function() {
@@ -149,7 +170,27 @@ define([
 			
 			// show subviews
 			//
-			this.typeFilter.show(new UserTypeFilterView({
+			this.showChildView('username', new UsernameFilterView({
+				model: this.model,
+				initialValue: this.options.data['username'],
+
+				// callbacks
+				//
+				onChange: function() {
+					self.onChange();
+				}
+			}));
+			this.showChildView('name', new UserNameFilterView({
+				model: this.model,
+				initialValue: this.options.data['name'],
+
+				// callbacks
+				//
+				onChange: function() {
+					self.onChange();
+				}
+			}));
+			this.showChildView('type', new UserTypeFilterView({
 				model: this.model,
 				initialValue: this.options.data['type'],
 
@@ -159,7 +200,7 @@ define([
 					self.onChange();
 				}
 			}));
-			this.dateFilter.show(new DateFilterView({
+			this.showChildView('date', new DateFilterView({
 				initialAfterDate: this.options.data['after'],
 				initialBeforeDate: this.options.data['before'],
 
@@ -169,7 +210,7 @@ define([
 					self.onChange();
 				}				
 			}));
-			this.lastLoginDateFilter.show(new DateFilterView({
+			this.showChildView('last_login', new DateFilterView({
 				id: "last-login-date-filter",
 				title: "Last Login Date",
 				icon: "fa-keyboard-o",
@@ -184,7 +225,7 @@ define([
 					self.onChange();
 				}				
 			}));
-			this.limitFilter.show(new LimitFilterView({
+			this.showChildView('limit', new LimitFilterView({
 				defaultValue: 50,
 				initialValue: this.options.data['limit'],
 

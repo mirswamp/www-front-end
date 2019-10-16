@@ -18,20 +18,24 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
 	'bootstrap/popover',
 	'text!templates/admin/settings/system-email/system-email-list/system-email-list.tpl',
-	'views/widgets/lists/sortable-table-list-view',
+	'views/base-view',
+	'views/collections/tables/sortable-table-list-view',
 	'views/admin/settings/system-email/system-email-list/system-email-list-item-view'
-], function($, _, Backbone, Marionette, Popover, Template, SortableTableListView, SystemEmailListItemView) {
+], function($, _, Popover, Template, BaseView, SortableTableListView, SystemEmailListItemView) {
 	return SortableTableListView.extend({
 
 		//
 		// attributes
 		//
 
+		template: _.template(Template),
 		childView: SystemEmailListItemView,
+
+		emptyView: BaseView.extend({
+			template: _.template("No emails.")
+		}),
 
 		sorting: {
 
@@ -71,15 +75,19 @@ define([
 		// rendering methods
 		//
 
-		template: function(data) {
-			return _.template(Template, _.extend(data, {
+		templateContext: function() {
+			return {
 				collection: this.collection,
 				showNumbering: this.options.showNumbering,
 				showHibernate: this.options.showHibernate
-			}));
+			};
 		},
 
 		onRender: function() {
+
+			// call superclass method
+			//
+			SortableTableListView.prototype.onRender.call(this);
 
 			// display popovers on hover
 			//
@@ -88,12 +96,21 @@ define([
 			});
 		},
 
-		childViewOptions: function(model, index) {
+		childViewOptions: function(model) {
+
+			// check if empty view
+			//
+			if (!model) {
+				return {};
+			}
+
+			// return view options
+			//
 			return {
-				index: index,
+				index: this.collection.indexOf(model),
 				showNumbering: this.options.showNumbering,
 				showHibernate: this.options.showHibernate
-			}
+			};
 		}
 	});
 });

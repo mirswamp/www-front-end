@@ -18,12 +18,9 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
 	'config',
-	'registry',
 	'models/utilities/timestamped',
-	'views/dialogs/error-view'
-], function($, _, Backbone, Config, Registry, Timestamped, ErrorView) {
+], function($, _, Config, Timestamped) {
 	return Timestamped.extend({
 
 		//

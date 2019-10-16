@@ -18,24 +18,19 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
 	'text!templates/projects/info/members/invitations/project-invitations-list/project-invitations-list-item.tpl',
-	'registry',
 	'utilities/time/date-format',
 	'models/users/user',
 	'models/projects/project-invitation',
-	'views/dialogs/confirm-view',
-	'views/dialogs/notify-view',
-	'views/dialogs/error-view'
-], function($, _, Backbone, Marionette, Template, Registry, DateFormat, User, ProjectInvitation, ConfirmView, NotifyView, ErrorView) {
-	return Backbone.Marionette.ItemView.extend({
+	'views/collections/tables/table-list-item-view'
+], function($, _, Template, DateFormat, User, ProjectInvitation, TableListItemView) {
+	return TableListItemView.extend({
 
 		//
 		// attributes
 		//
 
-		tagName: 'tr',
+		template: _.template(Template),
 
 		events: {
 			'click .delete button': 'onClickDelete'
@@ -45,13 +40,13 @@ define([
 		// rendering methods
 		//
 
-		template: function(data) {
-			return _.template(Template, _.extend(data, {
+		templateContext: function() {
+			return {
 				User: User,
 				model: this.model,
-				config: Registry.application.config,
+				config: application.config,
 				showDelete: this.options.showDelete
-			}));
+			};
 		},
 
 		//
@@ -61,52 +56,37 @@ define([
 		onClickDelete: function() {
 			var self = this;
 
-			// show confirm dialog
+			// show confirmation
 			//
-			Registry.application.modal.show(
-				new ConfirmView({
-					title: "Delete Project Invitation",
-					message: "Are you sure that you want to delete this invitation of " + this.model.get('invitee_name') + " to project " + self.options.project.get('full_name') + "?",
+			application.confirm({
+				title: "Delete Project Invitation",
+				message: "Are you sure that you want to delete this invitation of " + this.model.get('invitee_name') + " to project " + self.options.project.get('full_name') + "?",
 
-					// callbacks
+				// callbacks
+				//
+				accept: function() {
+					var projectInvitation = new ProjectInvitation({
+						'invitation_key': self.model.get('invitation_key')
+					});
+
+					// delete project invitation
 					//
-					accept: function() {
-						var projectInvitation = new ProjectInvitation({
-							'invitation_key': self.model.get('invitation_key')
-						});
+					self.model.destroy({
+						url: projectInvitation.url(),
 
-						// delete project invitation
+						// callbacks
 						//
-						self.model.destroy({
-							url: projectInvitation.url(),
+						error: function() {
 
-							// callbacks
+							// show error message
 							//
-							success: function() {
-
-								// show success notify
-								//
-								Registry.application.modal.show(
-									new NotifyView({
-										message: "This project invitation has successfully been deleted."
-									})
-								);
-							},
-
-							error: function() {
-
-								// show error dialog
-								//
-								Registry.application.modal.show(
-									new ErrorView({
-										message: "Could not delete this project invitation."
-									})
-								);
-							}
-						});
-					}
-				})
-			);
+							application.error({
+								message: "Could not delete this project invitation."
+							});
+						}
+					});
+				}
+			});
 		}
 	});
 });

@@ -18,13 +18,12 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
 	'text!templates/packages/info/compatibility/package-compatibility.tpl',
 	'collections/packages/package-platforms',
+	'views/base-view',
 	'views/packages/platforms/list/package-platforms-list-view'
-], function($, _, Backbone, Marionette, Template, PackagePlatforms, PackagePlatformsListView) {
-	return Backbone.Marionette.LayoutView.extend({
+], function($, _, Template, PackagePlatforms, BaseView, PackagePlatformsListView) {
+	return BaseView.extend({
 
 		//
 		// attributes
@@ -33,7 +32,7 @@ define([
 		template: _.template(Template),
 
 		regions: {
-			packagePlatformsList: '#package-platforms-list'
+			list: '#package-platforms-list'
 		},
 
 		//
@@ -53,7 +52,7 @@ define([
 		},
 
 		showPackagePlatforms: function() {
-			this.packagePlatformsList.show(new PackagePlatformsListView({
+			this.showChildView('list', new PackagePlatformsListView({
 				collection: this.collection
 			}));
 		},

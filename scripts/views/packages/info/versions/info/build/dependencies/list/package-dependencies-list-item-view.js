@@ -18,33 +18,31 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
-	'registry',
-	'text!templates/packages/info/versions/info/build/dependencies/list/package-dependencies-list-item.tpl'
-], function($, _, Backbone, Marionette, Registry, Template) {
-	return Backbone.Marionette.ItemView.extend({
+	'text!templates/packages/info/versions/info/build/dependencies/list/package-dependencies-list-item.tpl',
+	'views/collections/tables/table-list-item-view'
+], function($, _, Template, TableListItemView) {
+	return TableListItemView.extend({
 
 		//
 		// attributes
 		//
 
-		tagName: 'tr',
+		template: _.template(Template),
 
 		//
 		// rendering methods
 		//
 
-		template: function(data) {
-			return _.template(Template, _.extend(data, {
+		templateContext: function() {
+			return {
 				index: this.options.index,
 				showNumbering: this.options.showNumbering,
 				platformVersionName: this.options.platformVersion? this.options.platformVersion.get('full_name') : '?',
 				platformVersionString: this.options.platformVersion? this.options.platformVersion.get('version_string') : '?',
 				platformUrl: undefined,
-				platformVersionUrl: data.platform_version_uuid? Registry.application.getURL() + '#platforms/versions/' + data.platform_version_uuid : undefined,
+				platformVersionUrl: this.model.has('platform_version_uuid')? application.getURL() + '#platforms/versions/' + this.model.get('platform_version_uuid') : undefined,
 				dependencyList: this.model.get('dependency_list')
-			}));
+			};
 		}
 	});
 });

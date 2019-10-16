@@ -39,14 +39,14 @@ h1, h2, h3, .brand, label, .nav, .navbar, th, legend, .tagline {
 
 h1 {
 	line-height: 1em;
-	color: @veryDarkGrey;
+	color: @very-dark-grey;
 	font-size: 250%;
 	padding-bottom: 5px;
-	border-bottom: 2px solid @primaryColor;
+	border-bottom: 2px solid @brand-primary;
 	margin-bottom: 20px;
 
 	i {
-		color: @primaryColor;
+		color: @brand-primary;
 		float: left;
 		margin-top: 5px;
 		margin-right: 15px;
@@ -80,10 +80,10 @@ h2, h3 {
 
 h2 {
 	margin-top: 20px;
-	color: @secondaryColor;
+	color: @brand-secondary;
 
 	i {
-		color: @darkGrey;
+		color: @dark-grey;
 		float: left;
 		margin-top: 3px;
 		margin-right: 6px;
@@ -91,7 +91,7 @@ h2 {
 }
 
 h3 {
-	color: @secondaryColor;
+	color: @brand-secondary;
 
 	i {
 		margin-right: 10px;
@@ -103,7 +103,7 @@ h2 {
 }
 
 .help h2 {
-	color: @veryDarkGrey;
+	color: @very-dark-grey;
 }
 
 h3 {
@@ -115,7 +115,7 @@ h3 {
  */
 
 p {
-	color: @darkGrey;
+	color: @dark-grey;
 	font-weight: normal;
 }
 
@@ -132,25 +132,25 @@ p {
 //
 
 .success, .success a {
-	color: @mediumGreen;
+	color: @medium-green;
 }
 
 .caution, .caution a {
-	color: @mediumGold;
+	color: @medium-gold;
 }
 
 .warning, .warning a {
-	color: @mediumRed;
+	color: @medium-red;
 }
 
 h1 .name {
-	color: @secondaryColor;
+	color: @brand-secondary;
 }
 
 .highlighted {
-	color: @darkGold;
-	background-color: @paleLightGold;
-	border: 1px solid @mediumGold;
+	color: darken(@brand-primary, 15%);
+	background-color: lighten(@brand-primary, 20%);
+	border: 1px solid @brand-primary;
 	padding-left: 2px;
 	padding-right: 2px;
 	border-radius: 5px;
@@ -210,19 +210,29 @@ label {
 // other font styles
 //
 
+#title {
+	word-break: break-word;
+}
+
 .fineprint {
 	font-size: small;
 }
 
 .tagline {
-	color: @secondaryColor;
+	color: @brand-secondary;
 	font-style: italic;
 	font-size: 125%;
 }
 
+.select2-search {
+	input {
+		font-family: inherit;
+	}	
+}
+
 .select2-results li.select2-result-with-children > .select2-result-label {
 	font-family: 'TradeGothicBold', sans-serif;
-	color: @secondaryColor;
+	color: @brand-secondary;
 }
 
 .separator {
@@ -251,8 +261,8 @@ label {
 }
 
 code {
-	background-color: @primaryBackgroundColor;
-	border: 1px solid @primaryBorderColor;
+	background-color: @brand-primary-background;
+	border: 1px solid @brand-primary-border;
 	border-radius: 10px;
 }
 

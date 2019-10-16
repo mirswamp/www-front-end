@@ -1,6 +1,6 @@
 /******************************************************************************\
 |                                                                              |
-|                        new-project-invitations-list-view.js                  |
+|                   new-project-invitations-list-item-view.js                  |
 |                                                                              |
 |******************************************************************************|
 |                                                                              |
@@ -18,20 +18,19 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
+	'jquery.validate.bootstrap',
 	'text!templates/projects/info/members/invitations/new-project-invitations-list/new-project-invitations-list-item.tpl',
-	'registry',
+	'models/users/user',
 	'models/projects/project-invitation',
-	'views/dialogs/confirm-view'
-], function($, _, Backbone, Marionette, Template, Registry, ProjectInvitation, ConfirmView) {
-	return Backbone.Marionette.ItemView.extend({
+	'views/collections/tables/table-list-item-view',
+], function($, _, Validate, Template, User, ProjectInvitation, TableListItemView) {
+	return TableListItemView.extend({
 
 		//
 		// attributes
 		//
 
-		tagName: 'tr',
+		template: _.template(Template),
 
 		events: {
 			'click #add': 'onClickAdd',
@@ -42,16 +41,57 @@ define([
 		},
 
 		//
+		// constructor
+		//
+
+		initialize: function() {
+			var self = this;
+
+			// Custom validation method for class based rule
+			//
+			$.validator.addMethod('emailRequired', $.validator.methods.required, "Email Required");
+			$.validator.addMethod('nameRequired', $.validator.methods.required, "Name Required");
+			$.validator.addClassRules({
+				'email': {
+					emailRequired: true
+				},
+				'name': {
+					nameRequired: true
+				}
+			});
+		},
+
+		//
 		// rendering methods
 		//
 
-		template: function(data) {
-			return _.template(Template, _.extend(data, {
+		templateContext: function() {
+			return {
 				collection: this.collection,
 				model: this.model,
-				config: Registry.application.config,
+				config: application.config,
 				showDelete: this.options.showDelete
-			}));
+			};
+		},
+
+		onRender: function() {
+			// this.validate();
+		},
+
+		//
+		// form validation methods
+		//
+
+		validate: function() {
+			this.validator = this.$el.validate();
+		},
+
+		isValid: function() {
+			if (this.validator) {
+				return this.validator.form();
+			} else {
+				return true;
+			}
 		},
 
 		//
@@ -68,24 +108,25 @@ define([
 				message = "Are you sure you want to delete this invitation to the project, " + this.options.project.get('full_name') + "?";
 			}
 
-			// show confirm dialog
+			// show confirmation
 			//
-			Registry.application.modal.show(
-				new ConfirmView({
-					title: "Delete New Project Invitation",
-					message: message,
+			application.confirm({
+				title: "Delete New Project Invitation",
+				message: message,
 
-					// callbacks
-					//
-					accept: function() {
-						self.model.destroy();
-					}
-				})
-			);
+				// callbacks
+				//
+				accept: function() {
+					self.model.destroy();
+				}
+			});
 		},
 
 		onBlurName: function() {
 			var name = this.$el.find('.name input').val().trim();
+
+			// update model
+			//
 			if (name === '') {
 				name = undefined;
 			}
@@ -95,13 +136,39 @@ define([
 		},
 
 		onBlurEmail: function() {
+			var self = this;
 			var email = this.$el.find('.email input').val().trim();
+
+			// update model
+			//
 			if (email === '') {
 				email = undefined;
 			}
 			this.model.set({
 				'invitee_email': email
 			});
+
+			// check if email exists
+			//
+			if (email !== '' && email !== ' ') {
+
+				// check for username uniqueness
+				//
+				var response = new User().checkValidation({
+					'email': email
+				}, {
+
+					// callbacks
+					//
+					error: function() {
+						var error = JSON.parse(response.responseText)[0];
+						error = error.substr(0,1).toUpperCase() + error.substr(1);
+						self.$el.removeClass('success').addClass('error');
+						self.$el.find('.error').removeClass('valid');
+						self.$el.find('label.error').html(error);
+					}
+				});
+			}
 		},
 
 		onBlurUsername: function() {

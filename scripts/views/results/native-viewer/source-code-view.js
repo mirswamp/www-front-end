@@ -18,14 +18,12 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
-	'registry',
 	'text!templates/results/native-viewer/source-code.tpl',
-	'utilities/browser/html-utils',
+	'views/base-view',
+	'utilities/web/html-utils',
 	'ace/ace'
-], function($, _, Backbone, Marionette, Registry, Template, HtmlUtils, Ace) {
-	return Backbone.Marionette.LayoutView.extend({
+], function($, _, Template, BaseView, HtmlUtils, Ace) {
+	return BaseView.extend({
 
 		//
 		// attributes
@@ -33,12 +31,14 @@ define([
 
  		className: 'source-code',
 
+ 		template: _.template(Template),
+
 		//
 		// querying methods
 		//
 
 		getResultsUrl: function() {
-			return Registry.application.getURL() + '#results/' + this.options.data.assessment_results_uuid +
+			return application.getURL() + '#results/' + this.options.data.assessment_results_uuid +
 				'/viewer/' + this.options.viewerUuid +
 				'/project/' + this.options.projectUuid + 
 				'?to=50';
@@ -56,11 +56,11 @@ define([
 		// rendering methods
 		//
 
-		template: function(data) {
-			return _.template(Template, _.extend(data, {
+		templateContext: function() {
+			return {
 				results_url: this.getResultsUrl(),
-				filename: stringToHTML(this.options.filename)
-			}));
+				filename: textToHtml(this.options.filename)
+			};
 		},
 
 		onRender: function() {
@@ -91,7 +91,7 @@ define([
 			this.showBugs(this.options.bugInstances);
 		},
 
-		onShow: function() {
+		onAttach: function() {
 
 			// go to current bug location
 			//
@@ -110,10 +110,15 @@ define([
 			for (var i = 0; i < bugInstances.length; i++) {
 				var bugInstance = bugInstances[i];
 
+				// convert to text and replace smart quotes with straight quotes
+				//
+				var bugCode = htmlToText(bugInstance.BugCode).replace(/[\u2018\u2019]/g, "'");
+				var bugMessage = htmlToText(bugInstance.BugMessage).replace(/[\u2018\u2019]/g, "'");
+
 				annotations.push({
 					row: bugInstance.BugLocation.StartLine - 1,
 					column: bugInstance.BugLocation.StartColumn,
-					text: bugInstance.BugCode + ':\n' + '\n' + bugInstance.BugMessage,
+					text: bugMessage.startsWith(bugCode)? bugMessage : bugCode + ':\n\n' + bugMessage,
 					type: 'error'
 				});
 			}

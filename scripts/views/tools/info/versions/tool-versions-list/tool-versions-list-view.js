@@ -18,21 +18,24 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
 	'text!templates/tools/info/versions/tool-versions-list/tool-versions-list.tpl',
-	'registry',
 	'models/utilities/version',
-	'views/widgets/lists/sortable-table-list-view',
+	'views/base-view',
+	'views/collections/tables/sortable-table-list-view',
 	'views/tools/info/versions/tool-versions-list/tool-versions-list-item-view'
-], function($, _, Backbone, Marionette, Template, Registry, Version, SortableTableListView, ToolVersionsListItemView) {
+], function($, _, Template, Version, BaseView, SortableTableListView, ToolVersionsListItemView) {
 	return SortableTableListView.extend({
 
 		//
 		// attributes
 		//
 
+		template: _.template(Template),
 		childView: ToolVersionsListItemView,
+
+		emptyView: BaseView.extend({
+			template: _.template("No tool versions.")
+		}),
 
 		sorting: {
 
@@ -79,22 +82,31 @@ define([
 		// rendering methods
 		//
 
-		template: function(data) {
-			return _.template(Template, _.extend(data, {
-				user: Registry.application.session.user,
+		templateContext: function() {
+			return {
+				user: application.session.user,
 				model: this.model,
 				collection: this.collection,
 				showDelete: this.options.showDelete
-			}));
+			};
 		},
 
 		childViewOptions: function(model) {
+
+			// check if empty view
+			//
+			if (!model) {
+				return {};
+			}
+
+			// return view options
+			//
 			return {
-				user: Registry.application.session.user,
+				user: application.session.user,
 				model: model,
 				tool: this.model,
 				showDelete: this.options.showDelete
-			}   
+			};
 		}
 	});
 });

@@ -18,27 +18,26 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'registry',
 	'collections/packages/packages',
 	'collections/packages/package-versions',
-	'views/dialogs/error-view',
 	'views/widgets/selectors/grouped-name-selector-view',
 	'views/widgets/selectors/version-selector-view'
-], function($, _, Backbone, Registry, Packages, PackageVersions, ErrorView, GroupedNameSelectorView, VersionSelectorView) {
+], function($, _, Packages, PackageVersions, GroupedNameSelectorView, VersionSelectorView) {
 	return GroupedNameSelectorView.extend({
 
 		//
 		// constructor
 		//
 
-		initialize: function(attributes, options) {
+		initialize: function(options) {
+
+			// call superclass constructor
+			//
+			GroupedNameSelectorView.prototype.initialize.call(this, options);
 
 			// set attributes
 			//
 			this.collection = new Backbone.Collection();
-			this.options = options;
-			this.selected = this.options.initialValue;
 
 			// fetch and display
 			//
@@ -69,8 +68,8 @@ define([
 		},
 
 		reset: function(options) {
+			var self = this;
 			if (options.update) {
-				var self = this;
 				this.update({
 					done: function() {
 
@@ -91,6 +90,21 @@ define([
 				this.setSelectedName(options.package.get('name'));
 				//this.setSelectedName('Any', options);
 			}
+		},
+
+		//
+		// rendering methods
+		//
+
+		onRender: function() {
+
+			// call superclass method
+			//
+			GroupedNameSelectorView.prototype.onRender.call(this);
+
+			// initialize version selector
+			//
+			this.showVersion();
 		},
 
 		update: function(options) {
@@ -158,7 +172,7 @@ define([
 				// show version selector
 				//
 				if (self.options.versionSelector) {
-					self.showVersion(self.options.versionSelector);
+					self.showVersion();
 				}
 			});
 		},
@@ -171,53 +185,78 @@ define([
 			var self = this;
 			var publicPackages = new Packages([]);
 
-			// fetch public packages
-			//
-			publicPackages.fetchPublic({
+			if (this.options.showPublicPackages) {
 
-				// callbacks
+				// fetch public packages
 				//
-				success: function() {
-					if (self.options.project) {
-						var protectedPackages = new Packages([]);
+				publicPackages.fetchPublic({
 
-						// fetch protected packages
-						//		
-						protectedPackages.fetchProtected(self.options.project, {
-
-							// callbacks
-							//
-							success: function() {
-								success(publicPackages, protectedPackages);
-							},
-
-							error: function() {
-
-								// show error dialog
-								//
-								Registry.application.modal.show(
-									new ErrorView({
-										message: "Could not fetch protected packages."
-									})
-								);						
-							}
-						});
-					} else {
-						success(publicPackages);
-					}
-				},
-
-				error: function() {
-
-					// show error dialog
+					// callbacks
 					//
-					Registry.application.modal.show(
-						new ErrorView({
+					success: function() {
+						if (self.options.project) {
+							var protectedPackages = new Packages([]);
+
+							// fetch protected packages
+							//		
+							protectedPackages.fetchProtected(self.options.project, {
+
+								// callbacks
+								//
+								success: function() {
+									success(publicPackages, protectedPackages);
+								},
+
+								error: function() {
+
+									// show error message
+									//
+									application.error({
+										message: "Could not fetch protected packages."
+									});
+								}
+							});
+						} else {
+							success(publicPackages);
+						}
+					},
+
+					error: function() {
+
+						// show error message
+						//
+						application.error({
 							message: "Could not fetch public packages."
-						})
-					);
-				}
-			});
+						});
+					}
+				});
+			} else {
+				if (self.options.project) {
+					var protectedPackages = new Packages([]);
+
+					// fetch protected packages
+					//		
+					protectedPackages.fetchProtected(self.options.project, {
+
+						// callbacks
+						//
+						success: function() {
+							success(null, protectedPackages);
+						},
+
+						error: function() {
+
+							// show error message
+							//
+							application.error({
+								message: "Could not fetch protected packages."
+							});
+						}
+					});
+				} else {
+					success(null);
+				}	
+			}
 		},
 
 		//
@@ -237,36 +276,35 @@ define([
 		// rendering methods
 		//
 
-		showVersion: function(versionSelector) {
+		showVersion: function() {
 			var self = this;
 			var selectedPackage = this.getSelected();
+			var collection;
 
-			if (typeof selectedPackage == 'undefined') {
+			if (!selectedPackage) {
 
 				// only latest version available
 				//
-				var collection = new PackageVersions([{
+				collection = new PackageVersions([{
 					version_string: 'Latest'
 				}]);
 
 				// show version selector view
 				//
-				versionSelector.show(
-					new VersionSelectorView({
-						collection: collection,
-						parentSelector: self,
-						searchable: true,
+				this.options.versionSelectorRegion.show(new VersionSelectorView({
+					collection: collection,
+					parentSelector: self,
+					searchable: true,
 
-						// callbacks
-						//
-						onChange: self.options.onChange
-					})
-				);
+					// callbacks
+					//
+					onChange: self.options.onChange
+				}));
 			} else {
 
 				// fetch package versions
 				//
-				var collection = new PackageVersions([]);
+				collection = new PackageVersions([]);
 				collection.fetchByPackageProject(selectedPackage, self.options.project, {
 
 					// callbacks
@@ -289,31 +327,27 @@ define([
 
 						// show version selector view
 						//
-						versionSelector.show(
-							new VersionSelectorView({
-								collection: collection,
-								parentSelector: self,
-								initialValue: self.options.initialVersion,
-								searchable: true,
+						self.options.versionSelectorRegion.show(new VersionSelectorView({
+							collection: collection,
+							parentSelector: self,
+							initialValue: self.options.initialVersion,
+							searchable: true,
 
-								// callbacks
-								//
-								onChange: function(options) {
-									self.onChangeVersion(options);
-								}
-							})
-						);
+							// callbacks
+							//
+							onChange: function(options) {
+								self.onChangeVersion(options);
+							}
+						}));
 					},
 
 					error: function() {
 
-						// show error dialog
+						// show error message
 						//
-						Registry.application.modal.show(
-							new ErrorView({
-								message: "Could not fetch collection of package versions."
-							})
-						);
+						application.error({
+							message: "Could not fetch collection of package versions."
+						});
 					}
 				});
 			}
@@ -331,8 +365,8 @@ define([
 			
 			// update version selector
 			//
-			if (this.options.versionSelector) {
-				this.showVersion(this.options.versionSelector);
+			if (this.selected && this.options.versionSelectorRegion) {
+				this.showVersion();
 			}
 
 			// perform callback

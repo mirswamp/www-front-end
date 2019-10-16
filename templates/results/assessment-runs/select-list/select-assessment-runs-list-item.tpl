@@ -21,17 +21,17 @@
 <td class="package first">
 	<div class="name">
 		<% if (packageUrl) { %>
-		<a href="<%- packageUrl %>"><%= stringToHTML(package.name) %></a>
+		<a href="<%- packageUrl %>"><%= textToHtml(package.name) %></a>
 		<% } else { %>
-		<%= stringToHTML(package.name) %>
+		<%= textToHtml(package.name) %>
 		<% } %>
 	</div>
 
 	<div class="version">
 		<% if (packageVersionUrl) { %>
-		<a href="<%- packageVersionUrl %>"><%= stringToHTML(package.version_string) %></a>
+		<a href="<%- packageVersionUrl %>"><%= textToHtml(package.version_string) %></a>
 		<% } else { %>
-		<%= stringToHTML(package.version_string) %>
+		<%= textToHtml(package.version_string) %>
 		<% } %>
 	</div>
 </td>
@@ -39,17 +39,17 @@
 <td class="tool">
 	<div class="name">
 		<% if (toolUrl) { %>
-		<a href="<%- toolUrl %>"><%= stringToHTML(tool.name) %></a>
+		<a href="<%- toolUrl %>"><%= textToHtml(tool.name) %></a>
 		<% } else { %>
-		<%= stringToHTML(tool.name) %>
+		<%= textToHtml(tool.name) %>
 		<% } %>
 	</div>
 
 	<div class="version">
 		<% if (toolVersionUrl) { %>
-		<a href="<%- toolVersionUrl %>"><%= stringToHTML(tool.version_string) %></a>
+		<a href="<%- toolVersionUrl %>"><%= textToHtml(tool.version_string) %></a>
 		<% } else { %>
-		<%= stringToHTML(tool.version_string) %>
+		<%= textToHtml(tool.version_string) %>
 		<% } %>
 	</div>
 </td>
@@ -57,17 +57,17 @@
 <td class="platform">
 	<div class="name">
 		<% if (platformUrl) { %>
-		<a href="<%- platformUrl %>"><%= stringToHTML(platform.name) %></a>
+		<a href="<%- platformUrl %>"><%= textToHtml(platform.name) %></a>
 		<% } else { %>
-		<%= stringToHTML(platform.name) %>
+		<%= textToHtml(platform.name) %>
 		<% } %>
 	</div>
 
 	<div class="version">
 		<% if (platformVersionUrl) { %>
-		<a href="<%- platformVersionUrl %>"><%= stringToHTML(platform.version_string) %></a>
+		<a href="<%- platformVersionUrl %>"><%= textToHtml(platform.version_string) %></a>
 		<% } else { %>
-		<%= stringToHTML(platform.version_string) %>
+		<%= textToHtml(platform.version_string) %>
 		<% } %>
 	</div>
 </td>
@@ -76,9 +76,9 @@
 <td class="project">
 	<div class="name">
 		<% if (projectUrl) { %>
-		<a href="<%- projectUrl %>"><%= stringToHTML(project.name) %></a>
+		<a href="<%- projectUrl %>"><%= textToHtml(project.name) %></a>
 		<% } else { %>
-		<%= stringToHTML(project.name) %>
+		<%= textToHtml(project.name) %>
 		<% } %>
 	</div>
 </td>

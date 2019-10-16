@@ -18,25 +18,21 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
 	'text!templates/packages/info/sharing/package-sharing.tpl',
-	'config',
-	'registry',
 	'collections/projects/projects',
-	'views/dialogs/confirm-view',
-	'views/dialogs/notify-view',
-	'views/dialogs/error-view',
+	'views/base-view',
 	'views/projects/select-list/select-projects-list-view'
-], function($, _, Backbone, Marionette, Template, Config, Registry, Projects, ConfirmView, NotifyView, ErrorView, SelectProjectsListView) {
-	return Backbone.Marionette.LayoutView.extend({
+], function($, _, Template, Projects, BaseView, SelectProjectsListView) {
+	return BaseView.extend({
 
 		//
 		// attributes
 		//
 
+		template: _.template(Template),
+
 		regions: {
-			selectProjectsList: '#select-projects-list'
+			list: '#select-projects-list'
 		},
 
 		events: {
@@ -47,11 +43,11 @@ define([
 		},
 
 		//
-		// methods
+		// constructor
 		//
 
 		initialize: function() {
-			this.collection = new Projects()
+			this.collection = new Projects();
 		},
 
 		//
@@ -82,7 +78,7 @@ define([
 				// callbacks
 				//
 				success: function() {
-					self.model.saveSharedProjects(self.selectProjectsList.currentView.getSelected(), {
+					self.model.saveSharedProjects(self.getChildView('list').getSelected(), {
 						
 						// callbacks
 						//
@@ -90,46 +86,40 @@ define([
 
 							// show success notify view
 							//
-							Registry.application.modal.show(
-								new NotifyView({
-									message: "Your changes to package sharing been saved.",
+							application.notify({
+								message: "Your changes to package sharing been saved.",
 
-									// callbacks
+								// callbacks
+								//
+								accept: function() {
+
+									// go to package view
 									//
-									accept: function() {
-
-										// go to package view
-										//
-										Backbone.history.navigate('#packages/' + self.model.get('package_uuid'), {
-											trigger: true
-										});
-									}
-								})
-							);
+									Backbone.history.navigate('#packages/' + self.model.get('package_uuid'), {
+										trigger: true
+									});
+								}
+							});
 						},
 
 						error: function() {
 
-							// show error dialog
+							// show error message
 							//
-							Registry.application.modal.show(
-								new ErrorView({
-									message: "Could not save package's project sharing."
-								})
-							);
+							application.error({
+								message: "Could not save package's project sharing."
+							});
 						}
 					});
 				},
 
 				error: function() {
 
-					// show error dialog
+					// show error message
 					//
-					Registry.application.modal.show(
-						new ErrorView({
-							message: "Could not save package."
-						})
-					);
+					application.error({
+						message: "Could not save package."
+					});
 				}
 			});
 		},
@@ -137,11 +127,6 @@ define([
 		//
 		// rendering methods
 		//
-
-
-		template: function(data) {
-			return _.template(Template, data);
-		},
 
 		onRender: function() {
 			var self = this;
@@ -161,13 +146,11 @@ define([
 
 				error: function() {
 
-					// show error dialog
+					// show error message
 					//
-					Registry.application.modal.show(
-						new ErrorView({
-							message: "Could not fetch user's projects."
-						})
-					);
+					application.error({
+						message: "Could not fetch user's projects."
+					});
 				}
 			});
 		},
@@ -176,14 +159,12 @@ define([
 
 			// show select projects list
 			//
-			this.selectProjectsList.show(
-				new SelectProjectsListView({
-					collection: new Projects(this.collection.filter(function() {
-						return true;
-					})),
-					enabled: this.getSharingStatus() === 'protected'
-				})
-			);
+			this.showChildView('list', new SelectProjectsListView({
+				collection: new Projects(this.collection.filter(function() {
+					return true;
+				})),
+				enabled: this.getSharingStatus() === 'protected'
+			}));
 
 			// select shared project list items
 			//
@@ -200,18 +181,16 @@ define([
 				// callbacks
 				//
 				success: function(data) {
-					self.selectProjectsList.currentView.selectProjectsByUuids(data);
+					self.getChildView('list').selectProjectsByUuids(data);
 				},
 
 				error: function() {
 
-					// show error dialog
+					// show error message
 					//
-					Registry.application.modal.show(
-						new ErrorView({
-							message: "Could not fetch package sharing."
-						})
-					);				
+					application.error({
+						message: "Could not fetch package sharing."
+					});
 				}
 			});
 		},
@@ -226,11 +205,11 @@ define([
 			//
 			this.$el.find('#save').prop('disabled', false);
 
-			this.selectProjectsList.currentView.setEnabled(
+			this.getChildView('list').setEnabled(
 				this.getSharingStatus() === 'protected'
 			);
-			if (!this.selectProjectsList.currentView.isEnabled()) {
-				this.selectProjectsList.currentView.deselectAll();
+			if (!this.getChildView('list').isEnabled()) {
+				this.getChildView('list').deselectAll();
 			}
 		},
 
@@ -239,31 +218,29 @@ define([
 
 			if (this.getSharingStatus() === 'public') {
 
-				// show confirm dialog
+				// show confirmation
 				//
-				Registry.application.modal.show(
-					new ConfirmView({
-						title: "Make Package Public?",
-						message: "By making this package public every member of the SWAMP community will be able to access it. Do you wish to continue?",
-						
-						// callbacks
+				application.confirm({
+					title: "Make Package Public?",
+					message: "By making this package public every member of the SWAMP community will be able to access it. Do you wish to continue?",
+					
+					// callbacks
+					//
+					accept: function() {
+
+						// disable save button
 						//
-						accept: function() {
+						self.$el.find('#save').prop('disabled', true);
 
-							// disable save button
-							//
-							self.$el.find('#save').prop('disabled', true);
-
-							// save sharing info
-							//
-							self.updateSharingStatus.call(self);
-						},
-						
-						reject: function() {
-							self.onClickCancel.call(self);
-						}
-					})
-				);
+						// save sharing info
+						//
+						self.updateSharingStatus.call(self);
+					},
+					
+					reject: function() {
+						self.onClickCancel.call(self);
+					}
+				});
 			} else {
 
 				// disable save button
@@ -279,59 +256,53 @@ define([
 		onClickApplyToAll: function(){
 			var self = this;
 
-			// show confirm dialog
+			// show confirmation
 			//
-			Registry.application.modal.show(
-				new ConfirmView({
-					title: "Apply Default Sharing to All Versions?",
-					message: "This will apply the currently saved default sharing permissions specified for this package to be used for all versions of this package.  Do you wish to proceed?",
-					
-					// callbacks
-					//
-					accept: function() {
-						self.model.applySharing({
-							
-							// callbacks
+			application.confirm({
+				title: "Apply Default Sharing to All Versions?",
+				message: "This will apply the currently saved default sharing permissions specified for this package to be used for all versions of this package.  Do you wish to proceed?",
+				
+				// callbacks
+				//
+				accept: function() {
+					self.model.applySharing({
+						
+						// callbacks
+						//
+						success: function() {
+
+							// show success notify view
 							//
-							success: function() {
+							application.notify({
+								message: "Your default sharing settings have been applied to all versions of this package.",
 
-								// show success notify view
+								// callbacks
 								//
-								Registry.application.modal.show(
-									new NotifyView({
-										message: "Your default sharing settings have been applied to all versions of this package.",
+								accept: function() {
 
-										// callbacks
-										//
-										accept: function() {
+									// go to package view
+									//
+									Backbone.history.navigate('#packages/' + self.model.get('package_uuid'), {
+										trigger: true
+									});
+								}
+							});
+						},
+						
+						error: function() {
 
-											// go to package view
-											//
-											Backbone.history.navigate('#packages/' + self.model.get('package_uuid'), {
-												trigger: true
-											});
-										}
-									})
-								);
-							},
-							
-							error: function() {
-
-								// show error dialog
-								//
-								Registry.application.modal.show(
-									new ErrorView({
-										message: "Could not apply the default sharing settings to all packages."
-									})
-								);
-							}
-						});	
-					},
-					
-					reject: function() {
-					}
-				})
-			);
+							// show error message
+							//
+							application.error({
+								message: "Could not apply the default sharing settings to all packages."
+							});
+						}
+					});	
+				},
+				
+				reject: function() {
+				}
+			});
 		},
 
 		onClickCancel: function() {

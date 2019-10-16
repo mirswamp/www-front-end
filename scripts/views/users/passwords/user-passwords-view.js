@@ -18,15 +18,12 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
 	'collections/authentication/app-passwords',
 	'text!templates/users/passwords/user-passwords.tpl',
-	'registry',
+	'views/base-view',
 	'views/users/passwords/list/passwords-list-view',
-	'views/dialogs/error-view'
-], function($, _, Backbone, Marionette, AppPasswords, Template, Registry, PasswordsListView, ErrorView) {
-	return Backbone.Marionette.LayoutView.extend({
+], function($, _, AppPasswords, Template, BaseView, PasswordsListView) {
+	return BaseView.extend({
 
 		//
 		// attributes
@@ -35,7 +32,7 @@ define([
 		template: _.template(Template),
 
 		regions: {
-			passwordsList: '#passwords-list'
+			list: '#passwords-list'
 		},
 
 		events: {
@@ -43,7 +40,7 @@ define([
 		},
 
 		//
-		// methods
+		// constructor
 		//
 
 		initialize: function() {
@@ -66,13 +63,11 @@ define([
 		},
 
 		showPasswordsList: function() {
-			this.passwordsList.show(
-				new PasswordsListView({
-					collection: this.collection,
-					readOnly: true,
-					showDelete: true
-				})
-			);
+			this.showChildView('list', new PasswordsListView({
+				collection: this.collection,
+				readOnly: true,
+				showDelete: true
+			}));
 		},
 
 		fetchAndShowPasswordsList: function() {
@@ -90,13 +85,11 @@ define([
 
 				error: function() {
 
-					// show error dialog
+					// show error message
 					//
-					Registry.application.modal.show(
-						new ErrorView({
-							message: "Could not get passwords for this user."
-						})
-					);
+					application.error({
+						message: "Could not get passwords for this user."
+					});
 				}
 			});
 		},
@@ -108,13 +101,11 @@ define([
 		onClickAddNewPassword: function() {
 			var self = this;
 			require([
-				'views/users/passwords/dialogs/add-new-password-view'
-			], function (AddNewPasswordView) {
-				Registry.application.modal.show(
-					new AddNewPasswordView({
-						collection: self.collection
-					})
-				);
+				'views/users/passwords/dialogs/add-new-password-dialog-view'
+			], function (AddNewPasswordDialogView) {
+				application.show(new AddNewPasswordDialogView({
+					collection: self.collection
+				}));
 			});
 		}
 	});

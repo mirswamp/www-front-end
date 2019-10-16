@@ -18,19 +18,19 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
 	'text!templates/projects/nav-list/projects-nav-list.tpl',
-	'registry',
 	'models/permissions/user-permission',
-	'views/users/dialogs/project-ownership/project-ownership-policy-view',
-	'views/users/dialogs/project-ownership/project-ownership-status-view'
-], function($, _, Backbone, Marionette, Template, Registry, UserPermission, ProjectOwnershipPolicyView, ProjectOwnershipStatusView) {
-	return Backbone.Marionette.ItemView.extend({
+	'views/base-view',
+	'views/users/dialogs/project-ownership/project-ownership-policy-dialog-view',
+	'views/users/dialogs/project-ownership/project-ownership-status-dialog-view'
+], function($, _, Template, UserPermission, ProjectOwnershipPolicyDialogView, ProjectOwnershipStatusDialogView) {
+	return BaseView.extend({
 
 		//
 		// attributes
 		//
+
+		template: _.template(Template),
 
 		events: {
 			'click #add-new-project': 'onClickAddNewProject',
@@ -41,12 +41,12 @@ define([
 		// rendering methods
 		//
 
-		template: function(data) {
-			return _.template(Template, _.extend(data, {
-				user: Registry.application.session.user,
-				ownedProjects: this.collection.getOwnedBy(Registry.application.session.user),
-				joinedProjects: this.collection.getNotOwnedBy(Registry.application.session.user)
-			}));
+		templateContext: function() {
+			return {
+				user: application.session.user,
+				ownedProjects: this.collection.getOwnedBy(application.session.user),
+				joinedProjects: this.collection.getNotOwnedBy(application.session.user)
+			};
 		},
 
 		onRender: function() {
@@ -67,7 +67,7 @@ define([
 
 			// check to see if user has project owner permissions
 			//
-			if (Registry.application.session.user.isOwner()) {
+			if (application.session.user.isOwner()) {
 				Backbone.history.navigate('#projects/add', {
 					trigger: true
 				});
@@ -76,7 +76,7 @@ define([
 				// fetch then render
 				//
 				var project_owner_permission = new UserPermission({ 
-					'user_uid': Registry.application.session.user.get('user_uid'),
+					'user_uid': application.session.user.get('user_uid'),
 					'permission_code': 'project-owner'
 				});
 				project_owner_permission.fetch({
@@ -85,26 +85,22 @@ define([
 					//
 					success: function() {
 
-						// show project ownership status dialog box
+						// show project ownership status dialog
 						//
-						Registry.application.modal.show(
-							new ProjectOwnershipStatusView({
-								model: project_owner_permission
-							})
-						);
+						application.show(new ProjectOwnershipStatusDialogView({
+							model: project_owner_permission
+						}));
 					},
 
 					error: function() {
 
-						// show project ownership policy dialog box
+						// show project ownership policy dialog
 						//
-						Registry.application.modal.show(
-							new ProjectOwnershipPolicyView({
-								model: project_owner_permission,
-							}), {
-								size: 'large'
-							}
-						);
+						application.show(new ProjectOwnershipPolicyDialogView({
+							model: project_owner_permission,
+						}), {
+							size: 'large'
+						});
 					}
 				});			
 			}

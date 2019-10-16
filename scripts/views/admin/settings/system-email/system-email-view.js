@@ -18,17 +18,14 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
+	'bootstrap/popover',
 	'text!templates/admin/settings/system-email/system-email.tpl',
-	'registry',
 	'models/users/user',
 	'collections/users/users',
-	'views/dialogs/notify-view',
-	'views/dialogs/error-view',
+	'views/base-view',
 	'views/admin/settings/system-email/system-email-list/system-email-list-view'
-], function($, _, Backbone, Marionette, Template, Registry, User, Users, NotifyView, ErrorView, SystemEmailListView) {
-	return Backbone.Marionette.LayoutView.extend({
+], function($, _, Popover, Template, User, Users, BaseView, SystemEmailListView) {
+	return BaseView.extend({
 
 		//
 		// attributes
@@ -37,7 +34,7 @@ define([
 		template: _.template(Template),
 
 		regions: {
-			systemEmailList: '#system-email-list'
+			list: '#system-email-list'
 		},
 
 		events: {
@@ -49,7 +46,7 @@ define([
 		},
 
 		//
-		// methods
+		// constructor
 		//
 
 		initialize: function() {
@@ -60,7 +57,7 @@ define([
 				this.options.showInactiveAccounts = true;
 			}
 			if (this.options.showNumbering == undefined) {
-				this.options.showNumbering = Registry.application.options.showNumbering;
+				this.options.showNumbering = application.options.showNumbering;
 			}
 
 			// set attributes
@@ -72,11 +69,11 @@ define([
 		// rendering methods
 		//
 
-		template: function(data) {
-			return _.template(Template, _.extend(data, {
+		templateContext: function() {
+			return {
 				showInactiveAccounts: this.options.showInactiveAccounts,
 				showNumbering: this.options.showNumbering
-			}));
+			};
 		},
 
 		onRender: function() {
@@ -100,13 +97,11 @@ define([
 
 				error: function() {
 
-					// show error dialog
+					// show error message
 					//
-					Registry.application.modal.show(
-						new ErrorView({
-							message: "Could not fetch system users."
-						})
-					);
+					application.error({
+						message: "Could not fetch system users."
+					});
 				}
 			});
 		},
@@ -116,15 +111,13 @@ define([
 
 			// show system email list view
 			//
-			this.systemEmailList.show(
-				new SystemEmailListView({
-					collection: new Users(this.collection.filter(function(user) {
-						return user.isEnabled() && (self.options.showInactiveAccounts || user.isActive());
-					})),
-					showNumbering: this.options.showNumbering,
-					showHibernate: this.options.showInactiveAccounts
-				})
-			);
+			this.showChildView('list', new SystemEmailListView({
+				collection: new Users(this.collection.filter(function(user) {
+					return user.isEnabled() && (self.options.showInactiveAccounts || user.isActive());
+				})),
+				showNumbering: this.options.showNumbering,
+				showHibernate: this.options.showInactiveAccounts
+			}));
 		},
 
 		//
@@ -150,19 +143,14 @@ define([
 				// callbacks
 				//
 				success: function(response) {
-					Registry.application.modal.show(
-						new NotifyView({
-							message: 'System email sent successfully. Failed sending for the following users:<br/><br/><textarea rows="12">' + JSON.stringify( response ) + '</textarea>'
-						})
-					);
-
+					application.notify({
+						message: 'System email sent successfully. Failed sending for the following users:<br/><br/><textarea rows="12">' + JSON.stringify( response ) + '</textarea>'
+					});
 				},
 				error: function(response) {
-					Registry.application.modal.show(
-						new ErrorView({
-							message: response.responseText
-						})
-					);
+					application.error({
+						message: response.responseText
+					});
 				}
 			});
 
@@ -177,8 +165,8 @@ define([
 		},
 
 		onClickShowNumbering: function(event) {
-			Registry.application.setShowNumbering($(event.target).is(':checked'));
-			this.options.showNumbering = Registry.application.options.showNumbering;
+			application.setShowNumbering($(event.target).is(':checked'));
+			this.options.showNumbering = application.options.showNumbering;
 			this.showSystemEmailList();
 		}
 	});

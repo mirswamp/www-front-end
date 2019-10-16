@@ -1,6 +1,6 @@
 /******************************************************************************\
 |                                                                              |
-|                              events-list-item-view.js                        |
+|                            events-list-item-view.js                          |
 |                                                                              |
 |******************************************************************************|
 |                                                                              |
@@ -18,26 +18,21 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
 	'text!templates/events/list/events-list-item.tpl',
+	'views/collections/tables/table-list-item-view',
 	'utilities/time/date-utils'
-], function($, _, Backbone, Marionette, Template) {
-	return Backbone.Marionette.LayoutView.extend({
+], function($, _, Template, TableListItemView) {
+	return TableListItemView.extend({
 
 		//
 		// attributes
 		//
 
-		tagName: 'tr',
+		template: _.template(Template),
 		
 		// 
 		// methods
 		//
-
-		getInfo: function(data) {
-			return '';
-		},
 
 		getDate: function() {
 			return this.model.get('date');
@@ -47,12 +42,12 @@ define([
 		// rendering methods
 		//
 
-		template: function(data) {
-			return _.template(Template, _.extend(data, {
+		templateContext: function() {
+			return {
+				index: this.options.index,
 				showNumbering: this.options.showNumbering,
-				info: this.getInfo(data),
 				date: this.getDate()
-			}));
+			};
 		}
 	});
 });

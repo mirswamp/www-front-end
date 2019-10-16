@@ -18,19 +18,23 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
 	'text!templates/notifications/list/notifications-list.tpl',
-	'views/widgets/lists/sortable-table-list-view',
+	'views/base-view',
+	'views/collections/tables/sortable-table-list-view',
 	'views/notifications/list/notifications-list-item-view'
-], function($, _, Backbone, Marionette, Template, SortableTableListView, NotificationsListItemView) {
+], function($, _, Template, BaseView, SortableTableListView, NotificationsListItemView) {
 	return SortableTableListView.extend({
 
 		//
 		// attributes
 		//
 
+		template: _.template(Template),
 		childView: NotificationsListItemView,
+
+		emptyView: BaseView.extend({
+			template: _.template("No notifications.")
+		}),
 
 		sorting: {
 
@@ -43,18 +47,28 @@ define([
 		// rendering methods
 		//
 
-		template: function(data) {
-			return _.template(Template, _.extend(data, {
+		templateContext: function() {
+			return {
 				collection: this.collection,
 				showNumbering: this.options.showNumbering
-			}));
+			};
 		},
 
-		childViewOptions: function(model, index) {
-			return {
-				index: index,
-				showNumbering: this.options.showNumbering
+		childViewOptions: function(model) {
+
+			// check if empty view
+			//
+			if (!model) {
+				return {};
 			}
+
+			// return view options
+			//
+			return {
+				index: this.collection.indexOf(model),
+				showNumbering: this.options.showNumbering,
+				onClick: this.options.onClick
+			};
 		}
 	});
 });

@@ -18,12 +18,12 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone'
-], function($, _, Backbone) {
+	'routers/base-router'
+], function($, _, BaseRouter) {
 
 	// create router
 	//
-	return Backbone.Router.extend({
+	return BaseRouter.extend({
 
 		//
 		// route definitions
@@ -51,16 +51,14 @@ define([
 		showRunRequests: function(queryString) {
 			var self = this;
 			require([
-				'registry',
 				'routers/query-string-parser',
 				'collections/viewers/viewers',
-				'views/dialogs/error-view',
-				'views/scheduled-runs/scheduled-runs-view'
-			], function (Registry, QueryStringParser, Viewers, ErrorView, ScheduledRunsView) {
+							'views/scheduled-runs/scheduled-runs-view'
+			], function (QueryStringParser, Viewers, ScheduledRunsView) {
 
 				// show content view
 				//
-				Registry.application.showContent({
+				application.showContent({
 					nav1: 'home',
 					nav2: 'runs', 
 
@@ -74,12 +72,10 @@ define([
 
 							// show run requests view
 							//
-							view.content.show(
-								new ScheduledRunsView({
-									data: data,
-									model: view.model
-								})
-							);
+							view.showChildView('content', new ScheduledRunsView({
+								data: data,
+								model: view.model
+							}));
 						});
 					}
 				});
@@ -89,16 +85,14 @@ define([
 		showAddRunRequests: function(queryString) {
 			var self = this;
 			require([
-				'registry',
 				'routers/query-string-parser',
 				'models/projects/project',
-				'views/dialogs/error-view',
-				'views/scheduled-runs/schedule-run-requests/schedule-run-requests-view'
-			], function (Registry, QueryStringParser, Project, ErrorView, ScheduleRunRequestsView) {
+							'views/scheduled-runs/schedule-run-requests/schedule-run-requests-view'
+			], function (QueryStringParser, Project, ScheduleRunRequestsView) {
 
 				// show content view
 				//
-				Registry.application.showContent({
+				application.showContent({
 					nav1: 'home',
 					nav2: 'runs', 
 
@@ -112,12 +106,10 @@ define([
 
 							// show project's schedule run requests view
 							//
-							view.content.show(
-								new ScheduleRunRequestsView({
-									model: data['project'] || view.model,
-									data: data
-								})
-							);
+							view.showChildView('content', new ScheduleRunRequestsView({
+								model: data['project'] || view.model,
+								data: data
+							}));
 						});
 					}
 				});
@@ -131,16 +123,14 @@ define([
 		showAddRunRequestSchedule: function(queryString) {
 			var self = this;
 			require([
-				'registry',
 				'routers/query-string-parser',
 				'models/projects/project',
-				'views/dialogs/error-view',
-				'views/scheduled-runs/schedules/add/add-schedule-view'
-			], function (Registry, QueryStringParser, Project, ErrorView, AddScheduleView) {
+							'views/scheduled-runs/schedules/add/add-schedule-view'
+			], function (QueryStringParser, Project, AddScheduleView) {
 
 				// show content view
 				//
-				Registry.application.showContent({
+				application.showContent({
 					nav1: 'home',
 					nav2: 'runs', 
 
@@ -155,22 +145,18 @@ define([
 
 								// show project's add schedule view
 								//
-								view.content.show(
-									new AddScheduleView({
-										project: data['project'],
-										assessmentRunUuids: data['assessments']
-									})
-								);
+								view.showChildView('content', new AddScheduleView({
+									project: data['project'],
+									assessmentRunUuids: data['assessments']
+								}));
 							} else {
 
 								// show my add schedule view
 								//
-								view.content.show(
-									new AddScheduleView({
-										project: view.model,
-										assessmentRunUuids: data['assessments']
-									})
-								);
+								view.showChildView('content', new AddScheduleView({
+									project: view.model,
+									assessmentRunUuids: data['assessments']
+								}));
 							}
 						});
 					}
@@ -181,16 +167,14 @@ define([
 		showRunRequestSchedule: function(runRequestUuid) {
 			var self = this;
 			require([
-				'registry',
 				'models/projects/project',
 				'models/run-requests/run-request',
 				'views/scheduled-runs/schedules/schedule/schedule-view',
-				'views/dialogs/error-view'
-			], function (Registry, Project, RunRequest, ScheduleView, ErrorView) {
+						], function (Project, RunRequest, ScheduleView) {
 
 				// show content view
 				//
-				Registry.application.showContent({
+				application.showContent({
 					nav1: 'home',
 					nav2: 'runs', 
 
@@ -224,36 +208,30 @@ define([
 
 										// show schedule view
 										//
-										view.content.show(
-											new ScheduleView({
-												model: runRequest,
-												project: project
-											})
-										);
+										view.showChildView('content', new ScheduleView({
+											model: runRequest,
+											project: project
+										}));
 									},
 
 									error: function() {
 
-										// show error dialog
+										// show error message
 										//
-										Registry.application.modal.show(
-											new ErrorView({
-												message: "Could not fetch run request's project."
-											})
-										);				
+										application.error({
+											message: "Could not fetch run request's project."
+										});				
 									}
 								});
 							},
 
 							error: function() {
 
-								// show error dialog
+								// show error message
 								//
-								Registry.application.modal.show(
-									new ErrorView({
-										message: "Could not fetch run request."
-									})
-								);
+								application.error({
+									message: "Could not fetch run request."
+								});
 							}
 						});
 					}
@@ -264,16 +242,14 @@ define([
 		showEditRunRequestSchedule: function(runRequestUuid) {
 			var self = this;
 			require([
-				'registry',
 				'models/projects/project',
 				'models/run-requests/run-request',
 				'views/scheduled-runs/schedules/edit/edit-schedule-view',
-				'views/dialogs/error-view'
-			], function (Registry, Project, RunRequest, EditScheduleView, ErrorView) {
+						], function (Project, RunRequest, EditScheduleView) {
 
 				// show content view
 				//
-				Registry.application.showContent({
+				application.showContent({
 					nav1: 'home',
 					nav2: 'runs', 
 
@@ -307,36 +283,30 @@ define([
 
 										// show schedule view
 										//
-										view.content.show(
-											new EditScheduleView({
-												model: runRequest,
-												project: project
-											})
-										);
+										view.showChildView('content', new EditScheduleView({
+											model: runRequest,
+											project: project
+										}));
 									},
 
 									error: function() {
 
-										// show error dialog
+										// show error message
 										//
-										Registry.application.modal.show(
-											new ErrorView({
-												message: "Could not fetch run request's project."
-											})
-										);				
+										application.error({
+											message: "Could not fetch run request's project."
+										});				
 									}
 								});
 							},
 
 							error: function() {
 
-								// show error dialog
+								// show error message
 								//
-								Registry.application.modal.show(
-									new ErrorView({
-										message: "Could not fetch run request."
-									})
-								);
+								application.error({
+									message: "Could not fetch run request."
+								});
 							}
 						});
 					}
@@ -347,16 +317,14 @@ define([
 		showRunRequestSchedules: function(queryString) {
 			var self = this;
 			require([
-				'registry',
 				'routers/query-string-parser',
 				'models/projects/project',
-				'views/dialogs/error-view',
-				'views/scheduled-runs/schedules/schedules-view'
-			], function (Registry, QueryStringParser, Project, ErrorView, SchedulesView) {
+							'views/scheduled-runs/schedules/schedules-view'
+			], function (QueryStringParser, Project, SchedulesView) {
 
 				// show content view
 				//
-				Registry.application.showContent({
+				application.showContent({
 					nav1: 'home',
 					nav2: 'runs', 
 
@@ -367,12 +335,10 @@ define([
 						// parse and fetch query string data
 						//
 						QueryStringParser.fetch(QueryStringParser.parse(queryString, view.model), function(data) {
-							view.content.show(
-								new SchedulesView({
-									data: data,
-									model: view.model
-								})
-							);
+							view.showChildView('content', new SchedulesView({
+								data: data,
+								model: view.model
+							}));
 						});
 					}
 				});

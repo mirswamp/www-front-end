@@ -19,14 +19,12 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
-	'registry',
 	'text!templates/users/passwords/dialogs/add-new-password.tpl',
 	'models/authentication/app-password',
+	'views/base-view',
 	'views/users/passwords/forms/password-form-view',
-], function($, _, Backbone, Marionette, Registry, Template, AppPassword, PasswordFormView) {
-	return Backbone.Marionette.LayoutView.extend({
+], function($, _, Template, AppPassword, BaseView, PasswordFormView) {
+	return BaseView.extend({
 
 		//
 		// attributes
@@ -35,7 +33,7 @@ define([
 		template: _.template(Template),
 
 		regions: {
-			passwordForm: '#password-form',
+			form: '#password-form',
 		},
 
 		events: {
@@ -44,7 +42,7 @@ define([
 		},
 
 		//
-		// methods
+		// constructor
 		//
 
 		initialize: function() {
@@ -55,6 +53,10 @@ define([
 				label: ''
 			});
 		},
+
+		//
+		// methods
+		//
 
 		savePassword: function() {
 			var self = this;
@@ -76,28 +78,25 @@ define([
 				error: function(data, response) {
 					response = JSON.parse(response.responseText);
 
-					Registry.application.notify({
+					application.notify({
 						title: response.error.toTitleCase(),
 						message: response.error_description
 					});
 				}
-			})
+			});
 		},
 
 		showPassword: function(model) {
 			require([
-				'registry',
-				'views/users/passwords/dialogs/new-password-view',
-			], function (Registry, NewPasswordView) {
-				Registry.application.modal.show(
-					new NewPasswordView({
-						model: model
-					})
-				);
+				'views/users/passwords/dialogs/new-password-dialog-view',
+			], function (NewPasswordDialogView) {
+				application.show(new NewPasswordDialogView({
+					model: model
+				}));
 			});
 
 			/*
-			Registry.application.notify({
+			application.notify({
 				message: "Your new application password is: " + model.get('password') + '. ' +
 					"Please make a note of it since it won't be retrievable once this dialog box is dismissed."
 			});
@@ -117,21 +116,19 @@ define([
 
 		showPasswordForm: function() {
 			var self = this;
-			this.passwordForm.show(
-				new PasswordFormView({
-					model: this.model,
+			this.showChildView('form', new PasswordFormView({
+				model: this.model,
 
-					// callbacks
-					//
-					onChange: function() {
-						if (self.passwordForm.currentView.isValid()) {
-							self.enableButtons();
-						} else {
-							self.disableButtons();
-						}
+				// callbacks
+				//
+				onChange: function() {
+					if (self.getChildView('form').isValid()) {
+						self.enableButtons();
+					} else {
+						self.disableButtons();
 					}
-				})
-			);
+				}
+			}));
 		},
 
 		showWarning: function() {
@@ -163,11 +160,11 @@ define([
 		},
 
 		onClickOk: function() {
-			if (this.passwordForm.currentView.isValid()) {
+			if (this.getChildView('form').isValid()) {
 
 				// update model
 				//
-				this.passwordForm.currentView.update(this.model);
+				this.getChildView('form').applyTo(this.model);
 
 				// save password to server
 				//

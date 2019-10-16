@@ -18,23 +18,21 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
-	'bootstrap/tooltip',
 	'bootstrap/popover',
 	'text!templates/packages/info/versions/info/details/new-package-version-details.tpl',
-	'registry',
-	'views/dialogs/notify-view',
+	'views/base-view',
 	'views/packages/info/versions/info/details/package-version-profile/new-package-version-profile-form-view'
-], function($, _, Backbone, Marionette, Tooltip, Popover, Template, Registry, NotifyView, NewPackageVersionProfileFormView) {
-	return Backbone.Marionette.LayoutView.extend({
+], function($, _, Popover, Template, BaseView, NewPackageVersionProfileFormView) {
+	return BaseView.extend({
 
 		//
 		// attributes
 		//
 
+		template: _.template(Template),
+
 		regions: {
-			newPackageVersionProfileForm: '#new-package-version-profile-form'
+			form: '#new-package-version-profile-form'
 		},
 
 		events: {
@@ -47,29 +45,27 @@ define([
 		// rendering methods
 		//
 
-		template: function(data) {
-			return _.template(Template, _.extend(data, {
+		templateContext: function() {
+			return {
 				package: this.options.package
-			}));
+			};
 		},
 
 		onRender: function() {
 
 			// display package version profile form view
 			//
-			this.newPackageVersionProfileForm.show(
-				new NewPackageVersionProfileFormView({
-					model: this.model,
-					package: this.options.package
-				})
-			);
+			this.showChildView('form', new NewPackageVersionProfileFormView({
+				model: this.model,
+				package: this.options.package
+			}));
 
 			// add popover
 			//
 			this.$el.find('#formats-supported').popover({
 				'trigger': 'click',
 				'placement': 'bottom'
-			})
+			});
 		},
 
 		showWarning: function() {
@@ -85,28 +81,29 @@ define([
 		//
 
 		upload: function(options) {
+			var data = this.getChildView('form').$el[0];
 
 			// get data to upload
 			//
-			var data = new FormData(this.newPackageVersionProfileForm.currentView.$el.find('form')[0]);
+			var formData = new FormData(data);
 
 			// append pertinent model data
 			//
-			data.append('package_uuid', this.options.package.get('package_uuid'));
-			data.append('user_uid', Registry.application.session.user.get('user_uid'));
+			formData.append('package_uuid', this.options.package.get('package_uuid'));
+			formData.append('user_uid', application.session.user.get('user_uid'));
 			
 			// append external url data
 			//
 			if (this.options.package.has('external_url')) {
-				data.append('use_external_url', this.options.package.has('external_url'));
+				formData.append('use_external_url', this.options.package.has('external_url'));
 			}
 			if (this.model.has('checkout_argument')) {
-				data.append('checkout_argument', this.model.get('checkout_argument'));
+				formData.append('checkout_argument', this.model.get('checkout_argument'));
 			}
 
 			// upload
 			//
-			this.model.upload(data, options);
+			this.model.upload(formData, options);
 		},
 
 		//
@@ -122,11 +119,11 @@ define([
 
 			// check validation
 			//
-			if (this.newPackageVersionProfileForm.currentView.isValid()) {
+			if (this.getChildView('form').isValid()) {
 
 				// update model
 				//
-				this.newPackageVersionProfileForm.currentView.update(this.model);
+				this.getChildView('form').applyTo(this.model);
 
 				// upload model
 				//
@@ -167,12 +164,12 @@ define([
 
 					error: function(response) {
 
-						// show notify dialog view
+						// show notification
 						//
-						Registry.application.modal.show(new NotifyView({
+						application.notify({
 							title: 'Package Upload Error',
 							message: response.statusText
-						}));
+						});
 
 						self.resetProgressBar();
 					}

@@ -18,30 +18,27 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
 	'text!templates/platforms/info/details/platform-details.tpl',
-	'registry',
 	'collections/platforms/platform-versions',
-	'views/dialogs/confirm-view',
-	'views/dialogs/notify-view',
-	'views/dialogs/error-view',
+	'views/base-view',
 	'views/platforms/info/details/platform-profile/platform-profile-view',
 	'views/platforms/info/versions/platform-versions-list/platform-versions-list-view'
-], function($, _, Backbone, Marionette, Template, Registry, PlatformVersions, ConfirmView, NotifyView, ErrorView, PlatformProfileView, PlatformVersionsListView) {
-	return Backbone.Marionette.LayoutView.extend({
+], function($, _, Template, PlatformVersions, BaseView, PlatformProfileView, PlatformVersionsListView) {
+	return BaseView.extend({
 
 		//
 		// attributes
 		//
 
+		template: _.template(Template),
+
 		regions: {
-			platformProfile: '#platform-profile',
-			platformVersionsList: '#platform-versions-list'
+			profile: '#platform-profile',
+			list: '#platform-versions-list'
 		},
 
 		//
-		// methods
+		// constructor
 		//
 
 		initialize: function() {
@@ -64,13 +61,11 @@ define([
 
 				error: function() {
 
-					// show error dialog
+					// show error message
 					//
-					Registry.application.modal.show(
-						new ErrorView({
-							message: "Could not fetch platform versions."
-						})
-					);
+					application.error({
+						message: "Could not fetch platform versions."
+					});
 				}
 			});
 		},
@@ -79,20 +74,14 @@ define([
 		// rendering methods
 		//
 
-		template: function(data) {
-			return _.template(Template, data);
-		},
-
 		onRender: function() {
 			var self = this;
 
 			// display platform profile view
 			//
-			this.platformProfile.show(
-				new PlatformProfileView({
-					model: this.model
-				})
-			);
+			this.showChildView('profile', new PlatformProfileView({
+				model: this.model
+			}));
 
 			// fetch and show platform versions
 			//
@@ -105,12 +94,10 @@ define([
 
 			// show platform versions list view
 			//
-			this.platformVersionsList.show(
-				new PlatformVersionsListView({
-					model: this.model,
-					collection: this.collection
-				})
-			);
+			this.showChildView('list', new PlatformVersionsListView({
+				model: this.model,
+				collection: this.collection
+			}));
 		}
 	});
 });

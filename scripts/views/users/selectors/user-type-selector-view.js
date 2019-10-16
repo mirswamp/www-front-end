@@ -19,17 +19,22 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
 	'text!templates/widgets/selectors/name-selector.tpl',
 	'views/widgets/selectors/name-selector-view'
-], function($, _, Backbone, Template, NameSelectorView) {
+], function($, _, Template, NameSelectorView) {
 	return NameSelectorView.extend({
 
 		//
-		// methods
+		// attributes
 		//
 
-		initialize: function(attributes, options) {
+		template: _.template(Template),
+
+		//
+		// constructor
+		//
+
+		initialize: function(options) {
 			var self = this;
 			this.collection = new Backbone.Collection([{
 					name: 'Any',
@@ -57,18 +62,18 @@ define([
 
 			// call superclass method
 			//
-			NameSelectorView.prototype.initialize.call(this, this.options);
+			NameSelectorView.prototype.initialize.call(this, options);
 		},
 
 		//
 		// rendering methods
 		//
 
-		template: function(data) {
+		templateContext: function() {
 			var selectedItem = this.collection.where({ value: this.selected });
-			return _.template(Template, _.extend(data, {
+			return {
 				selected: selectedItem? selectedItem[0].get('name') : undefined
-			}));
+			};
 		},
 
 		//

@@ -1,6 +1,6 @@
 /******************************************************************************\
 |                                                                              |
-|                            select-projects-item-view.js                      |
+|                      select-projects-list-item-view.js                       |
 |                                                                              |
 |******************************************************************************|
 |                                                                              |
@@ -19,25 +19,16 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
-	'text!templates/projects/select-list/select-projects-list-item.tpl'
-], function($, _, Backbone, Marionette, Template) {
-	return Backbone.Marionette.ItemView.extend({
+	'text!templates/projects/select-list/select-projects-list-item.tpl',
+	'views/projects/list/projects-list-item-view'
+], function($, _, Template, ProjectsListItemView) {
+	return ProjectsListItemView.extend({
 
 		//
 		// attributes
 		//
 
-		tagName: 'tr',
-
-		//
-		// rendering methods
-		//
-
-		template: function(data) {
-			return _.template(Template, data);
-		},
+		template: _.template(Template),
 
 		//
 		// methods

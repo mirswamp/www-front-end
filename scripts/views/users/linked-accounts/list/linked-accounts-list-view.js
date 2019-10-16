@@ -19,23 +19,23 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
 	'text!templates/users/linked-accounts/list/linked-accounts-list.tpl',
-	'registry',
-	'config',
-	'collections/authentication/user-linked-accounts',
-	'views/dialogs/notify-view',
-	'views/dialogs/error-view',
-	'views/widgets/lists/sortable-table-list-view',
+	'views/base-view',
+	'views/collections/tables/sortable-table-list-view',
 	'views/users/linked-accounts/list/linked-accounts-list-item-view'
-], function($, _, Backbone, Marionette, Template, Registry, Config, UserPermissions, NotifyView, ErrorView, SortableTableListView, LinkedAccountsListItemView) {
+], function($, _, Template, BaseView, SortableTableListView, LinkedAccountsListItemView) {
 	return SortableTableListView.extend({
 
 		//
 		// attributes
 		//
+
+		template: _.template(Template),
 		childView: LinkedAccountsListItemView,
+
+		emptyView: BaseView.extend({
+			template: _.template("No linked accounts.")
+		}),
 
 		sorting: {
 
@@ -59,16 +59,16 @@ define([
 		// rendering methods
 		//
 
-		template: function(data) {
-			return _.template(Template, _.extend(data, {
-				admin: Registry.application.session.user.get('admin_flag'),
+		templateContext: function() {
+			return {
+				admin: application.session.user.get('admin_flag'),
 				collection: this.collection,
 				showStatus: this.options.showStatus,
 				showDelete: this.options.showDelete
-			}));
+			};
 		},
 
-		childViewOptions: function(){
+		childViewOptions: function() {
 			return {
 				parent: this.options.parent,
 				showStatus: this.options.showStatus,

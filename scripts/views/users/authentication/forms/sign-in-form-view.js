@@ -1,10 +1,10 @@
 /******************************************************************************\
 |                                                                              |
-|                               sign-in-form-view.js                           |
+|                             sign-in-form-view.js                             |
 |                                                                              |
 |******************************************************************************|
 |                                                                              |
-|        This defines a form for authenticating (signing in) users.            |
+|        This defines a form for entering authentication info.                 |
 |                                                                              |
 |        Author(s): Abe Megahed                                                |
 |                                                                              |
@@ -18,26 +18,22 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
-	'bootstrap/popover',
-	'jquery.validate',
 	'text!templates/users/authentication/forms/sign-in-form.tpl',
 	'config',
-	'registry',
+	'views/base-view',
 	'views/users/authentication/selectors/auth-provider-selector-view',
-	'views/dialogs/error-view'
-], function($, _, Backbone, Marionette, Popover, Validate, Template, Config, Registry, AuthProviderSelectorView, ErrorView) {
-	return Backbone.Marionette.LayoutView.extend({
+], function($, _, Template, Config, BaseView, AuthProviderSelectorView) {
+	return BaseView.extend({
 
 		//
 		// attributes
 		//
 
-		className: 'form-horizontal',
+		template: _.template(Template),
+		className: 'form form-horizontal',
 
 		regions: {
-			linkedAccountSignIn: '#linked-account-sign-in'
+			linked_sign_in: '#linked-account-sign-in'
 		},
 
 		events: {
@@ -57,12 +53,12 @@ define([
 
 			// remove auth provider from saved options
 			//
-			Registry.application.options.authProvider = null;
-			Registry.application.saveOptions();
+			application.options.authProvider = null;
+			application.saveOptions();
 
 			// send login request
 			//
-			Registry.application.session.login(username, password, {
+			application.session.login(username, password, {
 				crossDomain: true,
 				
 				// callbacks
@@ -91,7 +87,7 @@ define([
 					// check for blocked request
 					//
 					} else if (response.status == 403) {
-						window.location = Registry.application.getURL() + 'block/index.html';
+						window.location = application.getURL() + 'block/index.html';
 
 					// check for bad request
 					//
@@ -144,13 +140,11 @@ define([
 					//
 					} else {
 
-						// show error dialog
+						// show error message
 						//
-						Registry.application.modal.show(
-							new ErrorView({
-								message: response.responseText
-							})
-						);
+						application.error({
+							message: response.responseText
+						});
 					}
 				}
 			});
@@ -160,30 +154,17 @@ define([
 		// rendering methods
 		//
 
-		template: function() {
-			return _.template(Template, {
-				config: Registry.application.config
-			});
-		},
-
-		onRender: function() {
-
-			// display popovers on hover
-			//
-			this.$el.find('[data-toggle="popover"]').popover({
-				trigger: 'hover'
-			});
-
-			// perform initial validation
-			//
-			//this.validate();
+		templateContext: function() {
+			return {
+				config: application.config
+			};
 		},
 
 		onShow: function() {
 
 			// show linked account sign in
 			//
-			if (Registry.application.config['linked_accounts_enabled']) {
+			if (application.config['linked_accounts_enabled']) {
 				this.showLinkedAccountForm();
 			}
 		},
@@ -193,26 +174,24 @@ define([
 			require([
 				'views/users/authentication/forms/linked-account-sign-in-form-view',
 			], function (LinkedAccountSignInFormView) {
-				self.linkedAccountSignIn.show(
-					new LinkedAccountSignInFormView({
-						parent: self,
+				self.showChildView('linked_sign_in', new LinkedAccountSignInFormView({
+					parent: self,
 
-						// callbacks
-						//
-						onShowProviders: function() {
-							self.showProviders();
-							self.onChange();
-						},
-						onHideProviders: function() {
-							self.hideProviders();
-							self.onChange();
-						}
-					})
-				);
+					// callbacks
+					//
+					onShowProviders: function() {
+						self.showProviders();
+						self.onChange();
+					},
+					onHideProviders: function() {
+						self.hideProviders();
+						self.onChange();
+					}
+				}));
 
 				// configure form view
 				//
-				if (Registry.application.options.authProvider) {
+				if (application.options.authProvider) {
 					self.showProviders();
 				}
 			});
@@ -220,14 +199,12 @@ define([
 
 		showEmailVerificationError: function(username, password) {
 			require([
-				'views/users/dialogs/email-verification-error-view',
-			], function (EmailVerificationErrorView) {
-				Registry.application.modal.show(
-					new EmailVerificationErrorView({
-						username: username,
-						password: password
-					})
-				);
+				'views/users/dialogs/email-verification-error-dialog-view',
+			], function (EmailVerificationErrorDialogView) {
+				application.show(new EmailVerificationErrorDialogView({
+					username: username,
+					password: password
+				}));
 			});
 		},
 
@@ -273,23 +250,30 @@ define([
 		// form methods
 		//
 
+		focus: function() {
+			this.$el.find('#username input').focus();
+		},
+
+		getValues: function() {
+			return {
+				username: this.$el.find('#username input').val(),
+				password: this.$el.find('#password input').val()
+			};
+		},
+
 		submit: function(options) {
-			if (Registry.application.config['linked_accounts_enabled'] &&
-				this.linkedAccountSignIn.currentView.useLinkedAccount) {
+			if (application.config['linked_accounts_enabled'] &&
+				this.getChildView('linked_sign_in').useLinkedAccount) {
 
 				// sign in using linked account
 				//
-				this.linkedAccountSignIn.currentView.submit();
+				this.getChildView('linked_sign_in').submit();
 			} else {
-
-				// get parameters
-				//
-				var username = this.$el.find('#username input').val();
-				var password = this.$el.find('#password input').val();
+				var values = this.getValues();
 
 				// make request
 				//
-				this.login(username, password, options);
+				this.login(values.username, values.password, options);
 			}
 		},
 
@@ -297,14 +281,10 @@ define([
 		// form validation methods
 		//
 
-		validate: function() {
-			this.validator = this.$el.validate();
-		},
-
 		isValid: function() {
 			/*
-			if (Registry.application.config['linked_accounts_enabled']) {
-				return this.validator.form() || this.linkedAccountSignIn.currentView.isValid();
+			if (application.config['linked_accounts_enabled']) {
+				return this.validator.form() || this.getChildView('linked_sign_in').isValid();
 			} else {
 				return this.validator.form();
 			}
@@ -312,8 +292,8 @@ define([
 
 			// check if using linked accounts form
 			//
-			if (Registry.application.config['linked_accounts_enabled']) {
-				if (this.linkedAccountSignIn.currentView && this.linkedAccountSignIn.currentView.useLinkedAccount) {
+			if (application.config['linked_accounts_enabled']) {
+				if (this.getChildView('linked_sign_in') && this.getChildView('linked_sign_in').useLinkedAccount) {
 					return true;
 				}
 			}
@@ -347,31 +327,27 @@ define([
 
 		onClickResetPassword: function() {
 			require([
-				'views/users/authentication/dialogs/reset-password-view'
-			], function (ResetPasswordView) {
+				'views/users/authentication/dialogs/reset-password-dialog-view'
+			], function (ResetPasswordDialogView) {
 
 				// show reset password view
 				//
-				Registry.application.modal.show(
-					new ResetPasswordView({
-						parent: this
-					})
-				);
+				application.show(new ResetPasswordDialogView({
+					parent: this
+				}));
 			});
 		},
 
 		onClickRequestUsername: function() {
 			require([
-				'views/users/authentication/dialogs/request-username-view'
-			], function (RequestUsernameView) {
+				'views/users/authentication/dialogs/request-username-dialog-view'
+			], function (RequestUsernameDialogView) {
 
 				// show request username view
 				//
-				Registry.application.modal.show(
-					new RequestUsernameView({
-						parent: this
-					})
-				);
+				application.show(new RequestUsernameDialogView({
+					parent: this
+				}));
 			});
 		}
 	});

@@ -27,7 +27,7 @@
 <% if (showHibernate) { %>
 <td class="hibernate last">
 	<% if (model.isHibernating()) { %>
-		<i class="fa fa-bed"></i>
+		hibernating
 	<% } %>
 </td>
 <% } %>	

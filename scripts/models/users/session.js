@@ -18,15 +18,13 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
 	'jquery.cookie',
 	'config',
-	'registry',
+	'models/base-model',
 	'models/users/user',
-	'views/dialogs/error-view',
-	'utilities/browser/url-strings'
-], function($, _, Backbone, Cookie, Config, Registry, User, ErrorView) {
-	return Backbone.Model.extend({
+	'utilities/web/url-strings'
+], function($, _, Cookie, Config, BaseModel, User) {
+	return BaseModel.extend({
 
 		//
 		// login methods
@@ -95,13 +93,11 @@ define([
 				//
 				error: function(jqxhr, textStatus, errorThrown) {
 
-					// show error dialog view
+					// show error message view
 					//
-					Registry.application.modal.show(
-						new ErrorView({
-							message: "Could not log out: " + errorThrown + "."
-						})
-					);
+					application.error({
+						message: "Could not log out: " + errorThrown + "."
+					});
 				}
 			}));
 		},
@@ -124,8 +120,8 @@ define([
 			// save auth provider
 			//
 			if (provider) {
-				Registry.application.options.authProvider = provider.get('name');
-				Registry.application.saveOptions();
+				application.options.authProvider = provider.get('name');
+				application.saveOptions();
 			}
 
 			// redirect

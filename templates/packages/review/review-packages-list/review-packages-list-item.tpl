@@ -7,7 +7,7 @@
 <% } %>
 
 <td class="package first">
-	<a href="<%- url %>"><%= stringToHTML(model.get('name')) %></a>
+	<a href="<%- url %>"><%= textToHtml(model.get('name')) %></a>
 </td>
 
 <td class="type">

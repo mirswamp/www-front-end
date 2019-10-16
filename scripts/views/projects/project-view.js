@@ -18,11 +18,9 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
 	'text!templates/projects/project.tpl',
-	'registry',
 	'collections/users/users',
+	'collections/projects/projects',
 	'collections/projects/project-memberships',
 	'collections/assessments/assessment-runs',
 	'collections/assessments/execution-records',
@@ -30,21 +28,21 @@ define([
 	'collections/run-requests/run-requests',
 	'collections/events/project-events',
 	'collections/events/user-project-events',
-	'views/dialogs/confirm-view',
-	'views/dialogs/notify-view',
-	'views/dialogs/error-view',
+	'views/base-view',
 	'views/projects/info/project-profile/project-profile-view',
 	'views/projects/info/members/list/project-members-list-view'
-], function($, _, Backbone, Marionette, Template, Registry, Users, ProjectMemberships, AssessmentRuns, ExecutionRecords, ScheduledRuns, RunRequests, ProjectEvents, UserProjectEvents, ConfirmView, NotifyView, ErrorView, ProjectProfileView, ProjectMembersListView) {
-	return Backbone.Marionette.LayoutView.extend({
+], function($, _, Template, Users, Projects, ProjectMemberships, AssessmentRuns, ExecutionRecords, ScheduledRuns, RunRequests, ProjectEvents, UserProjectEvents, BaseView, ProjectProfileView, ProjectMembersListView) {
+	return BaseView.extend({
 
 		//
 		// attributes
 		//
 
+		template: _.template(Template),
+
 		regions: {
-			projectProfile: '#project-profile',
-			membersList: '#members-list'
+			profile: '#project-profile',
+			list: '#members-list'
 		},
 
 		events: {
@@ -65,12 +63,28 @@ define([
 		},
 
 		//
-		// methods
+		// constructor
 		//
 
 		initialize: function() {
+			var self = this;
 			this.collection = new ProjectMemberships();
+
+			// find total number of projects
+			//
+			Projects.fetchNum({
+
+				// callbacks
+				//
+				success: function(numProjects) {
+					self.numProjects = parseInt(numProjects);
+				}
+			});
 		},
+
+		//
+		// methods
+		//
 
 		saveProjectMemberships: function(done) {
 			this.collection.save({
@@ -88,23 +102,29 @@ define([
 
 				error: function() {
 
-					// show error dialog
+					// show error message
 					//
-					Registry.application.modal.show(
-						new ErrorView({
-							message: "Your project membership changes could not be saved."
-						})
-					);
+					application.error({
+						message: "Your project membership changes could not be saved."
+					});
 				}
 			});
 		},
 
 		deleteProject: function() {
+			var self = this;
 			this.model.destroy({
 
 				// callbacks
 				//
 				success: function() {
+
+					// update user
+					//
+					self.numProjects--;
+					if (self.numProjects == 1) {
+						application.session.user.set('has_projects', false);
+					}
 
 					// return to projects view
 					//
@@ -115,13 +135,11 @@ define([
 
 				error: function() {
 
-					// show error dialog
+					// show error message
 					//
-					Registry.application.modal.show(
-						new ErrorView({
-							message: "Could not delete this project."
-						})
-					);
+					application.error({
+						message: "Could not delete this project."
+					});
 				}
 			});
 		},
@@ -130,32 +148,33 @@ define([
 		// rendering methods
 		//
 
-		template: function(data) {
-			return _.template(Template, _.extend(data, {
+		templateContext: function(data) {
+			return {
 				model: this.model,
 				isOwned: this.model.isOwned(),
 				isTrialProject: this.model.isTrialProject(),
-				isAdmin: Registry.application.session.isAdmin(),
-				isProjectAdmin: Registry.application.session.isAdmin() ||
+				isDeactivated: this.model.isDeactivated(),
+				isAdmin: application.session.isAdmin(),
+				isProjectAdmin: application.session.isAdmin() ||
 					this.options.projectMembership && this.options.projectMembership.isAdmin(),
 				allowPublicTools: true,
-				showNumbering: Registry.application.options.showNumbering
-			}));
+				showNumbering: application.options.showNumbering
+			};
 		},
 
 		onRender: function() {
 
 			// display project profile view
 			//
-			this.projectProfile.show(
-				new ProjectProfileView({
-					model: this.model
-				})
-			);
+			this.showChildView('profile', new ProjectProfileView({
+				model: this.model
+			}));
 
 			// show project members view
 			//
-			this.showProjectMembers();
+			if (!this.model.isTrialProject()) {
+				this.showProjectMembers();
+			}
 
 			// and add count bubbles / badges for project info
 			//
@@ -172,59 +191,31 @@ define([
 				// callbacks
 				//
 				success: function() {
-
-					// get the list of members
-					//
-					self.users = new Users();
-					self.users.fetchByProject(self.model, {
-
-						// callbacks
-						//
-						success: function() {
-							self.showList();
-						},
-
-						error: function() {
-
-							// show error dialog
-							//
-							Registry.application.modal.show(
-								new ErrorView({
-									message: "Could not fetch project users."
-								})
-							);
-						}
-					});
+					self.showList();
 				},
 
 				error: function() {
 
-					// show error dialog
+					// show error message
 					//
-					Registry.application.modal.show(
-						new ErrorView({
-							message: "Could not fetch project memberships."
-						})
-					);
+					application.error({
+						message: "Could not fetch project memberships."
+					});
 				}
 			});
 		},
 
 		showList: function() {
-			this.membersList.show(
-				new ProjectMembersListView({
-					model: this.model,
-					collection: this.users,
-					currentProjectMembership: this.options.projectMembership,
-					projectMemberships: this.collection,
-					showEmail: Registry.application.config['email_enabled'],
-					showUsername: true,
-					showDelete: this.options.projectMembership && this.options.projectMembership.isAdmin(),
-					showNumbering: Registry.application.options.showNumbering,
-					readOnly: !(Registry.application.session.isAdmin() ||
-						this.options.projectMembership && this.options.projectMembership.isAdmin())
-				})
-			);
+			this.showChildView('list', new ProjectMembersListView({
+				model: this.model,
+				collection: this.collection,
+				showEmail: application.config.email_enabled,
+				showUsername: true,
+				showDelete: this.options.projectMembership && this.options.projectMembership.isAdmin(),
+				showNumbering: application.options.showNumbering,
+				readOnly: !(application.session.isAdmin() ||
+					this.options.projectMembership && this.options.projectMembership.isAdmin())
+			}));
 
 			// show count of project members
 			//
@@ -280,9 +271,9 @@ define([
 
 			// add num events badge
 			//
-			ProjectEvents.fetchNumByUser(this.model, Registry.application.session.user, {
+			ProjectEvents.fetchNumByUser(this.model, application.session.user, {
 				success: function(numProjectEvents) {
-					UserProjectEvents.fetchNumByUser(self.model, Registry.application.session.user, {
+					UserProjectEvents.fetchNumByUser(self.model, application.session.user, {
 						success: function(numUserProjectEvents) {
 							self.addBadge("#events", numProjectEvents + numUserProjectEvents);
 						}
@@ -380,21 +371,19 @@ define([
 		onClickDeleteProject: function() {
 			var self = this;
 
-			// show confirm dialog
+			// show confirmation
 			//
-			Registry.application.modal.show(
-				new ConfirmView({
-					title: "Delete Project",
-					message: "Are you sure that you would like to delete project " + self.model.get('full_name') + "? " +
-						"When you delete a project, all of the project data will continue to be retained.",
+			application.confirm({
+				title: "Delete Project",
+				message: "Are you sure that you would like to delete project " + self.model.get('full_name') + "? " +
+					"When you delete a project, all of the project data will continue to be retained.",
 
-					// callbacks
-					//
-					accept: function() {
-						self.deleteProject();
-					}
-				})
-			);
+				// callbacks
+				//
+				accept: function() {
+					self.deleteProject();
+				}
+			});
 		},
 
 		onClickSaveChanges: function() {
@@ -413,11 +402,9 @@ define([
 
 			// show no changes notification view
 			//
-			Registry.application.modal.show(
-				new NotifyView({
-					message: "No changes made to project members to save."
-				})
-			);
+			application.notify({
+				message: "No changes made to project members to save."
+			});
 		},
 
 		onClickCancel: function() {
@@ -427,7 +414,7 @@ define([
 		},
 
 		onClickShowNumbering: function(event) {
-			Registry.application.setShowNumbering($(event.target).is(':checked'));
+			application.setShowNumbering($(event.target).is(':checked'));
 			this.showList();
 		}
 	});

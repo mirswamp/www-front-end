@@ -18,24 +18,24 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
 	'text!templates/platforms/info/versions/platform-version/platform-version.tpl',
-	'registry',
 	'collections/projects/projects',
 	'collections/assessments/assessment-runs',
 	'collections/assessments/execution-records',
 	'collections/assessments/scheduled-runs',
+	'views/base-view',
 	'views/platforms/info/versions/platform-version/platform-version-profile/platform-version-profile-view'
-], function($, _, Backbone, Marionette, Template, Registry, Projects, AssessmentRuns, ExecutionRecords, ScheduledRuns, PlatformVersionProfileView) {
-	return Backbone.Marionette.LayoutView.extend({
+], function($, _, Template, Projects, AssessmentRuns, ExecutionRecords, ScheduledRuns, BaseView, PlatformVersionProfileView) {
+	return BaseView.extend({
 
 		//
 		// attributes
 		//
 
+		template: _.template(Template),
+
 		regions: {
-			platformVersionProfile: '#platform-version-profile'
+			profile: '#platform-version-profile'
 		},
 
 		events: {
@@ -49,13 +49,13 @@ define([
 		// rendering methods
 		//
 
-		template: function(data) {
-			return _.template(Template, _.extend(data, {
+		templateContext: function() {
+			return {
 				platform: this.options.platform,
 				name: this.options.platform.get('name'),
-				isOwned: Registry.application.session.user.isAdmin(),
+				isOwned: application.session.user.isAdmin(),
 				showNavigation: this.options.showNavigation
-			}));
+			};
 		},
 
 		onRender: function() {
@@ -63,11 +63,9 @@ define([
 			
 			// show tool version profile
 			//
-			this.platformVersionProfile.show(
-				new PlatformVersionProfileView({
-					model: this.model
-				})
-			);
+			this.showChildView('profile', new PlatformVersionProfileView({
+				model: this.model
+			}));
 
 			// fetch projects and add badges for projects info
 			//

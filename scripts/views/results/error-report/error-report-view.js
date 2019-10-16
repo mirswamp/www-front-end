@@ -18,20 +18,24 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
 	'text!templates/results/error-report/error-report.tpl',
-	'registry',
-	'utilities/browser/html-utils'
-], function($, _, Backbone, Marionette, Template, Registry) {
-	return Backbone.Marionette.LayoutView.extend({
+	'views/base-view',
+	'utilities/web/html-utils'
+], function($, _, Template, BaseView) {
+	return BaseView.extend({
+
+		//
+		// attributes
+		//
+
+		template: _.template(Template),
 
 		//
 		// rendering methods
 		//
 
-		template: function(data) {
-			return _.template(Template, _.extend(data, {
+		templateContext: function() {
+			return {
 				package_url: undefined,
 				package_version_url: undefined,
 
@@ -43,21 +47,21 @@ define([
 
 				/*
 				packageUrl: report.package && report.package.package_uuid?
-					Registry.application.getURL() + '#packages/' + report.package.package_uuid : '',
+					application.getURL() + '#packages/' + report.package.package_uuid : '',
 				packageVersionUrl: report.package && report.package.package_version_uuid?
-					Registry.application.getURL() + '#packages/versions/' + report.package.package_version_uuid : '',
+					application.getURL() + '#packages/versions/' + report.package.package_version_uuid : '',
 			
 				toolUrl: report.tool && report.tool.tool_uuid?
-					Registry.application.getURL() + '#tools/' + report.tool.tool_uuid : '',
+					application.getURL() + '#tools/' + report.tool.tool_uuid : '',
 				toolVersionUrl: report.tool && report.tool.tool_version_uuid?
-					Registry.application.getURL() + '#tools/versions/' + report.tool.tool_version_uuid : '',
+					application.getURL() + '#tools/versions/' + report.tool.tool_version_uuid : '',
 
 				platformUrl: report.platform && report.platform.platform_uuid?
-					Registry.application.getURL() + '#platforms/' + report.platform.platform_uuid : '',
+					application.getURL() + '#platforms/' + report.platform.platform_uuid : '',
 				platformVersionUrl: report.platform && report.platform.platform_version_uuid?
-					Registry.application.getURL() + '#platforms/versions/' + report.platform.platform_version_uuid : '',
+					application.getURL() + '#platforms/versions/' + report.platform.platform_version_uuid : '',
 				*/
-			}));
+			};
 		}
 	});
 });

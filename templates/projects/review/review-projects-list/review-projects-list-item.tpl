@@ -1,5 +1,3 @@
-<% if (!model.isDeactivated() || showDeactivatedProjects) { %>
-
 <% if (showNumbering) { %>
 <td class="prepend number">
 	<%- index %>
@@ -47,4 +45,3 @@
 		<% } %>
 	</div>
 </td>
-<% } %>

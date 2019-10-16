@@ -5,34 +5,34 @@
 <% } %>
 
 <td class="user first">
-	<%- model.getFullName() %>
+	<%- user.getFullName() %>
 </td>
 
 <% if (showEmail) { %>
 <td class="email">
-	<a href="mailto:<%- model.get('email') %>"><%= emailToHTML(model.get('email')) %></a>
+	<a href="mailto:<%- user.get('email') %>"><%= emailToHTML(user.get('email')) %></a>
 </td>
 <% } %>
 
 <% if (showUsername) { %>
 <td class="username">
-	<%= model.get('username') %>
+	<%= user.get('username') %>
 </td>
 <% } %>
 
 <td class="affiliation hidden-xs">
-	<%- model.get('affiliation') %>
+	<%- user.get('affiliation') %>
 </td>
 
 <td class="join-date hidden-xs datetime">
 	<%/* projectMembership is for the current row, while currentProjectMembership is for the current user. */%>
-	<% if (projectMembership.hasCreateDate()) { %>
-	<%= dateToSortableHTML(projectMembership.getCreateDate()) %>
+	<% if (create_date) { %>
+	<%= dateToSortableHTML(create_date) %>
 	<% } %>
 </td>
 
 <td class="admin last">
-	<% if (projectMembership && projectMembership.isAdmin()) { %>
+	<% if (admin_flag) { %>
 	<input type="checkbox" checked <% if (readOnly) { %> disabled="disabled" <% } %> />
 	<% } else {  %>
 	<input type="checkbox" <% if (readOnly) { %> disabled="disabled" <% } %> />

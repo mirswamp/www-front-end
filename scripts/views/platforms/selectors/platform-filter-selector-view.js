@@ -18,23 +18,19 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
 	'select2',
-	'text!templates/widgets/selectors/grouped-name-selector.tpl',
-	'registry',
 	'collections/platforms/platforms',
 	'collections/platforms/platform-versions',
-	'views/dialogs/error-view',
 	'views/widgets/selectors/grouped-name-selector-view',
 	'views/widgets/selectors/version-filter-selector-view'
-], function($, _, Backbone, Select2, Template, Registry, Platforms, PlatformVersions, ErrorView, GroupedNameSelectorView, VersionFilterSelectorView) {
+], function($, _, Select2, Platforms, PlatformVersions, GroupedNameSelectorView, VersionFilterSelectorView) {
 	return GroupedNameSelectorView.extend({
 
 		//
 		// constructor
 		//
 
-		initialize: function(attributes, options) {
+		initialize: function(options) {
 
 			// call superclass method
 			//
@@ -77,45 +73,13 @@ define([
 						//
 						self.setSelectedName('Any', options);
 					}
-				})
+				});
 			} else {
 
 				// reset selection
 				//
 				this.setSelectedName('Any', options);
 			}
-		},
-
-		update: function(options) {
-			var self = this;
-
-			// fetch platforms
-			//
-			this.fetchPlatforms(function(publicPlatforms) {
-				self.collection = new Backbone.Collection([{
-					'name': "Any",
-					'model': null
-				}, {
-					'name': "Public Platforms",
-					'group': publicPlatforms || new Platforms()
-				}]);
-				
-				// render
-				//
-				self.render();
-
-				// perform callback
-				//
-				if (options && options.done) {
-					options.done();
-				}
-
-				// show version filter selector
-				//
-				if (self.options.versionFilterSelector) {
-					self.showVersionFilter(self.options.versionFilterSelector);
-				}
-			});
 		},
 
 		//
@@ -138,19 +102,47 @@ define([
 
 				error: function() {
 
-					// show error dialog
+					// show error message
 					//
-					Registry.application.modal.show(
-						new ErrorView({
-							message: "Could not fetch all platforms."
-						})
-					);
+					application.error({
+						message: "Could not fetch all platforms."
+					});
+				}
+			});
+		},
+
+		fetchPlatformVersions: function(platform, done) {
+			var self = this;
+			var collection = new PlatformVersions([]);
+
+			// fetch platform versions
+			//
+			collection.fetchByPlatform(platform, {
+
+				// callbacks
+				//
+				success: function() {
+
+					// perform callback
+					//
+					if (done) {
+						done(collection);
+					}
+				},
+
+				error: function() {
+
+					// show error message
+					//
+					application.error({
+						message: "Could not fetch collection of platform versions."
+					});
 				}
 			});
 		},
 
 		//
-		// name querying methods
+		// querying methods
 		//
 
 		getSelectedName: function() {
@@ -165,15 +157,24 @@ define([
 			return (this.getSelected() !== null) && (this.getSelected() != undefined);
 		},
 
+		getEnabled: function(platforms) {
+
+			// filter by tool
+			//
+			if (this.options.toolSelected) {
+				platforms = platforms.getByTool(this.options.toolSelected);
+			} 
+
+			return platforms;
+		},
+
 		//
 		// version querying methods
 		//
 
 		hasSelectedVersion: function() {
-			if (this.options.versionFilterSelector && this.options.versionFilterSelector.currentView) {
-				return this.options.versionFilterSelector.currentView.hasSelected();
-			} else if (this.options.initialVersion) {
-				return true;
+			if (this.versionFilterSelector) {
+				return this.versionFilterSelector.hasSelected();
 			} else {
 				return false;
 			}
@@ -184,10 +185,14 @@ define([
 		},
 
 		getSelectedVersionString: function() {
-			if (this.options.versionFilterSelector && this.options.versionFilterSelector.currentView) {
-				return this.options.versionFilterSelector.currentView.getSelectedVersionString();
+			if (this.versionFilterSelector) {
+				return this.versionFilterSelector.getSelectedVersionString();
 			} else if (this.options.initialVersion) {
-				return VersionFilterSelectorView.getVersionString(this.options.initialVersion);
+				if (typeof this.options.initialVersion == 'string') {
+					return this.options.initialVersion;
+				} else {
+					return this.options.initialVersion.get('version_string');
+				}
 			}
 		},
 
@@ -200,12 +205,15 @@ define([
 
 				// return name and version
 				//
-				var description =  this.getSelectedName();
-				if (this.hasSelectedVersion()) {
-					if (description) {
-						description += " ";
+				var description = this.getSelectedName();
+				if (this.hasSelectedVersionString()) {
+					var versionString = this.getSelectedVersionString();
+					if (versionString && versionString != 'any version') {
+						if (description) {
+							description += " ";
+						}
+						description += versionString.replace('version', '').trim();
 					}
-					description += this.getSelectedVersionString();
 				}
 				return description;
 			} else {
@@ -220,137 +228,140 @@ define([
 		// tool enabling / disabling methods
 		//
 
-		getEnabled: function() {
-			var self = this;
-			var enabled = [];
-
-			if (this.options.toolSelected) {
-				var platformNames = this.options.toolSelected.get('platform_names');
-
-				// generate list of enabled platforms
-				//
-				this.collection.each(function(item, index, list) {
-					if (group = item.get('group')) {
-						group.each(function(platform) {
-							if (_.contains(platformNames, platform.get('name'))) {
-								enabled.push(platform);
-							}
-						});
-					}
-				});
-			} else {
-
-				// return list of all platforms
-				//
-				this.collection.each(function(item, index, list) {
-					if (group = item.get('group')) {
-						group.each(function(platform) {
-							enabled.push(platform);
-						});
-					}
-				});
+		getPlatformNames: function(platforms) {
+			var names = [];
+			for (var i = 0; i < platforms.length; i++) {
+				names.push(platforms[i].get('name'));
 			}
-
-			return enabled;
+			return names;
 		},
 
 		//
 		// rendering methods
 		//
 
-		template: function(data) {
-			this.enabledItems = this.getEnabled();
-			
-			// add enabled platforms
-			//
-			if (this.options.toolSelected) {
-				var platformNames = this.options.toolSelected.get('platform_names');
-				for (var i = 0; i < data.items.length; i++) {
-					if (data.items[i].group) {
-						var collection = new Backbone.Collection();
-						var group = data.items[i].group;
-						for (var j = 0; j < group.length; j++) {
-							var item = data.items[i].group.at(j);
-							if (_.contains(platformNames, item.get('name'))) {
-								collection.add(item);
-							}					
-						}
-						data.items[i].group = collection;
-					}
-
-				}
-			}
-
-			return _.template(Template, _.extend(data, {
+		templateContext: function() {
+			return {
 				selected: this.options.initialValue
-			}));
+			};
 		},
 		
-		showVersionFilter: function(versionFilterSelector, done) {
+		update: function(options) {
 			var self = this;
-			var selectedPlatform = this.getSelected();
-			
-			if (selectedPlatform) {
-				var collection = new PlatformVersions([]);
 
-				// fetch platform versions
+			// fetch platforms
+			//
+			this.fetchPlatforms(function(publicPlatforms) {
+
+				// filter platforms
 				//
-				collection.fetchByPlatform(selectedPlatform, {
+				publicPlatforms = self.getEnabled(publicPlatforms);
+				
+				// set collection
+				//
+				self.collection = new Backbone.Collection([{
+					name: 'Any',
+					model: null
+				}, {
+					name: 'Public Platforms',
+					group: publicPlatforms || new Platforms()
+				}]);
+				
+				// render
+				//
+				self.render();
 
-					// callbacks
+				// perform callback
+				//
+				if (options && options.done) {
+					options.done();
+				}
+
+				// show version filter selector
+				//
+				if (self.options.versionFilterSelector) {
+					self.updateVersionFilterSelector();
+				}
+			});
+		},
+
+		//
+		// version filter rendering methods
+		//
+
+		showVersionFilterSelector: function(collection) {
+			var self = this;
+
+			// create new version filter selector
+			//
+			this.versionFilterSelector = new VersionFilterSelectorView({
+				collection: collection,
+				initialValue: this.options.initialVersion,
+				defaultOptions: this.options.versionDefaultOptions,
+				selectedOptions: this.options.versionSelectedOptions,
+				searchable: true,
+
+				// callbacks
+				//
+				onChange: function(changes) {
+
+					// perform callback
 					//
-					success: function() {
+					if (self.options && self.options.onChange) {
+						self.options.onChange({
+							'platform-version': changes.version
+						});
+					}
+				}
+			});
 
-						// show version filter selector view
-						//
-						versionFilterSelector.show(
-							new VersionFilterSelectorView({
-								collection: collection,
-								initialValue: self.options.initialVersion,
-								defaultOptions: self.options.versionDefaultOptions,
-								selectedOptions: self.options.versionSelectedOptions,
+			// show version filter selector
+			//
+			this.options.versionFilterSelector.show(self.versionFilterSelector);
 
-								// callbacks
-								//
-								onChange: self.options.onChange
-							})
-						);
+			// show version filter label
+			//
+			if (this.options.versionFilterLabel) {
+				this.options.versionFilterLabel.show();
+			}
+		},
+
+		hideVersionFilterSelector: function() {
+
+			// hide version filter selector view
+			//
+			this.options.versionFilterSelector.reset();
+
+			// hide version filter label
+			//
+			if (this.options.versionFilterLabel) {
+				this.options.versionFilterLabel.hide();
+			}
+		},
+
+		updateVersionFilterSelector: function(done) {
+			var self = this;
+			if (this.options.versionFilterSelector) {
+				if (this.selected) {
+					this.fetchPlatformVersions(this.selected, function(collection) {
+						self.showVersionFilterSelector(collection);
 
 						// perform callback
 						//
 						if (done) {
 							done();
 						}
-					},
+					});
+				} else {
+					this.hideVersionFilterSelector();
 
-					error: function() {
-
-						// show error dialog
-						//
-						Registry.application.modal.show(
-							new ErrorView({
-								message: "Could not fetch collection of platform versions."
-							})
-						);
+					// perform callback
+					//
+					if (done) {
+						done();
 					}
-				});
-
-				// show version filter label
-				//
-				if (this.options.versionFilterLabel) {
-					this.options.versionFilterLabel.show();
 				}
 			} else {
-
-				// hide version filter selector view
-				//
-				versionFilterSelector.reset();
-
-				// hide version filter label
-				//
-				if (this.options.versionFilterLabel) {
-					this.options.versionFilterLabel.hide();
-				}
 
 				// perform callback
 				//
@@ -365,25 +376,25 @@ define([
 		//
 
 		onChange: function(options) {
+			var self = this;
 
 			// update selected
 			//
-			this.selected = this.enabledItems[this.getSelectedIndex() - 1];
+			this.selected = this.getItemByIndex(this.getSelectedIndex());
 			this.options.initialVersion = 'any';
-			
-			// update version selector
-			//
-			if (this.options.versionFilterSelector) {
-				this.showVersionFilter(this.options.versionFilterSelector);
-			}
 
-			// perform callback
+			// update version filter selector
 			//
-			if (this.options && this.options.onChange && (!options || !options.silent)) {
-				this.options.onChange({
-					'platform': this.selected
-				});
-			}
+			this.updateVersionFilterSelector(function() {
+
+				// perform callback
+				//
+				if (self.options && self.options.onChange && (!options || !options.silent)) {
+					self.options.onChange({
+						'platform': self.selected
+					});
+				}
+			});
 		}
 	});
 });

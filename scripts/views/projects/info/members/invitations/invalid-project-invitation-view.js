@@ -18,15 +18,16 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
-	'text!templates/projects/info/members/invitations/invalid-project-invitation.tpl'
-], function($, _, Backbone, Marionette, Template) {
-	return Backbone.Marionette.ItemView.extend({
+	'text!templates/projects/info/members/invitations/invalid-project-invitation.tpl',
+	'views/base-view'
+], function($, _, Template, BaseView) {
+	return BaseView.extend({
 
 		//
 		// attributes
 		//
+
+		template: _.template(Template),
 
 		events: {
 			'click #ok': 'onClickOk'
@@ -36,10 +37,10 @@ define([
 		// rendering methods
 		//
 
-		template: function(data) {
-			return _.template(Template, _.extend(data, {
+		templateContext: function() {
+			return {
 				message: this.options.message
-			}));
+			};
 		},
 
 		//

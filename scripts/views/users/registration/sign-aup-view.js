@@ -19,23 +19,20 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
 	'jquery.validate',
 	'text!templates/users/registration/sign-aup.tpl',
 	'text!templates/policies/acceptable-use-policy.tpl',
-	'registry',
+	'views/base-view',
 	'views/users/registration/user-registration-view',
-], function($, _, Backbone, Marionette, Validate, Template, AupTemplate, Registry, UserRegistrationView) {
-	return Backbone.Marionette.LayoutView.extend({
+], function($, _, Validate, Template, AupTemplate, BaseView, UserRegistrationView) {
+	return BaseView.extend({
 
 		//
 		// attributes
 		//
 
 		regions: {
-			aupText: '#aup-text',
-			linkedAccountSignUpForm: "#linked-account-sign-up-form"
+			form: "#linked-account-sign-up-form"
 		},
 
 		template: _.template(Template),
@@ -45,6 +42,22 @@ define([
 			'click #aup-form input': 'onClickCheckbox',
 			'click #register': 'onClickRegister',
 			'click #cancel': 'onClickCancel'
+		},
+
+		//
+		// form attributes
+		//
+
+		rules: {
+			'accept': {
+				required: true
+			}
+		},
+
+		messages: {
+			'accept': {
+				required: "You must accept the terms to continue."
+			}
 		},
 
 		//
@@ -76,9 +89,7 @@ define([
 
 				// show sign up form
 				//
-				self.linkedAccountSignUpForm.show(
-					new LinkedAccountSignUpFormView()
-				);
+				self.showChildView('form', new LinkedAccountSignUpFormView());
 			});
 		},
 
@@ -99,16 +110,8 @@ define([
 			// validate form
 			//
 			return this.$el.find('#aup-form').validate({
-				rules: {
-					'accept': {
-						required: true
-					}
-				},
-				messages: {
-					'accept': {
-						required: "You must accept the terms to continue."
-					}
-				}
+				rules: this.rules,
+				messages: this.messages
 			});
 		},
 
@@ -152,9 +155,7 @@ define([
 
 					// show next view
 					//
-					Registry.application.showMain(
-						new UserRegistrationView({})
-					);
+					application.showMain(new UserRegistrationView({}));
 				}
 			} else {
 				this.showWarning();

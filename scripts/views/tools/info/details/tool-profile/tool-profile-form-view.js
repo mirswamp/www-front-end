@@ -1,11 +1,10 @@
 /******************************************************************************\
 |                                                                              |
-|                              tool-profile-form-view.js                       |
+|                          tool-profile-form-view.js                           |
 |                                                                              |
 |******************************************************************************|
 |                                                                              |
-|        This defines an editable form view of a tool's profile                |
-|        information.                                                          |
+|        This defines a form for entering a tool's profile info.               |
 |                                                                              |
 |        Author(s): Abe Megahed                                                |
 |                                                                              |
@@ -19,71 +18,45 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
-	'jquery.validate',
-	'bootstrap/tooltip',
-	'bootstrap/popover',
-	'text!templates/tools/info/details/tool-profile/tool-profile-form.tpl'
-], function($, _, Backbone, Marionette, Validate, Tooltip, Popover, Template) {
-	return Backbone.Marionette.ItemView.extend({
+	'text!templates/tools/info/details/tool-profile/tool-profile-form.tpl',
+	'views/forms/form-view'
+], function($, _, Template, FormView) {
+	return FormView.extend({
+
+		//
+		// attributes
+		//
+
+		template: _.template(Template),
+
+		//
+		// form attributes
+		//
+
+		rules: {
+			'description': {
+				required: true
+			}
+		},
 
 		//
 		// rendering methods
 		//
 
-		template: function(data) {
-			return _.template(Template, _.extend(data, {
+		templateContext: function() {
+			return {
 				model: this.model
-			}));
-		},
-
-		onRender: function() {
-
-			// display popovers on hover
-			//
-			this.$el.find('[data-toggle="popover"]').popover({
-				trigger: 'hover'
-			});
-
-			// validate the form
-			//
-			this.validator = this.validate();
-		},
-
-		//
-		// form validation methods
-		//
-
-		validate: function() {
-			return this.$el.find('form').validate({
-				rules: {
-					'description': {
-						required: true
-					}
-				}
-			});
-		},
-
-		isValid: function() {
-			return this.validator.form();
+			};
 		},
 
 		//
 		// form methods
 		//
 
-		update: function(model) {
-
-			// get values from form
-			//
-			var name = this.$el.find('#name').val();
-
-			// update model
-			//
-			model.set({
-				'name': name
-			});
+		getValues: function() {
+			return {
+				name: this.$el.find('#name').val()
+			};
 		}
 	});
 });

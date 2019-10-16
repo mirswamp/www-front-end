@@ -18,27 +18,27 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
 	'text!templates/widgets/viewers/file-list/file-list.tpl',
+	'views/collections/collection-view',
 	'views/widgets/viewers/file-list/file-list-item-view'
-], function($, _, Backbone, Marionette, Template, FileListItemView) {
-	return Backbone.Marionette.CompositeView.extend({
+], function($, _, Template, CollectionView, FileListItemView) {
+	return CollectionView.extend({
 
 		//
 		// attributes
 		//
 
+		template: _.template(Template),
 		childView: FileListItemView,
 		
 		//
 		// rendering methods
 		//
 
-		template: function(data) {
-			return _.template(Template, _.extend(data, {
+		templateContext: function() {
+			return {
 				collection: this.collection
-			}));
+			};
 		},
 
 		attachHtml: function(collectionView, childView){

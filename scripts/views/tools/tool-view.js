@@ -18,23 +18,23 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
 	'text!templates/tools/tool.tpl',
-	'registry',
 	'collections/projects/projects',
 	'collections/assessments/assessment-runs',
 	'collections/assessments/execution-records',
-	'collections/assessments/scheduled-runs'
-], function($, _, Backbone, Marionette, Template, Registry, Projects, AssessmentRuns, ExecutionRecords, ScheduledRuns) {
-	return Backbone.Marionette.LayoutView.extend({
+	'collections/assessments/scheduled-runs',
+	'views/base-view'
+], function($, _, Template, Projects, AssessmentRuns, ExecutionRecords, ScheduledRuns, BaseView) {
+	return BaseView.extend({
 
 		//
 		// attributes
 		//
 
+		template: _.template(Template),
+
 		regions: {
-			toolInfo: '#tool-info'
+			info: '#tool-info'
 		},
 
 		events: {
@@ -49,11 +49,11 @@ define([
 		// rendering methods
 		//
 
-		template: function(data) {
-			return _.template(Template, _.extend(data, {
+		templateContext: function() {
+			return {
 				nav: this.options.nav,
 				showSharing: this.model.isOwned()
-			}));
+			};
 		},
 
 		onRender: function() {

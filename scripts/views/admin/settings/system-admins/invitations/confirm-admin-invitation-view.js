@@ -18,19 +18,17 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
 	'text!templates/admin/settings/system-admins/invitations/confirm-admin-invitation.tpl',
-	'registry',
 	'models/admin/admin',
-	'views/dialogs/error-view',
-	'views/dialogs/notify-view'
-], function($, _, Backbone, Marionette, Template, Registry, Admin, ErrorView, NotifyView) {
-	return Backbone.Marionette.ItemView.extend({
+	'views/base-view',
+], function($, _, Template, Admin, BaseView) {
+	return BaseView.extend({
 
 		//
 		// attributes
 		//
+
+		template: _.template(Template),
 
 		events: {
 			'click #accept': 'onClickAccept',
@@ -41,11 +39,11 @@ define([
 		// rendering methods
 		//
 
-		template: function(data) {
-			return _.template(Template, _.extend(data, {
+		templateContext: function() {
+			return {
 				inviter: this.model.get('inviter'),
 				invitee: this.model.get('invitee')
-			}));
+			};
 		},
 
 		//
@@ -65,35 +63,31 @@ define([
 
 					// show invitation accepted notify dialog
 					//
-					Registry.application.modal.show(
-						new NotifyView({
-							title: "Administrator Invitation Accepted",
-							message: "Congratulations, " + self.model.get('invitee').getFullName() + ".  You are now a SWAMP administrator.",
+					application.notify({
+						title: "Administrator Invitation Accepted",
+						message: "Congratulations, " + self.model.get('invitee').getFullName() + ".  You are now a SWAMP administrator.",
 
-							// callbacks
+						// callbacks
+						//
+						accept: function() {
+
+							// go to home view
 							//
-							accept: function() {
-
-								// go to home view
-								//
-								Backbone.history.navigate('#home', {
-									trigger: true
-								});
-								window.location.reload();
-							}
-						})
-					);
+							Backbone.history.navigate('#home', {
+								trigger: true
+							});
+							window.location.reload();
+						}
+					});
 				},
 
 				error: function() {
 
-					// show error dialog
+					// show error message
 					//
-					Registry.application.modal.show(
-						new ErrorView({
-							message: "Could not accept administrator invitation."
-						})
-					);
+					application.error({
+						message: "Could not accept administrator invitation."
+					});
 				}
 			});
 		},
@@ -115,35 +109,31 @@ define([
 
 					// show declined notification dialog
 					//
-					Registry.application.modal.show(
-						new NotifyView({
-							title: "Administrator Invitation Declined",
-							message: "Your invitation to become a SWAMP administrator has been declined. ",
+					application.notify({
+						title: "Administrator Invitation Declined",
+						message: "Your invitation to become a SWAMP administrator has been declined. ",
 
-							// callbacks
+						// callbacks
+						//
+						accept: function() {
+
+							// go to home view
 							//
-							accept: function() {
-
-								// go to home view
-								//
-								Backbone.history.navigate('#home', {
-									trigger: true
-								});
-								window.location.reload();
-							}
-						})
-					);
+							Backbone.history.navigate('#home', {
+								trigger: true
+							});
+							window.location.reload();
+						}
+					});
 				},
 
 				error: function() {
 
-					// show error dialog
+					// show error message
 					//
-					Registry.application.modal.show(
-						new ErrorView({
-							message: "Could not decline administrator invitation."
-						})
-					);
+					application.error({
+						message: "Could not decline administrator invitation."
+					});
 				}
 			});
 		}

@@ -18,7 +18,7 @@
 		<div class="well">
 			<div class="form-group">
 				<label class="form-label">Project</label>
-				<div class="controls"><%= stringToHTML(key) %></div>
+				<div class="controls"><%= textToHtml(key) %></div>
 			</div>
 
 			<% if (project.configuration) { %>

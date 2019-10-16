@@ -18,32 +18,25 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
 	'text!templates/packages/list/packages-list.tpl',
-	'views/widgets/lists/sortable-table-list-view',
+	'views/base-view',
+	'views/collections/tables/sortable-table-list-view',
 	'views/packages/list/packages-list-item-view'
-], function($, _, Backbone, Marionette, Template, SortableTableListView, PackagesListItemView) {
+], function($, _, Template, BaseView, SortableTableListView, PackagesListItemView) {
 	return SortableTableListView.extend({
 
 		//
 		// attributes
 		//
 
+		template: _.template(Template),
 		childView: PackagesListItemView,
 
-		sorting: {
+		emptyView: BaseView.extend({
+			template: _.template("No packages.")
+		}),
 
-			// disable sorting on delete column
-			//
-			headers: {
-				4: { 
-					sorter: false 
-				},
-				5: { 
-					sorter: false 
-				}
-			},
+		sorting: {
 
 			// sort on name column in ascending order 
 			//
@@ -51,25 +44,65 @@ define([
 		},
 
 		//
-		// rendering methods
+		// constructor
 		//
 
-		template: function(data) {
-			if (this.collection.length > 0) {
-				return _.template(Template, _.extend(data, {
-					collection: this.collection,	
-					showNumbering: this.options.showNumbering,
-					showProjects: this.options.showProjects,
-					showDelete: this.options.showDelete
-				}));
+		initialize: function() {
+			if (this.options.showProjects) {
+
+				// disable sorting on projects, versions, and delete columns
+				//
+				this.sorting.headers = {
+					2: { 
+						sorter: false 
+					},
+					4: { 
+						sorter: false 
+					},
+					5: { 
+						sorter: false 
+					}
+				};
 			} else {
-				return _.template("No packages have been uploaded.");
+
+				// disable sorting on versions and delete columns
+				//
+				this.sorting.headers = {
+					3: { 
+						sorter: false 
+					},
+					4: { 
+						sorter: false 
+					}
+				};
 			}
 		},
 
-		childViewOptions: function(model, index) {
+		//
+		// rendering methods
+		//
+
+		templateContext: function() {
 			return {
-				index: index,
+				collection: this.collection,	
+				showNumbering: this.options.showNumbering,
+				showProjects: this.options.showProjects,
+				showDelete: this.options.showDelete
+			};
+		},
+
+		childViewOptions: function(model) {
+
+			// check if empty view
+			//
+			if (!model) {
+				return {};
+			}
+
+			// return view options
+			//
+			return {
+				index: this.collection.indexOf(model),
 				showDeactivatedPackages: this.options.showDeactivatedPackages,
 				showNumbering: this.options.showNumbering,
 				showProjects: this.options.showProjects,

@@ -19,22 +19,19 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
 	'text!templates/users/prompts/linked-account-link-prompt.tpl',
-	'registry',
 	'config',
 	'models/users/user',
 	'models/users/session',
-	'views/dialogs/notify-view',
-	'views/dialogs/confirm-view',
-	'views/dialogs/error-view'
-], function($, _, Backbone, Marionette, Template, Registry, Config, User, Session, NotifyView, ConfirmView, ErrorView) {
-	return Backbone.Marionette.ItemView.extend({
+	'views/base-view',
+], function($, _, Template, Config, User, Session, BaseView) {
+	return BaseView.extend({
 
 		//
 		// attributes
 		//
+
+		template: _.template(Template),
 
 		events: {
 			'click .alert-warning .close': 'onClickAlertWarningClose',
@@ -49,12 +46,12 @@ define([
 		// rendering methods
 		//
 
-		template: function(){
-			return _.template(Template, {
+		templateContext: function() {
+			return {
 				oauth2_id: this.options.oauth2_id,
 				username: this.options.username,
 				email: this.options.email
-			});
+			};
 		},
 
 		onRender: function() {
@@ -133,55 +130,53 @@ define([
 					// callbacks
 					//
 					success: function() {
-						window.location = Registry.application.getURL();
+						window.location = application.getURL();
 					},
 
 					error: function(response) {
 						if (response.responseText.indexOf('EXISTING_ACCOUNT') > -1) {
 							var info = JSON.parse(response.responseText);
 
-							// show error notify view
+							// show confirmation
 							//
-							Registry.application.modal.show(
-								new ConfirmView({
-									message: "SWAMP account '" + info.username + "' was previously bound to another linked account.  " +
-												"To connect your SWAMP account with the account '" + info.login + "' instead, click 'Ok'.  " + 
-												"Otherwise, click Cancel to maintain your current linked account account connection.",
-									
-									// callbacks
+							application.confirm({
+								message: "SWAMP account '" + info.username + "' was previously bound to another linked account.  " +
+											"To connect your SWAMP account with the account '" + info.login + "' instead, click 'Ok'.  " + 
+											"Otherwise, click Cancel to maintain your current linked account account connection.",
+								
+								// callbacks
+								//
+								accept: function() {
+
+									// request link
 									//
-									accept: function() {
+									User.requestLinkedAccountLink(username, password, self.options.oauth2_id, true, {
 
-										// request link
+										// callbacks
 										//
-										User.requestLinkedAccountLink(username, password, self.options.oauth2_id, true, {
+										success: function() {
+											window.location = application.getURL();
+										},
 
-											// callbacks
+										error: function(response) {
+
+											// disable submit button
 											//
-											success: function() {
-												window.location = Registry.application.getURL();
-											},
+											self.$el.find("#submit").prop('disabled', true);
+						
+											// show warning
+											//
+											self.showWarning(response.responseText);
+										}
+									});
+								},
 
-											error: function(response) {
-
-												// disable submit button
-												//
-												self.$el.find("#submit").prop('disabled', true);
-							
-												// show warning
-												//
-												self.showWarning(response.responseText);
-											}
-										});
-									},
-
-									reject: function() {
-										Backbone.history.navigate("#home", {
-											trigger: true
-										});
-									}
-								})
-							);
+								reject: function() {
+									Backbone.history.navigate("#home", {
+										trigger: true
+									});
+								}
+							});
 						} else {
 
 							// disable submit button

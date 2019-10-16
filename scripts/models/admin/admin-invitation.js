@@ -20,11 +20,9 @@ define([
 	'jquery',
 	'underscore',
 	'config',
-	'registry',
 	'models/utilities/timestamped',
 	'models/users/user',
-	'views/dialogs/notify-view'
-], function($, _, Config, Registry, Timestamped, User, NotifyView) {
+], function($, _, Config, Timestamped, User) {
 	return Timestamped.extend({
 
 		//

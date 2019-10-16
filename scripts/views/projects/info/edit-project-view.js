@@ -18,23 +18,22 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
 	'text!templates/projects/info/edit-project.tpl',
-	'registry',
-	'utilities/time/date-format',
-	'views/dialogs/error-view',
+	'models/viewers/viewer',
+	'views/base-view',
 	'views/projects/info/project-profile/project-profile-form-view',
-	'models/viewers/viewer'
-], function($, _, Backbone, Marionette, Template, Registry, DateFormat, ErrorView, ProjectProfileFormView, Viewer) {
-	return Backbone.Marionette.LayoutView.extend({
+	'utilities/time/date-format',
+], function($, _, Template, Viewer, BaseView, ProjectProfileFormView, DateFormat) {
+	return BaseView.extend({
 
 		//
 		// attributes
 		//
 
+		template: _.template(Template),
+
 		regions: {
-			projectProfileForm: '#project-profile-form'
+			form: '#project-profile-form'
 		},
 
 		events: {
@@ -44,7 +43,11 @@ define([
 			'click #cancel': 'onClickCancel'
 		},
 
-		initialize: function(){
+		//
+		// constuctor
+		//
+
+		initialize: function() {
 			this.viewer = new Viewer();
 		},
 
@@ -52,21 +55,19 @@ define([
 		// rendering methods
 		//
 
-		template: function(data) {
-			return _.template(Template, _.extend(data, {
+		templateContext: function() {
+			return {
 				model: this.model
-			}));
+			};
 		},
 
 		onRender: function() {
 
 			// display project profile form view
 			//
-			this.projectProfileForm.show(
-				new ProjectProfileFormView({
-					model: this.model
-				})
-			);
+			this.showChildView('form', new ProjectProfileFormView({
+				model: this.model
+			}));
 		},
 
 		//
@@ -83,11 +84,11 @@ define([
 		onClickSave: function() {
 			var self = this;
 
-			if (this.projectProfileForm.currentView.isValid()) {
+			if (this.getChildView('form').isValid()) {
 
 				// update model
 				//
-				this.projectProfileForm.currentView.update(this.model);
+				this.getChildView('form').applyTo(this.model);
 
 				// ensure timezone isn't affected
 				//
@@ -128,13 +129,11 @@ define([
 
 					error: function() {
 
-						// show error dialog
+						// show error message
 						//
-						Registry.application.modal.show(
-							new ErrorView({
-								message: "Could not save project changes."
-							})
-						);
+						application.error({
+							message: "Could not save project changes."
+						});
 					}
 				});
 			} // if isValid

@@ -18,31 +18,30 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
 	'jquery.validate',
 	'bootstrap/collapse',
-	'modernizr',
 	'text!templates/packages/filters/review-packages-filters.tpl',
-	'registry',
-	'utilities/browser/query-strings',
-	'utilities/browser/url-strings',
+	'utilities/web/query-strings',
+	'utilities/web/url-strings',
 	'models/projects/project',
 	'collections/projects/projects',
+	'views/base-view',
 	'views/packages/filters/package-type-filter-view',
 	'views/widgets/filters/date-filter-view',
 	'views/widgets/filters/limit-filter-view'
-], function($, _, Backbone, Marionette, Validate, Collapse, Modernizr, Template, Registry, QueryStrings, UrlStrings, Project, Projects, PackageTypeFilterView, DateFilterView, LimitFilterView) {
-	return Backbone.Marionette.LayoutView.extend({
+], function($, _, Validate, Collapse, Template, QueryStrings, UrlStrings, Project, Projects, BaseView, PackageTypeFilterView, DateFilterView, LimitFilterView) {
+	return BaseView.extend({
 
 		//
 		// attributes
 		//
 
+		template: _.template(Template),
+
 		regions: {
-			packageTypeFilter: '#package-type-filter',
-			dateFilter: '#date-filter',
-			limitFilter: '#limit-filter'
+			package_type: '#package-type-filter',
+			date: '#date-filter',
+			limit: '#limit-filter'
 		},
 
 		events: {
@@ -58,9 +57,9 @@ define([
 
 			// add tags
 			//
-			tags += this.packageTypeFilter.currentView.getTag();
-			tags += this.dateFilter.currentView.getTags();
-			tags += this.limitFilter.currentView.getTag();
+			tags += this.getChildView('package_type').getTag();
+			tags += this.getChildView('date').getTags();
+			tags += this.getChildView('limit').getTag();
 
 			return tags;
 		},
@@ -71,13 +70,13 @@ define([
 			// add info for filters
 			//
 			if (!attributes || _.contains(attributes, 'package-type')) {
-				_.extend(data, this.packageTypeFilter.currentView.getData());
+				_.extend(data, this.getChildView('package_type').getData());
 			}
 			if (!attributes || _.contains(attributes, 'date')) {
-				_.extend(data, this.dateFilter.currentView.getData());
+				_.extend(data, this.getChildView('date').getData());
 			}
 			if (!attributes || _.contains(attributes, 'limit')) {
-				_.extend(data, this.limitFilter.currentView.getData());
+				_.extend(data, this.getChildView('limit').getData());
 			}
 
 			return data;
@@ -89,13 +88,13 @@ define([
 			// add info for filters
 			//
 			if (!attributes || _.contains(attributes, 'package-type')) {
-				_.extend(attrs, this.packageTypeFilter.currentView.getAttrs());
+				_.extend(attrs, this.getChildView('package_type').getAttrs());
 			}
 			if (!attributes || _.contains(attributes, 'date')) {
-				_.extend(attrs, this.dateFilter.currentView.getAttrs());
+				_.extend(attrs, this.getChildView('date').getAttrs());
 			}
 			if (!attributes || _.contains(attributes, 'limit')) {
-				_.extend(attrs, this.limitFilter.currentView.getAttrs());
+				_.extend(attrs, this.getChildView('limit').getAttrs());
 			}
 
 			return attrs;
@@ -106,9 +105,9 @@ define([
 
 			// add info for filters
 			//
-			queryString = addQueryString(queryString, this.packageTypeFilter.currentView.getQueryString());
-			queryString = addQueryString(queryString, this.dateFilter.currentView.getQueryString());
-			queryString = addQueryString(queryString, this.limitFilter.currentView.getQueryString());
+			queryString = addQueryString(queryString, this.getChildView('package_type').getQueryString());
+			queryString = addQueryString(queryString, this.getChildView('date').getQueryString());
+			queryString = addQueryString(queryString, this.getChildView('limit').getQueryString());
 
 			return queryString;
 		},
@@ -121,13 +120,13 @@ define([
 
 			// reset sub filters
 			//
-			this.packageTypeFilter.currentView.reset({
+			this.getChildView('package_type').reset({
 				silent: true
 			});
-			this.dateFilter.currentView.reset({
+			this.getChildView('date').reset({
 				silent: true
 			});
-			this.limitFilter.currentView.reset({
+			this.getChildView('limit').reset({
 				silent: true
 			});
 
@@ -140,14 +139,14 @@ define([
 		// rendering methods
 		//
 
-		template: function(data) {
-			return _.template(Template, _.extend(data, {
+		templateContext: function() {
+			return {
 				highlighted: {
 					'type-filter': this.options.data['type'] != undefined,
 					'date-filter': this.options.data['after'] != undefined || this.options.data['before'] != undefined,
 					'limit-filter': this.options.data['limit'] != undefined
 				}
-			}));
+			};
 		},
 
 		onRender: function() {
@@ -155,7 +154,7 @@ define([
 			
 			// show subviews
 			//
-			this.packageTypeFilter.show(new PackageTypeFilterView({
+			this.showChildView('package_type', new PackageTypeFilterView({
 				model: this.model,
 				initialValue: this.options.data['type'],
 
@@ -165,7 +164,7 @@ define([
 					self.onChange();
 				}			
 			}));
-			this.dateFilter.show(new DateFilterView({
+			this.showChildView('date', new DateFilterView({
 				initialAfterDate: this.options.data['after'],
 				initialBeforeDate: this.options.data['before'],
 
@@ -175,7 +174,7 @@ define([
 					self.onChange();
 				}				
 			}));
-			this.limitFilter.show(new LimitFilterView({
+			this.showChildView('limit', new LimitFilterView({
 				defaultValue: 50,
 				initialValue: this.options.data['limit'],
 

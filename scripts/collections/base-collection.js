@@ -160,9 +160,14 @@ define([
 		//
 
 		getByAttribute: function(attribute, value) {
-			var collection = this.clone();
 
-			collection.reset();
+			// create empty collection
+			//
+			var collection = new this.constructor([], {
+				model: this.model,
+				comparator: this.comparator
+			});
+
 			this.each(function(item) {
 				if (item.get(attribute).toLowerCase() == value) {
 					collection.add(item);
@@ -173,9 +178,14 @@ define([
 		},
 
 		getByNotAttribute: function(attribute, value) {
-			var collection = this.clone();
 
-			collection.reset();
+			// create empty collection
+			//
+			var collection = new this.constructor([], {
+				model: this.model,
+				comparator: this.comparator
+			});
+
 			this.each(function(item) {
 				if (item.get(attribute).toLowerCase() != value) {
 					collection.add(item);

@@ -8,9 +8,9 @@
 
 <td class="name first">
 	<% if (url) { %>
-	<a href="<%- url %>"><%= stringToHTML(model.get('name')) %></a>
+	<a href="<%- url %>"><%= textToHtml(model.get('name')) %></a>
 	<% } else { %>
-	<%= stringToHTML(model.get('name')) %>
+	<%= textToHtml(model.get('name')) %>
 	<% } %>
 </td>
 

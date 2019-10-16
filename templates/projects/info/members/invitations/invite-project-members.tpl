@@ -7,10 +7,13 @@
 	<li>Project Invitations</li>
 </ol>
 
+<h2><i class="fa fa-envelope"></i>Sent Project Invitations</h2>
 <div id="project-invitations-list">
 	<div align="center"><i class="fa fa-spinner fa-spin fa-2x"></i><br/>Loading project invitations...</div>
 </div>
 <br />
+
+<h2><i class="fa fa-envelope-open"></i>New Project Invitations</h2>
 <div id="new-project-invitations-list"></div>
 
 <div class="bottom buttons">

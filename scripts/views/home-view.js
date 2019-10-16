@@ -18,15 +18,12 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
 	'text!templates/home.tpl',
-	'registry',
 	'models/projects/project',
-	'views/dialogs/error-view',
+	'views/base-view',
 	'views/dashboard/dashboard-view',
-], function($, _, Backbone, Marionette, Template, Registry, Project, ErrorView, DashboardView) {
-	return Backbone.Marionette.LayoutView.extend({
+], function($, _, Template, Project, BaseView, DashboardView) {
+	return BaseView.extend({
 
 		//
 		// attributes
@@ -38,7 +35,7 @@ define([
 		},
 
 		//
-		// methods
+		// constructor
 		//
 
 		initialize: function() {
@@ -67,14 +64,10 @@ define([
 
 		showDashboard: function(trialProject) {
 			if (this.options.nav === 'home') {
-				if (this.content) {
-					this.content.show(
-						new DashboardView({
-							model: trialProject
-						})
-					);
-				}
-			}	
+				this.showChildView('content', new DashboardView({
+					model: trialProject
+				}));
+			}
 		}
 	});
 });

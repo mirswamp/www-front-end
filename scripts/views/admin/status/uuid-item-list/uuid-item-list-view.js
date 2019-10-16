@@ -19,33 +19,33 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
 	'text!templates/admin/status/uuid-item-list/uuid-item-list.tpl',
+	'views/base-view',
 	'views/admin/status/item-list/item-list-view',
 	'views/admin/status/uuid-item-list/uuid-item-list-item-view'
-], function($, _, Backbone, Marionette, Template, ItemListView, UuidItemListItemView) {
+], function($, _, Template, BaseView, ItemListView, UuidItemListItemView) {
 	return ItemListView.extend({
 
 		//
 		// attributes
 		//
 
+		template: _.template(Template),
 		childView: UuidItemListItemView,
+		
+		emptyView: BaseView.extend({
+			template: _.template("No items.")
+		}),
 
 		//
 		// rendering methods
 		//
 
-		template: function(data) {
-			if (this.collection.length > 0) {
-				return _.template(Template, _.extend(data, {
-					fieldnames: this.options.fieldnames,
-					showNumbering: this.options.showNumbering
-				}));
-			} else {
-				return _.template("No items.");
-			}
+		templateContext: function() {
+			return {
+				fieldnames: this.options.fieldnames,
+				showNumbering: this.options.showNumbering
+			};
 		}
 	});
 });

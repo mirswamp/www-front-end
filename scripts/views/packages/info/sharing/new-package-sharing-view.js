@@ -18,25 +18,21 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
 	'text!templates/packages/info/sharing/new-package-sharing.tpl',
-	'config',
-	'registry',
 	'collections/projects/projects',
-	'views/dialogs/confirm-view',
-	'views/dialogs/notify-view',
-	'views/dialogs/error-view',
+	'views/base-view',
 	'views/projects/select-list/select-projects-list-view'
-], function($, _, Backbone, Marionette, Template, Config, Registry, Projects, ConfirmView, NotifyView, ErrorView, SelectProjectsListView) {
-	return Backbone.Marionette.LayoutView.extend({
+], function($, _, Template, Projects, BaseView, SelectProjectsListView) {
+	return BaseView.extend({
 
 		//
 		// attributes
 		//
 
+		template: _.template(Template),
+
 		regions: {
-			selectProjectsList: '#select-projects-list'
+			list: '#select-projects-list'
 		},
 
 		events: {
@@ -47,12 +43,16 @@ define([
 		},
 
 		//
-		// methods
+		// constructor
 		//
 
 		initialize: function() {
-			this.collection = new Projects()
+			this.collection = new Projects();
 		},
+
+		//
+		// methods
+		//
 
 		saveSharedProjects: function(done) {
 			this.options.packageVersion.saveSharedProjects(this.getSharedProjects(), {
@@ -70,13 +70,11 @@ define([
 
 				error: function() {
 
-					// show error dialog
+					// show error message
 					//
-					Registry.application.modal.show(
-						new ErrorView({
-							message: "Could not save package versions's project sharing."
-						})
-					);
+					application.error({
+						message: "Could not save package versions's project sharing."
+					});
 				}
 			});			
 		},
@@ -105,7 +103,7 @@ define([
 		//
 
 		getSharingStatus: function() {
-			if (Registry.application.session.isAdmin()) {
+			if (application.session.isAdmin()) {
 				return this.$el.find('input:radio[name=sharing]:checked').val();
 			} else {
 				return 'protected';
@@ -113,7 +111,7 @@ define([
 		},
 
 		getSharedProjects: function() {
-			var sharedProjects = this.selectProjectsList.currentView.getSelected();
+			var sharedProjects = this.getChildView('list').getSelected();
 
 			// make sure that 'My Project' is included
 			//
@@ -132,11 +130,11 @@ define([
 		// rendering methods
 		//
 
-		template: function(data) {
-			return _.template(Template, _.extend(data, {
-				isAdmin: Registry.application.session.isAdmin(),
+		templateContext: function() {
+			return {
+				isAdmin: application.session.isAdmin(),
 				version_sharing_status: this.options.packageVersion.get('package_sharing_status')
-			}));
+			};
 		},
 
 		onRender: function() {
@@ -144,7 +142,7 @@ define([
 
 			// show projects
 			//
-			this.collection.fetchByUser(Registry.application.session.user, {
+			this.collection.fetchByUser(application.session.user, {
 
 				// callbacks
 				//
@@ -154,13 +152,11 @@ define([
 
 				error: function() {
 
-					// show error dialog
+					// show error message
 					//
-					Registry.application.modal.show(
-						new ErrorView({
-							message: "Could not fetch user's projects."
-						})
-					);
+					application.error({
+						message: "Could not fetch user's projects."
+					});
 				}
 			});
 		},
@@ -169,13 +165,11 @@ define([
 
 			// show select projects list
 			//
-			this.selectProjectsList.show(
-				new SelectProjectsListView({
-					collection: this.collection,
-					enabled: this.getSharingStatus() === 'protected',
-					showTrialProjects: true
-				})
-			);
+			this.showChildView('list', new SelectProjectsListView({
+				collection: this.collection,
+				enabled: this.getSharingStatus() === 'protected',
+				showTrialProjects: true
+			}));
 
 			// select shared project list items
 			//
@@ -191,7 +185,7 @@ define([
 			// set default sharing status
 			//
 			this.setSharingStatus('protected');
-			this.selectProjectsList.currentView.enable();
+			this.getChildView('list').enable();
 
 			// select My Project by default
 			//
@@ -215,11 +209,11 @@ define([
 		//
 
 		onClickRadioSharing: function() {
-			this.selectProjectsList.currentView.setEnabled(
+			this.getChildView('list').setEnabled(
 				this.getSharingStatus() === 'protected'
 			);
-			if (!this.selectProjectsList.currentView.isEnabled()) {
-				this.selectProjectsList.currentView.deselectAll();
+			if (!this.getChildView('list').isEnabled()) {
+				this.getChildView('list').deselectAll();
 			}
 		},
 
@@ -228,31 +222,29 @@ define([
 
 			if (this.getSharingStatus() === 'public') {
 
-				// show confirm dialog
+				// show confirmation
 				//
-				Registry.application.modal.show(
-					new ConfirmView({
-						title: "Make Package Public?",
-						message: "By making this package public every member of the SWAMP community will be able to access it. Do you wish to continue?",
-						
-						// callbacks
+				application.confirm({
+					title: "Make Package Public?",
+					message: "By making this package public every member of the SWAMP community will be able to access it. Do you wish to continue?",
+					
+					// callbacks
+					//
+					accept: function() {
+
+						// disable save button
 						//
-						accept: function() {
+						self.$el.find('#save').prop('disabled', true);
 
-							// disable save button
-							//
-							self.$el.find('#save').prop('disabled', true);
-
-							// save sharing info
-							//
-							self.savePackageAndVersionSharing();
-						},
-						
-						reject: function() {
-							self.onClickCancel.call(self);
-						}
-					})
-				);
+						// save sharing info
+						//
+						self.savePackageAndVersionSharing();
+					},
+					
+					reject: function() {
+						self.onClickCancel.call(self);
+					}
+				});
 			} else {
 
 				// disable save button

@@ -1,6 +1,6 @@
 /******************************************************************************\
 |                                                                              |
-|                               admin-invitations-view.js                      |
+|                      admin-invitations-list-item-view.js                     |
 |                                                                              |
 |******************************************************************************|
 |                                                                              |
@@ -18,23 +18,18 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
 	'text!templates/admin/settings/system-admins/invitations/admin-invitations-list/admin-invitations-list-item.tpl',
-	'registry',
 	'models/admin/admin-invitation',
-	'views/dialogs/confirm-view',
-	'views/dialogs/notify-view',
-	'views/dialogs/error-view',
+	'views/collections/tables/table-list-item-view',
 	'utilities/time/date-utils'
-], function($, _, Backbone, Marionette, Template, Registry, AdminInvitation, ConfirmView, NotifyView, ErrorView) {
-	return Backbone.Marionette.ItemView.extend({
+], function($, _, Template, AdminInvitation, TableListItemView) {
+	return TableListItemView.extend({
 
 		//
 		// attributes
 		//
 
-		tagName: 'tr',
+		template: _.template(Template),
 
 		events: {
 			'click .delete button': 'onClickDelete'
@@ -44,12 +39,12 @@ define([
 		// rendering methods
 		//
 
-		template: function(data) {
-			return _.template(Template, _.extend(data, {
+		templateContext: function() {
+			return {
 				model: this.model,
-				url: Registry.application.getURL() + '#accounts',
+				url: application.getURL() + '#accounts',
 				showDelete: this.options.showDelete
-			}));
+			};
 		},
 
 		//
@@ -59,41 +54,37 @@ define([
 		onClickDelete: function() {
 			var self = this;
 
-			// show confirm dialog
+			// show confirmation
 			//
-			Registry.application.modal.show(
-				new ConfirmView({
-					title: "Delete Administrator Invitation",
-					message: "Are you sure that you want to delete this administrator invitation to " + this.model.get('invitee').getFullName() + "?",
+			application.confirm({
+				title: "Delete Administrator Invitation",
+				message: "Are you sure that you want to delete this administrator invitation to " + this.model.get('invitee').getFullName() + "?",
 
-					// callbacks
+				// callbacks
+				//
+				accept: function() {
+					var adminInvitation = new AdminInvitation({
+						'invitation_key': self.model.get('invitation_key')
+					});
+
+					// delete admin invitation
 					//
-					accept: function() {
-						var adminInvitation = new AdminInvitation({
-							'invitation_key': self.model.get('invitation_key')
-						});
+					self.model.destroy({
+						url: adminInvitation.url(),
 
-						// delete admin invitation
+						// callbacks
 						//
-						self.model.destroy({
-							url: adminInvitation.url(),
+						error: function() {
 
-							// callbacks
+							// show error message
 							//
-							error: function() {
-
-								// show error dialog
-								//
-								Registry.application.modal.show(
-									new ErrorView({
-										message: "Could not delete this admin invitation."
-									})
-								);
-							}
-						});
-					}
-				})
-			);
+							application.error({
+								message: "Could not delete this admin invitation."
+							});
+						}
+					});
+				}
+			});
 		}
 	});
 });

@@ -18,11 +18,10 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
 	'config',
 	'models/packages/package-type',
 	'collections/utilities/named-items'
-], function($, _, Backbone, Config, PackageType, NamedItems) {
+], function($, _, Config, PackageType, NamedItems) {
 	return NamedItems.extend({
 
 		//

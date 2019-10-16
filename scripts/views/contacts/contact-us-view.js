@@ -18,24 +18,22 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
 	'text!templates/contacts/contact-us.tpl',
 	'config',
-	'registry',
 	'models/utilities/contact',
-	'views/dialogs/notify-view',
-	'views/dialogs/error-view',
+	'views/base-view',
 	'views/contacts/contact-profile/new-contact-profile-form-view'
-], function($, _, Backbone, Marionette, Template, Config, Registry, Contact, NotifyView, ErrorView, NewContactProfileFormView) {
-	return Backbone.Marionette.LayoutView.extend({
+], function($, _, Template, Config, Contact, BaseView, NewContactProfileFormView) {
+	return BaseView.extend({
 
 		//
 		// attributes
 		//
 
+		template: _.template(Template),
+
 		regions: {
-			newContactProfileForm: '#new-contact-profile-form'
+			form: '#new-contact-profile-form'
 		},
 
 		events: {
@@ -45,7 +43,7 @@ define([
 		},
 
 		//
-		// methods
+		// constructor
 		//
 
 		initialize: function() {
@@ -56,23 +54,21 @@ define([
 		// rendering methods
 		//
 
-		template: function(data) {
-			return _.template(Template, _.extend(data, {
+		templateContext: function() {
+			return {
 				contact: Config.contact,
-				config: Registry.application.config
-			}));
+				config: application.config
+			};
 		},
 
 		onRender: function() {
 			
 			// show new contact profile form
 			//
-			if (Registry.application.config['email_enabled'] && Registry.application.config['contact_form_enabled']) {
-				this.newContactProfileForm.show(
-					new NewContactProfileFormView({
-						model: this.model
-					})
-				);
+			if (application.config.email_enabled && application.config.contact_form_enabled) {
+				this.showChildView('form', new NewContactProfileFormView({
+					model: this.model
+				}));
 			}
 		},
 
@@ -96,53 +92,40 @@ define([
 
 			// check validation
 			//
-			if (this.newContactProfileForm.currentView.isValid()) {
+			if (!this.getChildView('form').submit({
 
-				// update model
+				// callbacks
 				//
-				this.newContactProfileForm.currentView.update(this.model);
+				success: function() {
 
-				// save model
-				//
-				this.model.save(undefined, {
-
-					// callbacks
+					// show success notification dialog
 					//
-					success: function() {
+					application.notify({
+						title: "Message Sent",
+						message: "Thank you for your feedback.",
 
-						// show success notification dialog
+						// callbacks
 						//
-						Registry.application.modal.show(
-							new NotifyView({
-								title: "Message Sent",
-								message: "Thank you for your feedback.",
+						accept: function() {
 
-								// callbacks
-								//
-								accept: function() {
+							// go to home view
+							//
+							Backbone.history.navigate('#home', {
+								trigger: true
+							});
+						}
+					});
+				},
 
-									// go to home view
-									//
-									Backbone.history.navigate('#home', {
-										trigger: true
-									});
-								}
-							})
-						);
-					},
+				error: function() {
 
-					error: function() {
-
-						// show error dialog
-						//
-						Registry.application.modal.show(
-							new ErrorView({
-								message: "Could not send contact info."
-							})
-						);
-					}
-				});
-			} else {
+					// show error message
+					//
+					application.error({
+						message: "Could not send contact info."
+					});
+				}
+			})) {
 
 				// display error message
 				//

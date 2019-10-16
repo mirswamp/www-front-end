@@ -1,6 +1,6 @@
 /******************************************************************************\
 |                                                                              |
-|                               item-list-item-view.js                         |
+|                            item-list-item-view.js                            |
 |                                                                              |
 |******************************************************************************|
 |                                                                              |
@@ -18,30 +18,28 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
 	'text!templates/admin/status/item-list/item-list-item.tpl',
-	'registry',
-	'utilities/browser/html-utils'
-], function($, _, Backbone, Marionette, Template, Registry) {
-	return Backbone.Marionette.ItemView.extend({
+	'views/collections/tables/table-list-item-view',
+	'utilities/web/html-utils'
+], function($, _, Template, TableListItemView) {
+	return TableListItemView.extend({
 
 		//
 		// attributes
 		//
 
-		tagName: 'tr',
+		template: _.template(Template),
 
 		//
 		// rendering methods
 		//
 
-		template: function(data) {
-			return _.template(Template, {
+		templateContext: function() {
+			return {
 				index: this.options.index + 1, 
-				data: data,	
+				data: this.model.attributes,
 				showNumbering: this.options.showNumbering
-			});
+			};
 		}
 	});
 });

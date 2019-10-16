@@ -19,9 +19,8 @@ define([
 	'jquery',
 	'underscore',
 	'config',
-	'registry',
 	'models/utilities/timestamped'
-], function($, _, Config, Registry, Timestamped) {
+], function($, _, Config, Timestamped) {
 	return Timestamped.extend({
 
 		//
@@ -86,7 +85,11 @@ define([
 		},
 
 		isCurrentUser: function() {
-			return this.isSameAs(Registry.application.session.user);
+			return this.isSameAs(application.session.user);
+		},
+
+		isSignedIn: function() {
+			return this.get('signed_in_flag');
 		},
 
 		hasSshAccess: function() {

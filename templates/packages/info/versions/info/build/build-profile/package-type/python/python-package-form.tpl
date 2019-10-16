@@ -46,15 +46,11 @@
 
 					<div class="panel-heading">
 						<label>Advanced settings</label>
-						<span class="tags">
-							<span class="<% if (!showConfigure) { %>collapsed <% } %>toggle configure tag accordion-toggle" data-toggle="collapse" data-parent="#filters" href="#configure-settings"><i class="fa fa-tasks"></i>Configure</span>
-							<span class="<% if (!showBuild) { %>collapsed <% } %>toggle build tag accordion-toggle" data-toggle="collapse" data-parent="#filters" href="#build-settings"<% if (isWheel) { %> style="display:none"<% } %>><i class="fa fa-puzzle-piece"></i>Build</span>
-						</span>
 					</div>
 
 					<div class="nested">
-						<div id="configure-settings" class="well collapse<% if (showConfigure) { %> in<% } %>">
-							<h3><i class="fa fa-tasks"></i>Configure settings<i class="fa fa-minus-circle close accordion-toggle" data-toggle="collapse" href="#configure-settings" /></h3>
+						<div id="configure-settings" class="well">
+							<h3><i class="fa fa-tasks"></i>Configure settings</h3>
 
 							<div id="configure-path" class="form-group">
 								<label class="control-label">Configure path</label>
@@ -96,7 +92,7 @@
 							</div>
 						</div>
 
-						<div id="build-settings" class="well collapse<% if (showBuild) { %> in<% } %>">
+						<div id="build-settings" class="well">
 							<h3><i class="fa fa-puzzle-piece"></i>Build settings</h3>
 
 							<div id="build-path" class="form-group" style="display:none">

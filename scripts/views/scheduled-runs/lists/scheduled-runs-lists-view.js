@@ -18,49 +18,59 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
-	'text!templates/scheduled-runs/lists/scheduled-runs-lists.tpl',
-	'views/scheduled-runs/list/scheduled-runs-list-view'
-], function($, _, Backbone, Marionette, Template, ScheduledRunsListView) {
-	return Backbone.Marionette.CompositeView.extend({
+	'views/base-view',
+	'views/collections/collection-view',
+	'views/scheduled-runs/lists/scheduled-runs-lists-item-view'
+], function($, _, BaseView, CollectionView, ScheduledRunsListsItemView) {
+	return CollectionView.extend({
 
 		//
 		// attributes
 		//
 
-		childView: ScheduledRunsListView,
+		childView: ScheduledRunsListsItemView,
+
+		emptyView: BaseView.extend({
+			className: 'empty-list',
+			template: _.template("No scheduled runs.")
+		}),
 
 		//
 		// methods 
 		//
 
-		buildChildView: function(child, ChildViewClass, childViewOptions) {
+		childViewOptions: function(model) {
 
-			// create the child view instance
+			// check if empty view
 			//
-			return new ScheduledRunsListView(_.extend({
-				model: child.get('run_request'),
-				collection: child.get('collection')
-			}, {
+			if (!model) {
+				return {};
+			}
+
+			// return view options
+			//
+			return {
+				model: model,
+				collection: this.options.scheduledRuns.getByRunRequest(model),
 				showProjects: this.options.showProjects,
 				showNumbering: this.options.showNumbering,
 				showSchedule: this.options.showSchedule,
 				showDelete: this.options.showDelete,
+				onDelete: this.options.onDelete,
 				parent: this
-			}));
+			};
 		},
 
 		//
 		// rendering methods
 		//
 
-		template: function(data) {
-			return _.template(Template, _.extend(data, {
+		templateContext: function() {
+			return {
 				collection: this.collection,
 				showProjects: this.options.showProjects,
 				showNumbering: this.options.showNumbering
-			}));
+			};
 		},
 	});
 });

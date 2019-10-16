@@ -19,35 +19,31 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
 	'text!templates/results/assessments-results.tpl',
-	'registry',
-	'config',
 	'models/projects/project',
 	'models/run-requests/run-request',
 	'collections/projects/projects',
 	'collections/assessments/assessment-runs',
 	'collections/assessments/execution-records',
 	'collections/assessments/scheduled-runs',
-	'views/dialogs/confirm-view',
-	'views/dialogs/notify-view',
-	'views/dialogs/error-view',
+	'views/base-view',
 	'views/results/assessment-runs/filters/assessment-runs-filters-view',
 	'views/results/assessment-runs/select-list/select-assessment-runs-list-view',
 	'views/results/native-viewer/native-viewer-view',
 	'views/widgets/selectors/version-filter-selector-view'
-], function($, _, Backbone, Marionette, Template, Registry, Config, Project, RunRequest, Projects, AssessmentRuns, ExecutionRecords, ScheduledRuns, ConfirmView, NotifyView, ErrorView, AssessmentRunsFiltersView, SelectAssessmentRunsListView, NativeViewerView, VersionFilterSelectorView) {
-	return Backbone.Marionette.LayoutView.extend({
+], function($, _, Template, Project, RunRequest, Projects, AssessmentRuns, ExecutionRecords, ScheduledRuns, BaseView, AssessmentRunsFiltersView, SelectAssessmentRunsListView, NativeViewerView, VersionFilterSelectorView) {
+	return BaseView.extend({
 
 		//
 		// attributes
 		//
 		refreshInterval: 10000,
 
+		template: _.template(Template),
+
 		regions: {
-			assessmentRunsFilters: '#assessment-runs-filters',
-			assessmentRunsList: '#assessment-runs-list'
+			filters: '#assessment-runs-filters',
+			list: '#assessment-runs-list'
 		},
 
 		events: {
@@ -315,8 +311,8 @@ define([
 		//
 
 		getSelected: function() {
-			if (this.assessmentRunsList.currentView) {
-				return this.assessmentRunsList.currentView.getSelected();
+			if (this.getChildView('list')) {
+				return this.getChildView('list').getSelected();
 			}
 		},
 
@@ -380,7 +376,7 @@ define([
 			var viewer = this.getSelectedViewer();
 			var useNativeViewer = (viewer && viewer.get('name').toLowerCase().indexOf('native') != -1);
 			var projectUuid = this.getAssesmentRunProjectUuid();
-			var url = Registry.application.getURL() + '#results/' + assessmentResultUuids + '/viewer/' + (viewer? viewer.get('viewer_uuid') : '') + '/project/' + projectUuid;
+			var url = application.getURL() + '#results/' + assessmentResultUuids + '/viewer/' + (viewer? viewer.get('viewer_uuid') : '') + '/project/' + projectUuid;
 
 			if (useNativeViewer) {
 				return url + '?to=' + NativeViewerView.itemsPerPage;
@@ -398,15 +394,15 @@ define([
 		//
 
 		getQueryString: function() {
-			return this.assessmentRunsFilters.currentView.getQueryString();
+			return this.getChildView('filters').getQueryString();
 		},
 
 		getFilterData: function(attributes) {
-			return this.assessmentRunsFilters.currentView.getData(attributes);
+			return this.getChildView('filters').getData(attributes);
 		},
 
 		getFilterAttrs: function(attributes) {
-			return this.assessmentRunsFilters.currentView.getAttrs(attributes);
+			return this.getChildView('filters').getAttrs(attributes);
 		},
 
 		//
@@ -432,13 +428,11 @@ define([
 
 				error: function() {
 
-					// show error dialog
+					// show error message
 					//
-					Registry.application.modal.show(
-						new ErrorView({
-							message: "Could not get execution records for this project."
-						})
-					);
+					application.error({
+						message: "Could not get execution records for this project."
+					});
 				}
 			});
 		},
@@ -462,13 +456,11 @@ define([
 
 				error: function() {
 
-					// show error dialog
+					// show error message
 					//
-					Registry.application.modal.show(
-						new ErrorView({
-							message: "Could not get execution records for these projects."
-						})
-					);
+					application.error({
+						message: "Could not get execution records for these projects."
+					});
 				}
 			});
 		},
@@ -500,16 +492,16 @@ define([
 		// rendering methods
 		//
 
-		template: function(data) {
-			return _.template(Template, _.extend(data, {
+		templateContext: function() {
+			return {
 				title: this.getTitle(),
 				shortTitle: this.getShortTitle(),
 				showNavigation: Object.keys(this.options.data).length > 0,
 				viewers: this.options.viewers,
-				showNumbering: Registry.application.options.showNumbering,
-				showGrouping: Registry.application.options.showGrouping,
-				autoRefresh: Registry.application.options.autoRefresh
-			}));
+				showNumbering: application.options.showNumbering,
+				showGrouping: application.options.showGrouping,
+				autoRefresh: application.options.autoRefresh
+			};
 		},
 
 		onRender: function() {
@@ -527,7 +519,7 @@ define([
 			this.addBadges();
 		},
 
-		onShow: function() {
+		onAttach: function() {
 
 			// set initial state of view results notice and button
 			//
@@ -539,35 +531,33 @@ define([
 			
 			// show assessment results filters view
 			//
-			this.assessmentRunsFilters.show(
-				new AssessmentRunsFiltersView({
-					model: this.model,
-					data: this.options.data,
+			this.showChildView('filters', new AssessmentRunsFiltersView({
+				model: this.model,
+				data: this.options.data,
 
-					// callbacks
+				// callbacks
+				//
+				onChange: function() {
+					// setQueryString(self.getQueryString());
+					
+					// update filter data
 					//
-					onChange: function() {
-						// setQueryString(self.getQueryString());
-						
-						// update filter data
-						//
-						var projects = self.options.data.projects;
-						self.options.data = self.getFilterData();
-						self.options.data.projects = projects;
+					var projects = self.options.data.projects;
+					self.options.data = self.getFilterData();
+					self.options.data.projects = projects;
 
-						// update url
-						//
-						var queryString = self.getQueryString();
-						var state = window.history.state;
-						var url = getWindowBaseLocation() + (queryString? ('?' + queryString) : '');
-						window.history.pushState(state, '', url);
-						
-						// update view
-						//
-						self.onChange();				
-					}
-				})
-			);
+					// update url
+					//
+					var queryString = self.getQueryString();
+					var state = window.history.state;
+					var url = getWindowBaseLocation() + (queryString? ('?' + queryString) : '');
+					window.history.pushState(state, '', url);
+					
+					// update view
+					//
+					self.onChange();				
+				}
+			}));
 		},
 
 		scheduleNextRefresh: function() {
@@ -622,40 +612,38 @@ define([
 
 			// preserve existing sorting order
 			//
-			if (this.assessmentRunsList.currentView && this.collection.length > 0) {
-				this.options.sortList = this.assessmentRunsList.currentView.getSortList();
+			if (this.getChildView('list') && this.collection.length > 0) {
+				this.options.sortList = this.getChildView('list').getSortList();
 			}
 
 			// show assessment runs list view
 			//
-			this.assessmentRunsList.show(
-				new SelectAssessmentRunsListView({
-					model: this.model,
-					collection: this.collection,
-					viewer: this.getSelectedViewer(),
-					viewers: this.options.viewers,
-					selectedExecutionRecords: this.options.selectedExecutionRecords,
-					errorViewer: this.options.viewers.getNative(),
-					selected: selected,
-					sortList: this.options.sortList,
-					queryString: this.getQueryString(),
-					showProjects: Registry.application.session.user.get('has_projects'),
-					showNumbering: Registry.application.options.showNumbering,
-					showGrouping: Registry.application.options.showGrouping,
-					showStatus: true,
-					showErrors: true,
-					showDelete: false,
-					showSsh: true,
-					parent: this,
+			this.showChildView('list', new SelectAssessmentRunsListView({
+				model: this.model,
+				collection: this.collection,
+				viewer: this.getSelectedViewer(),
+				viewers: this.options.viewers,
+				selectedExecutionRecords: this.options.selectedExecutionRecords,
+				errorViewer: this.options.viewers.getNative(),
+				selected: selected,
+				sortList: this.options.sortList,
+				queryString: this.getQueryString(),
+				showProjects: application.session.user.get('has_projects'),
+				showNumbering: application.options.showNumbering,
+				showGrouping: application.options.showGrouping,
+				showStatus: true,
+				showErrors: true,
+				showDelete: false,
+				showSsh: true,
+				parent: this,
 
-					// callback
-					//
-					onSelect: function() {
-						self.setViewResultsLink();
-						self.showEnabledViewers();
-					}
-				})
-			);
+				// callback
+				//
+				onSelect: function() {
+					self.setViewResultsLink();
+					self.showEnabledViewers();
+				}
+			}));
 		},
 
 		addBadge: function(selector, num) {
@@ -748,7 +736,7 @@ define([
 					// open results window
 					//
 					var options = 'scrollbars=yes,directories=yes,titlebar=yes,toolbar=yes,location=yes';
-					var url = Registry.application.getURL() + '#results/' + assessmentResultUuids + '/viewer/' + viewer.get('viewer_uuid') + '/project/' + projectUuid;
+					var url = application.getURL() + '#results/' + assessmentResultUuids + '/viewer/' + viewer.get('viewer_uuid') + '/project/' + projectUuid;
 					var target = '_blank';
 					var replace = false;
 
@@ -757,23 +745,19 @@ define([
 					var resultsWindow = window.open(url, target, options, replace);
 				} else {
 
-					// show error dialog
+					// show notification
 					//
-					Registry.application.modal.show(
-						new NotifyView({
-							message: "Can't open CodeDx because no project has been selected."
-						})
-					);				
+					application.notify({
+						message: "Can't open CodeDx because no project has been selected."
+					});
 				}
 			} else {
 
-				// show error dialog
+				// show notification
 				//
-				Registry.application.modal.show(
-					new NotifyView({
-						message: "Package names and versions must match to view multiple assessment results with CodeDX."
-					})
-				);	
+				application.notify({
+					message: "Package names and versions must match to view multiple assessment results with CodeDX."
+				});
 			}
 		},
 
@@ -781,19 +765,17 @@ define([
 			var self = this;
 			if (this.getSelected().length == 0) {
 
-				// show confirm dialog
+				// show confirmation
 				//
-				Registry.application.modal.show(
-					new ConfirmView({
-						message: "No assessment results have been selected. This will launch CodeDx using previously viewed assessment results.  Are you sure you want to continue?",
-					
-						// callbacks
-						//
-						accept: function(){
-							self.launchCodeDxViewer(viewer);
-						}
-					})
-				);			
+				application.confirm({
+					message: "No assessment results have been selected. This will launch CodeDx using previously viewed assessment results.  Are you sure you want to continue?",
+				
+					// callbacks
+					//
+					accept: function(){
+						self.launchCodeDxViewer(viewer);
+					}
+				});
 			} else {
 				this.launchCodeDxViewer(viewer);
 			}
@@ -804,13 +786,11 @@ define([
 
 			if (this.getSelected().length == 0) {
 
-				// show error dialog
+				// show notification
 				//
-				Registry.application.modal.show(
-					new NotifyView({
-						message: "You must first select at least one assessment result to show."
-					})
-				);			
+				application.notify({
+					message: "You must first select at least one assessment result to show."
+				});
 			} else {
 
 				// display each selected assessment result
@@ -820,7 +800,7 @@ define([
 					var executionRecord = executionRecords[i];
 					var options = 'scrollbars=yes,directories=yes,titlebar=yes,toolbar=yes,location=yes';
 					var queryString = '?to=' + NativeViewerView.itemsPerPage;
-					var url = Registry.application.getURL() + '#results/' + executionRecord.get('assessment_result_uuid') + '/viewer/' + viewer.get('viewer_uuid') + '/project/' + executionRecord.get('project_uuid') + queryString;
+					var url = application.getURL() + '#results/' + executionRecord.get('assessment_result_uuid') + '/viewer/' + viewer.get('viewer_uuid') + '/project/' + executionRecord.get('project_uuid') + queryString;
 					var target = '_blank';
 					var replace = false;
 
@@ -908,7 +888,7 @@ define([
 		},
 
 		onClickResetFilters: function() {
-			this.assessmentRunsFilters.currentView.reset();
+			this.getChildView('filters').reset();
 		},
 
 		onClickRefresh: function() {
@@ -919,11 +899,11 @@ define([
 
 			// store refresh in cookie
 			//
-			Registry.application.setAutoRefresh(this.getAutoRefresh());
+			application.setAutoRefresh(this.getAutoRefresh());
 
 			// enable / disable refresh
 			//
-			if (Registry.application.options.autoRefresh) {
+			if (application.options.autoRefresh) {
 				this.enableAutoRefresh();
 			} else {
 				this.disableAutoRefresh();
@@ -943,12 +923,12 @@ define([
 		},
 
 		onClickShowNumbering: function() {
-			Registry.application.setShowNumbering($(event.target).is(':checked'));
+			application.setShowNumbering($(event.target).is(':checked'));
 			this.showList();
 		},
 
 		onClickShowGrouping: function() {
-			Registry.application.setShowGrouping($(event.target).is(':checked'));
+			application.setShowGrouping($(event.target).is(':checked'));
 			this.showList();
 		},
 
@@ -957,16 +937,14 @@ define([
 			var self = this;
 
 			require([
-				'registry',
-				'utilities/browser/query-strings',
-				'utilities/browser/url-strings',
-				'views/dialogs/error-view',
+				'utilities/web/query-strings',
+				'utilities/web/url-strings',
 				'views/results/delete/delete-assessments-results-view'
-			], function (Registry, QueryStrings, UrlStrings, ErrorView, DeleteAssessmentsResultsView) {
+			], function (QueryStrings, UrlStrings, DeleteAssessmentsResultsView) {
 
 				// show content view
 				//
-				Registry.application.showContent({
+				application.showContent({
 					nav1: 'home',
 					nav2: 'results', 
 
@@ -976,14 +954,12 @@ define([
 					
 						// show assessments results view
 						//
-						view.content.show(
-							new DeleteAssessmentsResultsView({
-								data: self.options.data,
-								model: view.model,
-								viewers: self.options.viewers,
-								selectedExecutionRecords: selectedExecutionRecords
-							})
-						);
+						view.showChildView('content', new DeleteAssessmentsResultsView({
+							data: self.options.data,
+							model: view.model,
+							viewers: self.options.viewers,
+							selectedExecutionRecords: selectedExecutionRecords
+						}));
 					}
 				});
 			});

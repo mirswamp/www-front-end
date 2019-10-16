@@ -1,10 +1,11 @@
 /******************************************************************************\
 |                                                                              |
-|                         package-version-profile-form-view.js                 |
+|                     package-version-profile-form-view.js                     |
 |                                                                              |
 |******************************************************************************|
 |                                                                              |
-|        This defines a view of a package versions's profile information.      |
+|        This defines a form for entering a package versions's profile         |
+|        info.                                                                 |
 |                                                                              |
 |        Author(s): Abe Megahed                                                |
 |                                                                              |
@@ -18,37 +19,26 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
-	'jquery.validate',
-	'bootstrap/tooltip',
-	'bootstrap/popover',
-	'text!templates/packages/info/versions/info/details/package-version-profile/package-version-profile-form.tpl'
-], function($, _, Backbone, Marionette, Validate, Tooltip, Popover, Template) {
-	return Backbone.Marionette.ItemView.extend({
+	'text!templates/packages/info/versions/info/details/package-version-profile/package-version-profile-form.tpl',
+	'views/forms/form-view'
+], function($, _, Template, FormView) {
+	return FormView.extend({
+
+		//
+		// attributes
+		//
+
+		template: _.template(Template),
 
 		//
 		// rendering methods
 		//
 
-		template: function(data) {
-			return _.template(Template, _.extend(data, {
+		templateContext: function() {
+			return {
 				model: this.model,
 				package: this.options.package
-			}));
-		},
-
-		onRender: function() {
-
-			// display popovers on hover
-			//
-			this.$el.find('[data-toggle="popover"]').popover({
-				trigger: 'hover'
-			});
-			
-			// validate the form
-			//
-			this.validator = this.validate();
+			};
 		},
 
 		//
@@ -56,7 +46,7 @@ define([
 		//
 
 		validate: function() {
-			return this.$el.find("form").validate({
+			return this.$el.validate({
 
 				// callbacks
 				//
@@ -72,15 +62,11 @@ define([
 			});
 		},
 
-		isValid: function() {
-			return this.validator.form();
-		},
-
 		//
 		// form methods
 		//
 
-		update: function(model) {
+		getValues: function() {
 
 			// get values from form
 			//
@@ -88,13 +74,11 @@ define([
 			var versionString = this.$el.find('#version-string').val();
 			var notes = this.$el.find('#notes').val();
 
-			// update model
-			//
-			model.set({
+			return {
 				'checkout_argument': checkoutArgument != ''? checkoutArgument : null,
 				'version_string': versionString != ''? versionString : null,
 				'notes': notes != ''? notes : null
-			});
+			};
 		},
 	});
 });

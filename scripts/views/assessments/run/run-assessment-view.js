@@ -18,45 +18,43 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
 	'text!templates/assessments/run/run-assessment.tpl',
-	'registry',
 	'models/assessments/assessment-run',
 	'models/run-requests/run-request',
+	'views/base-view',
 	'views/projects/selectors/project-selector-view',
 	'views/packages/selectors/package-selector-view',
 	'views/tools/selectors/tool-selector-view',
 	'views/platforms/selectors/platform-selector-view',
-	'views/dialogs/confirm-view',
-	'views/dialogs/error-view',
-	'views/dialogs/notify-view',
-	'views/assessments/dialogs/confirm-run-request-view'
-], function($, _, Backbone, Marionette, Template, Registry, AssessmentRun, RunRequest, ProjectSelectorView, PackageSelectorView, ToolSelectorView, PlatformSelectorView, ConfirmView, ErrorView, NotifyView, ConfirmRunRequestView) {
-	return Backbone.Marionette.LayoutView.extend({
+	'views/assessments/dialogs/confirm-run-request-dialog-view'
+], function($, _, Template, AssessmentRun, RunRequest, BaseView, ProjectSelectorView, PackageSelectorView, ToolSelectorView, PlatformSelectorView, ConfirmRunRequestDialogView) {
+	return BaseView.extend({
 
 		//
 		// attributes
 		//
 
+		template: _.template(Template),
+
 		regions: {
-			projectSelector: '#project-selector',
-			packageSelector: '#package-selector',
-			packageVersionSelector: '#package-version-selector',
-			toolSelector: '#tool-selector',
-			toolVersionSelector: '#tool-version-selector',
-			platformSelector: '#platform-selector',
-			platformVersionSelector: '#platform-version-selector'
+			project: '#project-selector',
+			package: '#package-selector',
+			package_version: '#package-version-selector',
+			tool: '#tool-selector',
+			tool_version: '#tool-version-selector',
+			platform: '#platform-selector',
+			platform_version: '#platform-version-selector'
 		},
 
 		events: {
+			'click #include-public input': 'onClickIncludePublic',
 			'click #save': 'onClickSave',
 			'click #save-and-run': 'onClickSaveAndRun',
 			'click #cancel': 'onClickCancel'
 		},
 
 		//
-		// methods
+		// constructor
 		//
 
 		initialize: function() {
@@ -90,7 +88,7 @@ define([
 			this.$el.find('#save-and-run').attr('disabled','disabled');
 		},
 
-		update: function(assessmentRun) {
+		getValues: function() {
 
 			// get triplet information
 			//
@@ -104,7 +102,7 @@ define([
 
 			// set package and tool
 			//
-			assessmentRun.set({
+			var values = {
 				'assessment_run_uuid': undefined,
 				'project_uuid': selectedProject.get('project_uid'),
 
@@ -113,16 +111,18 @@ define([
 
 				'tool_uuid': selectedTool? selectedTool.get('tool_uuid') : '*',
 				'tool_version_uuid': selectedToolVersion? selectedToolVersion.get('tool_version_uuid') : null,
-			});
+			};
 
 			// set platform, if one is defined
 			//
 			if (selectedPlatform) {
-				assessmentRun.set({
+				values = _.extend(values, {
 					'platform_uuid': selectedPlatform.get('platform_uuid'),
-					'platform_version_uuid': selectedPlatformVersion? selectedPlatformVersion.get('platform_version_uuid') : null,
+					'platform_version_uuid': selectedPlatformVersion? selectedPlatformVersion.get('platform_version_uuid') : null					
 				});
 			}
+
+			return values;
 		},
 
 		saveIncompatible: function(assessmentRun) {
@@ -146,13 +146,11 @@ define([
 
 				error: function(jqxhr, textstatus, errorThrown) {
 
-					// show error dialog
+					// show error message
 					//
-					Registry.application.modal.show(
-						new ErrorView({
-							message: "Could not save this assessment."
-						})
-					);
+					application.error({
+						message: "Could not save this assessment."
+					});
 				}
 			});
 		},
@@ -196,11 +194,12 @@ define([
 							break;
 
 						case 'owner_no_permission':
-							Registry.application.modal.show(
-								new NotifyView({
-									message: "The owner of this project must request permission to use \"" + selectedTool.get('name') + ".\""
-								})
-							);
+
+							// show notification
+							//
+							application.notify({
+								message: "The owner of this project must request permission to use \"" + selectedTool.get('name') + ".\""
+							});
 							break;
 
 						case 'no_user_policy':
@@ -212,13 +211,11 @@ define([
 								//
 								error: function(response) {
 
-									// show error dialog
+									// show error message
 									//
-									Registry.application.modal.show(
-										new ErrorView({
-											message: "Error saving policy acknowledgement."
-										})
-									);
+									application.error({
+										message: "Error saving policy acknowledgement."
+									});
 								}
 							});
 							break;
@@ -233,33 +230,34 @@ define([
 								//
 								error: function (response) {
 
-									// show error dialog
+									// show error message
 									//
-									Registry.application.modal.show(
-										new ErrorView({
-											message: "Could not designate this project."
-										})
-									);
+									application.error({
+										message: "Could not designate this project."
+									});
 								}
 							});
 							break;
 
 						case 'member_project_unbound':
-							Registry.application.modal.show(
-								new NotifyView({
-									message: "The project owner has not designated \"" + self.options.data['project'].get('full_name') + "\" for use with \"" + selectedTool.get('name') + ".\" To do so the project owner must add an assessment which uses \"" + selectedTool.get('name') + ".\""
-								})
-							);
+
+							// show notification
+							//
+							application.notify({
+								message: "The project owner has not designated \"" + self.options.data['project'].get('full_name') + "\" for use with \"" + selectedTool.get('name') + ".\" To do so the project owner must add an assessment which uses \"" + selectedTool.get('name') + ".\""
+							});
+
 						case 'package_unbound':
 							selectedTool.confirmToolPackage(selectedPackage);
 							break;
 
 						default:
-							Registry.application.modal.show(
-								new ErrorView({
-									message: response.responseText
-								})
-							);					
+
+							// show error message
+							//
+							application.error({
+								message: response.responseText
+							});
 							break;
 					}
 				}
@@ -278,6 +276,10 @@ define([
 			var selectedPlatform = self.getPlatform();
 			var selectedPlatformVersion = self.getPlatformVersion();
 
+			// update model
+			//
+			this.model.set(this.getValues());
+			
 			// check compatibility and save assessment
 			//
 			assessmentRun.checkCompatibility({
@@ -316,27 +318,25 @@ define([
 						}
 						message += ". Save assessment anyway?";
 
-						Registry.application.modal.show(
-							new ConfirmView({
-								title: "Save Incompatible Assessment",
-								message: message,
+						// show confirmation
+						//
+						application.confirm({
+							title: "Save Incompatible Assessment",
+							message: message,
 
-								// callbacks
-								//
-								accept: function() {
-									self.saveIncompatible(assessmentRun);
-								},
-							})
-						);
+							// callbacks
+							//
+							accept: function() {
+								self.saveIncompatible(assessmentRun);
+							},
+						});
 					} else {
 
-						// show error dialog
+						// show error message
 						//
-						Registry.application.modal.show(
-							new ErrorView({
-								message: "Could not save this assessment."
-							})
-						);
+						application.error({
+							message: "Could not save this assessment."
+						});
 					}
 				}
 			});
@@ -371,13 +371,11 @@ define([
 
 				error: function() {
 
-					// show error dialog
+					// show error message
 					//
-					Registry.application.modal.show(
-						new ErrorView({
-							message: "Could not save run request assoc."
-						})
-					);		
+					application.error({
+						message: "Could not save run request assoc."
+					});
 				}
 			});
 		},
@@ -387,21 +385,19 @@ define([
 			
 			// show confirm dialog box
 			//
-			Registry.application.modal.show(
-				new ConfirmRunRequestView({
-					selectedAssessmentRuns: [assessmentRun],
+			application.show(new ConfirmRunRequestDialogView({
+				selectedAssessmentRuns: [assessmentRun],
 
-					// callbacks
-					//
-					accept: function(selectedAssessmentRuns, notifyWhenComplete) {
-						self.scheduleOneTimeRunRequest(assessmentRun, notifyWhenComplete);
-					},
+				// callbacks
+				//
+				accept: function(selectedAssessmentRuns, notifyWhenComplete) {
+					self.scheduleOneTimeRunRequest(assessmentRun, notifyWhenComplete);
+				},
 
-					reject: function() {
-						self.enableButtons();
-					}
-				})
-			);
+				reject: function() {
+					self.enableButtons();
+				}
+			}));
 		},
 
 		//
@@ -409,16 +405,16 @@ define([
 		//
 
 		getProject: function() {
-			if (this.options.data['project']) {
-
-				// return fixed project
-				//
-				return this.options.data['project'];
-			} else if (this.projectSelector.currentView) {
+			if (this.hasChildView('project')) {
 
 				// return selected project
 				//
-				return this.projectSelector.currentView.getSelected();
+				return this.getChildView('project').getSelected();
+			} else if (this.options.data.project) {
+
+				// return initial project
+				//
+				return this.options.data.project;
 			} else {
 
 				// return default project
@@ -428,86 +424,56 @@ define([
 		},
 
 		getPackage: function() {
-			if (this.options.data['package']) {
-
-				// return fixed package
-				//
-				return this.options.data['package'];
-			} else if (this.packageSelector.currentView) {
+			if (this.hasChildView('package')) {
 
 				// return selected package
 				//
-				return this.packageSelector.currentView.getSelected();
+				return this.getChildView('package').getSelected();
 			}
 		},
 
 		getPackageVersion: function() {
-			if (this.options.data['package-version']) {
-
-				// return fixed package version
-				//
-				return this.options.data['package-version'] != 'latest'? this.options.data['package-version'] : undefined;
-			} else if (this.packageVersionSelector.currentView) {
+			if (this.hasChildView('package_version')) {
 
 				// return selected package version
 				//
-				return this.packageVersionSelector.currentView.getSelected();
+				return this.getChildView('package_version').getSelected();
 			}
 		},
 
 		getTool: function() {
-			if (this.options.data['tool']) {
-
-				// return fixed tool
-				//
-				return this.options.data['tool']
-			} else if (this.toolSelector.currentView) {
+			if (this.hasChildView('tool')) {
 
 				// return selected tool
 				//
-				return this.toolSelector.currentView.getSelected();
+				return this.getChildView('tool').getSelected();
 			}
 		},
 
 		getToolVersion: function() {
-			if (this.options.data['tool-version']) {
-
-				// return fixed tool version
-				//
-				return this.options.data['tool-version'] != 'latest'? this.options.data['tool-version'] : undefined;
-			} else if (this.toolVersionSelector.currentView) {
+			if (this.hasChildView('tool_version')) {
 
 				// return selected tool version
 				//
-				return this.toolVersionSelector.currentView.getSelected();
+				return this.getChildView('tool_version').getSelected();
 			}
 		},
 
 		getPlatform: function() {
-			if (this.options.data['platform']) {
-
-				// return fixed platform
-				//
-				return this.options.data['platform']
-			} else if (this.platformSelector.currentView) {
+			if (this.hasChildView('platform')) {
 
 				// return selected platform
 				//
-				return this.platformSelector.currentView.getSelected();
+				return this.getChildView('platform').getSelected();
 			}
 		},
 
 		getPlatformVersion: function() {
-			if (this.options.data['platform-version']) {
-
-				// return fixed platform version
-				//
-				return this.options.data['platform-version'] != 'latest'? this.options.data['platform-version'] : undefined;
-			} else if (this.platformVersionSelector.currentView) {
+			if (this.hasChildView('platform_version')) {
 
 				// return selected platform version
 				//
-				return this.platformVersionSelector.currentView.getSelected();
+				return this.getChildView('platform_version').getSelected();
 			}
 		},
 
@@ -598,17 +564,18 @@ define([
 		// rendering methods
 		//
 
-		template: function(data) {
-			return _.template(Template, _.extend(data, {
-				hasProjects: Registry.application.session.user.get('has_projects'),
+		templateContext: function() {
+			return {
+				hasProjects: application.session.user.get('has_projects'),
 				project: this.options.data['project'],
 				package: this.options.data['package'],
 				packageVersion: this.options.data['package-version'],
 				tool: this.options.data['tool'],
 				toolVersion: this.options.data['tool-version'],
 				platform: this.options.data['platform'],
-				platformVersion: this.options.data['platform-version']
-			}));
+				platformVersion: this.options.data['platform-version'],
+				includePublic: this.options.data['package']? !this.options.data['package'].get('is_owned') : false
+			};
 		},
 
 		onRender: function() {
@@ -618,36 +585,36 @@ define([
 			this.showSelectors();
 		},
 
-		showSelectors: function() {
+		getProjectSelector: function() {
 			var self = this;
+			return new ProjectSelectorView({
+				collection: self.options.projects,
+				initialValue: this.options.data['project'] || this.options.project,
 
-			// create selectors
-			//
-			if (Registry.application.session.user.get('has_projects')) {
-				this.projectSelectorView = new ProjectSelectorView({
-					collection: self.options.projects,
-					initialValue: this.options.data['project'] || this.options.project,
-
-					// callbacks
-					//
-					onChange: function(changes) {
-						if (changes.project) {
-							self.$el.find('#package-selection').show();
-						}
-						self.packageSelectorView.setProject(changes.project, {
-							package: self.getPackage(),
-							packageVersion: self.getPackageVersion()
-						});
+				// callbacks
+				//
+				onChange: function(changes) {
+					if (changes.project) {
+						self.$el.find('#package-selection').show();
 					}
-				});
-			}
-			this.packageSelectorView = new PackageSelectorView([], {
+					self.packageSelectorView.setProject(changes.project, {
+						package: self.getPackage(),
+						packageVersion: self.getPackageVersion()
+					});
+				}
+			});
+		},
+
+		getPackageSelector: function(showPublicPackages) {
+			var self = this;
+			return new PackageSelectorView({
 				project: this.getProject(),
 				initialValue: this.options.data['package'],
 				initialVersion: this.options.data['package-version'] != 'latest'? this.options.data['package-version'] : undefined,
-				versionSelector: this.packageVersionSelector,
+				versionSelectorRegion: this.getRegion('package_version'),
 				showPlatformDependent: (this.options.data['platform'] != undefined
 					|| this.options.data['platform'] != undefined),
+				showPublicPackages: showPublicPackages,
 
 				// callbacks
 				//
@@ -659,13 +626,17 @@ define([
 					self.platformSelectorView.setPackage(changes.package);
 				}
 			});
-			this.toolSelectorView = new ToolSelectorView([], {
+		},
+
+		getToolSelector: function() {
+			var self = this;
+			return new ToolSelectorView({
 				project: this.getProject(),
 				initialValue: this.options.data['tool'],
 				initialVersion: this.options.data['tool-version'] != 'latest'? this.options.data['tool-version'] : undefined,
 				packageSelected: this.options.data['package'],
 				platformSelected: this.options.data['platform'],
-				versionSelector: this.toolVersionSelector,
+				versionSelectorRegion: this.getRegion('tool_version'),
 				addAssessmentView: this,
 
 				// callbacks
@@ -675,13 +646,17 @@ define([
 					self.platformSelectorView.setTool(changes.tool);
 				}
 			});
-			this.platformSelectorView = new PlatformSelectorView([], {
+		},
+
+		getPlatformSelector: function() {
+			var self = this;
+			return new PlatformSelectorView({
 				project: this.getProject(),
 				initialValue: this.options.data['platform'],
 				initialVersion: this.options.data['platform-version'] != 'latest'? this.options.data['platform-version'] : undefined,
 				packageSelected: this.options.data['package'],
 				toolSelected: this.options.data['tool'],
-				versionSelector: this.platformVersionSelector,
+				versionSelectorRegion: this.getRegion('platform_version'),
 
 				// callbacks
 				//
@@ -689,18 +664,48 @@ define([
 					self.onChange();
 				}
 			});
+		},
+
+		showSelectors: function() {
+			var showPublicPackages = this.$el.find('#include-public input').is(':checked');
+
+			// create selectors
+			//
+			if (application.session.user.get('has_projects')) {
+				this.projectSelectorView = this.getProjectSelector();
+			}
+			this.packageSelectorView = this.getPackageSelector(showPublicPackages);
+			this.toolSelectorView = this.getToolSelector();
+			this.platformSelectorView = this.getPlatformSelector();
 
 			// show selectors
 			//
-			this.projectSelector.show(this.projectSelectorView);
-			this.packageSelector.show(this.packageSelectorView);
-			this.toolSelector.show(this.toolSelectorView);
-			this.platformSelector.show(this.platformSelectorView);
+			if (application.session.user.get('has_projects')) {
+				this.showChildView('project', this.projectSelectorView);
+			}
+			this.showChildView('package', this.packageSelectorView);
+			this.showChildView('tool', this.toolSelectorView);
+			this.showChildView('platform', this.platformSelectorView);
 		},
 
 		//
 		// event handling methods
 		//
+
+		onClickIncludePublic: function() {
+			var showPublicPackages = this.$el.find('#include-public input').is(':checked');
+
+			// show selectors
+			//
+			this.packageSelectorView.destroy();
+			this.packageSelectorView = this.getPackageSelector(showPublicPackages);
+			this.showChildView('package', this.packageSelectorView);
+
+			// hide selectors
+			//
+			this.$el.find('#tool-selection').hide();
+			this.$el.find('#platform-selection').hide();
+		},
 
 		onChange: function() {
 			var selectedProject = this.getProject();
@@ -745,10 +750,6 @@ define([
 		onClickSave: function() {
 			var self = this;
 
-			// update model
-			//
-			this.update(this.model);
-
 			// save assessment
 			//
 			this.save(this.model, {
@@ -767,23 +768,17 @@ define([
 
 				error: function() {
 
-					// show error dialog
+					// show error message
 					//
-					Registry.application.modal.show(
-						new ErrorView({
-							message: "Could not save this assessment."
-						})
-					);			
+					application.error({
+						message: "Could not save this assessment."
+					});
 				}
 			});
 		},
 
 		onClickSaveAndRun: function() {
 			var self = this;
-			
-			// update model
-			//
-			this.update(this.model);
 
 			// save assessment
 			//
@@ -797,13 +792,11 @@ define([
 
 				error: function() {
 
-					// show error dialog
+					// show error message
 					//
-					Registry.application.modal.show(
-						new ErrorView({
-							message: "Could not save this assessment."
-						})
-					);
+					application.error({
+						message: "Could not save this assessment."
+					});
 				}
 			});
 		},

@@ -18,13 +18,11 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
 	'config',
-	'registry',
 	'models/users/user',
 	'models/events/user-event',
 	'collections/events/events'
-], function($, _, Backbone, Config, Registry, User, UserEvent, Events) {
+], function($, _, Config, User, UserEvent, Events) {
 	return Events.extend({
 
 		//
@@ -40,7 +38,7 @@ define([
 		//
 
 		fetchNumAll: function(options) {
-			return this.fetchNumAllByUser(Registry.application.session.user, options);
+			return this.fetchNumAllByUser(application.session.user, options);
 		},
 
 		fetchNumAllByUser: function(user, options) {

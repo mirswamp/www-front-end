@@ -1,6 +1,6 @@
 /******************************************************************************\
 |                                                                              |
-|                               reset-password-view.js                         |
+|                            reset-password-view.js                            |
 |                                                                              |
 |******************************************************************************|
 |                                                                              |
@@ -18,22 +18,19 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
 	'jquery.validate',
-	'bootstrap/tooltip',
 	'bootstrap/popover',
 	'text!templates/users/reset-password/reset-password.tpl',
-	'registry',
 	'utilities/security/password-policy',
-	'views/dialogs/notify-view',
-	'views/dialogs/error-view'
-], function($, _, Backbone, Marionette, Validate, Tooltip, Popover, Template, Registry, PasswordPolicy, NotifyView, ErrorView) {
-	return Backbone.Marionette.ItemView.extend({
+	'views/base-view',
+], function($, _, Validate, Popover, Template, PasswordPolicy, BaseView) {
+	return BaseView.extend({
 
 		//
 		// attributes
 		//
+
+		template: _.template(Template),
 
 		events: {
 			'click #submit': 'onClickSubmit',
@@ -41,7 +38,32 @@ define([
 		},
 
 		//
-		// methods
+		// form attributes
+		//
+
+		rules: {
+			'password': {
+				required: true,
+				passwordValid: true
+			},
+			'confirm-password': {
+				required: true,
+				equalTo: '#password'
+			}
+		},
+
+		messages: {
+			'password': {
+				required: "Enter a password"
+			},
+			'confirm-password': {
+				required: "Re-enter your password",
+				equalTo: "Enter the same password as above"
+			}
+		},
+
+		//
+		// constructor
 		//
 
 		initialize: function() {
@@ -60,11 +82,11 @@ define([
 		// rendering methods
 		//
 
-		template: function(data) {
-			return _.template(Template, _.extend(data, {
+		templateContext: function() {
+			return {
 				user: this.options.user,
 				passwordPolicy: passwordPolicy
-			}));
+			};
 		},
 		
 		onRender: function() {
@@ -94,25 +116,8 @@ define([
 
 		validate: function() {
 			return this.$el.find('form').validate({
-				rules: {
-					'password': {
-						required: true,
-						passwordValid: true
-					},
-					'confirm-password': {
-						required: true,
-						equalTo: '#password'
-					}
-				},
-				messages: {
-					'password': {
-						required: "Enter a password"
-					},
-					'confirm-password': {
-						required: "Re-enter your password",
-						equalTo: "Enter the same password as above"
-					}
-				}
+				rules: this.rules,
+				messages: this.messages
 			});
 		},
 
@@ -152,26 +157,24 @@ define([
 					//
 					success: function() {
 
-						// show success notification dialog
+						// show success notification message
 						//
-						Registry.application.modal.show(
-							new NotifyView({
-								title: "My Password Changed",
-								message: "Your user password has been successfully changed.  Note that this password reset also deleted any application passwords that you may have previously created. ",
+						application.notify({
+							title: "My Password Changed",
+							message: "Your user password has been successfully changed.  Note that this password reset also deleted any application passwords that you may have previously created. ",
 
-								// callbacks
+							// callbacks
+							//
+							accept: function() {
+
+								// go home
 								//
-								accept: function() {
-
-									// go home
-									//
-									Backbone.history.navigate('#home', {
-										trigger: true
-									});
-									window.location.reload();
-								}
-							})
-						);
+								Backbone.history.navigate('#home', {
+									trigger: true
+								});
+								window.location.reload();
+							}
+						});
 					},
 
 					error: function(response) {
@@ -205,13 +208,11 @@ define([
 							}
 						}
 
-						// show error dialog
+						// show notification
 						//
-						Registry.application.modal.show(
-							new NotifyView({
-								message: "Your password could not be reset" + (responseText? ' because "' + responseText + '"' : '') + "."
-							})
-						);
+						application.notify({
+							message: "Your password could not be reset" + (responseText? ' because "' + responseText + '"' : '') + "."
+						});
 					}	
 				});
 			} else {

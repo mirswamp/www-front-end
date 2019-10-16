@@ -18,16 +18,12 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
 	'text!templates/users/accounts/edit/edit-my-account.tpl',
-	'registry',
-	'views/dialogs/notify-view',
-	'views/dialogs/error-view',
-	'views/users/dialogs/user-validation-error-view',
+	'views/base-view',
+	'views/users/dialogs/user-validation-error-dialog-view',
 	'views/users/user-profile/user-profile-form-view'
-], function($, _, Backbone, Marionette, Template, Registry, NotifyView, ErrorView, UserValidationErrorView, UserProfileFormView) {
-	return Backbone.Marionette.LayoutView.extend({
+], function($, _, Template, BaseView, UserValidationErrorDialogView, UserProfileFormView) {
+	return BaseView.extend({
 
 		//
 		// attributes
@@ -36,7 +32,7 @@ define([
 		template: _.template(Template),
 
 		regions: {
-			userProfileForm: "#user-profile-form"
+			form: "#user-profile-form"
 		},
 
 		events: {
@@ -49,11 +45,11 @@ define([
 		},
 
 		//
-		// methods
+		// contructor
 		//
 
 		initialize: function() {
-			this.model = Registry.application.session.user.clone();
+			this.model = application.session.user.clone();
 		},
 
 		//
@@ -61,11 +57,9 @@ define([
 		//
 
 		onRender: function() {
-			this.userProfileForm.show(
-				new UserProfileFormView({
-					model: this.model
-				})
-			);
+			this.showChildView('form', new UserProfileFormView({
+				model: this.model
+			}));
 		},
 
 		showWarning: function() {
@@ -96,11 +90,11 @@ define([
 
 			// check validation
 			//
-			if (this.userProfileForm.currentView.isValid()) {
+			if (this.getChildView('form').isValid()) {
 
 				// update model from form
 				//
-				this.userProfileForm.currentView.update(this.model);
+				this.getChildView('form').applyTo(this.model);
 
 				// check to see if model is valid
 				//
@@ -128,34 +122,31 @@ define([
 							//
 							success: function() {
 
-								// udpate user
+								// update user
 								//
-								Registry.application.session.user = self.model;
-								Registry.application.main.currentView.header.currentView.render();
+								application.setUser(self.model);
 
 								// notify user
 								//
 								if (self.model.changed.email) {
 
-									// show notification dialog
+									// show notification message
 									//
-									Registry.application.modal.show(
-										new NotifyView({
-											title: "My Email Updated",
-											message: "An email verification link has been sent to your new email address. Please follow the link in the email to change your email address. Your previous email address will remain in effect until you do so.",
+									application.notify({
+										title: "My Email Updated",
+										message: "An email verification link has been sent to your new email address. Please follow the link in the email to change your email address. Your previous email address will remain in effect until you do so.",
 
-											// callbacks
+										// callbacks
+										//
+										accept: function() {
+
+											// return to my account view
 											//
-											accept: function() {
-
-												// return to my account view
-												//
-												Backbone.history.navigate("#my-account", {
-													trigger: true
-												});
-											}
-										})
-									);
+											Backbone.history.navigate("#my-account", {
+												trigger: true
+											});
+										}
+									});
 								} else {
 
 									// return to my account view
@@ -168,13 +159,11 @@ define([
 
 							error: function() {
 
-								// show error dialog
+								// show error message
 								//
-								Registry.application.modal.show(
-									new ErrorView({
-										message: "Could not save user profile changes."
-									})
-								);
+								application.error({
+									message: "Could not save user profile changes."
+								});
 							}
 						});
 					},
@@ -182,13 +171,11 @@ define([
 					error: function(response) {
 						var errors = JSON.parse(response.responseText);
 
-						// show validation errors dialog
+						// show validation error dialog
 						//
-						Registry.application.modal.show(
-							new UserValidationErrorView({
-								errors: errors
-							})
-						);
+						application.show(new UserValidationErrorDialogView({
+							errors: errors
+						}));
 					}
 				});
 			} else {

@@ -18,19 +18,15 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
 	'text!templates/admin/settings/system-admins/invitations/invite-admins.tpl',
-	'registry',
 	'models/admin/admin-invitation',
 	'collections/admin/admin-invitations',
 	'collections/users/users',
-	'views/dialogs/error-view',
-	'views/dialogs/notify-view',
+	'views/base-view',
 	'views/admin/settings/system-admins/invitations/admin-invitations-list/admin-invitations-list-view',
 	'views/admin/settings/system-admins/invitations/new-admin-invitations-list/new-admin-invitations-list-view'
-], function($, _, Backbone, Marionette, Template, Registry, AdminInvitation, AdminInvitations, Users, ErrorView, NotifyView, AdminInvitationsListView, NewAdminInvitationsListView) {
-	return Backbone.Marionette.LayoutView.extend({
+], function($, _, Template, AdminInvitation, AdminInvitations, Users, BaseView, AdminInvitationsListView, NewAdminInvitationsListView) {
+	return BaseView.extend({
 
 		//
 		// attributes
@@ -39,8 +35,8 @@ define([
 		template: _.template(Template),
 
 		regions: {
-			adminInvitationsList: '#admin-invitations-list',
-			newAdminInvitationsList: '#new-admin-invitations-list'
+			list: '#admin-invitations-list',
+			new: '#new-admin-invitations-list'
 		},
 
 		events: {
@@ -50,7 +46,7 @@ define([
 		},
 
 		//
-		// methods
+		// constructor
 		//
 
 		initialize: function() {
@@ -59,6 +55,10 @@ define([
 			//
 			this.collection = new AdminInvitations([]);
 		},
+
+		//
+		// methods
+		//
 
 		send: function() {
 			var self = this;
@@ -69,11 +69,9 @@ define([
 
 				// show no new invitations notification dialog
 				//
-				Registry.application.modal.show(
-					new NotifyView({
-						message: "There are no new administrator invitations to send."
-					})
-				);
+				application.notify({
+					message: "There are no new administrator invitations to send."
+				});
 			}
 
 			this.collection.send({
@@ -88,12 +86,10 @@ define([
 
 					// show success notification dialog
 					//
-					Registry.application.modal.show(
-						new NotifyView({
-							title: "Administrator Invitations Sent",
-							message: "Your administrator invitations have been sent.",
-						})
-					);
+					application.notify({
+						title: "Administrator Invitations Sent",
+						message: "Your administrator invitations have been sent.",
+					});
 				},
 
 				error: function(response) {
@@ -102,21 +98,12 @@ define([
 					//
 					self.fetchAndShowAdminInvitations();
 					
-					// show notify dialog
+					// show notification
 					//
-					Registry.application.modal.show(
-						new NotifyView({
-							message: response.responseText
-						})
-					);
-
-					/*
-					Registry.application.modal.show(
-						new NotifyView({
-							message: "Could not send administrator invitations."
-						})
-					);
-					*/
+					application.notify({
+						message: response.responseText
+						// message: "Could not send administrator invitations."
+					});
 				}
 			});
 		},
@@ -139,13 +126,11 @@ define([
 
 				error: function() {
 
-					// show error dialog
+					// show error message
 					//
-					Registry.application.modal.show(
-						new ErrorView({
-							message: "Could not fetch admin invitations."
-						})
-					);
+					application.error({
+						message: "Could not fetch admin invitations."
+					});
 				}
 			});
 		},
@@ -160,13 +145,11 @@ define([
 		},
 
 		showAdminInvitations: function(collection) {
-			this.adminInvitationsList.show(
-				new AdminInvitationsListView({
-					model: this.model,
-					collection: collection,
-					showDelete: true
-				})
-			);
+			this.showChildView('list', new AdminInvitationsListView({
+				model: this.model,
+				collection: collection,
+				showDelete: true
+			}));
 		},
 
 		fetchAndShowAdminInvitations: function() {
@@ -176,100 +159,15 @@ define([
 			});
 		},
 
-		/*
-		showAdminInvitations: function() {
-			var self = this;
-			var collection = new AdminInvitations([]);
-
-			// fetch admin invitations
-			//
-			collection.fetch({
-
-				// callbacks
-				//
-				success: function() {
-					var invitees = new Users();
-
-					// fetch invitees associated with admin invitations
-					//
-					invitees.fetchByInvitees({
-
-						// callbacks
-						//
-						success: function() {
-							var inviters = new Users();
-
-							// fetch inviters associated with admin invitations
-							//
-							inviters.fetchByInviters({
-
-								// callbacks
-								//
-								success: function() {
-
-									// show admin invitations
-									//
-									self.adminInvitationsList.show(
-										new AdminInvitationsListView({
-											model: self.model,
-											collection: collection,
-											invitees: invitees,
-											inviters: inviters
-										})
-									);
-								},
-
-								error: function() {
-
-									// show error dialog
-									//
-									Registry.application.modal.show(
-										new ErrorView({
-											message: "Could not fetch inviters associated with admin invitations."
-										})
-									);
-								}
-							});
-						},
-
-						error: function() {
-
-							// show error dialog
-							//
-							Registry.application.modal.show(
-								new ErrorView({
-									message: "Could not fetch invitees associated with admin invitations."
-								})
-							);
-						}
-					});
-				},
-
-				error: function() {
-
-					// show error dialog
-					//
-					Registry.application.modal.show(
-						new ErrorView({
-							message: "Could not fetch admin invitations."
-						})
-					);
-				}
-			});
-		},
-		*/
-
 		showNewAdminInvitations: function() {
 
 			// show admin invitations list view
 			//
-			this.newAdminInvitationsList.show(
-				new NewAdminInvitationsListView({
-					model: this.model,
-					collection: this.collection,
-					showDelete: true
-				})
-			);
+			this.showChildView('new', new NewAdminInvitationsListView({
+				model: this.model,
+				collection: this.collection,
+				showDelete: true
+			}));
 		},
 
 		//
@@ -282,25 +180,26 @@ define([
 			//
 			this.collection.add(new AdminInvitation({
 				'project_uid': this.model? this.model.get('project_uid') : undefined,
-				'inviter_uid': Registry.application.session.user.get('user_uid'),
+				'inviter_uid': application.session.user.get('user_uid'),
 				'status': 'pending',
 				'confirm_route': '#settings/admins/invite/confirm'
 			}));
 
 			// update list view
 			//
-			this.newAdminInvitationsList.currentView.render();
+			this.getChildView('new').render();
 		},
 
 		onClickSend: function() {
-			if (this.newAdminInvitationsList.currentView.isValid()) {
+			if (this.getChildView('new').isValid()) {
 				this.send();
 			} else {
-				Registry.application.modal.show(
-					new NotifyView({
-						message: "This form has errors or is incomplete.  Please fix before sending."
-					})
-				);		
+
+				// show notification
+				//
+				application.notify({
+					message: "This form has errors or is incomplete.  Please fix before sending."
+				});
 			}
 		},
 

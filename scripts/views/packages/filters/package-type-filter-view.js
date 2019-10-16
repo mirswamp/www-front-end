@@ -18,22 +18,22 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
 	'bootstrap/collapse',
-	'modernizr',
 	'text!templates/packages/filters/package-type-filter.tpl',
-	'utilities/browser/url-strings',
+	'utilities/web/url-strings',
+	'views/base-view',
 	'views/packages/selectors/package-type-selector-view',
-], function($, _, Backbone, Marionette, Collapse, Modernizr, Template, UrlStrings, PackageTypeSelectorView) {
-	return Backbone.Marionette.LayoutView.extend({
+], function($, _, Collapse, Template, UrlStrings, BaseView, PackageTypeSelectorView) {
+	return BaseView.extend({
 
 		//
 		// attributes
 		//
 
+		template: _.template(Template),
+
 		regions: {
-			packageTypeSelector: '.package-type-selector',
+			selector: '.package-type-selector',
 		},
 
 		events: {
@@ -41,7 +41,7 @@ define([
 		},
 
 		//
-		// methods
+		// constructor
 		//
 
 		initialize: function() {
@@ -62,7 +62,7 @@ define([
 
 		getDescription: function() {
 			if (this.hasSelected()) {
-				var name = this.packageTypeSelector.currentView.getSelectedName();
+				var name = this.getChildView('selector').getSelectedName();
 				if (name != 'Any') {
 					return name;
 				} else {
@@ -89,7 +89,7 @@ define([
 
 		getData: function() {
 			if (this.hasSelected()) {
-				var name = this.packageTypeSelector.currentView.getSelectedName();
+				var name = this.getChildView('selector').getSelectedName();
 				if (name != 'Any') {
 					return {
 						type: name
@@ -99,7 +99,7 @@ define([
 				if (this.options.initialValue) {
 					return {
 						type: this.options.initialValue
-					}
+					};
 				}	
 			}
 		},
@@ -112,7 +112,7 @@ define([
 			var queryString = '';
 
 			if (this.hasSelected()) {
-				queryString += 'type=' + urlEncode(this.packageTypeSelector.currentView.getSelectedName());
+				queryString += 'type=' + urlEncode(this.getChildView('selector').getSelectedName());
 			}
 
 			return queryString;
@@ -123,33 +123,27 @@ define([
 		//
 
 		reset: function(options) {
-			this.packageTypeSelector.currentView.setSelectedName("Any", options);
+			this.getChildView('selector').setSelectedName("Any", options);
 		},
 
 		//
 		// rendering methods
 		//
 
-		template: function(data) {
-			return _.template(Template, data);
-		},
-
 		onRender: function() {
 			var self = this;
 
 			// show subviews
 			//
-			this.packageTypeSelector.show(
-				new PackageTypeSelectorView({
-					initialValue: this.options.initialValue,
+			this.showChildView('selector', new PackageTypeSelectorView({
+				initialValue: this.options.initialValue,
 
-					// callbacks
-					//
-					onChange: function() {
-						self.onChange();
-					}
-				})
-			);
+				// callbacks
+				//
+				onChange: function() {
+					self.onChange();
+				}
+			}));
 
 			// update reset button
 			//
@@ -188,7 +182,7 @@ define([
 
 			// update selected
 			//
-			this.selected = this.packageTypeSelector.currentView.getSelectedName();
+			this.selected = this.getChildView('selector').getSelectedName();
 
 			// update reset button
 			//

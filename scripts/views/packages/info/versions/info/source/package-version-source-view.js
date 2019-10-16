@@ -19,21 +19,21 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
 	'text!templates/packages/info/versions/info/source/package-version-source.tpl',
-	'registry',
+	'views/base-view',
 	'views/packages/info/versions/info/source/source-profile/package-version-source-profile-view'
-], function($, _, Backbone, Marionette, Template, Registry, PackageVersionSourceProfileView) {
-	return Backbone.Marionette.LayoutView.extend({
+], function($, _, Template, BaseView, PackageVersionSourceProfileView) {
+	return BaseView.extend({
 
 		//
 		// attributes
 		//
 		incremental: true,
 
+		template: _.template(Template),
+
 		regions: {
-			packageVersionSourceProfile: '#package-version-source-profile'
+			profile: '#package-version-source-profile'
 		},
 
 		events: {
@@ -49,24 +49,22 @@ define([
 		// rendering methods
 		//
 
-		template: function(data) {
-			return _.template(Template, _.extend(data, {
+		templateContext: function() {
+			return {
 				model: this.model,
 				package: this.options.package,
 				showNavigation: this.options.showNavigation
-			}));
+			};
 		},
 
 		onRender: function() {
 
 			// show profile
 			//
-			this.packageVersionSourceProfile.show(
-				new PackageVersionSourceProfileView({
-					model: this.model,
-					package: this.options.package
-				})
-			);
+			this.showChildView('profile', new PackageVersionSourceProfileView({
+				model: this.model,
+				package: this.options.package
+			}));
 		},
 
 		//
@@ -76,44 +74,40 @@ define([
 		onClickShowFileTypes: function() {
 			var self = this;
 			require([
-				'views/packages/info/versions/info/source/dialogs/package-version-file-types-view'
-			], function (PackageVersionFileTypesView) {
+				'views/packages/info/versions/info/source/dialogs/package-version-file-types-dialog-view'
+			], function (PackageVersionFileTypesDialogView) {
 
 				// show package version file types dialog
 				//
-				Registry.application.modal.show(
-					new PackageVersionFileTypesView({
-						model: self.model,
-						packagePath: self.model.get('source_path')
-					})
-				);
+				application.show(new PackageVersionFileTypesDialogView({
+					model: self.model,
+					packagePath: self.model.get('source_path')
+				}));
 			});
 		},
 
 		onClickShowGemInfo: function(event) {
 			var self = this;
 			require([
-				'views/packages/info/versions/info/source/dialogs/package-version-gem-info-view'
-			], function (PackageVersionGemInfoView) {
+				'views/packages/info/versions/info/source/dialogs/package-version-gem-info-dialog-view'
+			], function (PackageVersionGemInfoDialogView) {
 
 				// show package version gem info dialog
 				//
-				Registry.application.modal.show(
-					new PackageVersionGemInfoView({
-						model: self.model,
-						packagePath: self.model.get('source_path')
-					}), {
-						size: 'large'
-					}
-				);
+				application.show(new PackageVersionGemInfoView({
+					model: self.model,
+					packagePath: self.model.get('source_path')
+				}), {
+					size: 'large'
+				});
 			});
 		},
 
 		onClickShowWheelInfo: function(event) {
 			var self = this;
 			require([
-				'views/packages/info/versions/info/source/dialogs/package-version-wheel-info-view'
-			], function (PackageVersionWheelInfoView) {
+				'views/packages/info/versions/info/source/dialogs/package-version-wheel-info-dialog-view'
+			], function (PackageVersionWheelInfoDialogView) {
 				var path = self.model.get('source_path');
 				var dirname = self.model.getWheelDirname();
 
@@ -125,12 +119,10 @@ define([
 
 				// show package version wheel info dialog
 				//
-				Registry.application.modal.show(
-					new PackageVersionWheelInfoView({
-						model: self.model,
-						dirname: path + "/" + dirname
-					})
-				);
+				application.show(new PackageVersionWheelInfoDialogView({
+					model: self.model,
+					dirname: path + "/" + dirname
+				}));
 			});
 		},
 

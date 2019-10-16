@@ -19,24 +19,23 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
 	'text!templates/packages/info/versions/info/build/edit-package-version-build.tpl',
-	'registry',
 	'widgets/accordions',
 	'collections/packages/package-version-dependencies',
-	'views/dialogs/error-view',
+	'views/base-view',
 	'views/packages/info/versions/info/build/build-script/build-script-view',
 	'views/packages/info/versions/info/build/build-profile/build-profile-form-view',
-], function($, _, Backbone, Marionette, Template, Registry, Accordions, PackageVersionDependencies, ErrorView, BuildScriptView, BuildProfileFormView) {
-	return Backbone.Marionette.LayoutView.extend({
+], function($, _, Template, Accordions, PackageVersionDependencies, BaseView, BuildScriptView, BuildProfileFormView) {
+	return BaseView.extend({
 
 		//
 		// attributes
 		//
 
+		template: _.template(Template),
+
 		regions: {
-			buildProfileForm: '#build-profile-form'
+			form: '#build-profile-form'
 		},
 
 		events: {
@@ -94,13 +93,11 @@ define([
 
 				error: function() {
 
-					// show error dialog
+					// show error message
 					//
-					Registry.application.modal.show(
-						new ErrorView({
-							message: "Could not save package version changes."
-						})
-					);
+					application.error({
+						message: "Could not save package version changes."
+					});
 				}
 			});
 		},
@@ -140,13 +137,13 @@ define([
 		// rendering methods
 		//
 
-		template: function(data) {
-			return _.template(Template, _.extend(data, {
+		templateContext: function() {
+			return {
 				model: this.model,
 				package: this.options.package,
 				show_source_files: !this.options.package.isBuildable() && !this.model.isAtomic(),
 				show_build_script: this.model.hasBuildScript() && this.options.package.hasBuildScript()
-			}));
+			};
 		},
 
 		onRender: function() {
@@ -168,21 +165,19 @@ define([
 
 					// show build profile form
 					//
-					self.buildProfileForm.show(
-						new BuildProfileFormView({
-							model: self.model,
-							package: self.options.package,
-							packageVersionDependencies: self.packageVersionDependencies,
-							deletedPackageVersionDependencies: self.deletedPackageVersionDependencies,
-							parent: self,
+					self.showChildView('form', new BuildProfileFormView({
+						model: self.model,
+						package: self.options.package,
+						packageVersionDependencies: self.packageVersionDependencies,
+						deletedPackageVersionDependencies: self.deletedPackageVersionDependencies,
+						parent: self,
 
-							// callbacks
-							//
-							onChange: function() {
-								self.onChange();	
-							}
-						})
-					);
+						// callbacks
+						//
+						onChange: function() {
+							self.onChange();	
+						}
+					}));
 				}
 			});
 		},
@@ -192,7 +187,7 @@ define([
 
 			// get current model
 			//
-			var model = this.buildProfileForm.currentView.getCurrentModel();
+			var model = this.getChildView('form').getCurrentModel();
 
 			// fetch build info
 			//
@@ -215,12 +210,10 @@ define([
 			require([
 				'views/packages/dialogs/source-files-dialog-view'
 			], function (SourceFilesDialogView) {
-				Registry.application.modal.show(
-					new SourceFilesDialogView({
-						model: packageVersion,
-						package: self.options.package
-					})
-				);
+				application.show(new SourceFilesDialogView({
+					model: packageVersion,
+					package: self.options.package
+				}));
 			});
 		},
 		
@@ -229,7 +222,7 @@ define([
 
 			// get current model
 			//
-			var model = this.buildProfileForm.currentView.getCurrentModel();
+			var model = this.getChildView('form').getCurrentModel();
 
 			// fetch build info
 			//
@@ -258,12 +251,10 @@ define([
 			require([
 				'views/packages/dialogs/build-script-dialog-view'
 			], function (BuildScriptDialogView) {
-				Registry.application.modal.show(
-					new BuildScriptDialogView({
-						model: packageVersion,
-						package: self.options.package
-					})
-				);
+				application.show(new BuildScriptDialogView({
+					model: packageVersion,
+					package: self.options.package
+				}));
 			});
 		},
 
@@ -321,11 +312,11 @@ define([
 
 			// check validation
 			//
-			if (this.buildProfileForm.currentView.isValid()) {
+			if (this.getChildView('form').isValid()) {
 
 				// update model
 				//
-				this.buildProfileForm.currentView.update(this.model);
+				this.getChildView('form').applyTo(this.model);
 
 				// check build system
 				//
@@ -341,7 +332,7 @@ define([
 					},
 
 					error: function(data) {
-						Registry.application.confirm({
+						application.confirm({
 							title: 'Build System Warning',
 							message: data.responseText + "  Would you like to continue anyway?",
 

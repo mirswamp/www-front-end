@@ -1,0 +1,94 @@
+{
+	"package-types": {
+
+		"c-source": {
+			"name": "C/C++",
+			"language": "C"
+		},
+				
+		"java7-source": {
+			"name": "Java 7 source",
+			"language": "Java"
+		},
+	
+		"java7-bytecode": {
+			"name": "Java 7 bytecode",
+			"language": "Java"
+		},
+
+		"python2": {
+			"name": "Python2",
+			"language": "Python"
+		},
+
+		"python3": {
+			"name": "Python3",
+			"language": "Python"
+		},
+
+		"android-source": {
+			"name": "Android source",
+			"language": "Java"
+		},
+		
+		"ruby": {
+			"name": "Ruby",
+			"language": "Ruby",
+			"versions": [
+				"default",
+				"2.6.0",
+				"2.5.3",
+				"2.4.5",
+				"2.3.8",
+				"2.2.10",
+				"2.1.10",
+				"2.0.0",
+				"1.9.3",
+				"1.9.2",
+				"1.9.1",
+				"1.8.7",
+				"1.8.6"
+			]
+		},
+
+		"sinatra": {
+			"name": "Sinatra",
+			"language": "Ruby"
+		},
+
+		"rails": {
+			"name": "Rails",
+			"language": "Ruby"
+		},
+
+		"padrino": {
+			"name": "Padrino",
+			"language": "Ruby"
+		},
+
+		"android-bytecode": {
+			"name": "Android bytecode",
+			"language": "Java"
+		},
+
+		"java8-source": {
+			"name": "Java 8 source",
+			"language": "Java"
+		},
+
+		"java8-bytecode": {
+			"name": "Java 8 bytecode",
+			"language": "Java"
+		},
+
+		"web-scripting": {
+			"name": "Web scripting",
+			"language": ["HTML", "Javascript", "PHP", "CSS", "XML"]
+		},
+
+		".net": {
+			"name": ".NET",
+			"language": ["C#", "VB"]
+		}
+	}
+}

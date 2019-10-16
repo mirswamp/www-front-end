@@ -32,7 +32,7 @@
 						<input type="checkbox" id="<%= catalog[i].code %>"<% if (filter_type == 'include'? filter.includes(catalog[i].code) : !filter.includes(catalog[i].code)) { %> checked<% } %>/>
 					</td>
 					<td class="bug-type">
-						<%= catalog[i].code %>
+						<%= htmlEncode(catalog[i].code) %>
 					</td>
 					<td class="bug-count last">
 						<span class="badge"><%= catalog[i].count %></span>

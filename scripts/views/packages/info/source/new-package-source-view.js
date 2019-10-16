@@ -19,21 +19,20 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
 	'text!templates/packages/info/source/new-package-source.tpl',
-	'registry',
-	'views/packages/info/source/source-profile/package-source-profile-form-view',
-	'views/packages/info/versions/info/source/dialogs/package-version-file-types-view'
-], function($, _, Backbone, Marionette, Template, Registry, PackageSourceProfileFormView, PackageVersionFileTypesView) {
-	return Backbone.Marionette.LayoutView.extend({
+	'views/base-view',
+	'views/packages/info/source/source-profile/package-source-profile-form-view'
+], function($, _, Template, BaseView, PackageSourceProfileFormView) {
+	return BaseView.extend({
 
 		//
 		// attributes
 		//
 
+		template: _.template(Template),
+
 		regions: {
-			packageSourceProfileForm: '#package-source-profile-form'
+			form: '#package-source-profile-form'
 		},
 
 		events: {
@@ -48,10 +47,10 @@ define([
 		// rendering methods
 		//
 
-		template: function(data) {
-			return _.template(Template, _.extend(data, {
+		templateContext: function() {
+			return {
 				package: this.model
-			}));
+			};
 		},
 
 		onRender: function() {
@@ -62,13 +61,11 @@ define([
 
 			// show source profile form view
 			//
-			this.packageSourceProfileForm.show(
-				new PackageSourceProfileFormView({
-					model: this.options.packageVersion,
-					package: this.model,
-					parent: this
-				})
-			);
+			this.showChildView('form', new PackageSourceProfileFormView({
+				model: this.options.packageVersion,
+				package: this.model,
+				parent: this
+			}));
 		},
 
 		showNotice: function(message) {
@@ -111,11 +108,11 @@ define([
 
 			// check validation
 			//
-			if (this.packageSourceProfileForm.currentView.isValid()) {
+			if (this.getChildView('form').isValid()) {
 
 				// update package and package version
 				//
-				this.packageSourceProfileForm.currentView.update(this.model, this.options.packageVersion);
+				this.getChildView('form').applyTo(this.model, this.options.packageVersion);
 
 				// go to next view
 				//

@@ -18,19 +18,16 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
 	'bootstrap/tab',
 	'text!templates/admin/status/review-status.tpl',
-	'registry',
 	'models/users/session',
 	'models/assessments/execution-record',
 	'collections/assessments/execution-records',
-	'views/dialogs/error-view',
+	'views/base-view',
 	'views/admin/status/run-queue-summary/run-queue-summary-view',
 	'views/admin/status/status-tabs/status-tabs-view',
-], function($, _, Backbone, Marionette, Tab, Template, Registry, Session, ExecutionRecord, ExecutionRecords, ErrorView, RunQueueSummaryView, StatusTabsView) {
-	return Backbone.Marionette.LayoutView.extend({
+], function($, _, Tab, Template, Session, ExecutionRecord, ExecutionRecords, BaseView, RunQueueSummaryView, StatusTabsView) {
+	return BaseView.extend({
 
 		//
 		// attributes
@@ -38,8 +35,10 @@ define([
 
 		refreshInterval: 5000,
 
+		template: _.template(Template),
+
 		regions: {
-			runQueueSummary: '#run-queue-summary',
+			summary: '#run-queue-summary',
 			details: '#details',
 		},
 
@@ -72,6 +71,8 @@ define([
 		//
 
 		saveTabState: function() {
+			var detailsView;
+
 			if (this.options.data) {
 
 				// save sort order for each tab
@@ -87,21 +88,15 @@ define([
 
 					// store sorting order for each tab
 					//
-					var detailsView = this.getRegion('details').currentView;
-					if (detailsView) {
-						if (detailsView[tab].currentView) {
-							this.tabState[tab].sortList = detailsView[tab].currentView.getSortList();
-						}
+					if (this.hasTabView(tab)) {
+						this.tabState[tab].sortList = this.getTabView(tab).getSortList();
 					}
 				}
 
 				// save selected checkboxes
 				//
-				var detailsView = this.getRegion('details').currentView;
-				if (detailsView) {
-					if (detailsView[this.options.activeTab] && detailsView[this.options.activeTab].currentView && detailsView[this.options.activeTab].currentView.getSelected) { 
-						this.tabState[this.options.activeTab].selected = detailsView[this.options.activeTab].currentView.getSelected();
-					}
+				if (this.hasActiveTabView() && this.getActiveTabView().getSelected) {
+					this.tabState[this.options.activeTab].selected = this.getActiveTabView().getSelected();
 				}
 			}
 		},
@@ -169,12 +164,14 @@ define([
 				success: function() {
 					self.fetchAndShow();
 				},
+
 				error: function() {
-					Registry.application.modal.show(
-				    	new ErrorView({
-							message: "Could not kill all selected assessment runs."
-						})  
-					);
+
+					// show error message
+					//
+					application.error({
+						message: "Could not kill all selected assessment runs."
+					});
 				}
 			}, options));
 		},
@@ -187,15 +184,33 @@ define([
 			return this.$el.find('#auto-refresh').is(':checked');
 		},
 
+		hasTabView: function(tab) {
+			return this.hasChildView('details') && this.getChildView('details').hasChildView(tab);
+		},
+
+		getTabView: function(tab) {
+			if (this.hasChildView('details')) {
+				return this.getChildView('details').getChildView(tab);
+			}
+		},
+
+		hasActiveTabView: function() {
+			return this.hasTabView(this.options.activeTab);
+		},
+
+		getActiveTabView: function() {
+			return this.getTabView(this.options.activeTab);
+		},
+
 		//
 		// rendering methods
 		//
 
-		template: function(data) {		
-			return _.template(Template, _.extend(data, {
-				autoRefresh: Registry.application.options.autoRefresh,
-				showNumbering: Registry.application.options.showNumbering
-			}));
+		templateContext: function() {		
+			return {
+				autoRefresh: application.options.autoRefresh,
+				showNumbering: application.options.showNumbering
+			};
 		},
 
 		onRender: function() {		
@@ -247,24 +262,20 @@ define([
 		},
 
 		showDetails: function(data) {
-			this.details.show(
-				new StatusTabsView({
-					activeTab: this.options.activeTab,
-					tabState: this.tabState,
-					data: data,
-					parent: this
-				})
-			);
+			this.showChildView('details', new StatusTabsView({
+				activeTab: this.options.activeTab,
+				tabState: this.tabState,
+				data: data,
+				parent: this
+			}));
 		},
 
 		showRunQueueSummary: function(data) {
 			for (var key in data) {
-				this.runQueueSummary.show(
-					new RunQueueSummaryView({
-						server: key,
-						model: new Backbone.Model(data[key]['summary']),
-					})
-				);			
+				this.showChildView('summary', new RunQueueSummaryView({
+					server: key,
+					model: new Backbone.Model(data[key].summary)
+				}));			
 			}
 		},
 
@@ -287,11 +298,11 @@ define([
 
 			// store refresh in cookie
 			//
-			Registry.application.setAutoRefresh(this.getAutoRefresh());
+			application.setAutoRefresh(this.getAutoRefresh());
 
 			// enable / disable refresh
 			//
-			if (Registry.application.options.autoRefresh) {
+			if (application.options.autoRefresh) {
 				this.enableAutoRefresh();
 			} else {
 				this.disableAutoRefresh();
@@ -320,47 +331,58 @@ define([
 
 			// enable / disable buttons
 			//
-			var currentView = this.getRegion('details').currentView[this.options.activeTab].currentView;
-			var checkboxesSelected = (currentView.$el.find('input[name="select"]:checked').length > 0);
-			this.$el.find('#kill-runs').attr('disabled', !selected);
-			// this.$el.find('#kill-viewers').attr('disabled', !selected);
-			this.$el.find('#shutdown-viewers').attr('disabled', !selected);
+			if (this.hasActiveTabView()) {
+				var selected = (this.getActiveTabView().$el.find('input[name="select"]:checked').length > 0);
+				this.$el.find('#kill-runs').attr('disabled', !selected);
+				this.$el.find('#shutdown-viewers').attr('disabled', !selected);
+			}
 		},
 
 		onClickShowNumbering: function(event) {
-			Registry.application.setShowNumbering($(event.target).is(':checked'));
+			application.setShowNumbering($(event.target).is(':checked'));
 			this.showDetails(this.options.data);
 		},
 
 		onClickKillRuns: function(event) {
-			var selected = this.getRegion('details').currentView[this.options.activeTab].currentView.getSelected();
+			var selected = this.getActiveTabView().getSelected();
 			this.killRuns(selected, {
 				hard: true
 			});
 		},
 
 		onClickKillViewers: function(event) {
-			var selected = this.getRegion('details').currentView['Viewer Queue'].currentView.getSelected();
+			var selected = this.getChildView('details').getChildView('Viewer Queue').getSelected();
 			this.killRuns(selected, {
 				hard: true
 			});
 		},
 
 		onClickShutdownViewers: function(event) {
-			var selected = this.getRegion('details').currentView['Viewer Queue'].currentView.getSelected();
+			var selected = this.getChildView('details').getChildView('Viewer Queue').getSelected();
 			this.killRuns(selected, {
 				hard: false
 			});
 		},
 
 		onClickSelect: function() {
-			var currentView = this.getRegion('details').currentView[this.options.activeTab].currentView;
-			if (currentView.$el.find('input[name="select"]:checked').length > 0) {
+			var tabView = this.getActiveTabView();
+			if (tabView.$el.find('input[name="select"]:checked').length > 0) {
 				this.$el.find('#kill-runs').removeAttr('disabled');
 				this.$el.find('#shutdown-viewers').removeAttr('disabled');
 			} else {
 				this.$el.find('#kill-runs').attr('disabled', true);
 				this.$el.find('#shutdown-viewers').attr('disabled', true);
+			}
+		},
+
+		//
+		// cleanup methods
+		//
+
+		onBeforeDestroy: function() {
+			if (this.timeout) {
+				window.clearTimeout(this.timeout);
+				this.timeout = null;
 			}
 		}
 	});

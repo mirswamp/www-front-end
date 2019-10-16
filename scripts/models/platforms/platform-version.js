@@ -20,9 +20,8 @@ define([
 	'underscore',
 	'config',
 	'models/utilities/shared-version',
-	'views/dialogs/error-view'
-], function($, _, Config, SharedVersion, ErrorView) {
-	var Class = SharedVersion.extend({
+], function($, _, Config, SharedVersion) {
+	return SharedVersion.extend({
 
 		//
 		// Backbone attributes
@@ -40,7 +39,7 @@ define([
 
 			// fetch platform version
 			//
-			var platformVersion = new Class({
+			var platformVersion = new this.prototype.constructor({
 				platform_version_uuid: platformVersionUuid
 			});
 
@@ -54,17 +53,13 @@ define([
 
 				error: function() {
 
-					// show error dialog
+					// show error message
 					//
-					Registry.application.modal.show(
-						new ErrorView({
-							message: "Could not fetch platform version."
-						})
-					);
+					application.error({
+						message: "Could not fetch platform version."
+					});
 				}
 			});
 		}
 	});
-
-	return Class;
 });

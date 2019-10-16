@@ -1,10 +1,11 @@
 /******************************************************************************\
 |                                                                              |
-|                      new-package-version-profile-form-view.js                |
+|                   new-package-version-profile-form-view.js                   |
 |                                                                              |
 |******************************************************************************|
 |                                                                              |
-|        This defines a view of a package versions's profile information.      |
+|        This defines a form for entering a new package versions's             |
+|        profile info.                                                         |
 |                                                                              |
 |        Author(s): Abe Megahed                                                |
 |                                                                              |
@@ -18,25 +19,21 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
-	'jquery.validate',
-	'bootstrap/tooltip',
-	'bootstrap/popover',
-	'registry',
 	'text!templates/packages/info/versions/info/details/package-version-profile/new-package-version-profile-form.tpl',
 	'models/packages/package',
+	'views/forms/form-view',
 	'views/packages/info/versions/info/details/package-version-profile/package-version-profile-form-view',
-	'views/dialogs/notify-view'
-], function($, _, Backbone, Marionette, Validate, Tooltip, Popover, Registry, Template, Package, PackageVersionProfileFormView, NotifyView) {
-	return Backbone.Marionette.LayoutView.extend({
+], function($, _, Template, Package, FormView, PackageVersionProfileFormView) {
+	return FormView.extend({
 
 		//
 		// attributes
 		//
 
+		template: _.template(Template),
+
 		regions: {
-			packageVersionProfileForm: '#package-version-profile-form'
+			form: '#package-version-profile-form'
 		},
 
 		events: {
@@ -45,7 +42,7 @@ define([
 		},
 
 		//
-		// methods
+		// constructor
 		//
 
 		initialize: function() {
@@ -63,7 +60,16 @@ define([
 			// add file validation rule
 			//
 			$.validator.addMethod('file', function(value) {
-				return (value != '' && Package.isValidArchiveName(value)) || (self.hasExternalUrl() && self.getExternalUrl() != '') || self.useExternalUrl();
+
+				// check if we are using external url
+				//
+				if ((self.hasExternalUrl() && self.getExternalUrl() != '') || self.useExternalUrl()) {
+					return true;
+				}
+
+				// check filename
+				//
+				return value != '' && Package.isValidArchiveName(value);
 			}, "Please select an archive file.");
 		},
 
@@ -87,44 +93,30 @@ define([
 			var fileName = this.model.getFilenameFromPath(value);
 			return Package.protoype.isValidArchiveName(fileName);
 		},
-
+		
 		//
 		// rendering methods
 		//
 
-		template: function(data) {
-			return _.template(Template, _.extend(data, {
+		templateContext: function() {
+			return {
 				model: this.model,
 				package: this.options.package
-			}));
+			};
 		},
 
 		onRender: function() {
 
-			// show new package version profile form
+			// show child views
 			//
-			this.packageVersionProfileForm.show(
-				new PackageVersionProfileFormView({
-					model: this.model,
-					package: this.options.package
-				})
-			);
+			this.showChildView('form', new PackageVersionProfileFormView({
+				model: this.model,
+				package: this.options.package
+			}));
 
-			// display popovers on hover
+			// call superclass method
 			//
-			this.$el.find('[data-toggle="popover"]').popover({
-				trigger: 'hover'
-			});
-
-			// display archive file tooltips on mouse over
-			//
-			this.$el.find("input[type='file']").popover({
-				trigger: 'hover'
-			});
-
-			// validate the form
-			//
-			this.validator = this.validate();
+			FormView.prototype.onRender.call(this);
 		},
 
 		//
@@ -133,25 +125,19 @@ define([
 
 		validate: function() {
 
+			// call superclass method
+			//
+			FormView.prototype.validate.call(this);
+
 			// validate new package version profile form
 			//
-			this.packageVersionProfileForm.currentView.validate({
-				rules: {
-					'file': {
-						file: true
-					},
-				},
-			});
-
-			// validate form
-			//
-			return this.$el.find('form').validate();
+			this.getChildView('form').validate();
 		},
 
 		isValid: function() {
-			return this.validator.form();
+			return FormView.prototype.isValid.call(this) && this.getChildView('form').isValid();
 		},
-
+		
 		//
 		// form methods
 		//
@@ -195,23 +181,23 @@ define([
 				}
 
 				event.preventDefault();
-				Registry.application.modal.show(new NotifyView({
+
+				// show notification
+				//
+				application.notify({
 					title: 'No File Required',
 					message: message
-				}));
+				});
 			}
 		},
 
-		update: function(model) {
+		getValues: function() {
+			var values = this.getChildView('form').getValues();
 			var checkoutArgument = this.$el.find('#checkout-argument input').val();
-
-			// update model
-			//
-			model.set({
+			
+			return _.extend(values, {
 				'checkout_argument': checkoutArgument != ''? checkoutArgument : null
 			});
-
-			this.packageVersionProfileForm.currentView.update(model);
 		}
 	});
 });

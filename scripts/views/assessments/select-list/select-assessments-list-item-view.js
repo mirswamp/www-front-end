@@ -19,92 +19,41 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
-	'bootstrap/tooltip',
 	'text!templates/assessments/select-list/select-assessments-list-item.tpl',
-	'registry',
-	'utilities/browser/query-strings',
+	'utilities/web/query-strings',
 	'views/assessments/list/assessments-list-item-view'
-], function($, _, Backbone, Marionette, Tooltip, Template, Registry, QueryStrings, AssessmentsListItemView) {
+], function($, _, Template, QueryStrings, AssessmentsListItemView) {
 	return AssessmentsListItemView.extend({
 
 		//
 		// attributes
 		//
 
-		tagName: 'tr',
+		template: _.template(Template),
 
 		events: _.extend(AssessmentsListItemView.prototype.events, {
 			'click .select input': 'onClickSelectInput',
-			// 'dblclick .select input': 'onDoubleClickSelectInput',
 			'click .select-group input': 'onClickSelectGroupInput'
 		}),
-
-		//
-		// querying methods
-		//
-
-		getProjectUrl: function(data) {
-			if (data.project_uuid && data.project_uuid != 'undefined') {
-				return Registry.application.getURL() + '#projects/' + data.project_uuid;	
-			}
-		},
-
-		getPackageUrl: function(data) {
-			if (data.package_uuid && data.package_uuid != 'undefined') {
-				return Registry.application.getURL() + '#packages/' + data.package_uuid;	
-			}
-		},
-
-		getPackageVersionUrl: function(data) {
-			if (data.package_version_uuid && data.package_version_uuid != 'undefined') {
-				return Registry.application.getURL() + '#packages/versions/' + data.package_version_uuid;
-			}
-		},
-
-		getToolUrl: function(data) {
-			if (data.tool_uuid && data.tool_uuid != 'undefined') {
-				return Registry.application.getURL() + '#tools/' + data.tool_uuid;
-			}
-		},
-
-		getToolVersionUrl: function(data) {
-			if (data.tool_version_uuid && data.tool_version_uuid != 'undefined') {
-				return Registry.application.getURL() + '#tools/versions/' + data.tool_version_uuid;
-			}
-		},
-
-		getPlatformUrl: function(data) {
-			if (data.platform_uuid && data.platform_uuid != 'undefined') {
-				return Registry.application.getURL() + '#platforms/' + data.platform_uuid;
-			}
-		},
-
-		getPlatformVersionUrl: function(data) {
-			if (data.platform_version_uuid && data.platform_version_uuid != 'undefined') {
-				return Registry.application.getURL() + '#platforms/versions/' + data.platform_version_uuid;
-			}
-		},
 
 		//
 		// rendering methods
 		//
 
-		template: function(data) {
-			return _.template(Template, _.extend(data, {
+		templateContext: function() {
+			return {
 				index: this.options.index + 1,
 				showProjects: this.options.showProjects,
 				showNumbering: this.options.showNumbering,
-				projectUrl: this.getProjectUrl(data),
-				packageUrl: this.getPackageUrl(data),
-				packageVersionUrl: this.getPackageVersionUrl(data),
-				toolUrl: this.getToolUrl(data),
-				toolVersionUrl: this.getToolVersionUrl(data),
-				platformUrl: this.getPlatformUrl(data),
-				platformVersionUrl: this.getPlatformVersionUrl(data),
+				projectUrl: this.getProjectUrl(),
+				packageUrl: this.getPackageUrl(),
+				packageVersionUrl: this.getPackageVersionUrl(),
+				toolUrl: this.getToolUrl(),
+				toolVersionUrl: this.getToolVersionUrl(),
+				platformUrl: this.getPlatformUrl(),
+				platformVersionUrl: this.getPlatformVersionUrl(),
 				showDelete: this.options.showDelete
-			}));
+			};
 		},
 
 		onRender: function() {

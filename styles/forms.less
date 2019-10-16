@@ -19,7 +19,7 @@
 // form colors
 //
 
-@inputBackground: @veryVeryLightGrey;
+@inputBackground: @ultra-light-grey;
 
 //
 // input fields
@@ -42,6 +42,24 @@ input[type="tel"],
 input[type="color"],
 .uneditable-input {
 	background-color: @inputBackground;
+	padding: 5px 10px;
+}
+
+input.inline.form-control {
+	display: inline-block;
+	width: auto;
+}
+
+//
+// show search field cancel buttons
+//
+
+input[type="search"] {
+	&::-webkit-search-cancel-button {
+		-webkit-appearance: searchfield-cancel-button;
+		opacity: 1 !important;
+		cursor: pointer;
+	}
 }
 
 //
@@ -78,7 +96,7 @@ input[type="color"],
 }
 
 input:disabled {
-	background-color: @veryVeryLightGrey;
+	background-color: @ultra-light-grey;
 }
 
 textarea {
@@ -87,13 +105,12 @@ textarea {
 }
 
 select {
-	color: @darkGrey;
-	-webkit-appearance: menulist-button;
-	border: 1px solid @lightGrey;
+	color: @dark-grey;
+	border: 1px solid @very-very-very-light-grey;
 	font-size: 16px;
 	height: 32px;
 	margin-right: 15px;
-	background: @veryVeryLightGrey;
+	background: @ultra-light-grey;
 	border-radius: @input-border-radius;
 	cursor: pointer;
 }
@@ -128,7 +145,7 @@ label {
 
 .required:after { 
 	content: "*"; 
-	color: @mediumRed;
+	color: @medium-red;
 	margin-left: 5px;
 }
 input.required:after {
@@ -153,7 +170,7 @@ input.required:after {
 
 	/*
 	i {
-		color: @darkGrey;
+		color: @dark-grey;
 	}
 	*/
 }
@@ -210,7 +227,7 @@ label span {
 //
 
 span.form-control {
-	border: 1px solid @veryLightGrey;
+	border: 1px solid @very-light-grey;
 	//border: none;
 	//box-shadow: none;
 }
@@ -257,7 +274,7 @@ form.run-requests-form {
 		margin-bottom: 0;
 	}
 	.error .add-on {
-		border-color: @mediumRed;
+		border-color: @medium-red;
 	}
 	.input-append {
 		margin-bottom: 0;
@@ -342,7 +359,7 @@ input[type="time"] {
 //
 
 .dropdown-menu > .active > a, .dropdown-menu > .active > a:hover, .dropdown-menu > .active > a:focus {
-	background: @primaryColor;
+	background: @brand-primary;
 }
 
 .select2-drop {

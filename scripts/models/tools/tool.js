@@ -1,6 +1,6 @@
 /******************************************************************************\
 |                                                                              |
-|                                       tool.js                                |
+|                                   tool.js                                    |
 |                                                                              |
 |******************************************************************************|
 |                                                                              |
@@ -19,11 +19,9 @@ define([
 	'jquery',
 	'underscore',
 	'config',
-	'registry',
 	'models/utilities/timestamped',
-	'views/dialogs/error-view',
-], function($, _, Config, Registry, Timestamped, ErrorView) {
-	var Class = Timestamped.extend({
+], function($, _, Config, Timestamped) {
+	return Timestamped.extend({
 
 		//
 		// Backbone attributes
@@ -60,7 +58,6 @@ define([
 				for (var i = 0; i < names.length; i++) {
 					if (packageTypeName == names[i]) {
 						return true;
-						break;
 					}
 				}
 
@@ -159,26 +156,22 @@ define([
 
 						error: function(response) {
 
-							// show error dialog
+							// show error message
 							//
-							Registry.application.modal.show(
-								new ErrorView({
-									message: "Error saving policy acknowledgement."
-								})
-							);
+							application.error({
+								message: "Error saving policy acknowledgement."
+							});
 						}
 					});
 				},
 
 				error: function() {
 
-					// show error dialog
+					// show error message
 					//
-					Registry.application.modal.show(
-						new ErrorView({
-							message: "Could not fetch tool policy."
-						})
-					);
+					application.error({
+						message: "Could not fetch tool policy."
+					});
 				}
 			});
 		},
@@ -238,83 +231,77 @@ define([
 		},
 
 		noToolPermission: function() {
-			var self = this;
-			require([
-				'views/dialogs/confirm-view'
-			], function (ConfirmView) {
-				Registry.application.modal.show(
-					new ConfirmView({
-						title: 'Tool Permission Required',
-						message: 'To use the "' + self.get('name') + '" tool, you are required to apply for permission.  Click "Ok" to navigate to your profile\'s permissions interface or "Cancel" to continue.',
-						
-						// callbacks
-						//
-						accept: function() {
-							Backbone.history.navigate('#my-account/permissions', {
-								trigger: true
-							});
-						}
-					})
-				);
+
+			// show confirmation
+			//
+			application.confirm({
+				title: 'Tool Permission Required',
+				message: 'To use the "' + this.get('name') + '" tool, you are required to apply for permission.  Click "Ok" to navigate to your profile\'s permissions interface or "Cancel" to continue.',
+				
+				// callbacks
+				//
+				accept: function() {
+					Backbone.history.navigate('#my-account/permissions', {
+						trigger: true
+					});
+				}
 			});
 		},
 
 		confirmToolPolicy: function(options) {
 			var self = this;
 			require([
-				'views/policies/dialogs/accept-policy-view'
-			], function (AcceptPolicyView) {
-				Registry.application.modal.show(
-					new AcceptPolicyView({
-						title: self.get('name') + " Policy",
-						message: "To use this tool you must first read and accept the following policy:",
-						policy: options.policy,
-						
-						// callbacks
-						//
-						accept: function() {
-							$.ajax({
-								url: Config.servers.web + '/user_policies/' + options.policy_code + '/user/' + Registry.application.session.user.get('user_uid'),
-								data: {
-									accept_flag: 1
-								},
-								type: 'POST',
-								dataType: 'JSON',
+				'views/policies/dialogs/accept-policy-dialog-view'
+			], function (AcceptPolicyDialogView) {
+				application.show(new AcceptPolicyDialogView({
+					title: self.get('name') + " Policy",
+					message: "To use this tool you must first read and accept the following policy:",
+					policy: options.policy,
+					
+					// callbacks
+					//
+					accept: function() {
+						$.ajax({
+							url: Config.servers.web + '/user_policies/' + options.policy_code + '/user/' + application.session.user.get('user_uid'),
+							data: {
+								accept_flag: 1
+							},
+							type: 'POST',
+							dataType: 'JSON',
 
-								// callbacks
-								//
-								success: function(response) {
-
-									// perform callback
-									//
-									if (options && options.success) {
-										options.success(response);
-									}
-								},
-
-								error: function(response) {
-
-									// perform callback
-									//
-									if (options && options.error) {
-										options.error(response);
-									}
-								}
-							});
-						},
-
-						reject: function() {
-
-							// perform callback
+							// callbacks
 							//
-							if (options && options.reject) {
-								options.reject();
+							success: function(response) {
+
+								// perform callback
+								//
+								if (options && options.success) {
+									options.success(response);
+								}
+							},
+
+							error: function(response) {
+
+								// perform callback
+								//
+								if (options && options.error) {
+									options.error(response);
+								}
 							}
+						});
+					},
+
+					reject: function() {
+
+						// perform callback
+						//
+						if (options && options.reject) {
+							options.reject();
 						}
-					}), {
-						size: 'large'
 					}
-				);
+				}), {
+					size: 'large'
+				});
 			});
 		},
 
@@ -324,44 +311,44 @@ define([
 		confirmToolProject: function(options) {
 			var self = this;
 			require([
-				'views/dialogs/confirm-view'
-			], function (ConfirmView) {
-				Registry.application.modal.show(
-					new ConfirmView({
-						title: 'Designate Tool Project',
-						message: 'This project is not a designated "' + self.get('name') + '" project. ' + (options.trial_project ? '' : ' If you wish to designate this project, be advised that project members may be able to create, schedule, and run assessments with "' + self.get('name') + '."  You will be held responsible for any abuse or usage contrary to the tool\'s EULA as project owner, so please vet and inform your project members. ' ) + ' Click "OK" to designate the project now.',
-						
-						// callbacks
-						//
-						accept: function() {
-							$.ajax({
-								url: Config.servers.web + '/user_permissions/' + options.user_permission_uid + '/project/' + options.project_uid,
-								type: 'POST',
-								dataType: 'JSON',
+						], function (ConfirmDialogView) {
 
-								// callbacks
+				// show confirmation
+				//
+				application.confirm({
+					title: 'Designate Tool Project',
+					message: 'This project is not a designated "' + self.get('name') + '" project. ' + (options.trial_project ? '' : ' If you wish to designate this project, be advised that project members may be able to create, schedule, and run assessments with "' + self.get('name') + '."  You will be held responsible for any abuse or usage contrary to the tool\'s EULA as project owner, so please vet and inform your project members. ' ) + ' Click "OK" to designate the project now.',
+					
+					// callbacks
+					//
+					accept: function() {
+						$.ajax({
+							url: Config.servers.web + '/user_permissions/' + options.user_permission_uid + '/project/' + options.project_uid,
+							type: 'POST',
+							dataType: 'JSON',
+
+							// callbacks
+							//
+							success: function(response) {
+
+								// perform callback
 								//
-								success: function(response) {
-
-									// perform callback
-									//
-									if (options && options.success) {
-										options.success(response);
-									}
-								},
-
-								error: function(response) {
-
-									// perform callback
-									//
-									if (options && options.error) {
-										options.error(response);
-									}
+								if (options && options.success) {
+									options.success(response);
 								}
-							});
-						}
-					})
-				);
+							},
+
+							error: function(response) {
+
+								// perform callback
+								//
+								if (options && options.error) {
+									options.error(response);
+								}
+							}
+						});
+					}
+				});
 			});
 		}
 	}, {
@@ -374,7 +361,7 @@ define([
 
 			// fetch tool
 			//
-			var tool = new Class({
+			var tool = new this.prototype.constructor({
 				tool_uuid: toolUuid
 			});
 
@@ -382,23 +369,19 @@ define([
 
 				// callbacks
 				//
-				success: function() {
-					done(tool);
+				success: function(model) {
+					done(model);
 				},
 
 				error: function() {
 
-					// show error dialog
+					// show error message
 					//
-					Registry.application.modal.show(
-						new ErrorView({
-							message: "Could not fetch tool."
-						})
-					);
+					application.error({
+						message: "Could not fetch tool."
+					});
 				}
 			});
 		}
 	});
-
-	return Class;
 });

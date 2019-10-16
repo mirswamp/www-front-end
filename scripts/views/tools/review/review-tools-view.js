@@ -19,27 +19,25 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
 	'text!templates/tools/review/review-tools.tpl',
-	'registry',
-	'utilities/browser/query-strings',
-	'utilities/browser/url-strings',
+	'utilities/web/query-strings',
+	'utilities/web/url-strings',
 	'collections/tools/tools',
-	'views/dialogs/notify-view',
-	'views/dialogs/error-view',
+	'views/base-view',
 	'views/tools/filters/tool-filters-view',
 	'views/tools/review/review-tools-list/review-tools-list-view'
-], function($, _, Backbone, Marionette, Template, Registry, QueryStrings, UrlStrings, Tools, NotifyView, ErrorView, ToolFiltersView, ReviewToolsListView) {
-	return Backbone.Marionette.LayoutView.extend({
+], function($, _, Template, QueryStrings, UrlStrings, Tools, BaseView, ToolFiltersView, ReviewToolsListView) {
+	return BaseView.extend({
 
 		//
 		// attributes
 		//
 
+		template: _.template(Template),
+
 		regions: {
-			toolFilters: '#tool-filters',
-			reviewToolsList: '#review-tools-list'
+			filters: '#tool-filters',
+			list: '#review-tools-list'
 		},
 
 		events: {
@@ -50,7 +48,7 @@ define([
 		},
 
 		//
-		// methods
+		// constructor
 		//
 
 		initialize: function() {
@@ -62,11 +60,11 @@ define([
 		//
 
 		getQueryString: function() {
-			return this.toolFilters.currentView.getQueryString();
+			return this.getChildView('filters').getQueryString();
 		},
 
 		getFilterData: function() {
-			return this.toolFilters.currentView.getData();
+			return this.getChildView('filters').getData();
 		},
 
 		//
@@ -79,7 +77,7 @@ define([
 			// fetch tools
 			//
 			this.collection.fetchAll({
-				data: this.toolFilters.currentView? this.toolFilters.currentView.getAttrs() : null,
+				data: this.getChildView('filters')? this.getChildView('filters').getAttrs() : null,
 
 				// callbacks
 				//
@@ -89,13 +87,11 @@ define([
 
 				error: function() {
 
-					// show error dialog
+					// show error message
 					//
-					Registry.application.modal.show(
-						new ErrorView({
-							message: "Could not fetch tools."
-						})
-					);
+					application.error({
+						message: "Could not fetch tools."
+					});
 				}
 			});	
 		},
@@ -109,23 +105,19 @@ define([
 
 					// show success notification dialog
 					//
-					Registry.application.modal.show(
-						new NotifyView({
-							title: "Tool Changes Saved",
-							message: "Your tool changes have been successfully saved."
-						})
-					);
+					application.notify({
+						title: "Tool Changes Saved",
+						message: "Your tool changes have been successfully saved."
+					});
 				},
 
 				error: function() {
 
-					// show error dialog
+					// show error message
 					//
-					Registry.application.modal.show(
-						new ErrorView({
-							message: "Your tool changes could not be saved."
-						})
-					);
+					application.error({
+						message: "Your tool changes could not be saved."
+					});
 				}
 			});
 		},
@@ -134,11 +126,11 @@ define([
 		// rendering methods
 		//
 
-		template: function(data) {
-			return _.template(Template, _.extend(data, {
+		templateContext: function() {
+			return {
 				data: this.options.data,
-				showNumbering: Registry.application.options.showNumbering
-			}));
+				showNumbering: application.options.showNumbering
+			};
 		},
 
 		onRender: function() {
@@ -157,49 +149,45 @@ define([
 
 			// show tool filters
 			//
-			this.toolFilters.show(
-				new ToolFiltersView({
-					model: this.model,
-					data: this.options.data? this.options.data : {},
+			this.showChildView('filters', new ToolFiltersView({
+				model: this.model,
+				data: this.options.data? this.options.data : {},
 
-					// callbacks
+				// callbacks
+				//
+				onChange: function() {
+					// setQueryString(self.getChildView('filters').getQueryString());			
+				
+					// update filter data
 					//
-					onChange: function() {
-						// setQueryString(self.toolFilters.currentView.getQueryString());			
-					
-						// update filter data
-						//
-						var projects = self.options.data.projects;
-						self.options.data = self.getFilterData();
-						self.options.data.projects = projects;
+					var projects = self.options.data.projects;
+					self.options.data = self.getFilterData();
+					self.options.data.projects = projects;
 
-						// update url
-						//
-						var queryString = self.getQueryString();
-						var state = window.history.state;
-						var url = getWindowBaseLocation() + (queryString? ('?' + queryString) : '');
-						window.history.pushState(state, '', url);
+					// update url
+					//
+					var queryString = self.getQueryString();
+					var state = window.history.state;
+					var url = getWindowBaseLocation() + (queryString? ('?' + queryString) : '');
+					window.history.pushState(state, '', url);
 
-						// update view
-						//
-						self.onChange();
-					}
-				})
-			);
+					// update view
+					//
+					self.onChange();
+				}
+			}));
 		},
 
 		showList: function() {
 
 			// show review tools list
 			//
-			this.reviewToolsList.show(
-				new ReviewToolsListView({
-					collection: this.collection,
-					showDeactivatedTools: this.$el.find('#show-deactivated-tools').is(':checked'),
-					showNumbering: Registry.application.options.showNumbering,
-					showDelete: true
-				})
-			);
+			this.showChildView('list', new ReviewToolsListView({
+				collection: this.collection,
+				showDeactivatedTools: this.$el.find('#show-deactivated-tools').is(':checked'),
+				showNumbering: application.options.showNumbering,
+				showDelete: true
+			}));
 		},
 
 		fetchAndShowList: function() {
@@ -244,12 +232,12 @@ define([
 		},
 
 		onClickShowDeactivatedTools: function() {
-			this.reviewToolsList.currentView.options.showDeactivatedTools = this.$el.find('#show-deactivated-tools').is(':checked');
-			this.reviewToolsList.currentView.render();
+			this.getChildView('list').options.showDeactivatedTools = this.$el.find('#show-deactivated-tools').is(':checked');
+			this.getChildView('list').render();
 		},
 
 		onClickShowNumbering: function(event) {
-			Registry.application.setShowNumbering($(event.target).is(':checked'));
+			application.setShowNumbering($(event.target).is(':checked'));
 			this.showList();
 		}
 	});

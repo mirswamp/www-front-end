@@ -18,22 +18,15 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
 	'text!templates/events/project-events/project-approved-event.tpl',
-	'registry',
-	'views/events/list/events-list-item-view',
-], function($, _, Backbone, Marionette, Template, Registry, EventsListItemView) {
-	return EventsListItemView.extend({
+	'views/events/project-events/project-event-view',
+], function($, _, Template, ProjectEventView) {
+	return ProjectEventView.extend({
 
 		//
-		// methods
+		// attributes
 		//
 
-		getInfo: function(data) {
-			return _.template(Template, _.extend(data, {
-				url: Registry.application.getURL() + '#projects/' + this.model.get('project_uid')
-			}));
-		}
+		template: _.template(Template)
 	});
 });

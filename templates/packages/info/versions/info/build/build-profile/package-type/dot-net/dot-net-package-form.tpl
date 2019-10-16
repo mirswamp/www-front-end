@@ -73,7 +73,7 @@
 				<div class="controls">
 					<div class="checkbox-inline">
 						<input type="checkbox"<% if (projectEnabled) { %> checked<% } %><% if (projectDisabled) { %> disabled<% } %>/>
-						<%= stringToHTML(projectName) %>
+						<%= textToHtml(projectName) %>
 					</div>
 				</div>
 			</div>
@@ -123,7 +123,7 @@
 				<label class="control-label">Note</label>
 				<div class="controls">
 					<% for (var j = 0; j < warnings.length; j++) { %>
-					<div class="form-control-static"><%= stringToHTML(warning.code) %> - <%= stringToHTML(warning.message) %></div>
+					<div class="form-control-static"><%= textToHtml(warning.code) %> - <%= textToHtml(warning.message) %></div>
 					<% } %>
 				</div>
 			</div>

@@ -18,23 +18,24 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
-	'text!templates/results/native-viewer/button-bars/nav-button-bar.tpl'
-], function($, _, Backbone, Marionette, Template) {
+	'text!templates/results/native-viewer/button-bars/nav-button-bar.tpl',
+	'views/base-view'
+], function($, _, Template, BaseView) {
 	'use strict';
 	
 	// pre-compile template
 	//
 	var _template = _.template(Template);
 
-	return Marionette.ItemView.extend({
+	return BaseView.extend({
 
 		//
 		// attributes
 		//
 
 		className: 'button-bar',
+
+		template: _.template(Template),
 
 		events: {
 			'change #items-per-page input': 'onChangeItemsPerPage',
@@ -91,30 +92,16 @@ define([
 		// rendering methods
 		//
 
-		template: function() {
-			return _template({
+		templateContext: function() {
+			return {
 				itemsPerPage: this.itemsPerPage,
 				pageNumber: this.pageNumber,
 				numPages: this.numPages
-			});
+			};
 		},
 
 		onRender: function() {
 			this.addTooltips();
-		},
-
-		addTooltips: function() {
-			var self = this;
-			require([
-				'bootstrap/tooltip'
-			], function () {
-
-				// show tooltips on hover
-				//
-				self.$el.find('[data-toggle="tooltip"]').tooltip({
-					trigger: 'hover'
-				});
-			});
 		},
 
 		//

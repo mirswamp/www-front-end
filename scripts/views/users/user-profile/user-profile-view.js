@@ -18,27 +18,30 @@
 define([
   'jquery',
   'underscore',
-  'backbone',
-  'marionette',
   'text!templates/users/user-profile/user-profile.tpl',
-  'config',
-  'registry',
+  'views/base-view',
   'utilities/time/time-utils',
   'utilities/time/date-utils'
-], function($, _, Backbone, Marionette, Template, Config, Registry) {
-	return Backbone.Marionette.ItemView.extend({
+], function($, _, Template, BaseView) {
+	return BaseView.extend({
+
+		//
+		// attributes
+		//
+
+		template: _.template(Template),
 
 		//
 		// rendering methods
 		//
 
-		template: function(data) {
-			return _.template(Template, _.extend(data, {
+		templateContext: function() {
+			return {
 				model: this.model,
-				config: Registry.application.config,
+				config: application.config,
 				myProfile: this.model && this.model.isCurrentUser(),
-				showUserType: Registry.application.session.user.isAdmin()
-			}));
+				showUserType: application.session.user.isAdmin()
+			};
 		},
 
 		updateTime: function() {

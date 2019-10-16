@@ -18,26 +18,30 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
 	'text!templates/scheduled-runs/list/scheduled-runs-list.tpl',
-	'views/widgets/lists/sortable-table-list-view',
+	'views/base-view',
+	'views/collections/tables/sortable-table-list-view',
 	'views/scheduled-runs/list/scheduled-runs-list-item-view'
-], function($, _, Backbone, Marionette, Template, SortableTableListView, ScheduledRunsListItemView) {
+], function($, _, Template, BaseView, SortableTableListView, ScheduledRunsListItemView) {
 	return SortableTableListView.extend({
 
 		//
 		// attributes
 		//
 
+		template: _.template(Template),
 		childView: ScheduledRunsListItemView,
+
+		emptyView: BaseView.extend({
+			template: _.template("No scheduled runs.")
+		}),
 
 		sorting: {
 
 			// disable sorting on delete column
 			//
 			headers: {
-				4: { 
+				3: { 
 					sorter: false 
 				}
 			},
@@ -48,7 +52,7 @@ define([
 		},
 
 		//
-		// methods
+		// constructor
 		//
 
 		initialize: function(options) {
@@ -73,27 +77,37 @@ define([
 		// rendering methods
 		//
 
-		template: function(data) {
-			return _.template(Template, _.extend(data, {
+		templateContext: function() {
+			return {
 				collection: this.collection,
 				runRequestUrl: this.getRunRequestUrl(),
 				showProjects: this.options.showProjects,
 				showNumbering: this.options.showNumbering,
 				showSchedule: this.options.showSchedule,
 				showDelete: this.options.showDelete
-			}));
+			};
 		},
 
-		childViewOptions: function(model, index) {
+		childViewOptions: function(model) {
+
+			// check if empty view
+			//
+			if (!model) {
+				return {};
+			}
+
+			// return view options
+			//
 			return {
-				index: index,
+				index: this.collection.indexOf(model),
 				collection: this.collection,
 				showProjects: this.options.showProjects,
 				showNumbering: this.options.showNumbering,
 				showSchedule: this.options.showSchedule,
 				showDelete: this.options.showDelete,
+				onDelete: this.options.onDelete,
 				parent: this
-			}
+			};
 		}
 	});
 });

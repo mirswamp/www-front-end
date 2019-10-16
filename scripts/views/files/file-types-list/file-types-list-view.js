@@ -19,19 +19,23 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
 	'text!templates/files/file-types-list/file-types-list.tpl',
-	'views/widgets/lists/sortable-table-list-view',
+	'views/base-view',
+	'views/collections/tables/sortable-table-list-view',
 	'views/files/file-types-list/file-types-list-item-view'
-], function($, _, Backbone, Marionette, Template, SortableTableListView, FileTypesListItemView) {
+], function($, _, Template, BaseView, SortableTableListView, FileTypesListItemView) {
 	return SortableTableListView.extend({
 
 		//
 		// attributes
 		//
 
+		template: _.template(Template),
 		childView: FileTypesListItemView,
+
+		emptyView: BaseView.extend({
+			template: _.template("No file types.")
+		}),
 
 		sorting: {
 
@@ -44,10 +48,10 @@ define([
 		// rendering methods
 		//
 
-		template: function(data) {
-			return _.template(Template, _.extend(data, {
+		templateContext: function() {
+			return {
 				collection: this.collection
-			}));
+			};
 		}
 	});
 });

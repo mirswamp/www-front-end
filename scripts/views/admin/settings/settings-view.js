@@ -18,20 +18,20 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
 	'text!templates/admin/settings/settings.tpl',
-	'registry',
 	'utilities/scripting/file-utils',
+	'views/base-view',
 	'views/admin/settings/restricted-domains/restricted-domains-view',
 	'views/admin/settings/system-admins/system-admins-view',
 	'views/admin/settings/system-email/system-email-view'
-], function($, _, Backbone, Marionette, Template, Registry, FileUtils, RestrictedDomainsView, SystemAdminsView, SystemEmailView) {
-	return Backbone.Marionette.LayoutView.extend({
+], function($, _, Template, FileUtils, BaseView, RestrictedDomainsView, SystemAdminsView, SystemEmailView) {
+	return BaseView.extend({
 
 		//
 		// attributes
 		//
+
+		template: _.template(Template),
 
 		regions: {
 			settings: '#settings'
@@ -47,10 +47,10 @@ define([
 		// rendering methods
 		//
 
-		template: function(data) {
-			return _.template(Template, _.extend(data, {
-				config: Registry.application.config
-			}));
+		templateContext: function() {
+			return {
+				config: application.config
+			};
 		},
 
 		onRender: function() {
@@ -76,19 +76,13 @@ define([
 			//
 			switch (this.options.nav) {
 				case 'restricted-domains':
-					this.settings.show(
-						new RestrictedDomainsView()
-					);
+					this.showChildView('settings', new RestrictedDomainsView());
 					break;
 				case 'admins':
-					this.settings.show(
-						new SystemAdminsView()
-					);
+					this.showChildView('settings', new SystemAdminsView());
 					break;
 				case 'email':
-					this.settings.show(
-						new SystemEmailView()
-					);
+					this.showChildView('settings', new SystemEmailView());
 					break;
 			}
 		},

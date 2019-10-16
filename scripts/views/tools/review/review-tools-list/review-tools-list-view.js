@@ -18,18 +18,17 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
 	'text!templates/tools/review/review-tools-list/review-tools-list.tpl',
-	'views/widgets/lists/sortable-table-list-view',
+	'views/tools/list/tools-list-view',
 	'views/tools/review/review-tools-list/review-tools-list-item-view'
-], function($, _, Backbone, Marionette, Template, SortableTableListView, ReviewToolsListItemView) {
-	return SortableTableListView.extend({
+], function($, _, Template, ToolsListView, ReviewToolsListItemView) {
+	return ToolsListView.extend({
 
 		//
 		// attributes
 		//
 
+		template: _.template(Template),
 		childView: ReviewToolsListItemView,
 
 		sorting: {
@@ -51,22 +50,31 @@ define([
 		// rendering methods
 		//
 
-		template: function(data) {
-			return _.template(Template, _.extend(data, {
+		templateContext: function() {
+			return {
 				collection: this.collection,
 				showDeactivatedTools: this.options.showDeactivatedTools,
 				showNumbering: this.options.showNumbering,
 				showDelete: this.options.showDelete
-			}));
+			};
 		},
 
-		childViewOptions: function(model, index) {
+		childViewOptions: function(model) {
+
+			// check if empty view
+			//
+			if (!model) {
+				return {};
+			}
+
+			// return view options
+			//
 			return {
-				index: index,
+				index: this.collection.indexOf(model),
 				showDeactivatedTools: this.options.showDeactivatedTools,
 				showNumbering: this.options.showNumbering,
 				showDelete: this.options.showDelete
-			}
+			};
 		}
 	});
 });

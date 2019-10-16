@@ -18,35 +18,29 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
 	'text!templates/packages/info/versions/new-package-version.tpl',
-	'registry',
 	'collections/projects/projects',
-	'views/dialogs/error-view',
-	'views/dialogs/notify-view',
+	'views/base-view',
 	'views/packages/info/versions/info/details/new-package-version-details-view',
 	'views/packages/info/versions/info/source/new-package-version-source-view',
 	'views/packages/info/versions/info/build/new-package-version-build-view',
 	'views/packages/info/versions/info/sharing/new-package-version-sharing-view'
-], function($, _, Backbone, Marionette, Template, Registry, Projects, ErrorView, NotifyView, NewPackageVersionDetailsView, NewPackageVersionSourceView, NewPackageVersionBuildView, NewPackageVersionSharingView) {
-	return Backbone.Marionette.LayoutView.extend({
+], function($, _, Template, Projects, BaseView, NewPackageVersionDetailsView, NewPackageVersionSourceView, NewPackageVersionBuildView, NewPackageVersionSharingView) {
+	return BaseView.extend({
 
 		//
 		// attributes
 		//
 
+		template: _.template(Template),
+
 		regions: {
-			newPackageVersionInfo: '#new-package-version-info'
+			info: '#new-package-version-info'
 		},
 
 		//
 		// rendering methods
 		//
-
-		template: function(data) {
-			return _.template(Template, data);
-		},
 
 		onRender: function() {
 			var self = this;
@@ -80,11 +74,9 @@ define([
 
 					// show error view
 					//
-					Registry.application.modal.show(
-						new ErrorView({
-							message: "Could not fetch number of projects."
-						})
-					);	
+					application.error({
+						message: "Could not fetch number of projects."
+					});
 				}
 			});
 		},
@@ -98,14 +90,12 @@ define([
 
 			// show new package version details view
 			//
-			this.newPackageVersionInfo.show(
-				new NewPackageVersionDetailsView({
-					model: this.model,
-					package: this.options.package,
-					packageVersionDependencies: this.options.packageVersionDependencies,
-					parent: this
-				})
-			);
+			this.showChildView('info', new NewPackageVersionDetailsView({
+				model: this.model,
+				package: this.options.package,
+				packageVersionDependencies: this.options.packageVersionDependencies,
+				parent: this
+			}));
 		},
 
 		showSource: function() {
@@ -117,14 +107,12 @@ define([
 
 			// show new package version details view
 			//
-			this.newPackageVersionInfo.show(
-				new NewPackageVersionSourceView({
-					model: this.model,
-					package: this.options.package,
-					packageVersionDependencies: this.options.packageVersionDependencies,
-					parent: this
-				})
-			);
+			this.showChildView('info', new NewPackageVersionSourceView({
+				model: this.model,
+				package: this.options.package,
+				packageVersionDependencies: this.options.packageVersionDependencies,
+				parent: this
+			}));
 		},
 
 		showBuild: function() {
@@ -136,15 +124,13 @@ define([
 
 			// show new package version build info view
 			//
-			this.newPackageVersionInfo.show(
-				new NewPackageVersionBuildView({
-					model: this.model,
-					package: this.options.package,
-					packageVersionDependencies: this.options.packageVersionDependencies,
-					showSave: !this.options.showSharing,
-					parent: this
-				})
-			);
+			this.showChildView('info', new NewPackageVersionBuildView({
+				model: this.model,
+				package: this.options.package,
+				packageVersionDependencies: this.options.packageVersionDependencies,
+				showSave: !this.options.showSharing,
+				parent: this
+			}));
 		},
 
 		showSharing: function() {
@@ -156,15 +142,13 @@ define([
 
 			// show new package version build info view
 			//
-			this.newPackageVersionInfo.show(
-				new NewPackageVersionSharingView({
-					model: this.model,
-					package: this.options.package,
-					packageVersionDependencies: this.options.packageVersionDependencies,
-					user: Registry.application.session.user,
-					parent: this
-				})
-			);
+			this.showChildView('info', new NewPackageVersionSharingView({
+				model: this.model,
+				package: this.options.package,
+				packageVersionDependencies: this.options.packageVersionDependencies,
+				user: application.session.user,
+				parent: this
+			}));
 		},
 
 		showWarning: function(message) {
@@ -207,26 +191,22 @@ define([
 
 						error: function(response) {
 
-							// show error dialog
+							// show error message
 							//
-							Registry.application.modal.show(
-								new ErrorView({
-									message: response.responseText
-								})
-							);
+							application.error({
+								message: response.responseText
+							});
 						}
 					});
 				},
 
 				error: function() {
 
-					// show error dialog
+					// show error message
 					//
-					Registry.application.modal.show(
-						new ErrorView({
-							message: "Could not save package version."
-						})
-					);
+					application.error({
+						message: "Could not save package version."
+					});
 				}
 			});
 		},

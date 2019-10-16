@@ -18,11 +18,10 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
 	'config',
 	'models/api/field',
 	'collections/base-collection'
-], function($, _, Backbone, Config, Field, BaseCollection) {
+], function($, _, Config, Field, BaseCollection) {
 	return BaseCollection.extend({
 
 		//

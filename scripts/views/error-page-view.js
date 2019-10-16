@@ -13,21 +13,26 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
-	'text!templates/error-page.tpl'
-], function($, _, Backbone, Marionette, Template) {
-	return Backbone.Marionette.ItemView.extend({
+	'text!templates/error-page.tpl',
+	'views/base-view'
+], function($, _, Template, BaseView) {
+	return BaseView.extend({
 
 		//
 		// attributes
 		//
 		
-		template: function() {
-			return _.template(Template, {
+		template: _.template(Template),
+
+		//
+		// rendering methods
+		//
+
+		templateContext: function() {
+			return {
 				title: this.options.title,
 				message: this.options.message
-			});
+			};
 		},
 	});
 });

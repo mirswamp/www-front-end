@@ -4,8 +4,8 @@
 |                                                                              |
 |******************************************************************************|
 |                                                                              |
-|        This defines an editable form view of a package versions's            |
-|        language / type specific profile information.                         |
+|        This defines a form for entereing a package versions's                |
+|        language / type specific profile info.                                |
 |                                                                              |
 |        Author(s): Abe Megahed                                                |
 |                                                                              |
@@ -19,16 +19,12 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
 	'bootstrap/collapse',
 	'bootstrap/dropdown',
-	'bootstrap/tooltip',
-	'bootstrap/popover',
 	'bootstrap.select',
-	'jquery.validate'
-], function($, _, Backbone, Marionette, Collapse, Dropdown, Tooltip, Popover, Select, Validate) {
-	return Backbone.Marionette.ItemView.extend({
+	'views/forms/form-view'
+], function($, _, Collapse, Dropdown, Select, FormView) {
+	return FormView.extend({
 
 		//
 		// attributes
@@ -48,7 +44,7 @@ define([
 		},
 
 		//
-		// form validation attributes
+		// form attributes
 		//
 
 		rules: {
@@ -92,29 +88,6 @@ define([
 			jQuery.validator.addMethod('buildSystemRequired', function (value) {
 				return (value != undefined);
 			}, "Please specify a build system.");
-		},
-
-		//
-		// form validation methods
-		//
-
-		validate: function() {
-			return this.$el.find('form').validate({
-				rules: this.rules,
-				messages: this.messages
-			});
-		},
-
-		isValid: function() {
-			return this.validator.form();
-		},
-
-		//
-		// form methods
-		//
-
-		update: function(model) {
-			model.set(this.getValues());
 		}
 	});
 });

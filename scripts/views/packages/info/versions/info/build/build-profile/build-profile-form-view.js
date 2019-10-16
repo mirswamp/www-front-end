@@ -1,11 +1,10 @@
 /******************************************************************************\
 |                                                                              |
-|                             build-profile-form-view.js                       |
+|                         build-profile-form-view.js                           |
 |                                                                              |
 |******************************************************************************|
 |                                                                              |
-|        This defines an editable form view of a package versions's            |
-|        build information.                                                    |
+|        This defines a form view for entering a package's build info.         |
 |                                                                              |
 |        Author(s): Abe Megahed                                                |
 |                                                                              |
@@ -19,17 +18,10 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
-	'jquery.validate',
-	'bootstrap/tooltip',
-	'bootstrap/popover',
 	'text!templates/packages/info/versions/info/build/build-profile/build-profile-form.tpl',
-	'registry',
 	'widgets/accordions',
 	'collections/platforms/platform-versions',
-	'views/dialogs/error-view',
-	'views/packages/info/versions/info/build/build-profile/dialogs/select-package-version-directory-view',
+	'views/forms/form-view',
 	'views/packages/info/versions/info/build/dependencies/editable-list/package-dependencies-editable-list-view',
 	'views/packages/info/versions/info/build/build-profile/package-type/package-type-form-view',
 	'views/packages/info/versions/info/build/build-profile/package-type/c/c-package-form-view',
@@ -41,16 +33,18 @@ define([
 	'views/packages/info/versions/info/build/build-profile/package-type/ruby/ruby-package-form-view',
 	'views/packages/info/versions/info/build/build-profile/package-type/web-scripting/web-scripting-package-form-view',
 	'views/packages/info/versions/info/build/build-profile/package-type/dot-net/dot-net-package-form-view'
-], function($, _, Backbone, Marionette, Validate, Tooltip, Popover, Template, Registry, Accordions, PlatformVersions, ErrorView, SelectPackageVersionDirectoryView, PackageDependenciesEditableListView, PackageTypeFormView, CPackageFormView, JavaSourcePackageFormView, JavaBytecodePackageFormView, AndroidSourcePackageFormView, AndroidBytecodePackageFormView, PythonPackageFormView, RubyPackageFormView, WebScriptingPackageFormView, DotNetPackageFormView) {
-	return Backbone.Marionette.LayoutView.extend({
+], function($, _, Template, Accordions, PlatformVersions, FormView, PackageDependenciesEditableListView, PackageTypeFormView, CPackageFormView, JavaSourcePackageFormView, JavaBytecodePackageFormView, AndroidSourcePackageFormView, AndroidBytecodePackageFormView, PythonPackageFormView, RubyPackageFormView, WebScriptingPackageFormView, DotNetPackageFormView) {
+	return FormView.extend({
 
 		//
 		// attributes
 		//
 
+		template: _.template(Template),
+
 		regions: {
-			packageDependenciesForm: '#package-dependencies-form',
-			packageTypeForm: '#package-type-form'
+			form: '#package-form',
+			dependencies_list: '#package-dependencies-list'
 		},
 
 		events: {
@@ -68,6 +62,8 @@ define([
 			'change #build-path input': 'onChangeBuild',
 			'change #build-file input': 'onChangeBuild'
 			*/
+
+			'click #add-new-dependency': 'onClickAddNewDependency'
 		},
 
 		//
@@ -76,7 +72,7 @@ define([
 
 		getCurrentModel: function() {
 			var model = this.model.clone();
-			this.update(model);
+			this.applyTo(model);
 
 			// set package type id for new packages
 			//
@@ -90,21 +86,23 @@ define([
 		},
 
 		getBuildSystem: function() {
-			return this.packageTypeForm.currentView.getBuildSystem();
+			return this.getChildView('form').getBuildSystem();
 		},
 
 		getBuildSystemName: function(buildSystem) {
-			return this.packageTypeForm.currentView.getBuildSystemName(buildSystem);
+			if (this.getChildView('form').getBuildSystemName) {
+				return this.getChildView('form').getBuildSystemName(buildSystem);
+			}
 		},
 		
 		//
 		// rendering methods
 		//
 
-		template: function(data) {
-			return _.template(Template, _.extend(data, {
+		templateContext: function() {
+			return {
 				model: this.model
-			}));
+			};
 		},
 
 		onRender: function() {
@@ -163,12 +161,6 @@ define([
 				this.validator = this.validate();
 			}
 
-			// display popovers on hover
-			//
-			this.$el.find('[data-toggle="popover"]').popover({
-				trigger: 'hover'
-			});
-
 			// change accordion icon
 			//
 			new Accordions(this.$el.find('.panel'));
@@ -176,8 +168,8 @@ define([
 
 		showPackageDependencies: function() {
 			var self = this;
-			var platformVersions = new PlatformVersions();
-			platformVersions.fetchAll({
+			this.platformVersions = new PlatformVersions();
+			this.platformVersions.fetchAll({
 
 				// callbacks
 				//
@@ -185,29 +177,27 @@ define([
 
 					// show editable package dependencies list view
 					//
-					self.packageDependenciesForm.show(
-						new PackageDependenciesEditableListView({
-							model: self.model,
-							collection: self.options.packageVersionDependencies,
-							deletedItems: self.options.deletedPackageVersionDependencies,
-							platformVersions: platformVersions,
-							showDelete: true,
-							parent: self,
+					self.showChildView('dependencies_list', new PackageDependenciesEditableListView({
+						model: self.model,
+						collection: self.options.packageVersionDependencies,
+						deletedItems: self.options.deletedPackageVersionDependencies,
+						platformVersions: self.platformVersions,
+						showDelete: true,
+						parent: self,
 
-							// callbacks
-							//
-							onChange: function() {
-								self.onChange();
-							}
-						})
-					);
+						// callbacks
+						//
+						onChange: function() {
+							self.onChange();
+						}
+					}));
 				},
 
 				error: function() {
 
-					// show error dialog
+					// show error message
 					//
-					Registry.application.error({
+					application.error({
 						message: "Could not fetch package dependencies."
 					});
 				}
@@ -224,70 +214,58 @@ define([
 				// C/C++ package types
 				//
 				case 'c-source':
-					this.packageTypeForm.show(
-						new CPackageFormView({
-							model: this.model,
-							package: this.options.package,
-							parent: this
-						})
-					);
+					this.showChildView('form', new CPackageFormView({
+						model: this.model,
+						package: this.options.package,
+						parent: this
+					}));
 					break;
 
 				// java package types
 				//
 				case 'java7-source':
 				case 'java8-source':
-					this.packageTypeForm.show(
-						new JavaSourcePackageFormView({
-							model: this.model,
-							package: this.options.package,
-							parent: this
-						})
-					);
+					this.showChildView('form', new JavaSourcePackageFormView({
+						model: this.model,
+						package: this.options.package,
+						parent: this
+					}));
 					break;
 				case 'java7-bytecode':
 				case 'java8-bytecode':
-					this.packageTypeForm.show(
-						new JavaBytecodePackageFormView({
-							model: this.model,
-							package: this.options.package,
-							parent: this
-						})
-					);
+					this.showChildView('form', new JavaBytecodePackageFormView({
+						model: this.model,
+						package: this.options.package,
+						parent: this
+					}));
 					break;
 
 				// android package types
 				//
 				case 'android-source':
-					this.packageTypeForm.show(
-						new AndroidSourcePackageFormView({
-							model: this.model,
-							package: this.options.package,
-							parent: this
-						})
-					);
+					this.showChildView('form', new AndroidSourcePackageFormView({
+						model: this.model,
+						package: this.options.package,
+						parent: this
+					}));
 					break;
 				case 'android-bytecode':
-					this.packageTypeForm.show(
-						new AndroidBytecodePackageFormView({
-							model: this.model,
-							package: this.options.package,
-							parent: this
-						})
-					);
+					this.showChildView('form', new AndroidBytecodePackageFormView({
+						model: this.model,
+						package: this.options.package,
+						parent: this
+					}));
 					break;
 
 				// python package types
 				//
 				case 'python2':
 				case 'python3':
-					this.packageTypeForm.show(
-						new PythonPackageFormView({
-							model: this.model,
-							package: this.options.package,
-							parent: this
-						})
-					);
+					this.showChildView('form', new PythonPackageFormView({
+						model: this.model,
+						package: this.options.package,
+						parent: this
+					}));
 					break;
 
 				// ruby package types
@@ -296,45 +274,39 @@ define([
 				case 'sinatra':
 				case 'rails':
 				case 'padrino':
-					this.packageTypeForm.show(
-						new RubyPackageFormView({
-							model: this.model,
-							package: this.options.package,
-							parent: this
-						})
-					);
+					this.showChildView('form', new RubyPackageFormView({
+						model: this.model,
+						package: this.options.package,
+						parent: this
+					}));
 					break;
 
 				// web scripting package type
 				//
 				case 'web-scripting':
-					this.packageTypeForm.show(
-						new WebScriptingPackageFormView({
-							model: this.model,
-							package: this.options.package,
-							parent: this
-						})
-					);
+					this.showChildView('form',new WebScriptingPackageFormView({
+						model: this.model,
+						package: this.options.package,
+						parent: this
+					}));
 					break;
 
 				// .net package type
 				//
 				case '.net':
-					this.packageTypeForm.show(
-						new DotNetPackageFormView({
-							model: this.model,
-							package: this.options.package,
-							parent: this
-						})
-					);
+					this.showChildView('form', new DotNetPackageFormView({
+						model: this.model,
+						package: this.options.package,
+						parent: this
+					}));
 					break;
 			}
 
 			// set on change callback
 			//
-			if (this.packageTypeForm.currentView) {
+			if (this.hasChildView('form')) {
 				var self = this;
-				this.packageTypeForm.currentView.options.onChange = function() {
+				this.getChildView('form').options.onChange = function() {
 					self.onChange();
 				};
 			}
@@ -391,7 +363,7 @@ define([
 
 			// check to see if method to set build system exists
 			//
-			if (this.packageTypeForm.currentView && this.packageTypeForm.currentView.setBuildSystem) {
+			if (this.getChildView('form') && this.getChildView('form').setBuildSystem) {
 				var self = this;
 
 				// fetch and set default build system
@@ -407,7 +379,7 @@ define([
 						
 						// set build system
 						//
-						self.packageTypeForm.currentView.setBuildSystem(buildSystem);
+						self.getChildView('form').setBuildSystem(buildSystem);
 
 						// show notice about current build system
 						//
@@ -420,7 +392,7 @@ define([
 
 						// set to default build system for each package type
 						//
-						self.packageTypeForm.currentView.setBuildSystem();
+						self.getChildView('form').setBuildSystem();
 					}
 				});
 			}
@@ -434,16 +406,18 @@ define([
 				// build system found
 				//
 				var buildSystemName = this.getBuildSystemName(buildSystem);
-				var notice = "This package appears to use the '" + buildSystemName + "' build system. ";
-				var isWheel = this.model.getFilename().endsWith('.whl');
-				var isApk = this.model.getFilename().endsWith('.apk');
+				if (buildSystemName) {
+					var notice = "This package appears to use the '" + buildSystemName + "' build system. ";
+					var isWheel = this.model.getFilename().endsWith('.whl');
+					var isApk = this.model.getFilename().endsWith('.apk');
 
-				// notify if build system can be changed
-				//
-				if (buildSystem != 'ruby-gem' && buildSystem != 'msbuild' && !isWheel && !isApk) {
-					notice += " You can set the build system if this is not correct.";
+					// notify if build system can be changed
+					//
+					if (buildSystem != 'ruby-gem' && buildSystem != 'msbuild' && !isWheel && !isApk) {
+						notice += " You can set the build system if this is not correct.";
+					}
+					this.options.parent.showNotice(notice);
 				}
-				this.options.parent.showNotice(notice);
 				this.options.parent.hideWarning();
 				if (this.options.parent.setNextDisabled) {
 					this.options.parent.setNextDisabled(false);
@@ -485,13 +459,13 @@ define([
 
 			// validate sub views
 			//
-			if (this.packageTypeForm.currentView && this.packageTypeForm.currentView.validate) {
-				this.packageTypeForm.currentView.validate();
+			if (this.getChildView('form') && this.getChildView('form').validate) {
+				this.getChildView('form').validate();
 			}
 		},
 
 		isValid: function() {
-			return (!this.packageTypeForm.currentView || this.packageTypeForm.currentView.isValid());
+			return (!this.getChildView('form') || this.getChildView('form').isValid());
 		},
 
 		//
@@ -522,14 +496,13 @@ define([
 		// form methods
 		//
 
-		update: function(packageVersion) {
+		applyTo: function(packageVersion) {
 
 			// update model from sub view
 			//
-			if (this.packageTypeForm &&
-				this.packageTypeForm.currentView &&
-				this.packageTypeForm.currentView.update) {
-				this.packageTypeForm.currentView.update(packageVersion);
+			if (this.hasChildView('form') &&
+				this.getChildView('form').applyTo) {
+				this.getChildView('form').applyTo(packageVersion);
 			}
 		},
 
@@ -541,7 +514,9 @@ define([
 
 			// update model
 			//
-			this.update(this.model);
+			if (this.hasChildView('form')) {
+				this.model.set(this.getChildView('form').getValues());
+			}
 			
 			// call on change callback
 			//
@@ -554,11 +529,11 @@ define([
 
 			// update model
 			//
-			this.update(this.model);
+			this.model.set(this.getChildView('form').getValues());
 
 			// recheck build system
 			//
-			var buildSystem = this.packageTypeForm.currentView.getBuildSystem();
+			var buildSystem = this.getChildView('form').getBuildSystem();
 			if (buildSystem != '.net') {
 				this.checkBuildSystem();
 			}
@@ -572,6 +547,32 @@ define([
 
 		onChangeInput: function() {
 			this.onChange();
+		},
+
+		//
+		// mouse event handling methods
+		//
+
+		onClickAddNewDependency: function() {
+			var self = this;
+			require([
+				'views/packages/info/versions/info/build/dependencies/editable-list/dialogs/add-new-package-dependency-dialog-view'
+			], function (AddNewPackageDependencyDialogView) {
+
+				// show add new package dependency dialog
+				//
+				application.show(new AddNewPackageDependencyDialogView({
+					packageVersion: self.model,
+					collection: self.options.packageVersionDependencies,
+					platformVersions: self.platformVersions,
+
+					// callbacks
+					//
+					onAdd: function() {
+						self.onChange();
+					}
+				}));
+			});
 		}
 	});
 });

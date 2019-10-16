@@ -19,14 +19,17 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
 	'text!templates/admin/status/uuid-item-select-list/uuid-item-select-list-item.tpl',
-	'registry',
 	'views/admin/status/uuid-item-list/uuid-item-list-item-view',
-	'utilities/browser/html-utils'
-], function($, _, Backbone, Marionette, Template, Registry, UuidItemListItemView) {
+	'utilities/web/html-utils'
+], function($, _, Template, UuidItemListItemView) {
 	return UuidItemListItemView.extend({
+
+		//
+		// attributes
+		//
+
+		template: _.template(Template),
 
 		//
 		// selection methods
@@ -52,16 +55,16 @@ define([
 		// rendering methods
 		//
 
-		template: function(data) {
-			return _.template(Template, {
+		templateContext: function() {
+			return {
 				index: this.options.index + 1, 
-				data: this.getData(data),	
-				urls: this.getUrls(data),	
+				data: this.getData(this.model.attributes),	
+				urls: this.getUrls(this.model.attributes),	
 				fieldnames: this.options.fieldnames,
 				showNumbering: this.options.showNumbering,
 				selectable: this.isSelectable(),	
 				selected: this.options.selected
-			});
+			};
 		}
 	});
 });

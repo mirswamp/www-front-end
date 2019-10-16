@@ -31,66 +31,67 @@ require.config({
 	baseUrl: 'scripts', 
 	paths: {
 
-		// config paths
+		// top level paths
 		//
-		config: 'config',
-
-		// template paths
-		//
+		vendor: '../vendor',
+		library: '../library',
 		templates: '../templates',
+		styles: '../styles',
+		svg: '../svg',
 
-		// library paths
+		// core library paths
 		//
-		text: 'library/require/text',
-		jquery: 'library/jquery/jquery-1.9.1.min',
-		'jquery-ui': 'library/jquery/jquery-ui/jquery-ui',
-		underscore: 'library/underscore/underscore',
-		backbone: 'library/backbone/backbone-e91b36c',
-		'backbone.wreqr': 'library/backbone/wreqr/backbone.wreqr',
-		'backbone.babysitter': 'library/backbone/babysitter/backbone.babysitter',
-		marionette: 'library/backbone/marionette/backbone.marionette',
-		clipboard: 'library/clipboard/clipboard.min',
-		moment: 'library/moment/moment.min',
+		text: '../library/require/text',
+		jquery: '../library/jquery/jquery-3.4.1.min',
+		underscore: '../library/underscore/underscore-min',
+		backbone: '../library/backbone/backbone',
+		'backbone.radio': '../library/backbone/radio/backbone.radio',
+		marionette: '../library/backbone/marionette/backbone.marionette',
+		clipboard: '../library/clipboard/clipboard.min',
+		moment: '../library/moment/moment.min',
 
-		// jquery paths
+		// jquery plugin paths
 		//
-		'jquery.validate': 'library/jquery/validate/jquery.validate',
-		'jquery.validate.bootstrap': 'library/jquery/validate/jquery.validate.bootstrap3',
-		'jquery.cookie': 'library/jquery/cookie/jquery.cookie',
-		'jquery.tablesorter': 'library/jquery/tablesorter/jquery.tablesorter',
-		'jquery.datepicker': 'library/jquery/datepicker/datepicker',
+		'jquery.validate': '../vendor/jquery/validate/js/jquery.validate',
+		'jquery.validate.bootstrap': '../vendor/jquery/validate/js/jquery.validate.bootstrap3',
+		'jquery.cookie': '../vendor/jquery/cookie/jquery.cookie',
+		'jquery.tablesorter': '../vendor/jquery/tablesorter/js/jquery.tablesorter',
+		'jquery.tablesorterpager': '../vendor/jquery/tablesorter/js/jquery.tablesorter.pager',
+		'jquery.datepicker': '../vendor/jquery/datepicker/js/datepicker',
+
+		// jquery ui paths
+		//
+		'jquery-ui': '../vendor/jquery/jquery-ui/js/jquery-ui.min',
 
 		// jquery ui plugin paths
 		//
-		core: 'library/jquery/jquery-ui/plugins/core',
-		mouse: 'library/jquery/jquery-ui/plugins/mouse',
-		widget: 'library/jquery/jquery-ui/plugins/widget',
-		draggable: 'library/jquery/jquery-ui/plugins/draggable',
-		sortable: 'library/jquery/jquery-ui/plugins/sortable',
-
-		// modernizr path
-		//
-		modernizr: 'library/modernizr/modernizr.input-types',
-		
-		// other plugins paths
-		//
-		select2: 'library/select2/select2.min',
-
-		// vendor paths
-		//
-		bootstrap: '../vendor/bootstrap/js',
-		fancybox: '../vendor/fancybox/jquery.fancybox',
-		ace: '../vendor/ace',
-		split: '../vendor/split-js',
+		'jquery-ui/core': '../vendor/jquery/jquery-ui/js/plugins/core',
+		'jquery-ui/mouse': '../vendor/jquery/jquery-ui/js/plugins/mouse',
+		'jquery-ui/widget': '../vendor/jquery/jquery-ui/js/plugins/widget',
+		'jquery-ui/draggable': '../vendor/jquery/jquery-ui/js/plugins/draggable',
+		'jquery-ui/droppable': '../vendor/jquery/jquery-ui/js/plugins/droppable',
+		'jquery-ui/resizable': '../vendor/jquery/jquery-ui/js/plugins/resizable',
+		'jquery-ui/sortable': '../vendor/jquery/jquery-ui/js/plugins/sortable',
 
 		// bootstrap plugin paths
 		//
-		'bootstrap.clickover': '../vendor/bootstrap/js/plugins/bootstrap/clickover/bootstrapx-clickover',
-		'bootstrap.combobox': '../vendor/bootstrap/js/plugins/bootstrap/combobox/bootstrap/combobox',
+		'bootstrap.clickover': '../vendor/bootstrap/js/plugins/bootstrap-clickover/bootstrapx-clickover',
+		'bootstrap.combobox': '../vendor/bootstrap/js/plugins/bootstrap-combobox/bootstrap-combobox',
 		'bootstrap.multimodal': '../vendor/bootstrap/js/plugins/multimodal/multimodal',
 		'bootstrap.select': '../vendor/bootstrap/js/plugins/bootstrap-select/bootstrap-select',
 		'bootstrap.timepicker': '../vendor/bootstrap/js/plugins/bootstrap-timepicker/bootstrap-timepicker',
-		'bootstrap.typeahead': '../vendor/bootstrap/js/plugins/bootstrap3-typeahead/bootstrap3-typeahead',
+		'bootstrap.typeahead': '../vendor/bootstrap/js/plugins/bootstrap3-typeahead/bootstrap3-typeahead',	
+	
+		// modernizr path
+		//
+		'modernizr': '../library/modernizr/modernizr.input-types',
+
+		// vendor paths
+		//
+		ace: '../vendor/ace',
+		bootstrap: '../vendor/bootstrap/js',
+		select2: '../vendor/select2/js/select2',
+		fancybox: '../vendor/fancybox/jquery.fancybox',
 	},
 
 	shim: {
@@ -139,7 +140,7 @@ require.config({
 		},
 
 		select2: ['jquery', 'bootstrap.select'],
-		
+
 		modernizr: {
 			exports: 'Modernizr'
 		},
@@ -271,7 +272,7 @@ require([
 
 	// set global for future reference
 	//
-	var application = new Application();
+	application = new Application();
 
 	// wait for document ready
 	//

@@ -18,36 +18,40 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
 	'bootstrap/collapse',
-	'modernizr',
 	'text!templates/packages/filters/package-filter.tpl',
-	'utilities/browser/query-strings',
+	'utilities/web/query-strings',
+	'views/base-view',
 	'views/packages/selectors/package-filter-selector-view'
-], function($, _, Backbone, Marionette, Collapse, Modernizr, Template, QueryStrings, PackageFilterSelectorView) {
-	return Backbone.Marionette.LayoutView.extend({
+], function($, _, Collapse, Template, QueryStrings, BaseView, PackageFilterSelectorView) {
+	return BaseView.extend({
 
 		//
 		// attributes
 		//
 
+		template: _.template(Template),
+
 		regions: {
-			packageFilterSelector: '.name-selector',
-			packageVersionFilterSelector: '.version-filter-selector'
+			selector: '.name-selector',
+			version_selector: '.version-filter-selector'
 		},
 
 		events: {
+			'click #include-public input': 'onClickIncludePublic',
 			'click #reset': 'onClickReset'
 		},
 
 		maxTagLength: 40,
 
 		//
-		// methods
+		// constructor
 		//
 
 		initialize: function() {
+
+			// set attributes
+			//
 			if (this.options.initialSelectedPackage) {
 				this.selected = this.options.initialSelectedPackage;
 			}
@@ -61,7 +65,7 @@ define([
 		//
 
 		setProject: function(project, options) {
-			this.packageFilterSelector.currentView.setProject(project, options);
+			this.getChildView('selector').setProject(project, options);
 		},
 
 		reset: function(options) {
@@ -73,7 +77,7 @@ define([
 
 			// reset selector
 			//
-			this.packageFilterSelector.currentView.reset({
+			this.getChildView('selector').reset({
 				silent: true
 			});
 
@@ -81,7 +85,7 @@ define([
 		},
 
 		update: function(options) {
-			this.packageFilterSelector.currentView.update({
+			this.getChildView('selector').update({
 				silent: true
 			});
 			this.onChange(options);
@@ -92,7 +96,7 @@ define([
 		//
 
 		hasSelected: function() {
-			return this.packageFilterSelector.currentView.hasSelected();
+			return this.selected != undefined;
 		},
 
 		getSelected: function() {
@@ -104,7 +108,7 @@ define([
 		},
 
 		getDescription: function() {
-			return this.packageFilterSelector.currentView.getDescription();
+			return this.getChildView('selector').getDescription();
 		},
 
 		tagify: function(text) {
@@ -190,37 +194,49 @@ define([
 		// rendering methods
 		//
 
-		template: function(data) {
-			return _.template(Template, data);
-		},
-
 		onRender: function() {
-			var self = this;
 
-			// show subviews
+			// set show public checkbox
 			//
-			this.packageFilterSelector.show(
-				new PackageFilterSelectorView([], {
-					project: this.model,
-					projects: this.options.projects,
-					initialValue: this.options.initialSelectedPackage,
-					initialVersion: this.options.initialSelectedPackageVersion,
-					versionFilterSelector: this.packageVersionFilterSelector,
-					versionFilterLabel: this.$el.find('.version label'),
-					versionDefaultOptions: this.options.versionDefaultOptions,
-					versionSelectedOptions: this.options.versionSelectedOptions,
+			if (this.options.initialSelectedPackage && this.options.initialSelectedPackage.isPublic()) {
+				this.$el.find('#include-public input').prop('checked', true);
+			}
 
-					// callbacks
-					//
-					onChange: function() {
-						self.onChange();
-					}
-				})
-			);
+			// show child views
+			//
+			this.showPackageSelector();
 
 			// update reset button
 			//
 			this.updateReset();
+		},
+
+		showPackageSelector: function() {
+			var self = this;
+
+			if (this.getRegion('selector').currentView) {
+				this.getRegion('selector').currentView.destroy();
+			}
+
+			// show subviews
+			//
+			this.showChildView('selector', new PackageFilterSelectorView({
+				project: this.model,
+				projects: this.options.projects,
+				initialValue: this.options.initialSelectedPackage,
+				initialVersion: this.options.initialSelectedPackageVersion,
+				versionFilterSelector: this.getRegion('version_selector'),
+				versionFilterLabel: this.$el.find('.version label'),
+				versionDefaultOptions: this.options.versionDefaultOptions,
+				versionSelectedOptions: this.options.versionSelectedOptions,
+				showPublicPackages: this.$el.find('#include-public input').is(':checked'),
+
+				// callbacks
+				//
+				onChange: function() {
+					self.onChange();
+				}
+			}));
 		},
 
 		//
@@ -247,16 +263,27 @@ define([
 		// event handling methods
 		//
 
+		onClickIncludePublic: function() {
+
+			// update package selector
+			//
+			this.showPackageSelector();
+
+			// update
+			//
+			this.reset();
+		},
+
 		onChange: function(options) {
 
 			// update package
 			//
-			this.selected = this.packageFilterSelector.currentView.getSelected();
+			this.selected = this.getChildView('selector').getSelected();
 
 			// update package version
 			//
-			this.selectedVersion = this.packageVersionFilterSelector.currentView?
-				this.packageVersionFilterSelector.currentView.getSelected() : undefined;
+			this.selectedVersion = this.getChildView('version_selector')?
+				this.getChildView('version_selector').getSelected() : undefined;
 
 			// update reset button
 			//

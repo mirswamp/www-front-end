@@ -19,17 +19,16 @@ define([
 	'jquery',
 	'underscore',
 	'config',
-	'registry',
+	'defaults',
 	'models/utilities/timestamped',
 	'models/packages/package-version',
 	'collections/packages/package-versions',
 	'collections/projects/projects',
 	'collections/platforms/platforms',
 	'collections/platforms/platform-versions',
-	'views/dialogs/error-view',
 	'utilities/scripting/file-utils'
-], function($, _, Config, Registry, Timestamped, PackageVersion, PackageVersions, Projects, Platforms, PlatformVersions, ErrorView) {
-	var Class = Timestamped.extend({
+], function($, _, Config, Defaults, Timestamped, PackageVersion, PackageVersions, Projects, Platforms, PlatformVersions) {
+	return Timestamped.extend({
 
 		//
 		// attributes
@@ -91,15 +90,15 @@ define([
 		},
 
 		getPackageType: function() {
-			return Class.toPackageType(this.get('package_type_id'));
+			return this.constructor.toPackageType(this.get('package_type_id'));
 		},
 
 		getLanguageType: function() {
-			return Class.toLanguageType(this.getPackageType());
+			return this.constructor.toLanguageType(this.getPackageType());
 		},
 
 		getPackageTypeName: function() {
-			return Class.packageTypeToName(Class.toPackageType(this.get('package_type_id')));
+			return this.constructor.packageTypeToName(this.constructor.toPackageType(this.get('package_type_id')));
 		},
 
 		hasLanguageVersion: function() {
@@ -327,7 +326,7 @@ define([
 
 			// fetch package
 			//
-			var package = new Class({
+			var package = new this.prototype.constructor({
 				package_uuid: packageUuid
 			});
 
@@ -341,161 +340,41 @@ define([
 
 				error: function() {
 
-					// show error dialog
+					// show error message
 					//
-					Registry.application.modal.show(
-						new ErrorView({
-							message: "Could not fetch package."
-						})
-					);
+					application.error({
+						message: "Could not fetch package."
+					});
 				}
 			});
 		},
 
 		toPackageType: function(packageTypeId) {
-			switch (packageTypeId) {
-				case 1:
-					return 'c-source';
-				case 2:
-					return 'java7-source';
-				case 3:
-					return 'java7-bytecode';
-				case 4:
-					return 'python2';
-				case 5:
-					return 'python3';
-				case 6:
-					return 'android-source';
-				case 7:
-					return 'ruby';
-				case 8:
-					return 'sinatra';
-				case 9:
-					return 'rails';
-				case 10:
-					return 'padrino';
-				case 11:
-					return 'android-bytecode';
-				case 12:
-					return 'java8-source';
-				case 13:
-					return 'java8-bytecode';
-				case 14:
-					return 'web-scripting';
-				case 15:
-					return '.net';
+			if (packageTypeId) {
+				var keys = Object.keys(Defaults['package-types']);
+				return keys[packageTypeId - 1];
 			}
 		},
 
 		toPackageTypeId: function(packageType) {
-			switch (packageType) {
-				case 'c-source':
-					return 1;
-				case 'java7-source':
-					return 2;
-				case 'java7-bytecode':
-					return 3;
-				case 'python2':
-					return 4;
-				case 'python3':
-					return 5;
-				case 'android-source':
-					return 6;
-				case 'ruby':
-					return 7;
-				case 'sinatra':
-					return 8;
-				case 'rails':
-					return 9;
-				case 'padrino':
-					return 10;
-				case 'android-bytecode':
-					return 11;
-				case 'java8-source':
-					return 12;
-				case 'java8-bytecode':
-					return 13;
-				case 'web-scripting':
-					return 14;
-				case '.net':
-					return 15;
+			if (packageType) {
+				var keys = Object.keys(Defaults['package-types']);
+				return keys.indexOf(packageType) + 1;
 			}
 		},
 
 		toLanguageType: function(packageType) {
-			switch (packageType) {
-				case 'c-source':
-					return 'C';
-				case 'java7-source':
-					return 'Java';
-				case 'java7-bytecode':
-					return 'Java';
-				case 'python2':
-					return 'Python';
-				case 'python3':
-					return 'Python';
-				case 'android-source':
-					return 'Java';
-				case 'ruby':
-					return 'Ruby';
-				case 'sinatra':
-					return 'Ruby';
-				case 'rails':
-					return 'Ruby';
-				case 'padrino':
-					return 'Ruby';
-				case 'android-bytecode':
-					return 'Java';
-				case 'java8-source':
-					return 'Java';
-				case 'java8-bytecode':
-					return 'Java';
-				case 'web-scripting':
-					return ['HTML', 'Javascript', 'PHP', 'CSS', 'XML'];
-				case '.net':
-					return 'C#, VB';
+			if (packageType) {
+				packageType = this.aliasToPackageType(packageType);
+				return Defaults['package-types'][packageType].language;
 			}
 		},
 
 		packageTypeToName: function(packageType) {
-			switch (packageType) {
-				case 'c-source':
-					return 'C/C++';
-				case 'java-source':
-					return 'Java source';
-				case 'java7-source':
-					return 'Java 7 source';
-				case 'java-bytecode':
-					return 'Java bytecode';
-				case 'java7-bytecode':
-					return 'Java 7 bytecode';
-				case 'python':
-					return 'Python';
-				case 'python2':
-					return 'Python2';
-				case 'python3':
-					return 'Python3';
-				case 'ruby':
-					return 'Ruby';
-				case 'sinatra':
-					return 'Sinatra';
-				case 'rails':
-					return 'Rails';
-				case 'padrino':
-					return 'Padrino';
-				case 'android-source':
-					return 'Android source';
-				case 'android-bytecode':
-					return 'Android bytecode';
-				case 'java8-source':
-					return 'Java 8 source';
-				case 'java8-bytecode':
-					return 'Java 8 bytecode';
-				case 'web-scripting':
-					return 'Web scripting';
-				case '.net':
-					return '.NET';
-			}		
+			if (packageType) {
+				packageType = this.aliasToPackageType(packageType);
+				return Defaults['package-types'][packageType].name;
+			}
 		},
 
 		packageTypesToString: function(packageTypes) {
@@ -508,8 +387,24 @@ define([
 						string += ", ";
 					}
 				} 
-				string += Class.packageTypeToName(packageTypes[i]);
+				string += this.packageTypeToName(packageTypes[i]);
 			}
+			return string;
+		},
+
+		//
+		// package type alias handling methods
+		//
+
+		aliasToPackageType: function(string) {
+			if (string == 'python') {
+				return 'python2';
+			} else if (string == 'java-source') {
+				return 'java8-source';
+			} else if (string == 'java-bytecode') {
+				return 'java8-bytecode';
+			}
+
 			return string;
 		},
 
@@ -540,6 +435,4 @@ define([
 			}
 		}
 	});
-
-	return Class;
 });

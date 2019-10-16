@@ -19,21 +19,23 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
 	'text!templates/users/permissions/select-list/select-permissions-list.tpl',
-	'registry',
-	'collections/permissions/user-permissions',
-	'views/widgets/lists/sortable-table-list-view',
+	'views/base-view',
+	'views/collections/tables/sortable-table-list-view',
 	'views/users/permissions/select-list/select-permissions-list-item-view'
-], function($, _, Backbone, Marionette, Template, Registry, UserPermissions, SortableTableListView, SelectPermissionsListItemView) {
+], function($, _, Template, BaseView, SortableTableListView, SelectPermissionsListItemView) {
 	return SortableTableListView.extend({
 
 		//
 		// attributes
 		//
 
+		template: _.template(Template),
 		childView: SelectPermissionsListItemView,
+
+		emptyView: BaseView.extend({
+			template: _.template("No permissions.")
+		}),
 
 		sorting: {
 
@@ -57,11 +59,11 @@ define([
 		// rendering methods
 		//
 
-		template: function(data) {
-			return _.template(Template, _.extend(data, {
-				admin: Registry.application.session.user.get('admin_flag'),
+		templateContext: function() {
+			return {
+				admin: application.session.user.get('admin_flag'),
 				collection: this.collection
-			}));
+			};
 		},
 
 		childViewOptions: function() { 

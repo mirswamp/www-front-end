@@ -18,11 +18,10 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
 	'config',
 	'models/assessments/assessment-run',
 	'collections/base-collection'
-], function($, _, Backbone, Config, AssessmentRun, BaseCollection) {
+], function($, _, Config, AssessmentRun, BaseCollection) {
 	return BaseCollection.extend({
 
 		//

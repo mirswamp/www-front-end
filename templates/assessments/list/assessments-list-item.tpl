@@ -7,17 +7,17 @@
 <td class="package first">
 	<div class="name">
 		<% if (packageUrl) { %>
-		<a href="<%- packageUrl %>"><%= stringToHTML(package_name) %></a>
+		<a href="<%- packageUrl %>"><%= textToHtml(package_name) %></a>
 		<% } else { %>
-		<%= stringToHTML(package_name) %>
+		<%= textToHtml(package_name) %>
 		<% } %>
 	</div>
 
 	<div class="version">
 		<% if (packageVersionUrl) { %>
-		<a href="<%- packageVersionUrl %>"><%= stringToHTML(package_version_string) %></a>
+		<a href="<%- packageVersionUrl %>"><%= textToHtml(package_version_string) %></a>
 		<% } else { %>
-		<%= stringToHTML(package_version_string) %>
+		<%= textToHtml(package_version_string) %>
 		<% } %>
 	</div>
 </td>
@@ -25,17 +25,17 @@
 <td class="tool">
 	<div class="name">
 		<% if (toolUrl) { %>
-		<a href="<%- toolUrl %>"><%= stringToHTML(tool_name) %></a>
+		<a href="<%- toolUrl %>"><%= textToHtml(tool_name) %></a>
 		<% } else { %>
-		<%= stringToHTML(tool_name) %>
+		<%= textToHtml(tool_name) %>
 		<% } %>
 	</div>
 
 	<div class="version">
 		<% if (toolVersionUrl) { %>
-		<a href="<%- toolVersionUrl %>"><%= stringToHTML(tool_version_string) %></a>
+		<a href="<%- toolVersionUrl %>"><%= textToHtml(tool_version_string) %></a>
 		<% } else { %>
-		<%= stringToHTML(tool_version_string) %>
+		<%= textToHtml(tool_version_string) %>
 		<% } %>
 	</div>
 </td>
@@ -43,17 +43,17 @@
 <td class="platform">
 	<div class="name">
 		<% if (platformUrl) { %>
-		<a href="<%- platformUrl %>"><%= stringToHTML(platform_name) %></a>
+		<a href="<%- platformUrl %>"><%= textToHtml(platform_name) %></a>
 		<% } else { %>
-		<%= stringToHTML(platform_name) %>
+		<%= textToHtml(platform_name) %>
 		<% } %>
 	</div>
 
 	<div class="version">
 		<% if (platformVersionUrl) { %>
-		<a href="<%- platformVersionUrl %>"><%= stringToHTML(platform_version_string) %></a>
+		<a href="<%- platformVersionUrl %>"><%= textToHtml(platform_version_string) %></a>
 		<% } else { %>
-		<%= stringToHTML(platform_version_string) %>
+		<%= textToHtml(platform_version_string) %>
 		<% } %>
 	</div>
 </td>

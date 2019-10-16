@@ -19,19 +19,25 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
 	'text!templates/users/prompts/linked-account-error-prompt.tpl',
-	'registry',
-	'config'
-], function($, _, Backbone, Marionette, Template, Registry, Config) {
-	return Backbone.Marionette.ItemView.extend({
+	'views/base-view'
+], function($, _, Template, BaseView) {
+	return BaseView.extend({
 
-		template: function(){
-			return _.template(Template, {
+		//
+		// attributes
+		//
+
+		template: _.template(Template),
+
+		//
+		// rendering methods
+		//
+
+		templateContext: function() {
+			return {
 				type: this.options.type
-			});
+			};
 		}
-
 	});
 });

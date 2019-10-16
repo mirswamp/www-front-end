@@ -18,15 +18,16 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
 	'text!templates/packages/info/versions/info/build/build-script/build-script.tpl',
-], function($, _, Backbone, Marionette, Template) {
-	return Backbone.Marionette.LayoutView.extend({
+	'views/base-view'
+], function($, _, Template, BaseView) {
+	return BaseView.extend({
 
 		//
 		// attributes
 		//
+
+		template: _.template(Template),
 
 		unarchiveCommands: {
 			'tar': 						'tar xf',
@@ -475,10 +476,10 @@ define([
 		// rendering methods
 		//
 
-		template: function(data) {
-			return _.template(Template, _.extend(data, {
+		templateContext: function() {
+			return {
 				buildScript: this.getBuildScript(this.model)
-			}));
+			};
 		}
 	});
 });

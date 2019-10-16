@@ -18,19 +18,23 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
 	'text!templates/admin/status/item-list/item-list.tpl',
-	'views/widgets/lists/sortable-table-list-view',
+	'views/base-view',
+	'views/collections/tables/sortable-table-list-view',
 	'views/admin/status/item-list/item-list-item-view'
-], function($, _, Backbone, Marionette, Template, SortableTableListView, ItemListItemView) {
+], function($, _, Template, BaseView, SortableTableListView, ItemListItemView) {
 	return SortableTableListView.extend({
 
 		//
 		// attributes
 		//
 
+		template: _.template(Template),
 		childView: ItemListItemView,
+
+		emptyView: BaseView.extend({
+			template: _.template("No items.")
+		}),
 
 		sorting: {
 
@@ -60,23 +64,28 @@ define([
 		// rendering methods
 		//
 
-		template: function(data) {
-			if (this.collection.length > 0) {
-				return _.template(Template, _.extend(data, {
-					fieldnames: this.options.fieldnames,
-					showNumbering: this.options.showNumbering
-				}));
-			} else {
-				return _.template("No items.")
-			}
-		},
-
-		childViewOptions: function(model, index) {
+		templateContext: function() {
 			return {
-				index: index,
 				fieldnames: this.options.fieldnames,
 				showNumbering: this.options.showNumbering
+			};
+		},
+
+		childViewOptions: function(model) {
+			
+			// check if empty view
+			//
+			if (!model) {
+				return {};
 			}
+
+			// return view options
+			//
+			return {
+				index: this.collection.indexOf(model),
+				fieldnames: this.options.fieldnames,
+				showNumbering: this.options.showNumbering
+			};
 		}
 	});
 });

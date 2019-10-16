@@ -18,22 +18,21 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
 	'text!templates/platforms/public-platforms.tpl',
-	'registry',
 	'collections/platforms/platforms',
-	'views/dialogs/error-view',
+	'views/base-view',
 	'views/platforms/list/platforms-list-view'
-], function($, _, Backbone, Marionette, Template, Registry, Platforms, ErrorView, PlatformsListView) {
-	return Backbone.Marionette.LayoutView.extend({
+], function($, _, Template, Platforms, BaseView, PlatformsListView) {
+	return BaseView.extend({
 
 		//
 		// attributes
 		//
 
+		template: _.template(Template),
+
 		regions: {
-			platformsList: '#platforms-list'
+			list: '#platforms-list'
 		},
 
 		events: {
@@ -41,7 +40,7 @@ define([
 		},
 
 		//
-		// methods
+		// constructor
 		//
 
 		initialize: function() {
@@ -53,21 +52,21 @@ define([
 		//
 
 
-		template: function(data) {
-			return _.template(Template, _.extend(data, {
-				loggedIn: Registry.application.session.user != null,
-				showNumbering: Registry.application.options.showNumbering
-			}));
+		templateContext: function() {
+			return {
+				loggedIn: application.session.user != null,
+				showNumbering: application.options.showNumbering
+			};
 		},
 
 		onRender: function() {
 
 			// show subviews
 			//
-			this.showList();
+			this.fetchAndShowList();
 		},
 
-		showList: function() {
+		fetchAndShowList: function() {
 			var self = this;
 			this.collection.fetchPublic({
 
@@ -77,26 +76,29 @@ define([
 
 					// show list of platforms
 					//
-					self.platformsList.show(
-						new PlatformsListView({
-							collection: self.collection,
-							showNumbering: Registry.application.options.showNumbering,
-							showDelete: false
-						})
-					);
+					self.showList();
 				},
 
 				error: function() {
 
-					// show error dialog
+					// show error message
 					//
-					Registry.application.modal.show(
-						new ErrorView({
-							message: "Could not get list of platforms."
-						})
-					);
+					application.error({
+						message: "Could not get list of platforms."
+					});
 				}
-			})
+			});
+		},
+
+		showList: function() {
+
+			// show list of platforms
+			//
+			this.showChildView('list', new PlatformsListView({
+				collection: this.collection,
+				showNumbering: application.options.showNumbering,
+				showDelete: false
+			}));	
 		},
 
 		//
@@ -104,7 +106,7 @@ define([
 		//
 
 		onClickShowNumbering: function(event) {
-			Registry.application.setShowNumbering($(event.target).is(':checked'));
+			application.setShowNumbering($(event.target).is(':checked'));
 			this.showList();
 		}
 	});

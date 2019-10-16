@@ -19,24 +19,19 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
 	'bootstrap/dropdown',
 	'text!templates/tools/review/review-tools-list/review-tools-list-item.tpl',
-	'registry',
 	'utilities/time/date-format',
-	'views/dialogs/error-view',
-	'views/dialogs/notify-view',
-	'views/dialogs/confirm-view',
+	'views/tools/list/tools-list-item-view',
 	'utilities/time/date-utils'
-], function($, _, Backbone, Marionette, Dropdown, Template, Registry, DateFormat, ErrorView, NotifyView, ConfirmView) {
-	return Backbone.Marionette.ItemView.extend({
+], function($, _, Dropdown, Template, DateFormat, ToolsListItemView) {
+	return ToolsListItemView.extend({
 
 		//
 		// attributes
 		//
 
-		tagName: 'tr',
+		template: _.template(Template),
 		
 		events: {
 			'click a.approved': 'onClickApproved',
@@ -51,16 +46,16 @@ define([
 		// rendering methods
 		//
 
-		template: function(data) {
-			return _.template(Template, _.extend(data, {
+		templateContext: function() {
+			return {
 				model: this.model,
 				collection: this.collection,
 				index: this.options.index + 1,
-				url: Registry.application.getURL() + '#tools/' + this.model.get('tool_uuid'),
+				url: application.getURL() + '#tools/' + this.model.get('tool_uuid'),
 				showDeactivatedTools: this.options.showDeactivatedTools,
 				showNumbering: this.options.showNumbering,
 				showDelete: this.options.showDelete
-			}));
+			};
 		},
 
 		//
@@ -95,34 +90,30 @@ define([
 		onClickDelete: function() {
 			var self = this;
 
-			// show confirm dialog
+			// show confirmation
 			//
-			Registry.application.modal.show(
-				new ConfirmView({
-					title: "Delete Tool",
-					message: "Are you sure that you want to delete tool " + this.model.get('name') + "?",
+			application.confirm({
+				title: "Delete Tool",
+				message: "Are you sure that you want to delete tool " + this.model.get('name') + "?",
 
-					// callbacks
-					//
-					accept: function() {
-						self.model.destroy({
+				// callbacks
+				//
+				accept: function() {
+					self.model.destroy({
 
-							// callbacks
+						// callbacks
+						//
+						error: function() {
+
+							// show error message
 							//
-							error: function() {
-
-								// show error dialog
-								//
-								Registry.application.modal.show(
-									new ErrorView({
-										message: "Could not delete this tool."
-									})
-								);
-							}
-						});
-					}
-				})
-			);
+							application.error({
+								message: "Could not delete this tool."
+							});
+						}
+					});
+				}
+			});
 		}
 	});
 });

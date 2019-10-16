@@ -19,22 +19,24 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
 	'bootstrap/popover',
 	'text!templates/users/review/review-accounts-list/review-accounts-list.tpl',
-	'registry',
-	'views/dialogs/confirm-view',
-	'views/widgets/lists/sortable-table-list-view',
+	'views/base-view',
+	'views/collections/tables/sortable-table-list-view',
 	'views/users/review/review-accounts-list/review-accounts-list-item-view'
-], function($, _, Backbone, Marionette, Popover, Template, Registry, ConfirmView, SortableTableListView, ReviewAccountsListItemView) {
+], function($, _, Popover, Template, BaseView, SortableTableListView, ReviewAccountsListItemView) {
 	return SortableTableListView.extend({
 
 		//
 		// attributes
 		//
 
+		template: _.template(Template),
 		childView: ReviewAccountsListItemView,
+
+		emptyView: BaseView.extend({
+			template: _.template("No accounts.")
+		}),
 
 		events: {
 			'click .force-password-reset .select-all': 'onClickForcePasswordResetSelectAll',
@@ -80,19 +82,19 @@ define([
 			if (this.options.showForcePasswordReset) {
 				headers[column] = {
 					sorter: false
-				}
+				};
 				column++;
 			}
 			if (this.options.showHibernate) {
 				headers[column] = {
 					sorter: false
-				}
+				};
 				column++;
 			}
 			if (this.options.showLinkedAccount) {
 				headers[column++] = {
 					sorter: false
-				}
+				};
 				column++;
 			}
 
@@ -124,20 +126,29 @@ define([
 		// rendering methods
 		//
 
-		template: function(data) {
-			return _.template(Template, _.extend(data, {
+		templateContext: function() {
+			return {
 				collection: this.collection,
-				config: Registry.application.config,
+				config: application.config,
 				showForcePasswordReset: this.options.showForcePasswordReset,
 				showHibernate: this.options.showHibernate,
 				showLinkedAccount: this.options.showLinkedAccount,
 				showNumbering: this.options.showNumbering
-			}));
+			};
 		},
 
-		childViewOptions: function(model, index) {
+		childViewOptions: function(model) {
+
+			// check if empty view
+			//
+			if (!model) {
+				return {};
+			}
+
+			// return view options
+			//
 			return {
-				index: index,
+				index: this.collection.indexOf(model),
 				showNumbering: this.options.showNumbering,
 				showForcePasswordReset: this.options.showForcePasswordReset,
 				showHibernate: this.options.showHibernate,
@@ -178,47 +189,49 @@ define([
 			var self = this;
 
 			if ($(event.target).prop('checked')) {
-				Registry.application.modal.show(
-					new ConfirmView({
-						title: 'Force Password Reset',
-						message: 'This will force the selected users to reset their password.  Note that this only affects the users shown in the list so you may have to remove the limit filter to select all users.  Changes will not be applied until you save.',
-						
-						// callbacks
+
+				// show confirmation
+				//
+				application.confirm({
+					title: 'Force Password Reset',
+					message: 'This will force the selected users to reset their password.  Note that this only affects the users shown in the list so you may have to remove the limit filter to select all users.  Changes will not be applied until you save.',
+					
+					// callbacks
+					//
+					accept: function() {
+
+						// select all
 						//
-						accept: function() {
+						self.$el.find('.force-password-reset input').prop('checked', true);
+						self.collection.setForcePasswordReset(true);
+					},
 
-							// select all
-							//
-							self.$el.find('.force-password-reset input').prop('checked', true);
-							self.collection.setForcePasswordReset(true);
-						},
-
-						reject: function() {
-							self.$el.find('.force-password-reset .select-all').prop('checked', false);
-						}
-					})
-				);
+					reject: function() {
+						self.$el.find('.force-password-reset .select-all').prop('checked', false);
+					}
+				});
 			} else {
-				Registry.application.modal.show(
-					new ConfirmView({
-						title: 'Unforce Password Reset',
-						message: 'This will remove the requirement for the selected users to reset their password.  Note that this only affects the users shown in the list so you may have to remove the limit filter to select users.  Changes will not be applied until you save.',
-						
-						// callbacks
+
+				// show confirmation
+				//
+				application.confirm({
+					title: 'Unforce Password Reset',
+					message: 'This will remove the requirement for the selected users to reset their password.  Note that this only affects the users shown in the list so you may have to remove the limit filter to select users.  Changes will not be applied until you save.',
+					
+					// callbacks
+					//
+					accept: function() {
+
+						// deselect all
 						//
-						accept: function() {
+						self.$el.find('.force-password-reset input').prop('checked', false);
+						self.collection.setForcePasswordReset(false);
+					},
 
-							// deselect all
-							//
-							self.$el.find('.force-password-reset input').prop('checked', false);
-							self.collection.setForcePasswordReset(false);
-						},
-
-						reject: function() {
-							self.$el.find('.force-password-reset .select-all').prop('checked', true);
-						}
-					})
-				);
+					reject: function() {
+						self.$el.find('.force-password-reset .select-all').prop('checked', true);
+					}
+				});
 			}
 
 			this.options.onChange();
@@ -228,47 +241,49 @@ define([
 			var self = this;
 
 			if ($(event.target).prop('checked')) {
-				Registry.application.modal.show(
-					new ConfirmView({
-						title: 'Hibernate Users',
-						message: 'This will mark the selected users as hibernating / inactive.  Note that this only affects the users shown in the list so you may have to remove the limit filter to select all users.  Changes will not be applied until you save.',
-						
-						// callbacks
+
+				// show confirmation
+				//
+				application.confirm({
+					title: 'Hibernate Users',
+					message: 'This will mark the selected users as hibernating / inactive.  Note that this only affects the users shown in the list so you may have to remove the limit filter to select all users.  Changes will not be applied until you save.',
+					
+					// callbacks
+					//
+					accept: function() {
+
+						// select all
 						//
-						accept: function() {
+						self.$el.find('.hibernate input').prop('checked', true);
+						self.collection.setHibernating(true);
+					},
 
-							// select all
-							//
-							self.$el.find('.hibernate input').prop('checked', true);
-							self.collection.setHibernating(true);
-						},
-
-						reject: function() {
-							self.$el.find('.hibernate .select-all').prop('checked', false);
-						}
-					})
-				);
+					reject: function() {
+						self.$el.find('.hibernate .select-all').prop('checked', false);
+					}
+				});
 			} else {
-				Registry.application.modal.show(
-					new ConfirmView({
-						title: 'Awake Users from Hibernation',
-						message: 'This will mark the selected users as NOT hibernating / inactive.  Note that this only affects the users shown in the list so you may have to remove the limit filter to select users.  Changes will not be applied until you save.',
-						
-						// callbacks
+
+				// show confirmation
+				//
+				application.confirm({
+					title: 'Awake Users from Hibernation',
+					message: 'This will mark the selected users as NOT hibernating / inactive.  Note that this only affects the users shown in the list so you may have to remove the limit filter to select users.  Changes will not be applied until you save.',
+					
+					// callbacks
+					//
+					accept: function() {
+
+						// deselect all
 						//
-						accept: function() {
+						self.$el.find('.hibernate input').prop('checked', false);
+						self.collection.setHibernating(false);
+					},
 
-							// deselect all
-							//
-							self.$el.find('.hibernate input').prop('checked', false);
-							self.collection.setHibernating(false);
-						},
-
-						reject: function() {
-							self.$el.find('.hibernate .select-all').prop('checked', true);
-						}
-					})
-				);
+					reject: function() {
+						self.$el.find('.hibernate .select-all').prop('checked', true);
+					}
+				});
 			}
 
 			this.options.onChange();

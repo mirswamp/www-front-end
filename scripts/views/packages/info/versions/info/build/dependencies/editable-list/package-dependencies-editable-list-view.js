@@ -18,23 +18,23 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
 	'text!templates/packages/info/versions/info/build/dependencies/editable-list/package-dependencies-editable-list.tpl',
-	'views/widgets/lists/sortable-table-list-view',
+	'views/base-view',
+	'views/collections/tables/sortable-table-list-view',
 	'views/packages/info/versions/info/build/dependencies/editable-list/package-dependencies-editable-list-item-view'
-], function($, _, Backbone, Marionette, Template, SortableTableListView, PackageDependenciesEditableListItemView) {
+], function($, _, Template, BaseView, SortableTableListView, PackageDependenciesEditableListItemView) {
 	return SortableTableListView.extend({
 
 		//
 		// attributes
 		//
 
-		events: {
-			'click #add-new-dependency': 'onClickAddNewDependency'
-		},
-
+		template: _.template(Template),
 		childView: PackageDependenciesEditableListItemView,
+
+		emptyView: BaseView.extend({
+			template: _.template("No package dependencies.")
+		}),
 
 		sorting: {
 
@@ -55,29 +55,33 @@ define([
 		// rendering methods
 		//
 
-		template: function(data) {
-			return _.template(Template, _.extend(data, {
+		templateContext: function() {
+			return {
 				collection: this.collection,
 				showNumbering: this.options.showNumbering
-			}));
+			};
 		},
 
-		childViewOptions: function(model, index) {
+		childViewOptions: function(model) {
 
-			// find dependency's platform
+			// check if empty view
 			//
-			var platformVersion = this.options.platformVersions.where({
-				'platform_version_uuid': model.get('platform_version_uuid')
-			})[0];
+			if (!model) {
+				return {};
+			}
 
+			// return view options
+			//
 			return {
 				model: model,
-				index: index,
-				platformVersion: platformVersion,
+				index: this.collection.indexOf(model),
+				platformVersion: this.options.platformVersions.where({
+					'platform_version_uuid': model? model.get('platform_version_uuid') : null
+				})[0],
 				showNumbering: this.options.showNumbering,
 				showDelete: this.options.showDelete,
 				parent: this
-			}
+			};
 		},
 
 		//
@@ -91,35 +95,6 @@ define([
 			if (this.options.onChange) {
 				this.options.onChange();
 			}
-		},
-
-		onClickAddNewDependency: function() {
-			var self = this;
-			require([
-				'registry',
-				'views/packages/info/versions/info/build/dependencies/editable-list/dialogs/add-new-package-dependency-view'
-			], function (Registry, AddNewPackageDependencyView) {
-
-				// show add new package dependency dialog
-				//
-				Registry.application.modal.show(
-					new AddNewPackageDependencyView({
-						packageVersion: self.model,
-						collection: self.collection,
-						platformVersions: self.options.platformVersions,
-
-						// callbacks
-						//
-						onAdd: function() {
-
-							// update
-							//
-							self.render();
-							self.onChange();
-						}
-					})
-				);
-			});
 		},
 
 		onSortEnd: function() {

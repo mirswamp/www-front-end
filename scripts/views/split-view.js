@@ -18,17 +18,16 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
-	'split/split'
-], function($, _, Backbone, Marionette, Split) {
+	'split/split',
+	'views/base-view'
+], function($, _, Split, BaseView) {
 	'use strict';
 
 	// pre-compile template
 	//
 	var _template = _.template('<div class="split sidebar"></div><div class="split mainbar"></div>');
 
-	return Backbone.Marionette.LayoutView.extend({
+	return BaseView.extend({
 
 		//
 		// attributes
@@ -198,10 +197,10 @@ define([
 			// show child views
 			//
 			if (this.sidebarView) {
-				this.sidebar.show(this.sidebarView());
+				this.showChildView('sidebar', this.sidebarView());
 			}
 			if (this.contentView) {
-				this.mainbar.show(this.contentView());
+				this.showChildView('content', this.contentView());
 			}
 		},
 

@@ -18,19 +18,19 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
 	'config',
 	'text!templates/info/about.tpl',
-	'registry',
 	'version',
-	'utilities/browser/address-bar'
-], function($, _, Backbone, Marionette, Config, Template, Registry, Version, AddressBar) {
-	return Backbone.Marionette.LayoutView.extend({
+	'views/base-view',
+	'utilities/web/address-bar'
+], function($, _, Config, Template, Version, BaseView, AddressBar) {
+	return BaseView.extend({
 
 		//
 		// attributes
 		//
+
+		template: _.template(Template),
 
 		events: {
 			'click .subscribe': 'onClickSubscribe'
@@ -54,11 +54,11 @@ define([
 		// rendering methods
 		//
 
-		template: function(data) {
-			return _.template(Template, _.extend(data, {
+		templateContext: function() {
+			return {
 				version_string: Version.release + ' build ' + Version.build,
 				api_url: this.getApiUrl()
-			}));
+			};
 		},
 
 		//

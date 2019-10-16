@@ -10,6 +10,8 @@
 		</div>
 		<div id="filters-info" class="nested panel-collapse collapse in">
 			<div class="filters panel-group">
+				<div id="username-filter" class="accordion-body <% if (typeof expanded !== 'undefined' && expanded['username-filter']) { %>in <% } %>collapse" />
+				<div id="user-name-filter" class="accordion-body <% if (typeof expanded !== 'undefined' && expanded['user-name-filter']) { %>in <% } %>collapse" />
 				<div id="user-type-filter" class="accordion-body <% if (typeof expanded !== 'undefined' && expanded['user-type-filter']) { %>in <% } %>collapse" />
 				<div id="date-filter" class="accordion-body <% if (typeof expanded !== 'undefined' && expanded['date-filter']) { %>in <% } %>collapse" />
 				<div id="last-login-date-filter" class="accordion-body <% if (typeof expanded !== 'undefined' && expanded['login-date-filter']) { %>in <% } %>collapse" />

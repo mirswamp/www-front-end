@@ -18,35 +18,30 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
 	'models/authentication/user-linked-account',
 	'collections/authentication/user-linked-accounts',
 	'text!templates/users/linked-accounts/my-linked-accounts.tpl',
-	'registry',
+	'views/base-view',
 	'views/users/linked-accounts/list/linked-accounts-list-view',
-	'views/dialogs/error-view'
-], function($, _, Backbone, Marionette, UserLinkedAccount, UserLinkedAccounts, Template, Registry, LinkedAccountsListView, ErrorView) {
-	return Backbone.Marionette.LayoutView.extend({
+], function($, _, UserLinkedAccount, UserLinkedAccounts, Template, BaseView, LinkedAccountsListView) {
+	return BaseView.extend({
 
 		//
 		// attributes
 		//
 
-		template: function() {
-			return _.template(Template);
-		},
+		template: _.template(Template),
 
 		regions: {
-			linkedAccountsList: '#linked-accounts-list'
+			list: '#linked-accounts-list'
 		},
 
 		//
-		// methods
+		// constructor
 		//
 
 		initialize: function() {
-			this.model = Registry.application.session.user;
+			this.model = application.session.user;
 			this.collection = new UserLinkedAccounts();
 		},
 
@@ -62,14 +57,12 @@ define([
 		},
 
 		showLinkedAccountsList: function() {
-			this.linkedAccountsList.show(
-				new LinkedAccountsListView({
-					model: this.model,
-					collection: this.collection,
-					showDelete: true,
-					parent: this
-				})
-			);
+			this.showChildView('list', new LinkedAccountsListView({
+				model: this.model,
+				collection: this.collection,
+				showDelete: true,
+				parent: this
+			}));
 		},
 
 		fetchAndShowLinkedAccountsList: function() {
@@ -87,13 +80,11 @@ define([
 
 				error: function() {
 
-					// show error dialog
+					// show error message
 					//
-					Registry.application.modal.show(
-						new ErrorView({
-							message: "Could not get linked accounts for this user."
-						})
-					);
+					application.error({
+						message: "Could not get linked accounts for this user."
+					});
 				}
 			});
 		}

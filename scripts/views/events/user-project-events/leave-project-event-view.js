@@ -18,22 +18,15 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
-	'registry',
 	'text!templates/events/user-project-events/leave-project-event.tpl',
 	'views/events/user-project-events/user-project-event-view'
-], function($, _, Backbone, Marionette, Registry, Template, UserProjectEventView) {
+], function($, _, Template, UserProjectEventView) {
 	return UserProjectEventView.extend({
 
 		//
-		// methods
+		// attributes
 		//
 
-		getInfo: function(data) {
-			return _.template(Template, _.extend(data, {
-				projectUrl: Registry.application.getURL() + '#projects/' + this.model.get('project_uid')
-			}));
-		}
+		template: _.template(Template)
 	});
 });

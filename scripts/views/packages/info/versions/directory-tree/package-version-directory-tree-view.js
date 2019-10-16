@@ -18,24 +18,20 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
 	'text!templates/files/directory-tree/directory-tree.tpl',
-	'registry',
 	'models/files/file',
 	'models/files/directory',
 	'models/packages/package-version',
-	'views/dialogs/error-view',
 	'views/files/directory-tree/directory-tree-view',
 	'views/packages/info/versions/directory-tree/package-version-file-view'
-], function($, _, Backbone, Marionette, Template, Registry, File, Directory, PackageVersion, ErrorView, DirectoryTreeView, PackageVersionFileView) {
-	var Class = DirectoryTreeView.extend({
+], function($, _, Template, File, Directory, PackageVersion, DirectoryTreeView, PackageVersionFileView) {
+	return DirectoryTreeView.extend({
 
 		//
 		// ajax methods
 		//
 
-		fetchContents: function() {
+		fetchContents: function(options) {
 			var self = this;
 
 			// fetch package version directory listing
@@ -49,21 +45,20 @@ define([
 				//
 				success: function(data) {
 
-					// show contents
+					// perform callback
 					//
-					self.model.setContents(data);
-					self.onRender();
+					if (options && options.success) {
+						options.success(data);
+					}
 				},
 
-				error: function() {
+				error: function(data) {
 
-					// show error dialog
+					// perform callback
 					//
-					Registry.application.modal.show(
-						new ErrorView({
-							message: "Could not get a file subtree for this package version."
-						})
-					);	
+					if (options && options.error) {
+						options.error(data);
+					}
 				}
 			});
 		},
@@ -80,7 +75,7 @@ define([
 					selected: this.isFileSelected(item)
 				});
 			} else if (item instanceof Directory) {
-				return new Class(_.extend(this.options, {
+				return new this.constructor(_.extend(this.options, {
 					model: item,
 					parent: this,
 					selectable: this.options.selectable,
@@ -118,15 +113,29 @@ define([
 								name: data
 							});
 
-							self.fetchContents();
+							self.fetchContents({
+
+								// callbacks
+								//
+								success: function(data) {
+									self.model.setContents(data);
+									self.onRender();
+								}
+							});
 						}
 					});
 				} else {
-					this.fetchContents();
+					this.fetchContents({
+
+						// callbacks
+						//
+						success: function(data) {
+							self.model.setContents(data);
+							self.onRender();
+						}
+					});
 				}
 			}
 		}
 	});
-
-	return Class;
 });

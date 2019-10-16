@@ -18,19 +18,22 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
 	'bootstrap.select',
 	'text!templates/widgets/selectors/country-selector.tpl',
-	'registry',
 	'models/utilities/country',
 	'collections/utilities/countries',
-	'views/dialogs/error-view',
 	'views/widgets/selectors/name-selector-view'
-], function($, _, Backbone, Select, Template, Registry, Country, Countries, ErrorView, NameSelectorView) {
+], function($, _, Select, Template, Country, Countries, NameSelectorView) {
 	return NameSelectorView.extend({
 
 		//
-		// methods
+		// attributes
+		//
+
+		template: _.template(Template),
+
+		//
+		// constructor
 		//
 
 		initialize: function() {
@@ -46,7 +49,7 @@ define([
 				if (typeof this.options.initialValue == 'string') {
 					this.options.initialValue = new Country({
 						name: this.options.initialValue
-					})
+					});
 				}
 				this.selected = this.options.initialValue;
 			}
@@ -74,13 +77,11 @@ define([
 
 				error: function() {
 
-					// show error dialog
+					// show error message
 					//
-					Registry.application.modal.show(
-						new ErrorView({
-							message: "Could not fetch list of countries."
-						})
-					);
+					application.error({
+						message: "Could not fetch list of countries."
+					});
 				}
 			});
 		},
@@ -88,10 +89,6 @@ define([
 		//
 		// rendering methods
 		//
-
-		template: function(data) {
-			return _.template(Template, data);
-		},
 
 		onRender: function() {
 			if (this.options.initialValue) {

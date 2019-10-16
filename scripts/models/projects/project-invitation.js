@@ -18,13 +18,11 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
 	'config',
-	'registry',
 	'models/users/user',
 	'models/projects/project',
 	'models/utilities/timestamped'
-], function($, _, Backbone, Config, Registry, User, Project, Timestamped) {
+], function($, _, Config, User, Project, Timestamped) {
 	return Timestamped.extend({
 
 		//

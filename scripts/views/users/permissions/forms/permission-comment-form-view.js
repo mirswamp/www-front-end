@@ -4,8 +4,7 @@
 |                                                                              |
 |******************************************************************************|
 |                                                                              |
-|        This defines a modal dialog box that is used to                       |
-|        prompt the user for a comment to proceed with some action.            |
+|        This defines a form for entering permission comment info.             |
 |                                                                              |
 |        Author(s): Abe Megahed                                                |
 |                                                                              |
@@ -19,25 +18,20 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
-	'bootstrap/tooltip',
-	'bootstrap/popover',
-	'jquery.validate',
-	'registry',
 	'text!templates/users/permissions/forms/permission-comment-form.tpl',
-	'views/widgets/lists/key-value-list/key-value-list-view'
-], function($, _, Backbone, Marionette, Tooltip, Popover, Validate, Registry, Template, KeyValueListView) {
-	return Backbone.Marionette.LayoutView.extend({
+	'views/forms/form-view',
+	'views/collections/lists/key-value-list/key-value-list-view'
+], function($, _, Template, FormView, KeyValueListView) {
+	return FormView.extend({
 
 		//
 		// attributes
 		//
 
+		template: _.template(Template),
+
 		regions: {
-			policyForm: '#policy-form',
-			commentForm: '#comment-form',
-			userData: '#user-data'
+			list: '#user-data'
 		},
 
 		events: {
@@ -47,10 +41,20 @@ define([
 		},
 
 		//
+		// form attributes
+		//
+
+		rules: {
+			'accept-policy': {
+				required: true
+			}
+		},
+
+		//
 		// querying methods
 		//
 
-		getData: function() {
+		getValues: function() {
 			return {
 				comment: this.$el.find("#comment").val()
 			};
@@ -60,42 +64,35 @@ define([
 		// rendering methods
 		//
 
-		template: function(data) {
-			var isAdmin = Registry.application.session.user.isAdmin();
-			return _.template(Template, _.extend(data, {
+		templateContext: function() {
+			var isAdmin = application.session.user.isAdmin();
+
+			return {
 				policy: !isAdmin? this.model.get('policy') : null,
 				showUserJustification: this.options.changeUserPermissions,
 				showUserData: isAdmin,
 				showComment: true
-			}));
+			};
 		},
 
 		onRender: function() {
 
-			// show subviews
+			// show child views
 			//
 			if (this.model.has('meta_information')) {
 				this.showUserData();
 			}
 
-			// display popovers on hover
+			// call superclass method
 			//
-			this.$el.find('[data-toggle="popover"]').popover({
-				trigger: 'hover'
-			});
-
-			// validate the form
-			//
-			this.validate();
+			FormView.prototype.onRender.call(this);
 		},
 
 		showUserData: function() {
-			this.userData.show(
-				new KeyValueListView({
-					array: this.model.get('meta_information'),
-					editable: false,
-				})
-			);
+			this.showChildView('list', new KeyValueListView({
+				array: this.model.get('meta_information'),
+				editable: false,
+			}));
 		},
 
 		showWarning: function() {
@@ -106,27 +103,10 @@ define([
 			this.$el.find('.alert-warning').hide();
 		},
 
-		//
-		// validation methods
-		//
-
-		isValid: function() {
-			return this.validator.form();
+		onClickAlertClose: function() {
+			this.hideWarning();
 		},
-
-		validate: function() {
-
-			// validate policy form
-			//
-			this.validator = this.$el.find('form').validate({
-				rules: {
-					'accept_policy': {
-						required: true
-					}
-				}
-			});
-		},
-
+		
 		//
 		// event handling methods
 		//

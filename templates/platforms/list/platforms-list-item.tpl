@@ -6,9 +6,9 @@
 
 <td class="name first">
 	<% if (user) { %>
-	<a href="#platforms/<%- model.get('platform_uuid') %>"><%= stringToHTML(model.get('name')) %></a>
+	<a href="#platforms/<%- model.get('platform_uuid') %>"><%= textToHtml(model.get('name')) %></a>
 	<% } else { %>
-	<%= stringToHTML(model.get('name')) %>
+	<%= textToHtml(model.get('name')) %>
 	<% } %>
 </td>
 

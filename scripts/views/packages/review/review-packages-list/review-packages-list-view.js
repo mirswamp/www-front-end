@@ -18,18 +18,17 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
 	'text!templates/packages/review/review-packages-list/review-packages-list.tpl',
-	'views/widgets/lists/sortable-table-list-view',
+	'views/packages/list/packages-list-view',
 	'views/packages/review/review-packages-list/review-packages-list-item-view'
-], function($, _, Backbone, Marionette, Template, SortableTableListView, ReviewPackagesListItemView) {
-	return SortableTableListView.extend({
+], function($, _, Template, PackagesListView, ReviewPackagesListItemView) {
+	return PackagesListView.extend({
 
 		//
 		// attributes
 		//
 
+		template: _.template(Template),
 		childView: ReviewPackagesListItemView,
 
 		sorting: {
@@ -51,20 +50,29 @@ define([
 		// rendering methods
 		//
 
-		template: function(data) {
-			return _.template(Template, _.extend(data, {
+		templateContext: function() {
+			return {
 				collection: this.collection,
 				showNumbering: this.options.showNumbering,
 				showDelete: this.options.showDelete
-			}));
+			};
 		},
 
-		childViewOptions: function(model, index) {
+		childViewOptions: function(model) {
+
+			// check if empty view
+			//
+			if (!model) {
+				return {};
+			}
+
+			// return view options
+			//
 			return {
-				index: index,
+				index: this.collection.indexOf(model),
 				showNumbering: this.options.showNumbering,
 				showDelete: this.options.showDelete
-			}
+			};
 		}
 	});
 });

@@ -19,13 +19,12 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
 	'text!templates/packages/info/versions/info/compatibility/package-version-compatibility.tpl',
 	'collections/packages/package-platforms',
+	'views/base-view',
 	'views/packages/platforms/list/package-platforms-list-view'
-], function($, _, Backbone, Marionette, Template, PackagePlatforms, PackagePlatformsListView) {
-	return Backbone.Marionette.LayoutView.extend({
+], function($, _, Template, PackagePlatforms, BaseView, PackagePlatformsListView) {
+	return BaseView.extend({
 
 		//
 		// attributes
@@ -34,7 +33,7 @@ define([
 		template: _.template(Template),
 
 		regions: {
-			packagePlatformsList: '#package-version-platforms-list'
+			list: '#package-version-platforms-list'
 		},
 
 		//
@@ -54,7 +53,7 @@ define([
 		},
 
 		showPackageVersionPlatforms: function() {
-			this.packagePlatformsList.show(new PackagePlatformsListView({
+			this.showChildView('list', new PackagePlatformsListView({
 				collection: this.collection
 			}));
 		},
@@ -75,7 +74,7 @@ define([
 				error: function() {
 					application.error({
 						message: 'Could not fetch package version platforms.'
-					})
+					});
 				}
 			});
 		}

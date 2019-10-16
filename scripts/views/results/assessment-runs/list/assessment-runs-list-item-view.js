@@ -1,6 +1,6 @@
 /******************************************************************************\
 |                                                                              |
-|                          assessment-runs-list-item-view.js                   |
+|                        assessment-runs-list-item-view.js                     |
 |                                                                              |
 |******************************************************************************|
 |                                                                              |
@@ -18,28 +18,21 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
-	'bootstrap/tooltip',
-	'text!templates/results/assessment-runs/list/assessment-runs-list-item.tpl',
 	'config',
-	'registry',
+	'text!templates/results/assessment-runs/list/assessment-runs-list-item.tpl',
 	'models/run-requests/run-request',
-	'views/dialogs/confirm-view',
-	'views/dialogs/notify-view',
-	'views/dialogs/error-view',
+	'views/collections/tables/table-list-item-view',
 	'utilities/time/date-utils'
-], function($, _, Backbone, Marionette, Tooltip, Template, Config, Registry, RunRequest, ConfirmView, NotifyView, ErrorView) {
-	return Backbone.Marionette.ItemView.extend({
+], function($, _, Config, Template, RunRequest, TableListItemView) {
+	return TableListItemView.extend({
 
 		//
 		// attributes
 		//
 
-		tagName: 'tr',
+		template: _.template(Template),
 
 		events: {
-			//'click #errors': 'onClickErrors',
 			'click .ssh': 'onClickSsh',
 			'click .delete button': 'onClickDelete'
 		},
@@ -77,7 +70,7 @@ define([
 			// show results using the native viewer
 			//
 			var options = 'scrollbars=yes,directories=yes,titlebar=yes,toolbar=yes,location=yes';
-			var url = Registry.application.getURL() + '#results/' + this.model.get('assessment_result_uuid') + '/viewer/' + viewer.get('viewer_uuid') + '/project/' + this.model.get('project_uuid');
+			var url = application.getURL() + '#results/' + this.model.get('assessment_result_uuid') + '/viewer/' + viewer.get('viewer_uuid') + '/project/' + this.model.get('project_uuid');
 			var target = '_blank';
 			var replace = false;
 
@@ -88,17 +81,14 @@ define([
 
 		showSshInfo: function(sshInfo) {
 			require([
-				'registry',
-				'views/results/assessment-runs/list/dialogs/ssh-info-view'
-			], function (Registry, SshInfoView) {
+				'views/results/assessment-runs/list/dialogs/ssh-info-dialog-view'
+			], function (SshInfoDialogView) {
 
-				// show report incident view
+				// show ssh dialog
 				//
-				Registry.application.modal.show(
-					new SshInfoView({
-						sshInfo: sshInfo
-					})
-				);
+				application.show(new SshInfoDialogView({
+					sshInfo: sshInfo
+				}));
 			});
 		},
 
@@ -106,40 +96,99 @@ define([
 		// querying methods
 		//
 
-		isSelected: function() {
-			return this.$el.find('input').is(':checked');
+		isViewable: function() {
+			return !this.model.hasErrors() && this.model.hasResults() && this.model.hasWeaknesses();
+		},
+
+		getRunUrl: function() {
+			if (this.model.has('execution_record_uuid')) {
+				return application.getURL() + '#runs/' + this.model.get('execution_record_uuid') + '/status' + (this.options.queryString != ''? '?' + this.options.queryString : '');
+			}
+		},
+
+		getProjectUrl: function() {
+			if (this.model.has('project') && this.model.get('project').project_uuid) {
+				return application.getURL() + '#projects/' + this.model.get('project').project_uuid;
+			}
+		},
+
+		getPackageUrl: function() {
+			if (this.model.has('package') && this.model.get('package').package_uuid) {
+				return application.getURL() + '#packages/' + this.model.get('package').package_uuid;
+			}
+		},
+
+		getPackageVersionUrl: function() {
+			if (this.model.has('package') && this.model.get('package').package_version_uuid) {
+				return application.getURL() + '#packages/versions/' + this.model.get('package').package_version_uuid;
+			}
+		},
+
+		getToolUrl: function() {
+			if (this.model.has('tool') && this.model.get('tool').tool_uuid) {
+				return application.getURL() + '#tools/' + this.model.get('tool').tool_uuid;
+			}
+		},
+
+		getToolVersionUrl: function() {
+			if (this.model.has('tool') && this.model.get('tool').tool_version_uuid) {
+				return application.getURL() + '#tools/versions/' + this.model.get('tool').tool_version_uuid;
+			}
+		},
+
+		getPlatformUrl: function() {
+			if (this.model.has('platform') && this.model.get('platform').platform_uuid) {
+				return application.getURL() + '#platforms/' + this.model.get('platform').platform_uuid;
+			}
+		},
+
+		getPlatformVersionUrl: function(data) {
+			if (this.model.has('platform') && this.model.get('platform').platform_version_uuid) {
+				return application.getURL() + '#platforms/versions/' + this.model.get('platform').platform_version_uuid;
+			}
 		},
 
 		getErrorUrl: function() {
-			var assessmentResultUuid = this.model.get('assessment_result_uuid');
-			var viewer = this.options.errorViewer;
-			var projectUuid = this.model.get('project_uuid');
-			return Registry.application.getURL() + '#results/' + assessmentResultUuid + '/viewer/' + viewer.get('viewer_uuid') + '/project/' + projectUuid;
+			if (this.model.has('assessment_result_uuid') && this.model.has('project_uuid')) {
+				var assessmentResultUuid = this.model.get('assessment_result_uuid');
+				var viewer = this.options.errorViewer;
+				var projectUuid = this.model.get('project_uuid');
+				return application.getURL() + '#results/' + assessmentResultUuid + '/viewer/' + viewer.get('viewer_uuid') + '/project/' + projectUuid;
+			}
+		},
+
+		getResultsUrl: function() {
+			if (this.model.has('assessment_result_uuid')) {
+				return Config.servers.web + '/v1/assessment_results/' + this.model.get('assessment_result_uuid') + '/scarf';
+			}
 		},
 
 		//
 		// rendering methods
 		//
 
-		template: function(data) {
-			return _.template(Template, _.extend(data, {
+		templateContext: function() {
+			return {
 				model: this.model,
 				index: this.options.index + 1,
-				runUrl: Registry.application.getURL() + '#runs/' + this.model.get('execution_record_uuid') + '/status' + (this.options.queryString != ''? '?' + this.options.queryString : ''),
-				packageUrl: data.package.package_uuid? Registry.application.getURL() + '#packages/' + data.package.package_uuid : undefined,
-				packageVersionUrl:  data.package.package_version_uuid? Registry.application.getURL() + '#packages/versions/' + data.package.package_version_uuid : undefined,
-				toolUrl: data.tool.tool_uuid? Registry.application.getURL() + '#tools/' + data.tool.tool_uuid : undefined,
-				toolVersionUrl: data.tool.tool_version_uuid? Registry.application.getURL() + '#tools/versions/' + data.tool.tool_version_uuid : undefined,
-				platformUrl: data.platform.platform_uuid? Registry.application.getURL() + '#platforms/' + data.platform.platform_uuid : undefined,
-				platformVersionUrl: data.platform.platform_version_uuid? Registry.application.getURL() + '#platforms/versions/' + data.platform.platform_version_uuid : undefined,
-				viewer: this.options.viewer,
+				runUrl: this.getRunUrl(),
+				projectUrl: this.getProjectUrl(),
+				packageUrl: this.getPackageUrl(),
+				packageVersionUrl: this.getPackageVersionUrl(),
+				toolUrl: this.getToolUrl(),
+				toolVersionUrl: this.getToolVersionUrl(),
+				platformUrl: this.getPlatformUrl(),
+				platformVersionUrl: this.getPlatformVersionUrl(),
+				resultsUrl: this.getResultsUrl(),
 				errorUrl: this.options.showErrors? this.getErrorUrl() : undefined,
+				showProjects: this.options.showProjects,
 				showNumbering: this.options.showNumbering,
 				showStatus: this.options.showStatus,
 				showErrors: this.options.showErrors,
 				showDelete: this.options.showDelete,
-				showSsh: this.model.isVmReady() && Registry.application.session.user.hasSshAccess() && this.options.showSsh
-			}));
+				showSsh: this.options.showSsh,
+				sshEnabled: this.model.isVmReady() && application.session.user.hasSshAccess()
+			};
 		},
 
 		onRender: function() {
@@ -158,35 +207,31 @@ define([
 		onClickDelete: function() {
 			var self = this;
 
-			// show confirm dialog
+			// show confirmation
 			//
-			Registry.application.modal.show(
-				new ConfirmView({
-					title: "Delete Assessment Results",
-					message: "Are you sure that you want to delete these assessment results? " +
-						"When you delete assessment results, all of the results data will continue to be retained.",
+			application.confirm({
+				title: "Delete Assessment Results",
+				message: "Are you sure that you want to delete these assessment results? " +
+					"When you delete assessment results, all of the results data will continue to be retained.",
 
-					// callbacks
-					//
-					accept: function() {
-						self.model.destroy({
+				// callbacks
+				//
+				accept: function() {
+					self.model.destroy({
 
-							// callbacks
+						// callbacks
+						//
+						error: function() {
+
+							// show error message
 							//
-							error: function() {
-
-								// show error dialog
-								//
-								Registry.application.modal.show(
-									new ErrorView({
-										message: "Could not delete this assessment."
-									})
-								);
-							}
-						});
-					}
-				})
-			);
+							application.error({
+								message: "Could not delete this assessment."
+							});
+						}
+					});
+				}
+			});
 		},
 
 		onClickErrors: function() {
@@ -201,20 +246,18 @@ define([
 				//
 				success: function(response){
 
-					// show ssh info dialog
+					// show ssh info
 					//
 					self.showSshInfo(response);
 				},
 
 				error: function(response){
 					
-					// show notify dialog
+					// show notification
 					//
-					Registry.application.modal.show(
-						new NotifyView({
-							message: response.responseText
-						})
-					);
+					application.notify({
+						message: response.responseText
+					});
 				}
 			});
 		}

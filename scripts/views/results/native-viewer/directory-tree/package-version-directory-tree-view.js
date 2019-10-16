@@ -18,16 +18,21 @@
 define([
 	'jquery',
 	'underscore',
-	'registry',
 	'text!templates/results/native-viewer/directory-tree/directory-tree.tpl',
 	'models/files/file',
 	'models/files/directory',
 	'models/assessments/assessment-results',
 	'views/results/native-viewer/directory-tree/package-version-file-view',
 	'views/packages/info/versions/directory-tree/package-version-directory-tree-view'
-], function($, _, Registry, Template, File, Directory, AssessmentResults, PackageVersionFileView, PackageVersionDirectoryTreeView) {
+], function($, _, Template, File, Directory, AssessmentResults, PackageVersionFileView, PackageVersionDirectoryTreeView) {
 	return PackageVersionDirectoryTreeView.extend({
 		
+		//
+		// attributes
+		//
+
+		template: _.template(Template),
+
 		//
 		// querying methods
 		//
@@ -48,7 +53,7 @@ define([
 		// ajax methods
 		//
 
-		fetchContents: function() {
+		fetchContents: function(options) {
 			var self = this;
 			var data = null;
 
@@ -81,21 +86,20 @@ define([
 				//
 				success: function(data) {
 
-					// show contents
+					// perform callback
 					//
-					self.model.setContents(data);
-					self.onRender();
+					if (options && options.success) {
+						options.success(data);
+					}
 				},
 
 				error: function() {
 
-					// show error dialog
+					// perform callback
 					//
-					Registry.application.modal.show(
-						new ErrorView({
-							message: "Could not get a file subtree for this package version."
-						})
-					);	
+					if (options && options.error) {
+						options.error(data);
+					}
 				}
 			});
 		},
@@ -104,17 +108,16 @@ define([
 		// rendering methods
 		//
 
-		template: function(data) {
-			return _.template(Template, _.extend(data, {
+		templateContext: function() {
+			return {
 				expanderClosedIcon: this.expanderClosedIcon,
 				expanderOpenIcon: this.expanderOpenIcon,
 				checked: this.model.has('contents'),
 				selectable: this.isSelectable(),
 				selected: this.isSelected(),
 				root: (this.options.parent == undefined),
-				// bugCount: this.getBugCount()
-				bugCount: data['bug_count']
-			}));
+				bugCount: this.model.get('bug_count')
+			};
 		},
 
 		getChildView: function(item) {

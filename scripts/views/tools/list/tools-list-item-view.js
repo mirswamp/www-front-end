@@ -1,6 +1,6 @@
 /******************************************************************************\
 |                                                                              |
-|                                tools-list-item-view.js                       |
+|                           tools-list-item-view.js                            |
 |                                                                              |
 |******************************************************************************|
 |                                                                              |
@@ -19,36 +19,34 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
 	'text!templates/tools/list/tools-list-item.tpl',
-	'registry',
+	'views/collections/tables/table-list-item-view',
 	'utilities/time/date-format'
-], function($, _, Backbone, Marionette, Template, Registry, DateFormat) {
-	return Backbone.Marionette.ItemView.extend({
+], function($, _, Template, TableListItemView, DateFormat) {
+	return TableListItemView.extend({
 
 		//
 		// attributes
 		//
 
-		tagName: 'tr',
+		template: _.template(Template),
 
 		//
 		// rendering methods
 		//
 
-		template: function(data) {
-			var showToolDetails = Registry.application.session.user && 
+		templateContext: function() {
+			var showToolDetails = application.session.user && 
 				(this.model.isPublic() || this.model.isOwned);
 
-			return _.template(Template, _.extend(data, {
+			return {
 				model: this.model,
 				index: this.options.index + 1,
 				url: showToolDetails? '#tools/' + this.model.get('tool_uuid'): undefined,
 				showDelete: this.options.showDelete,
 				showNumbering: this.options.showNumbering,
 				showDeactivatedPackages: this.options.showDeactivatedPackages
-			}));
+			};
 		}
 	});
 });

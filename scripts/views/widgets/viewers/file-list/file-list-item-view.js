@@ -1,6 +1,6 @@
 /******************************************************************************\
 |                                                                              |
-|                              file-list-item-view.js                          |
+|                             file-list-item-view.js                           |
 |                                                                              |
 |******************************************************************************|
 |                                                                              |
@@ -18,26 +18,25 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
 	'text!templates/widgets/viewers/file-list/file-list-item.tpl',
-], function($, _, Backbone, Marionette, Template) {
-	return Backbone.Marionette.ItemView.extend({
+	'views/collections/lists/list-item-view'
+], function($, _, Template, ListItemView) {
+	return ListItemView.extend({
 
 		//
 		// attributes
 		//
 
-		tagName: 'tr',
+		template: _.template(Template),
 
 		//
 		// rendering methods
 		//
 
-		template: function(data) {
-			return _.template(Template, _.extend(data, {
-				'model': this.model
-			}));
+		templateContext: function() {
+			return {
+				model: this.model
+			};
 		}
 	});
 });

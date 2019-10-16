@@ -1,11 +1,11 @@
 /******************************************************************************\
 |                                                                              |
-|                            python-package-form-view.js                       |
+|                          python-package-form-view.js                         |
 |                                                                              |
 |******************************************************************************|
 |                                                                              |
-|        This defines an editable form view of a package versions's            |
-|        language / type specific profile information.                         |
+|        This defines a form for entering a package versions's                 |
+|        language / type specific profile info.                                |
 |                                                                              |
 |        Author(s): Abe Megahed                                                |
 |                                                                              |
@@ -19,22 +19,21 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
 	'text!templates/packages/info/versions/info/build/build-profile/package-type/python/python-package-form.tpl',
-	'registry',
 	'widgets/accordions',
 	'models/files/directory',
 	'views/packages/info/versions/info/build/build-profile/package-type/package-type-form-view',
-	'views/packages/info/versions/info/build/build-profile/dialogs/select-package-version-file-view',
-	'views/packages/info/versions/info/build/build-profile/dialogs/select-package-version-directory-view'	
-], function($, _, Backbone, Marionette, Template, Registry, Accordions, Directory, PackageTypeFormView, SelectPackageVersionFileView, SelectPackageVersionDirectoryView) {
+	'views/packages/info/versions/info/build/build-profile/dialogs/select-package-version-file-dialog-view',
+	'views/packages/info/versions/info/build/build-profile/dialogs/select-package-version-directory-dialog-view'	
+], function($, _, Template, Accordions, Directory, PackageTypeFormView, SelectPackageVersionFileDialogView, SelectPackageVersionDirectoryDialogView) {
 	return PackageTypeFormView.extend({
 
 		//
 		// attributes
 		//
 		
+		template: _.template(Template),
+
 		events: {
 			'blur input': 'onBlurInput',
 			'focus #build-system select': 'onFocusBuildSystem',
@@ -183,10 +182,10 @@ define([
 		// rendering methods
 		//
 
-		template: function(data) {
-			return _.template(Template, _.extend(data, {
+		templateContext: function() {
+			return {
 				model: this.model
-			}));
+			};
 		},
 
 		onRender: function() {
@@ -195,19 +194,13 @@ define([
 			//
 			this.onSetBuildSystem();
 
-			// display popovers on hover
-			//
-			this.$el.find('[data-toggle="popover"]').popover({
-				trigger: 'hover'
-			});
-
 			// change accordion icon
 			//
 			new Accordions(this.$el.find('.panel'));
 
-			// validate the form
+			// call superclass method
 			//
-			this.validator = this.validate();
+			PackageTypeFormView.prototype.onRender.call(this);
 		},
 
 		//
@@ -216,14 +209,6 @@ define([
 
 		showConfigureSettings: function() {
 			this.$el.find('.tag[href="#configure-settings"]').show();
-
-			// expand / collapse settings
-			//
-			if (this.hasConfigureSettings()) {
-				this.$el.find('#configure-settings').collapse('show');
-			} else {
-				this.$el.find('#configure-settings').collapse('hide');
-			}
 		},
 
 		hideConfigureSettings: function() {
@@ -237,14 +222,6 @@ define([
 
 		showBuildSettings: function() {
 			this.$el.find('.tag[href="#build-settings"]').show();
-
-			// expand / collapse settings
-			//
-			if (this.hasBuildSettings()) {
-				this.$el.find('#build-settings').collapse('show');
-			} else {
-				this.$el.find('#build-settings').collapse('hide');
-			}
 		},
 
 		hideBuildSettings: function() {
@@ -258,7 +235,7 @@ define([
 
 		showBuildSystem: function(buildSystem) {
 
-			// expand / collapse build settings
+			// show / hide build settings
 			//
 			if (buildSystem != 'wheels') {
 				this.showConfigureSettings();
@@ -413,31 +390,29 @@ define([
 
 			// show select package version directory dialog
 			//
-			Registry.application.modal.show(
-				new SelectPackageVersionDirectoryView({
-					model: this.model,
-					title: "Select Configure Path",
-					selectedDirectoryName: sourcePath + configurePath,
+			application.show(new SelectPackageVersionDirectoryDialogView({
+				model: this.model,
+				title: "Select Configure Path",
+				selectedDirectoryName: sourcePath + configurePath,
 
-					// callbacks
+				// callbacks
+				//
+				accept: function(selectedDirectoryName) {
+
+					// make path relative to package path
 					//
-					accept: function(selectedDirectoryName) {
+					selectedDirectoryName = sourceDirectory.getRelativePathTo(selectedDirectoryName);
 
-						// make path relative to package path
-						//
-						selectedDirectoryName = sourceDirectory.getRelativePathTo(selectedDirectoryName);
-
-						// set configure path input
-						//
-						self.$el.find('#configure-path input').val(selectedDirectoryName);
-						self.onChange();
-					}
-				}), {
-					size: 'large'
+					// set configure path input
+					//
+					self.$el.find('#configure-path input').val(selectedDirectoryName);
+					self.onChange();
 				}
-			);
+			}), {
+				size: 'large'
+			});
 
-			// prevent event defaults
+			// prevent further handling of event
 			//
 			event.stopPropagation();
 			event.preventDefault();
@@ -459,31 +434,29 @@ define([
 
 			// show select package version directory dialog
 			//
-			Registry.application.modal.show(
-				new SelectPackageVersionDirectoryView({
-					model: this.model,
-					title: "Select Build Path",
-					selectedDirectoryName: sourceDirectory.getPathTo(buildPath),
-					
-					// callbacks
+			application.show(new SelectPackageVersionDirectoryDialogView({
+				model: this.model,
+				title: "Select Build Path",
+				selectedDirectoryName: sourceDirectory.getPathTo(buildPath),
+				
+				// callbacks
+				//
+				accept: function(selectedDirectoryName) {
+
+					// make path relative to package path
 					//
-					accept: function(selectedDirectoryName) {
+					selectedDirectoryName = sourceDirectory.getRelativePathTo(selectedDirectoryName);
 
-						// make path relative to package path
-						//
-						selectedDirectoryName = sourceDirectory.getRelativePathTo(selectedDirectoryName);
-
-						// set build path input
-						//
-						self.$el.find('#build-path input').val(selectedDirectoryName);
-						self.onChange();
-					}
-				}), {
-					size: 'large'
+					// set build path input
+					//
+					self.$el.find('#build-path input').val(selectedDirectoryName);
+					self.onChange();
 				}
-			);
+			}), {
+				size: 'large'
+			});
 
-			// prevent event defaults
+			// prevent further handling of event
 			//
 			event.stopPropagation();
 			event.preventDefault();
@@ -509,31 +482,29 @@ define([
 
 			// show select package version file dialog
 			//
-			Registry.application.modal.show(
-				new SelectPackageVersionFileView({
-					model: this.model,
-					title: "Select Build File",
-					selectedFileName: buildDirectory.getPathTo(buildFile),
-					
-					// callbacks
+			application.show(new SelectPackageVersionFileDialogView({
+				model: this.model,
+				title: "Select Build File",
+				selectedFileName: buildDirectory.getPathTo(buildFile),
+				
+				// callbacks
+				//
+				accept: function(selectedFileName) {
+
+					// make path relative to build directory
 					//
-					accept: function(selectedFileName) {
+					selectedFileName = buildDirectory.getRelativePathTo(selectedFileName);
 
-						// make path relative to build directory
-						//
-						selectedFileName = buildDirectory.getRelativePathTo(selectedFileName);
-
-						// set build file input
-						//
-						self.$el.find('#build-file input').val(selectedFileName);
-						self.onChange();
-					}
-				}), {
-					size: 'large'
+					// set build file input
+					//
+					self.$el.find('#build-file input').val(selectedFileName);
+					self.onChange();
 				}
-			);
+			}), {
+				size: 'large'
+			});
 
-			// prevent event defaults
+			// prevent further handling of event
 			//
 			event.stopPropagation();
 			event.preventDefault();

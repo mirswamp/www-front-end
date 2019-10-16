@@ -4,7 +4,7 @@
 |                                                                              |
 |******************************************************************************|
 |                                                                              |
-|        This defines the about/information view of the application.           |
+|        This defines a form for entering new contact profile info.            |
 |                                                                              |
 |        Author(s): Abe Megahed                                                |
 |                                                                              |
@@ -18,20 +18,34 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
-	'jquery.validate',
-	'bootstrap/tooltip',
-	'bootstrap/popover',
 	'text!templates/contacts/contact-profile/new-contact-profile-form.tpl',
-	'registry',
 	'widgets/accordions',
-	'models/contacts/contact'
-], function($, _, Backbone, Marionette, Validate, Tooltip, Popover, Template, Registry, Accordions, Contact) {
-	return Backbone.Marionette.ItemView.extend({
+	'models/contacts/contact',
+	'views/forms/form-view'
+], function($, _, Template, Accordions, Contact, FormView) {
+	return FormView.extend({
 
 		//
-		// methods
+		// attributes
+		//
+
+		template: _.template(Template),
+
+		//
+		// form attributes
+		//
+		
+		messages: {
+			'first-name': {
+				required: "Enter your given / first name"
+			},
+			'last-name': {
+				required: "Enter your family / last name"
+			}
+		},
+
+		//
+		// constructor
 		//
 
 		initialize: function() {
@@ -39,8 +53,8 @@ define([
 			
 			// set contact to current user
 			//
-			if (Registry.application.session.user) {
-				this.model.setUser(Registry.application.session.user);
+			if (application.session.user) {
+				this.model.setUser(application.session.user);
 			}
 
 			// add numeric only validation rule
@@ -60,73 +74,35 @@ define([
 		// rendering methods
 		//
 
-		template: function(data) {
-			return _.template(Template, _.extend(data, {
+		templateContext: function() {
+			return {
 				collapsed: this.model.has('email')
-			}));
+			};
 		},
 
 		onRender: function() {
-
-			// display popovers on hover
-			//
-			this.$el.find('[data-toggle="popover"]').popover({
-				trigger: 'hover'
-			});
 
 			// change accordion icon
 			//
 			new Accordions(this.$el.find('.panel'));
 
-			// validate form
+			// call superclass method
 			//
-			this.validator = this.validate();
+			FormView.prototype.onRender.call(this);
 		},
 
 		//
-		// form validation methods
+		// form methods
 		//
 
-		validate: function() {
-			return this.$el.find('form').validate({
-				messages: {
-					'first-name': {
-						required: "Enter your given / first name"
-					},
-					'last-name': {
-						required: "Enter your family / last name"
-					}
-				}
-			});
-		},
-
-		isValid: function() {
-			return this.validator.form();
-		},
-
-		//
-		// form processing methods
-		//
-
-		update: function(model) {
-
-			// get values from form
-			//
-			var firstName = this.$el.find('#first-name').val();
-			var lastName = this.$el.find('#last-name').val();
-			var email = this.$el.find('#email').val();
-			var subject = this.$el.find('#subject').val();
-			var question = this.$el.find('#question').val();
-
-			// update model
-			//
-			model.set({
-				'first_name': firstName,
-				'last_name': lastName,
-				'email': email,
-				'subject': subject,
-				'question': question
-			});
+		getValues: function() {
+			return {
+				'first_name': this.$el.find('#first-name').val(),
+				'last_name': this.$el.find('#last-name').val(),
+				'email': this.$el.find('#email').val(),
+				'subject': this.$el.find('#subject').val(),
+				'question': this.$el.find('#question').val()
+			};
 		}
 	});
 });

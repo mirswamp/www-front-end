@@ -1,10 +1,10 @@
 /******************************************************************************\
 |                                                                              |
-|                               settings-view.js                               |
+|                          restricted-domains-view.js                          |
 |                                                                              |
 |******************************************************************************|
 |                                                                              |
-|        This defines a view for showing the system settings.                  |
+|        This defines a view for showing restricted domains.                   |
 |                                                                              |
 |        Author(s): Abe Megahed                                                |
 |                                                                              |
@@ -18,17 +18,13 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
 	'text!templates/admin/settings/restricted-domains/restricted-domains.tpl',
-	'registry',
 	'models/admin/restricted-domain',
 	'collections/admin/restricted-domains',
-	'views/dialogs/error-view',
-	'views/dialogs/notify-view',
+	'views/base-view',
 	'views/admin/settings/restricted-domains/restricted-domains-list/restricted-domains-list-view'
-], function($, _, Backbone, Marionette, Template, Registry, RestrictedDomain, RestrictedDomains, ErrorView, NotifyView, RestrictedDomainsListView) {
-	return Backbone.Marionette.LayoutView.extend({
+], function($, _, Template, RestrictedDomain, RestrictedDomains, BaseView, RestrictedDomainsListView) {
+	return BaseView.extend({
 
 		//
 		// attributes
@@ -37,7 +33,7 @@ define([
 		template: _.template(Template),
 
 		regions: {
-			restrictedDomainsList: '#restricted-domains-list'
+			list: '#restricted-domains-list'
 		},
 
 		events: {
@@ -50,7 +46,7 @@ define([
 		},
 
 		//
-		// methods
+		// constructor
 		//
 
 		initialize: function() {
@@ -72,13 +68,11 @@ define([
 
 				error: function() {
 
-					// show error dialog
+					// show error message
 					//
-					Registry.application.modal.show(
-						new ErrorView({
-							message: "Could not fetch restricted domains."
-						})
-					);
+					application.error({
+						message: "Could not fetch restricted domains."
+					});
 				}
 			});
 		},
@@ -92,23 +86,19 @@ define([
 
 					// show success notification dialog
 					//
-					Registry.application.modal.show(
-						new NotifyView({
-							title: "Restricted Domain Changes Saved",
-							message: "Your restricted domain changes have been successfully saved."
-						})
-					);
+					application.notify({
+						title: "Restricted Domain Changes Saved",
+						message: "Your restricted domain changes have been successfully saved."
+					});
 				},
 
 				error: function() {
 
-					// show error dialog
+					// show error message
 					//
-					Registry.application.modal.show(
-						new ErrorView({
-							message: "Your restricted domain changes could not be saved."
-						})
-					);
+					application.error({
+						message: "Your restricted domain changes could not be saved."
+					});
 				}
 			});
 		},
@@ -123,12 +113,10 @@ define([
 			// fetch and show restricted domains
 			//
 			this.fetchRestrictedDomains(function() {
-				self.restrictedDomainsList.show(
-					new RestrictedDomainsListView({
-						collection: self.collection,
-						showDelete: true
-					})
-				);
+				self.showChildView('list', new RestrictedDomainsListView({
+					collection: self.collection,
+					showDelete: true
+				}));
 			});
 		},
 
@@ -145,7 +133,7 @@ define([
 			
 			// update list view
 			//
-			this.restrictedDomainsList.currentView.render();
+			this.getChildView('list').render();
 		},
 		
 		onClickSave: function() {

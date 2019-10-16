@@ -16,8 +16,8 @@
 \******************************************************************************/
 
 .sidebar {
-	background-color: @veryVeryLightGrey;
-	border: 1px solid @veryLightGrey;
+	background-color: @ultra-light-grey;
+	border: 1px solid @very-very-very-light-grey;
 	border-radius: 10px;
 	//box-shadow: 1px 1px 10px -2px rgba(0, 0, 0, 0.5);
 
@@ -34,9 +34,9 @@
 		padding-bottom: 2px;
 		margin-bottom: 10px;
 		
-		.vertical-gradient(white, @veryLightGrey);
+		.vertical-gradient(white, @very-very-very-light-grey);
 		box-shadow: none;
-		border: 2px solid @veryLightGrey;
+		border: 2px solid @very-very-very-light-grey;
 		border-radius: 5px;
 		//box-shadow: 2px 2px 2px -2px rgba(0, 0, 0, 0.5);
 	}
@@ -49,7 +49,7 @@
 
 	.tile:not(.selected):not(:hover) {
 		i {
-			color: @darkGrey;
+			color: @dark-grey;
 		}
 	}
 
@@ -62,8 +62,8 @@
 	}
 
 	.tile.selected {
-		.vertical-gradient(@primaryHighlightColor, @primaryColor);
-		border: 2px solid @primaryColor;
+		.vertical-gradient(@brand-primary-highlight, @brand-primary);
+		border: 2px solid @brand-primary;
 		//box-shadow: -2px -2px 2px -2px rgba(0, 0, 0, 0.5);
 
 		label {
@@ -75,11 +75,11 @@
 		i {
 			margin-left: 3px;
 			margin-right: 3px;
-			color: @secondaryColor;
+			color: @brand-secondary;
 		}
 
 		i:hover {
-			color: @secondaryHighlightColor;
+			color: @brand-secondary-highlight;
 		}
 	}
 }

@@ -19,28 +19,55 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
 	'text!templates/scheduled-runs/schedules/select-list/select-schedules-list.tpl',
-	'views/widgets/lists/table-list-view',
+	'views/collections/tables/sortable-table-list-view',
 	'views/scheduled-runs/schedules/select-list/select-schedules-list-item-view'
-], function($, _, Backbone, Marionette, Template, TableListView, SelectSchedulesListItemView) {
-	return TableListView.extend({
+], function($, _, Template, SortableTableListView, SelectSchedulesListItemView) {
+	return SortableTableListView.extend({
 
 		//
 		// attributes
 		//
 
+		template: _.template(Template),
+
 		childView: SelectSchedulesListItemView,
+
+		sorting: {
+
+			// disable sorting on select column
+			//
+			headers: { 
+				0: { 
+					sorter: false 
+				},
+				3: { 
+					sorter: false 
+				}
+			},
+
+			// sort on name column in ascending order 
+			//
+			sortList: [[1, 0]]
+		},
 
 		//
 		// methods
 		//
 
-		childViewOptions: function(model, index) {
+		childViewOptions: function(model) {
+
+			// check if empty view
+			//
+			if (!model) {
+				return {};
+			}
+
+			// return view options
+			//
 			return {
 				project: this.options.project,
-				itemIndex: index,
+				itemIndex: this.collection.indexOf(model),
 				selectedAssessmentRunUuids: this.options.selectedAssessmentRunUuids,
 				showProjects: this.options.showProjects,
 				showDelete: this.options.showDelete
@@ -51,12 +78,12 @@ define([
 		// rendering methods
 		//
 
-		template: function(data) {
-			return _.template(Template, _.extend(data, {
+		templateContext: function() {
+			return {
 				collection: this.collection,
 				showProjects: this.options.showProjects,
 				showDelete: this.options.showDelete
-			}));
+			};
 		},
 
 		//

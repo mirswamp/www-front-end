@@ -18,23 +18,22 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
 	'text!templates/tools/public-tools.tpl',
-	'registry',
 	'collections/tools/tools',
-	'views/dialogs/error-view',
+	'views/base-view',
 	'views/tools/list/tools-list-view'
-], function($, _, Backbone, Marionette, Template, Registry, Tools, ErrorView, ToolsListView) {
-	return Backbone.Marionette.LayoutView.extend({
+], function($, _, Template, Tools, BaseView, ToolsListView) {
+	return BaseView.extend({
 
 		//
 		// attributes
 		//
 
+		template: _.template(Template),
+
 		regions: {
-			openToolsList: "#open-tools-list",
-			commercialToolsList: "#commercial-tools-list"
+			open: "#open-tools-list",
+			commercial: "#commercial-tools-list"
 		},
 
 		events: {
@@ -42,7 +41,7 @@ define([
 		},
 
 		//
-		// methods
+		// constructor
 		//
 
 		initialize: function() {
@@ -53,12 +52,11 @@ define([
 		// rendering methods
 		//
 
-
-		template: function(data) {
-			return _.template(Template, _.extend(data, {
-				loggedIn: Registry.application.session.user != null,
-				showNumbering: Registry.application.options.showNumbering
-			}));
+		templateContext: function() {
+			return {
+				loggedIn: application.session.user != null,
+				showNumbering: application.options.showNumbering
+			};
 		},
 
 		onRender: function() {
@@ -79,26 +77,22 @@ define([
 
 					// show list of open tools
 					//
-					self.openToolsList.show(
-						new ToolsListView({
-							collection: self.collection.getOpen(),
-							showNumbering: Registry.application.options.showNumbering,
-							showDelete: false
-						})
-					);
+					self.showChildView('open', new ToolsListView({
+						collection: self.collection.getOpen(),
+						showNumbering: application.options.showNumbering,
+						showDelete: false
+					}));
 				},
 
 				error: function() {
 
-					// show error dialog
+					// show error message
 					//
-					Registry.application.modal.show(
-						new ErrorView({
-							message: "Could not get list of public tools."
-						})
-					);
+					application.error({
+						message: "Could not get list of public tools."
+					});
 				}
-			})
+			});
 		},
 
 		showCommercialToolsList: function() {
@@ -112,26 +106,22 @@ define([
 
 					// show list of commercial tools
 					//
-					self.commercialToolsList.show(
-						new ToolsListView({
-							collection: collection,
-							showNumbering: Registry.application.options.showNumbering,
-							showDelete: false
-						})
-					);
+					self.showChildView('commercial', new ToolsListView({
+						collection: collection,
+						showNumbering: application.options.showNumbering,
+						showDelete: false
+					}));
 				},
 
 				error: function() {
 
-					// show error dialog
+					// show error message
 					//
-					Registry.application.modal.show(
-						new ErrorView({
-							message: "Could not get list of public tools."
-						})
-					);
+					application.error({
+						message: "Could not get list of public tools."
+					});
 				}
-			})
+			});
 		},
 
 		showLists: function() {
@@ -144,7 +134,7 @@ define([
 		//
 
 		onClickShowNumbering: function(event) {
-			Registry.application.setShowNumbering($(event.target).is(':checked'));
+			application.setShowNumbering($(event.target).is(':checked'));
 			this.showLists();
 		}
 	});

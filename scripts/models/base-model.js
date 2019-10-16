@@ -19,9 +19,7 @@ define([
 	'jquery',
 	'underscore',
 	'backbone',
-	'registry',
-	'views/dialogs/error-view'
-], function($, _, Backbone, Registry, ErrorView) {
+], function($, _, Backbone) {
 	return Backbone.Model.extend({
 
 		//
@@ -68,13 +66,11 @@ define([
 				}
 				options.error = function() {
 
-					// show error dialog
+					// show error message
 					//
-					Registry.application.modal.show(
-						new ErrorView({
-							message: "Could not fetch " + self.getClassName() + "."
-						})
-					);
+					application.error({
+						message: "Could not fetch " + self.getClassName() + "."
+					});
 				};
 			}
 

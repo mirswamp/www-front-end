@@ -1,11 +1,10 @@
 /******************************************************************************\
 |                                                                              |
-|                             package-profile-form-view.js                     |
+|                         package-profile-form-view.js                         |
 |                                                                              |
 |******************************************************************************|
 |                                                                              |
-|        This defines an editable form view of a package's profile             |
-|        information.                                                          |
+|        This defines a form for entering a package's  profile info.           |
 |                                                                              |
 |        Author(s): Abe Megahed                                                |
 |                                                                              |
@@ -19,20 +18,18 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
 	'config',
-	'jquery.validate',
-	'bootstrap/tooltip',
-	'bootstrap/popover',
 	'text!templates/packages/info/details/package-profile/package-profile-form.tpl',
-	'utilities/browser/address-bar'
-], function($, _, Backbone, Marionette, Config, Validate, Tooltip, Popover, Template, AddressBar) {
-	return Backbone.Marionette.ItemView.extend({
+	'views/forms/form-view',
+	'utilities/web/address-bar'
+], function($, _, Config, Template, FormView, AddressBar) {
+	return FormView.extend({
 
 		//
 		// attributes
 		//
+
+		template: _.template(Template),
 
 		events: {
 			'focus #language-type': 'onFocusLanguageType',
@@ -41,7 +38,20 @@ define([
 		},
 
 		//
-		// methods
+		// form attributes
+		//
+		
+		rules: {
+			'name': {
+				required: true
+			},
+			'external-url': {
+				url: true
+			}
+		},
+
+		//
+		// constructor
 		//
 
 		initialize: function() {
@@ -124,25 +134,12 @@ define([
 		// rendering methods
 		//
 
-		template: function(data) {
-			return _.template(Template, _.extend(data, {
+		templateContext: function() {
+			return {
 				model: this.model,
 				payload_url: this.getPayloadUrl(),
 				suggested_secret_token: this.getSuggestedSecretToken()
-			}));
-		},
-
-		onRender: function() {
-
-			// display popovers on hover
-			//
-			this.$el.find('[data-toggle="popover"]').popover({
-				trigger: 'hover'
-			});
-
-			// validate form
-			//
-			this.validator = this.validate();
+			};
 		},
 
 		showLanguageType: function() {
@@ -157,40 +154,19 @@ define([
 		},
 
 		//
-		// form validation methods
-		//
-
-		validate: function() {
-			return this.$el.find('form').validate({
-				rules: {
-					'name': {
-						required: true
-					},
-					'external-url': {
-						url: true
-					}
-				}
-			});
-		},
-
-		isValid: function() {
-			return this.validator.form();
-		},
-
-		//
 		// form methods
 		//
 
 		getValues: function() {
 			return {
 				'name': this.$el.find('#name input').val(),
-				'description': this.$el.find('#description input').val(),
+				'description': this.$el.find('#description textarea').val(),
 				'external_url': this.$el.find('#external-url input').val(),
 				'secret_token': this.$el.find('#secret-token input').val()
 			};
 		},
 
-		update: function(package) {
+		applyTo: function(package) {
 
 			// update model
 			//

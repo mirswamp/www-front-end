@@ -32,8 +32,9 @@ define([
 		hasChangedSinceLastSync: false,
 
 		//
-		// methods
+		// constructor
 		//
+
 		initialize: function() {
 			var self = this;
 
@@ -44,6 +45,10 @@ define([
 				this.hasChangedSinceLastSync = true;
 			});
 		},
+
+		//
+		// querying methods
+		//
 
 		hasChanged: function() {
 			return this.hasChangedSinceLastSync;

@@ -1,11 +1,10 @@
 /******************************************************************************\
 |                                                                              |
-|                            new-tool-profile-form-view.js                     |
+|                        new-tool-profile-form-view.js                         |
 |                                                                              |
 |******************************************************************************|
 |                                                                              |
-|        This defines an editable form view of a tool's profile                |
-|        information.                                                          |
+|        This defines a form for entering a new tool's profile info.           |
 |                                                                              |
 |        Author(s): Abe Megahed                                                |
 |                                                                              |
@@ -19,26 +18,35 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
-	'jquery.validate',
-	'bootstrap/tooltip',
-	'bootstrap/popover',
 	'text!templates/tools/info/details/tool-profile/new-tool-profile-form.tpl',
+	'views/forms/form-view',
 	'views/tools/info/versions/tool-version/tool-version-profile/new-tool-version-profile-form-view'
-], function($, _, Backbone, Marionette, Validate, Tooltip, Popover, Template, NewToolVersionProfileFormView) {
-	return Backbone.Marionette.LayoutView.extend({
+], function($, _, Template, FormView, NewToolVersionProfileFormView) {
+	return FormView.extend({
 
 		//
 		// attributes
 		//
 
+		template: _.template(Template),
+
 		regions: {
-			newToolVersionProfileForm: '#new-tool-version-profile-form'
+			form: '#new-tool-version-profile-form'
 		},
 
 		//
-		// methods
+		// form attributes
+		//
+
+		rules: {
+			'name': {
+				required: true,
+				validToolName: true
+			}
+		},
+
+		//
+		// constructor
 		//
 
 		initialize: function() {
@@ -58,71 +66,44 @@ define([
 		// rendering methods
 		//
 
-		template: function(data) {
-			return _.template(Template, _.extend(data, {
+		templateContext: function() {
+			return {
 				model: this.model
-			}));
+			};
 		},
 
 		onRender: function() {
 
-			// display popovers on hover
+			// show child views
 			//
-			this.$el.find('[data-toggle="popover"]').popover({
-				trigger: 'hover'
-			});
+			this.showChildView('form', new NewToolVersionProfileFormView({
+				model: this.options.toolVersion
+			}));
 
-			// validate the form
+			// call superclass method
 			//
-			this.validator = this.validate();
-
-			// show tool version profile form
-			//
-			this.newToolVersionProfileForm.show(
-				new NewToolVersionProfileFormView({
-					model: this.options.toolVersion
-				})
-			);
-		},
-
-		//
-		// form validation methods
-		//
-
-		validate: function() {
-			return this.$el.find('form').validate({
-				rules: {
-					'name': {
-						required: true,
-						validToolName: true
-					}
-				}
-			});
-		},
-
-		isValid: function() {
-			return this.validator.form();
+			FormView.prototype.onRender.call(this);
 		},
 
 		//
 		// form methods
 		//
 
-		update: function(model, version) {
+		getValues: function() {
+			return {
+				name: this.$el.find('#name').val()
+			};
+		},
 
-			// get values from form
-			//
-			var name = this.$el.find('#name').val();
+		applyTo: function(model, version) {
 
 			// update model
 			//
-			model.set({
-				'name': name
-			});
+			model.set(this.getValues());
 
 			// update version
 			//
-			this.newToolVersionProfileForm.currentView.update(version);
+			this.getChildView('form').applyTo(version);
 		}
 	});
 });

@@ -18,21 +18,20 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
 	'text!templates/welcome.tpl',
-	'config',
-	'registry',
 	'models/utilities/usage',
 	'collections/tools/tools',
 	'collections/platforms/platforms',
+	'views/base-view',
 	'views/banner/usage-view'
-], function($, _, Backbone, Marionette, Template, Config, Registry, Usage, Tools, Platforms, UsageView) {
-	return Backbone.Marionette.LayoutView.extend({
+], function($, _, Template, Usage, Tools, Platforms, BaseView, UsageView) {
+	return BaseView.extend({
 
 		//
 		// attributes
 		//
+
+		template: _.template(Template),
 
 		regions: {
 			'banner': '#banner'
@@ -50,10 +49,10 @@ define([
 		// rendering methods
 		//
 
-		template: function() {
-			return _.template(Template, {
-				config: Registry.application.config
-			});
+		templateContext: function() {
+			return {
+				config: application.config
+			};
 		},
 
 		onRender: function() {
@@ -67,7 +66,7 @@ define([
 
 			// show optional child views
 			//
-			if (Registry.application.config['stats_enabled']) {
+			if (application.config.stats_enabled) {
 				this.showBanner();
 			}
 			if (this.options.showSignIn) {
@@ -109,9 +108,9 @@ define([
 				// callbacks
 				//
 				success: function(data) {
-					self.banner.show(new UsageView({
+					self.showChildView('banner', new UsageView({
 						data: data
-					}))	
+					}));
 				}
 			});
 		},
@@ -134,9 +133,9 @@ define([
 
 				error: function() {
 
-					// show error dialog
+					// show error message
 					//
-					Registry.application.error({
+					application.error({
 						message: "Could not fetch list of open tools."
 					});
 				}
@@ -160,9 +159,9 @@ define([
 
 				error: function() {
 
-					// show error dialog
+					// show error message
 					//
-					Registry.application.error({
+					application.error({
 						message: "Could not fetch list of commercial tools."
 					});
 				}
@@ -186,9 +185,9 @@ define([
 
 				error: function() {
 
-					// show error dialog
+					// show error message
 					//
-					Registry.application.error({
+					application.error({
 						message: "Could not fetch list of supported platforms."
 					});
 				}
@@ -197,16 +196,14 @@ define([
 
 		showSignIn: function() {
 			require([
-				'views/users/authentication/dialogs/sign-in-view'
-			], function (SignInView) {
+				'views/users/authentication/dialogs/sign-in-dialog-view'
+			], function (SignInDialogView) {
 
 				// show sign in dialog
 				//
-				Registry.application.modal.show(
-					new SignInView(), {
-						focus: '#ok'
-					}
-				)
+				application.show(new SignInDialogView(), {
+					focus: '#ok'
+				});
 			});
 		},
 
@@ -228,16 +225,14 @@ define([
 		},
 
 		onClickSignUp: function() {
-			if (Registry.application.config['linked_accounts_enabled']) {
+			if (application.config['linked_accounts_enabled']) {
 				require([
-					'views/users/registration/dialogs/sign-up-view'
-				], function (SignUpView) {
+					'views/users/registration/dialogs/sign-up-dialog-view'
+				], function (SignUpDialogView) {
 
 					// show sign up dialog
 					//
-					Registry.application.modal.show(
-						new SignUpView()
-					)
+					application.show(new SignUpDialogView());
 				});
 			} else {
 
@@ -255,31 +250,27 @@ define([
 
 		onClickForgotPassword: function() {
 			require([
-				'views/users/authentication/dialogs/reset-password-view'
-			], function (ResetPasswordView) {
+				'views/users/authentication/dialogs/reset-password-dialog-view'
+			], function (ResetPasswordDialogView) {
 
 				// show reset password view
 				//
-				Registry.application.modal.show(
-					new ResetPasswordView({
-						parent: this
-					})
-				);
+				application.show(new ResetPasswordDialogView({
+					parent: this
+				}));
 			});
 		},
 
 		onClickRequestUsername: function() {
 			require([
-				'views/users/authentication/dialogs/request-username-view'
-			], function (RequestUsernameView) {
+				'views/users/authentication/dialogs/request-username-dialog-view'
+			], function (RequestUsernameDialogView) {
 
 				// show request username view
 				//
-				Registry.application.modal.show(
-					new RequestUsernameView({
-						parent: this
-					})
-				);
+				application.show(new RequestUsernameDialogView({
+					parent: this
+				}));
 			});
 		},
 
@@ -287,23 +278,19 @@ define([
 
 			// respond to return key
 			//
-			if (event.keyCode == 13) {
+			if (event.keyCode == 13 && $('button:focus').length == 0) {
 				this.onClickSignIn();
 
 			// respond to 'c' key press
 			//
 			} else if (event.keyCode === 67) {
 				require([
-					'views/dialogs/credits-view'
-				], function (CreditsView) {
+					'views/dialogs/credits-dialog-view'
+				], function (CreditsDialogView) {
 
 					// show credits view
 					//
-					Registry.application.modal.show(
-						new CreditsView(), {
-							size: 'large'
-						}
-					);
+					application.show(new CreditsDialogView());
 				});
 			}
 		}

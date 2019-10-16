@@ -18,8 +18,8 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone'
-], function($, _, Backbone) {
+	'routers/base-router'
+], function($, _, BaseRouter) {
 
 	function parseQueryString(queryString) {
 
@@ -57,7 +57,7 @@ define([
 	
 	// create router
 	//
-	return Backbone.Router.extend({
+	return BaseRouter.extend({
 
 		//
 		// route definitions
@@ -95,13 +95,12 @@ define([
 
 		showTools: function(queryString) {
 			require([
-				'registry',
 				'views/tools/tools-view'
-			], function (Registry, ToolsView) {
+			], function (ToolsView) {
 
 				// show tools view
 				//
-				Registry.application.showContent({
+				application.showContent({
 					nav1: 'home',
 					nav2: 'tools', 
 
@@ -115,13 +114,11 @@ define([
 							
 							// show packages view
 							//
-							view.content.show(
-								new ToolsView({
-									data: data				
-								}), {
-									nav: 'tools'
-								}
-							);
+							view.showChildView('content', new ToolsView({
+								data: data				
+							}), {
+								nav: 'tools'
+							});
 						});
 					}
 				});
@@ -130,29 +127,25 @@ define([
 
 		showPublicTools: function() {
 			require([
-				'registry',
 				'views/tools/public-tools-view'
-			], function (Registry, PublicToolsView) {
+			], function (PublicToolsView) {
 
 				// show public tools view
 				//
-				Registry.application.showMain(
-					new PublicToolsView(), {
-						nav: 'resources'
-					}
-				);
+				application.showMain(new PublicToolsView(), {
+					nav: 'resources'
+				});
 			});
 		},
 
 		showAddTool: function() {
 			require([
-				'registry',
 				'views/tools/add/add-tool-view'
-			], function (Registry, AddToolView) {
+			], function (AddToolView) {
 
 				// show content view
 				//
-				Registry.application.showContent({
+				application.showContent({
 					nav1: 'home',
 					nav2: 'tools', 
 
@@ -162,11 +155,9 @@ define([
 
 						// show add tool view
 						//
-						view.content.show(
-							new AddToolView({
-								user: Registry.application.session.user
-							})
-						);
+						view.showChildView('content', new AddToolView({
+							user: application.session.user
+						}));
 					}
 				});
 			});
@@ -178,15 +169,14 @@ define([
 
 		showReviewTools: function(queryString) {
 			require([
-				'registry',
-				'utilities/browser/query-strings',
-				'utilities/browser/url-strings',
+				'utilities/web/query-strings',
+				'utilities/web/url-strings',
 				'views/tools/review/review-tools-view',
-			], function (Registry, QueryStrings, UrlStrings, ReviewToolsView) {
+			], function (QueryStrings, UrlStrings, ReviewToolsView) {
 
 				// show content view
 				//
-				Registry.application.showContent({
+				application.showContent({
 					'nav1': 'home',
 					'nav2': 'overview', 
 
@@ -196,11 +186,9 @@ define([
 
 						// show review tools view
 						//
-						view.content.show(
-							new ReviewToolsView({
-								data: parseQueryString(queryString)
-							})
-						);
+						view.showChildView('content', new ReviewToolsView({
+							data: parseQueryString(queryString)
+						}));
 					}
 				});
 			});
@@ -213,36 +201,37 @@ define([
 		showToolView: function(toolUuid, options) {
 			var self = this;
 			require([
-				'registry',
 				'models/tools/tool',
-				'views/dialogs/error-view',
-				'views/tools/tool-view'
-			], function (Registry, Tool, ErrorView, ToolView) {
+							'views/tools/tool-view'
+			], function (Tool, ToolView) {
 				Tool.fetch(toolUuid, function(tool) {
 
 					// check if user is logged in
 					//
-					if (Registry.application.session.user) {
+					if (application.session.user) {
 
 						// show content view
 						//
-						Registry.application.showContent({
+						application.showContent({
 							nav1: tool.isOwned()? 'home' : 'resources',
 							nav2: tool.isOwned()? 'tools' : undefined, 
 
 							// callbacks
 							//	
 							done: function(view) {
-								view.content.show(
-									new ToolView({
-										model: tool,
-										nav: options.nav,
-										parent: view
-									})
-								);
 
+								// show tools
+								//
+								view.showChildView('content', new ToolView({
+									model: tool,
+									nav: options.nav,
+									parent: view
+								}));
+
+								// perform callback
+								//
 								if (options.done) {
-									options.done(view.content.currentView);
+									options.done(view.getChildView('content'));
 								}				
 							}					
 						});
@@ -250,11 +239,10 @@ define([
 
 						// show single column tool view
 						//
-						Registry.application.showMain(
-							new ToolView({
-								model: package,
-								nav: options.nav
-							}), {
+						application.showMain(new ToolView({
+							model: package,
+							nav: options.nav
+						}), {
 							done: options.done
 						});
 					}
@@ -269,9 +257,8 @@ define([
 		showTool: function(toolUuid) {
 			var self = this;
 			require([
-				'registry',
 				'views/tools/info/details/tool-details-view'
-			], function (Registry, ToolDetailsView) {
+			], function (ToolDetailsView) {
 
 				// show tool view
 				//
@@ -284,11 +271,9 @@ define([
 
 						// show tool details view
 						//
-						view.toolInfo.show(
-							new ToolDetailsView({
-								model: view.model
-							})
-						);
+						view.showChildView('info', new ToolDetailsView({
+							model: view.model
+						}));
 					}
 				});
 			});
@@ -297,9 +282,8 @@ define([
 		showToolSharing: function(toolUuid) {
 			var self = this;
 			require([
-				'registry',
 				'views/tools/info/sharing/tool-sharing-view'
-			], function (Registry, ToolSharingView) {
+			], function (ToolSharingView) {
 
 				// show tool view
 				//
@@ -325,9 +309,8 @@ define([
 		showEditTool: function(toolUuid) {
 			var self = this;
 			require([
-				'registry',
 				'views/tools/info/details/edit-tool-details-view',
-			], function (Registry, EditToolDetailsView) {
+			], function (EditToolDetailsView) {
 
 				// show tool view
 				//
@@ -340,11 +323,9 @@ define([
 
 						// show edit tool details view
 						//
-						view.options.parent.content.show(
-							new EditToolDetailsView({
-								model: view.model
-							})
-						);
+						view.options.parent.showChildView('content', new EditToolDetailsView({
+							model: view.model
+						}));
 					}
 				});
 			});
@@ -353,9 +334,8 @@ define([
 		showToolPolicy: function(toolUuid) {
 			var self = this;
 			require([
-				'registry',
 				'views/policies/policy-view'
-			], function (Registry, PolicyView) {
+			], function (PolicyView) {
 
 				// show tool view
 				//
@@ -373,23 +353,19 @@ define([
 
 								// show policy view
 								//
-								view.options.parent.content.show(
-									new PolicyView({
-										policyTitle: '<span class="name">' + view.model.get('name') + '</span>' + " Tool Policy",
-										policyText: data
-									})
-								);
+								view.options.parent.showChildView('content', new PolicyView({
+									policyTitle: '<span class="name">' + view.model.get('name') + '</span>' + " Tool Policy",
+									policyText: data
+								}));
 							},
 
 							error: function() {
 
-								// show error dialog
+								// show error message
 								//
-								Registry.application.modal.show(
-									new ErrorView({
-										message: "Could not fetch tool policy."
-									})
-								);
+								application.error({
+									message: "Could not fetch tool policy."
+								});
 							}
 						});
 					}
@@ -399,9 +375,8 @@ define([
 
 		showAddToolVersion: function(toolUuid) {
 			require([
-				'registry',
 				'views/tools/versions/add/add-tool-version-view'
-			], function (Registry, AddToolVersionView) {
+			], function (AddToolVersionView) {
 
 				// show tool view
 				//
@@ -414,11 +389,9 @@ define([
 
 						// show add tool version view
 						//
-						view.options.parent.content.show(
-							new AddToolVersionView({
-								model: view.model
-							})
-						);
+						view.options.parent.showChildView('content', new AddToolVersionView({
+							model: view.model
+						}));
 					}
 				});
 			});
@@ -431,38 +404,39 @@ define([
 		showToolVersion: function(toolVersionUuid, options) {
 			var self = this;
 			require([
-				'registry',
 				'models/tools/tool',
 				'models/tools/tool-version',
-				'views/dialogs/error-view',
-				'views/tools/info/versions/tool-version/tool-version-view'
-			], function (Registry, Tool, ToolVersion, ErrorView, ToolVersionView) {
+							'views/tools/info/versions/tool-version/tool-version-view'
+			], function (Tool, ToolVersion, ToolVersionView) {
 				ToolVersion.fetch(toolVersionUuid, function(toolVersion) {
 					Tool.fetch(toolVersion.get('tool_uuid'), function(tool) {
 
 						// check if user is logged in
 						//
-						if (Registry.application.session.user) {
+						if (application.session.user) {
 
 							// show content view
 							//
-							Registry.application.showContent({
+							application.showContent({
 								nav1: tool.isOwned()? 'home' : 'resources',
 								nav2: tool.isOwned()? 'tools' : undefined, 
 
 								// callbacks
 								//	
 								done: function(view) {
-									view.content.show(
-										new ToolVersionView({
-											model: toolVersion,
-											tool: tool,
-											parent: view
-										})
-									);
 
+									// show tool version
+									//
+									view.showChildView('content', new ToolVersionView({
+										model: toolVersion,
+										tool: tool,
+										parent: view
+									}));
+
+									// perform callback
+									//
 									if (options && options.done) {
-										options.done(view.content.currentView);
+										options.done(view.getChildView('content'));
 									}				
 								}					
 							});
@@ -470,11 +444,10 @@ define([
 
 							// show single column package version view
 							//
-							Registry.application.showMain(
-								new ToolVersionView({
-									model: toolVersion,
-									tool: tool
-								}), {
+							application.showMain(new ToolVersionView({
+								model: toolVersion,
+								tool: tool
+							}), {
 								done: options.done
 							});
 						}
@@ -486,9 +459,8 @@ define([
 		showEditToolVersion: function(toolVersionUuid) {
 			var self = this;
 			require([
-				'registry',
 				'views/tools/info/versions/tool-version/edit-tool-version-view'
-			], function (Registry, EditToolVersionView) {
+			], function (EditToolVersionView) {
 
 				// show tool version view
 				//
@@ -501,12 +473,10 @@ define([
 
 						// show edit tool version view
 						//
-						view.options.parent.content.show(
-							new EditToolVersionView({
-								model: view.model,
-								tool: view.options.tool
-							})
-						);
+						view.options.parent.showChildView('content', new EditToolVersionView({
+							model: view.model,
+							tool: view.options.tool
+						}));
 					}
 				});
 			});

@@ -18,26 +18,23 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
 	'text!templates/tools/info/details/tool-details.tpl',
-	'registry',
 	'collections/tools/tool-versions',
-	'views/dialogs/confirm-view',
-	'views/dialogs/notify-view',
-	'views/dialogs/error-view',
+	'views/base-view',
 	'views/tools/info/details/tool-profile/tool-profile-view',
 	'views/tools/info/versions/tool-versions-list/tool-versions-list-view'
-], function($, _, Backbone, Marionette, Template, Registry, ToolVersions, ConfirmView, NotifyView, ErrorView, ToolProfileView, ToolVersionsListView) {
-	return Backbone.Marionette.LayoutView.extend({
+], function($, _, Template, ToolVersions, BaseView, ToolProfileView, ToolVersionsListView) {
+	return BaseView.extend({
 
 		//
 		// attributes
 		//
 
+		template: _.template(Template),
+
 		regions: {
-			toolProfile: '#tool-profile',
-			toolVersionsList: '#tool-versions-list'
+			profile: '#tool-profile',
+			list: '#tool-versions-list'
 		},
 
 		events: {
@@ -48,7 +45,7 @@ define([
 		},
 
 		//
-		// methods
+		// constructor
 		//
 
 		initialize: function() {
@@ -71,13 +68,11 @@ define([
 
 				error: function() {
 
-					// show error dialog
+					// show error message
 					//
-					Registry.application.modal.show(
-						new ErrorView({
-							message: "Could not fetch tool versions."
-						})
-					);
+					application.error({
+						message: "Could not fetch tool versions."
+					});
 				}
 			});
 		},
@@ -86,12 +81,12 @@ define([
 		// rendering methods
 		//
 
-		template: function(data) {
-			return _.template(Template, _.extend(data, {
+		templateContext: function() {
+			return {
 				isOwned: this.model.isOwned(),
-				isAdmin: Registry.application.session.isAdmin(),
+				isAdmin: application.session.isAdmin(),
 				showPolicy: this.model.has('policy_code')
-			}));
+			};
 		},
 
 		onRender: function() {
@@ -99,11 +94,9 @@ define([
 			
 			// display project profile view
 			//
-			this.toolProfile.show(
-				new ToolProfileView({
-					model: this.model
-				})
-			);
+			this.showChildView('profile', new ToolProfileView({
+				model: this.model
+			}));
 
 			// fetch and show tool versions
 			//
@@ -116,13 +109,11 @@ define([
 
 			// show tool versions list view
 			//
-			this.toolVersionsList.show(
-				new ToolVersionsListView({
-					model: this.model,
-					collection: this.collection,
-					showDelete: false
-				})
-			);
+			this.showChildView('list', new ToolVersionsListView({
+				model: this.model,
+				collection: this.collection,
+				showDelete: false
+			}));
 		},
 
 		//
@@ -138,11 +129,9 @@ define([
 				trigger: true
 			});
 			*/
-			Registry.application.modal.show(
-				new NotifyView({
-					message: "This feature is no longer supported."
-				})
-			);
+			application.notify({
+				message: "This feature is no longer supported."
+			});
 		},
 
 		onClickEditTool: function() {
@@ -157,61 +146,55 @@ define([
 		onClickDeleteTool: function() {
 			var self = this;
 
-			// show confirm dialog
+			// show confirmation
 			//
-			Registry.application.modal.show(
-				new ConfirmView({
-					title: "Delete Tool",
-					message: "Are you sure that you would like to delete tool " + self.model.get('name') + "? " +
-						"When you delete a tool, all of the project data will continue to be retained.",
+			application.confirm({
+				title: "Delete Tool",
+				message: "Are you sure that you would like to delete tool " + self.model.get('name') + "? " +
+					"When you delete a tool, all of the project data will continue to be retained.",
 
-					// callbacks
+				// callbacks
+				//
+				accept: function() {
+
+					// delete user
 					//
-					accept: function() {
+					self.model.destroy({
 
-						// delete user
+						// callbacks
 						//
-						self.model.destroy({
+						success: function() {
 
-							// callbacks
+							// show success notify message
 							//
-							success: function() {
+							application.notify({
+								title: "Tool Deleted",
+								message: "This tool has been successfuly deleted.",
 
-								// show success notification dialog
+								// callbacks
 								//
-								Registry.application.modal.show(
-									new NotifyView({
-										title: "Tool Deleted",
-										message: "This tool has been successfuly deleted.",
+								accept: function() {
 
-										// callbacks
-										//
-										accept: function() {
+									// return to main view
+									//
+									Backbone.history.navigate('#home', {
+										trigger: true
+									});
+								}
+							});
+						},
 
-											// return to main view
-											//
-											Backbone.history.navigate('#home', {
-												trigger: true
-											});
-										}
-									})
-								);
-							},
+						error: function() {
 
-							error: function() {
-
-								// show error dialog
-								//
-								Registry.application.modal.show(
-									new ErrorView({
-										message: "Could not delete this tool."
-									})
-								);
-							}
-						});
-					}
-				})
-			);
+							// show error message
+							//
+							application.error({
+								message: "Could not delete this tool."
+							});
+						}
+					});
+				}
+			});
 		},
 
 		onClickShowPolicy: function() {

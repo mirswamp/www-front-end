@@ -18,24 +18,19 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
 	'text!templates/projects/info/members/list/project-members-list-item.tpl',
-	'config',
-	'registry',
 	'utilities/time/date-format',
 	'models/users/user',
-	'views/dialogs/error-view',
-	'views/dialogs/confirm-view',
+	'views/collections/tables/table-list-item-view',
 	'utilities/time/date-utils'
-], function($, _, Backbone, Marionette, Template, Config, Registry, DateFormat, User, ErrorView, ConfirmView) {
-	return Backbone.Marionette.ItemView.extend({
+], function($, _, Template, DateFormat, User, TableListItemView) {
+	return TableListItemView.extend({
 
 		//
 		// attributes
 		//
 
-		tagName: 'tr',
+		template: _.template(Template),
 
 		events: {
 			'click .delete button': 'onClickDelete',
@@ -46,23 +41,20 @@ define([
 		// rendering methods
 		//
 
-		template: function(data) {
-			var isAdmin = Registry.application.session.isAdmin();
-			var isOwner = this.options.project.isOwnedByMember(this.options.projectMembership);
-			var myMembership = this.options.projectMembership.belongsTo(Registry.application.session.user);
+		templateContext: function() {
+			var isAdmin = application.session.isAdmin();
+			var isOwner = this.options.project.isOwnedBy(this.model.get('user'));
+			var myMembership = this.model.get('user').isCurrentUser();
 
-			return _.template(Template, _.extend(data, {
-				User: User,
-				model: this.model,
+			return {
 				index: this.options.index + 1,
 				project: this.options.project,
-				projectMembership: this.options.projectMembership,
 				showEmail: this.options.showEmail,
 				showUsername: this.options.showUsername,
 				showDelete: (this.options.showDelete || myMembership || isAdmin) && !isOwner,
 				showNumbering: this.options.showNumbering,
 				readOnly: this.options.readOnly || isOwner
-			}));
+			};
 		},
 
 		//
@@ -72,53 +64,49 @@ define([
 		onClickDelete: function() {
 			var self = this;
 
-			// show confirm dialog
+			// show confirmation
 			//
-			Registry.application.modal.show(
-				new ConfirmView({
-					title: "Delete Project Member",
-					message: "Are you sure that you want to delete " + this.model.getFullName() + " from the project, " + this.options.project.get('full_name') + "?",
+			application.confirm({
+				title: "Delete Project Member",
+				message: "Are you sure that you want to delete " + this.model.get('user').getFullName() + " from the project, " + this.options.project.get('full_name') + "?",
 
-					// callbacks
-					//
-					accept: function() {
-						var myMembership = self.options.projectMembership.belongsTo(Registry.application.session.user);
-						self.options.projectMembership.destroy({
+				// callbacks
+				//
+				accept: function() {
+					var myMembership = self.model.belongsTo(application.session.user);
+					self.model.destroy({
 
-							// callbacks
+						// callbacks
+						//
+						success: function() {
+
+							// remove user
 							//
-							success: function() {
+							self.collection.remove(self.model);
 
-								// remove user
+							// check if we are removing ourselves
+							//
+							if (myMembership) {
+								
+								// go to projects view
 								//
-								self.collection.remove(self.model);
-
-								// check if we are removing ourselves
-								//
-								if (myMembership) {
-									
-									// go to projects view
-									//
-									Backbone.history.navigate('#projects', {
-										trigger: true
-									});
-								}
-							},
-
-							error: function() {
-
-								// show error dialog
-								//
-								Registry.application.modal.show(
-									new ErrorView({
-										message: "Could not delete this project membership."
-									})
-								);
+								Backbone.history.navigate('#projects', {
+									trigger: true
+								});
 							}
-						});
-					}
-				})
-			);
+						},
+
+						error: function() {
+
+							// show error message
+							//
+							application.error({
+								message: "Could not delete this project membership."
+							});
+						}
+					});
+				}
+			});
 		},
 
 		onClickAdminCheckbox: function(event) {
@@ -126,7 +114,7 @@ define([
 
 			// update admin flag
 			//
-			this.options.projectMemberships.at(this.options.index).setAdmin(isChecked);
+			this.model.setAdmin(isChecked);
 		}
 	});
 });

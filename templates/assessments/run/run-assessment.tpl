@@ -37,6 +37,12 @@
 			<div id="package-version-selector"></div>
 		</div>
 	</div>
+	<div style="text-align:right; margin-bottom:10px">
+		<label id="include-public" class="checkbox-inline">
+			<input type="checkbox"<% if (includePublic) { %> checked<% } %>/>
+			Include public packages
+		</label>
+	</div>
 </div>
 
 <div class="panel" id="tool-selection"<% if (!package) { %> style="display:none"<% } %>>

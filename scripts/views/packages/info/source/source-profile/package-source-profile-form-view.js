@@ -1,11 +1,10 @@
 /******************************************************************************\
 |                                                                              |
-|                         package-source-profile-form-view.js                  |
+|                      package-source-profile-form-view.js                     |
 |                                                                              |
 |******************************************************************************|
 |                                                                              |
-|        This defines an editable form view of a package's source              |
-|        information.                                                          |
+|        This defines a form for entering a package's source info.             |
 |                                                                              |
 |        Author(s): Abe Megahed                                                |
 |                                                                              |
@@ -19,26 +18,23 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
 	'bootstrap/dropdown',
 	'select2',
-	'jquery.validate',
-	'bootstrap/tooltip',
-	'bootstrap/popover',
 	'text!templates/packages/info/source/source-profile/package-source-profile-form.tpl',
-	'registry',
+	'defaults',
 	'utilities/scripting/file-utils',
 	'models/packages/package',
 	'collections/packages/packages',
 	'collections/packages/package-types',
-	'views/dialogs/error-view'
-], function($, _, Backbone, Marionette, Dropdown, Select2, Validate, Tooltip, Popover, Template, Registry, FileUtils, Package, Packages, PackageTypes, ErrorView) {
-	return Backbone.Marionette.ItemView.extend({
+	'views/forms/form-view',
+], function($, _, Dropdown, Select2, Template, Defaults, FileUtils, Package, Packages, PackageTypes, FormView) {
+	return FormView.extend({
 
 		//
 		// attributes
 		//
+
+		template: _.template(Template),
 
 		events: {
 			'click #select-package-path': 'onClickSelectPackagePath',
@@ -57,7 +53,20 @@ define([
 		},
 
 		//
-		// methods
+		// form attributes
+		//
+		
+		rules: {
+			'package-path': {
+				required: true					
+			},
+			'language-type': {
+				languageSelected: true
+			}
+		},
+
+		//
+		// constructor
 		//
 
 		initialize: function() {
@@ -340,11 +349,12 @@ define([
 		// rendering methods
 		//
 
-		template: function(data) {
-			return _.template(Template, _.extend(data, {
+		templateContext: function() {
+			return {
 				model: this.model,
-				package: this.options.package
-			}));
+				package: this.options.package,
+				rubyVersions: Defaults['package-types'].ruby.versions
+			};
 		},
 
 		onRender: function() {
@@ -356,22 +366,15 @@ define([
 				self.setLanguageTypes(languages, packageTypes);
 			});
 
-
-			// display popovers on hover
-			//
-			this.$el.find('[data-toggle="popover"]').popover({
-				trigger: 'hover'
-			});
-
 			// unhide show wheel info button
 			//
 			if (this.model.getFilename().endsWith('whl')) {
 				this.$el.find('#show-wheel-info').show();
 			}
 
-			// validate the form
+			// call superclass method
 			//
-			this.validator = this.validate();
+			FormView.prototype.onRender.call(this);
 		},
 
 		showLanguageSelector: function(done) {
@@ -406,13 +409,11 @@ define([
 
 				error: function() {
 
-					// show error dialog
+					// show error message
 					//
-					Registry.application.modal.show(
-						new ErrorView({
-							message: "Could not fetch package types."
-						})
-					);
+					application.error({
+						message: "Could not fetch package types."
+					});
 				}			
 			});
 		},
@@ -526,13 +527,11 @@ define([
 
 				error: function() {
 
-					// show error dialog
+					// show error message
 					//
-					Registry.application.modal.show(
-						new ErrorView({
-							message: "Could not fetch directory tree for this package version."
-						})
-					);	
+					application.error({
+						message: "Could not fetch directory tree for this package version."
+					});
 				}
 			});
 		},
@@ -549,7 +548,7 @@ define([
 				success: function(packageTypes, languageVersions, fileTypes) {
 					self.defaultPackageTypes = packageTypes;
 
-					switch (packageTypes[0]) {
+					switch (Package.aliasToPackageType(packageTypes[0])) {
 
 						// C/C++ package types
 						//
@@ -568,7 +567,6 @@ define([
 							self.setDefaultAndroidSourceSetting();
 							break;
 
-						case 'java-source':
 						case 'java8-source':
 							self.setLanguageType('java');
 							self.setJavaType('java-source');
@@ -585,7 +583,6 @@ define([
 							self.setDefaultAndroidBytecodeSetting();
 							break;
 
-						case 'java-bytecode':
 						case 'java8-bytecode':
 							self.setLanguageType('java');
 							self.setJavaType('java-bytecode');
@@ -605,7 +602,6 @@ define([
 
 						// python package types
 						//
-						case 'python':
 						case 'python2':
 							self.setLanguageType('python');
 							self.setPythonVersion('python2');
@@ -697,13 +693,11 @@ define([
 
 				error: function() {
 
-					// show error dialog
+					// show error message
 					//
-					Registry.application.modal.show(
-						new ErrorView({
-							message: "Could not fetch language for this package version."
-						})
-					);	
+					application.error({
+						message: "Could not fetch language for this package version."
+					});
 				}
 			});
 		},
@@ -723,13 +717,11 @@ define([
 
 				error: function() {
 
-					// show error dialog
+					// show error message
 					//
-					Registry.application.modal.show(
-						new ErrorView({
-							message: "Could not check package version for file '" + filename + "'."
-						})
-					);	
+					application.error({
+						message: "Could not check package version for file '" + filename + "'."
+					});
 				}
 			});
 		},
@@ -749,13 +741,11 @@ define([
 
 				error: function() {
 
-					// show error dialog
+					// show error message
 					//
-					Registry.application.modal.show(
-						new ErrorView({
-							message: "Could not check package version for file '" + filename + "'."
-						})
-					);	
+					application.error({
+						message: "Could not check package version for file '" + filename + "'."
+					});
 				}
 			});
 		},
@@ -765,38 +755,21 @@ define([
 		},
 
 		//
-		// form validation methods
-		//
-
-		isValid: function() {
-			return this.validator.form();
-		},
-
-		validate: function() {
-			return this.$el.find('form').validate({
-				rules: {
-					'package-path': {
-						required: true					
-					},
-					'language-type': {
-						languageSelected: true
-					}
-				}
-			});
-		},
-
-		//
 		// form methods
 		//
 
-		update: function(package, packageVersion) {
+		getValues: function() {
+			return {
+				'package_type_id': Package.toPackageTypeId(this.getPackageType()),
+				'package_language': this.getPackageLanguage()
+			};
+		},
+
+		applyTo: function(package, packageVersion) {
 
 			// update package
 			//
-			package.set({
-				'package_type_id': Package.toPackageTypeId(this.getPackageType()),
-				'package_language': this.getPackageLanguage()
-			});
+			package.set(this.getValues());
 
 			// update package version
 			//
@@ -827,13 +800,11 @@ define([
 
 				error: function() {
 
-					// show error dialog
+					// show error message
 					//
-					Registry.application.modal.show(
-						new ErrorView({
-							message: "Could not check package version for file '" + filename + "'."
-						})
-					);	
+					application.error({
+						message: "Could not check package version for file '" + filename + "'."
+					});
 				}
 			});
 		},
@@ -855,13 +826,11 @@ define([
 
 				error: function() {
 
-					// show error dialog
+					// show error message
 					//
-					Registry.application.modal.show(
-						new ErrorView({
-							message: "Could not check package version for file '" + filename + "'."
-						})
-					);	
+					application.error({
+						message: "Could not check package version for file '" + filename + "'."
+					});
 				}
 			});
 		},
@@ -913,13 +882,13 @@ define([
 		onClickSelectPackagePath: function(event) {
 			var self = this;
 			require([
-				'views/packages/info/versions/info/build/build-profile/dialogs/select-package-version-directory-view'
-			], function (SelectPackageVersionDirectoryView) {
+				'views/packages/info/versions/info/build/build-profile/dialogs/select-package-version-directory-dialog-view'
+			], function (SelectPackageVersionDirectoryDialogView) {
 
 				// show select package version directory dialog
 				//
-				Registry.application.modal.show(
-					new SelectPackageVersionDirectoryView({
+				application.show(
+					new SelectPackageVersionDirectoryDialogView({
 						model: self.model,
 						title: "Select Package Path",
 						selectedDirectoryName: self.getPackagePath(),
@@ -960,7 +929,7 @@ define([
 			if (packageType) {
 				if (!this.checkPackageType(packageType)) {
 					this.options.parent.hideNotice();
-				};
+				}
 			}
 
 			// show / hide java type
@@ -1025,17 +994,15 @@ define([
 		onClickShowFileTypes: function(event) {
 			var self = this;
 			require([
-				'views/packages/info/versions/info/source/dialogs/package-version-file-types-view'
-			], function (PackageVersionFileTypesView) {
+				'views/packages/info/versions/info/source/dialogs/package-version-file-types-dialog-view'
+			], function (PackageVersionFileTypesDialogView) {
 
 				// show package version file types dialog
 				//
-				Registry.application.modal.show(
-					new PackageVersionFileTypesView({
-						model: self.model,
-						packagePath: self.$el.find('#package-path').val()
-					})
-				);
+				application.show(new PackageVersionFileTypesDialogView({
+					model: self.model,
+					packagePath: self.$el.find('#package-path').val()
+				}));
 			});
 		},
 
@@ -1049,27 +1016,25 @@ define([
 		onClickShowGemInfo: function(event) {
 			var self = this;
 			require([
-				'views/packages/info/versions/info/source/dialogs/package-version-gem-info-view'
-			], function (PackageVersionGemInfoView) {
+				'views/packages/info/versions/info/source/dialogs/package-version-gem-info-dialog-view'
+			], function (PackageVersionGemInfoDialogView) {
 
 				// show package version gem info dialog
 				//
-				Registry.application.modal.show(
-					new PackageVersionGemInfoView({
-						model: self.model,
-						packagePath: self.$el.find('#package-path').val()
-					}), {
-						size: 'large'
-					}
-				);
+				application.show(new PackageVersionGemInfoDialogView({
+					model: self.model,
+					packagePath: self.$el.find('#package-path').val()
+				}), {
+					size: 'large'
+				});
 			});
 		},
 
 		onClickShowWheelInfo: function(event) {
 			var self = this;
 			require([
-				'views/packages/info/versions/info/source/dialogs/package-version-wheel-info-view'
-			], function (PackageVersionWheelInfoView) {
+				'views/packages/info/versions/info/source/dialogs/package-version-wheel-info-dialog-view'
+			], function (PackageVersionWheelInfoDialogView) {
 				var path = self.$el.find('#package-path').val();
 				var dirname = self.model.getWheelDirname();
 
@@ -1081,12 +1046,10 @@ define([
 
 				// show package version wheel info dialog
 				//
-				Registry.application.modal.show(
-					new PackageVersionWheelInfoView({
-						model: self.model,
-						dirname: path + "/" + dirname
-					})
-				);
+				application.show(new PackageVersionWheelInfoDialogView({
+					model: self.model,
+					dirname: path + "/" + dirname
+				}));
 			});
 		},
 

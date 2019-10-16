@@ -1,6 +1,6 @@
 /******************************************************************************\
 |                                                                              |
-|                             projects-list-item-view.js                       |
+|                            projects-list-item-view.js                        |
 |                                                                              |
 |******************************************************************************|
 |                                                                              |
@@ -19,22 +19,18 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
 	'text!templates/projects/list/projects-list-item.tpl',
-	'registry',
 	'utilities/time/date-format',
-	'views/dialogs/confirm-view',
-	'views/dialogs/error-view',
+	'views/collections/tables/table-list-item-view',
 	'utilities/time/date-utils'
-], function($, _, Backbone, Marionette, Template, Registry, DateFormat, ConfirmView, ErrorView) {
-	return Backbone.Marionette.ItemView.extend({
+], function($, _, Template, DateFormat, TableListItemView) {
+	return TableListItemView.extend({
 
 		//
 		// attributes
 		//
 
-		tagName: 'tr',
+		template: _.template(Template),
 
 		events: {
 			'click .delete button': 'onClickDelete'
@@ -52,20 +48,27 @@ define([
 				//
 				success: function() {
 
-					// refresh parent
+					// remove model from collection
 					//
-					self.options.parent.render();
+					self.options.parent.collection.remove(self.model);
+
+					// update user
+					//
+					if (self.options.parent.collection.length == 1) {
+
+						// update user
+						//
+						application.session.user.set('has_projects', false);
+					}
 				},
 
 				error: function() {
 
-					// show error dialog
+					// show error message
 					//
-					Registry.application.modal.show(
-						new ErrorView({
-							message: "Could not delete this project."
-						})
-					);
+					application.error({
+						message: "Could not delete this project."
+					});
 				}
 			});
 		},
@@ -86,13 +89,11 @@ define([
 
 				error: function() {
 
-					// show error dialog
+					// show error message
 					//
-					Registry.application.modal.show(
-						new ErrorView({
-							message: "Could not delete this project member."
-						})
-					);
+					application.error({
+						message: "Could not delete this project member."
+					});
 				}
 			});	
 		},
@@ -101,15 +102,15 @@ define([
 		// rendering methods
 		//
 
-		template: function(data) {
-			return _.template(Template, _.extend(data, {
+		templateContext: function() {
+			return {
 				model: this.model,
 				collection: this.collection,
 				index: this.options.index + 1,
 				showDeactivatedProjects: this.options.showDeactivatedProjects,
 				showNumbering: this.options.showNumbering,
-				showDelete: this.options.showDelete && this.model.isOwnedBy(Registry.application.session.user) && !this.model.isTrialProject()
-			}));
+				showDelete: this.options.showDelete && this.model.isOwnedBy(application.session.user) && !this.model.isTrialProject()
+			};
 		},
 
 		//
@@ -118,39 +119,35 @@ define([
 
 		onClickDelete: function() {
 			var self = this;
-			if (this.model.isOwnedBy(Registry.application.session.user)) {
+			if (this.model.isOwnedBy(application.session.user)) {
 			
-				// show confirm dialog
+				// show confirmation
 				//
-				Registry.application.modal.show(
-					new ConfirmView({
-						title: "Delete Project",
-						message: "Are you sure that you would like to delete project " + self.model.get('full_name') + "? " +
-							"When you delete a project, all of the project data will continue to be retained.",
+				application.confirm({
+					title: "Delete Project",
+					message: "Are you sure that you would like to delete project " + self.model.get('full_name') + "? " +
+						"When you delete a project, all of the project data will continue to be retained.",
 
-						// callbacks
-						//
-						accept: function() {
-							self.deleteProject();
-						}
-					})
-				);
+					// callbacks
+					//
+					accept: function() {
+						self.deleteProject();
+					}
+				});
 			} else {
 
-				// show confirm dialog
+				// show confirmation
 				//
-				Registry.application.modal.show(
-					new ConfirmView({
-						title: "Delete Project Membership",
-						message: "Are you sure that you would like to delete your membership from project " + self.model.get('full_name') + "? ",
+				application.confirm({
+					title: "Delete Project Membership",
+					message: "Are you sure that you would like to delete your membership from project " + self.model.get('full_name') + "? ",
 
-						// callbacks
-						//
-						accept: function() {
-							self.deleteProjectMembership();
-						}
-					})
-				);				
+					// callbacks
+					//
+					accept: function() {
+						self.deleteProjectMembership();
+					}
+				});
 			}
 		},
 	});

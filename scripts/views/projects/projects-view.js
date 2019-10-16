@@ -18,18 +18,13 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
 	'text!templates/projects/projects.tpl',
-	'registry',
 	'models/permissions/user-permission',
 	'collections/projects/projects',
-	'views/dialogs/error-view',
-	'views/projects/list/projects-list-view',
-	'views/users/dialogs/project-ownership/project-ownership-policy-view',
-	'views/users/dialogs/project-ownership/project-ownership-status-view'
-], function($, _, Backbone, Marionette, Template, Registry, UserPermission, Projects, ErrorView, ProjectsListView, ProjectOwnershipPolicyView, ProjectOwnershipStatusView) {
-	return Backbone.Marionette.LayoutView.extend({
+	'views/base-view',
+	'views/projects/list/projects-list-view'
+], function($, _, Template, UserPermission, Projects, BaseView, ProjectsListView) {
+	return BaseView.extend({
 
 		//
 		// attributes
@@ -38,8 +33,8 @@ define([
 		template: _.template(Template),
 
 		regions: {
-			ownedProjectsList: '#owned-projects-list',
-			joinedProjectsList: '#joined-projects-list'
+			owned: '#owned-projects-list',
+			joined: '#joined-projects-list'
 		},
 
 		events: {
@@ -48,12 +43,16 @@ define([
 		},
 
 		//
-		// methods
+		// constructor
 		//
 
 		initialize: function() {
 			this.collection = new Projects();
 		},
+
+		//
+		// methods
+		//
 
 		addProject: function() {
 			Backbone.history.navigate('#projects/add', {
@@ -76,25 +75,23 @@ define([
 
 				error: function() {
 
-					// show error dialog
+					// show error message
 					//
-					Registry.application.modal.show(
-						new ErrorView({
-							message: "Could not fetch list of projects."
-						})
-					);
+					application.error({
+						message: "Could not fetch list of projects."
+					});
 				}
-			})
+			});
 		},
 
 		//
 		// rendering methods
 		//
 
-		template: function(data) {
-			return _.template(Template, _.extend(data, {
-				showNumbering: Registry.application.options.showNumbering
-			}));
+		templateContext: function() {
+			return {
+				showNumbering: application.options.showNumbering
+			};
 		},
 
 		onRender: function() {
@@ -111,23 +108,19 @@ define([
 
 			// show list of owned projects
 			//
-			this.ownedProjectsList.show(
-				new ProjectsListView({
-					collection: this.collection.getOwnedBy(Registry.application.session.user),
-					showNumbering: Registry.application.options.showNumbering,
-					showDelete: true
-				})
-			);
+			this.showChildView('owned', new ProjectsListView({
+				collection: this.collection.getOwnedBy(application.session.user),
+				showNumbering: application.options.showNumbering,
+				showDelete: true
+			}));
 
 			// show list of joined projects
 			//
-			this.joinedProjectsList.show(
-				new ProjectsListView({
-					collection: this.collection.getNotOwnedBy(Registry.application.session.user),
-					showNumbering: Registry.application.options.showNumbering,
-					showDelete: true
-				})
-			);
+			this.showChildView('joined', new ProjectsListView({
+				collection: this.collection.getNotOwnedBy(application.session.user),
+				showNumbering: application.options.showNumbering,
+				showDelete: true
+			}));
 		},
 
 		//
@@ -139,7 +132,7 @@ define([
 		},
 
 		onClickShowNumbering: function(event) {
-			Registry.application.setShowNumbering($(event.target).is(':checked'));
+			application.setShowNumbering($(event.target).is(':checked'));
 			this.showLists();
 		}
 	});

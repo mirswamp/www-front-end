@@ -18,15 +18,12 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
 	'text!templates/projects/add/add-new-project.tpl',
-	'registry',
 	'models/projects/project',
-	'views/dialogs/error-view',
+	'views/base-view',
 	'views/projects/info/project-profile/project-profile-form-view'
-], function($, _, Backbone, Marionette, Template, Registry, Project, ErrorView, ProjectProfileFormView) {
-	return Backbone.Marionette.LayoutView.extend({
+], function($, _, Template, Project, BaseView, ProjectProfileFormView) {
+	return BaseView.extend({
 
 		//
 		// attributes
@@ -35,7 +32,7 @@ define([
 		template: _.template(Template),
 
 		regions: {
-			projectProfile: '#project-profile'
+			profile: '#project-profile'
 		},
 
 		events: {
@@ -47,7 +44,7 @@ define([
 		},
 
 		//
-		// methods
+		// constructor
 		//
 
 		initialize: function() {
@@ -58,15 +55,17 @@ define([
 			});
 		},
 
+		//
+		// rendering methods
+		//
+
 		onRender: function() {
 
 			// display project profile form
 			//
-			this.projectProfile.show(
-				new ProjectProfileFormView({
-					model: this.model
-				})
-			);
+			this.showChildView('profile', new ProjectProfileFormView({
+				model: this.model
+			}));
 		},
 
 		showWarning: function() {
@@ -96,11 +95,11 @@ define([
 
 			// check validation
 			//
-			if (this.projectProfile.currentView.isValid()) {
+			if (this.getChildView('profile').isValid()) {
 
 				// update model from form
 				//
-				this.projectProfile.currentView.update(this.model);
+				this.getChildView('profile').applyTo(this.model);
 
 				// disable save button
 				//
@@ -112,9 +111,13 @@ define([
 
 					// callbacks
 					//
-					success: function( project ) {
+					success: function(project) {
 
-						// advance to project submitted project
+						// update user
+						//
+						application.session.user.set('has_projects', true);
+
+						// advance to project view
 						//
 						Backbone.history.navigate('#projects/' + project.get('project_uid'), {
 							trigger: true
@@ -124,15 +127,12 @@ define([
 
 					error: function() {
 
-						// show error dialog
+						// show error message
 						//
-						Registry.application.modal.show(
-							new ErrorView({
-								message: "Could not create new project."
-							})
-						);
+						application.error({
+							message: "Could not create new project."
+						});
 					}
-
 				});
 
 			} else {

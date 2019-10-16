@@ -18,15 +18,12 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
 	'collections/users/user-classes',
 	'text!templates/users/classes/user-classes.tpl',
-	'registry',
+	'views/base-view',
 	'views/users/classes/list/classes-list-view',
-	'views/dialogs/error-view'
-], function($, _, Backbone, Marionette, UserClasses, Template, Registry, ClassesListView, ErrorView) {
-	return Backbone.Marionette.LayoutView.extend({
+], function($, _, UserClasses, Template, BaseView, ClassesListView) {
+	return BaseView.extend({
 
 		//
 		// attributes
@@ -35,7 +32,7 @@ define([
 		template: _.template(Template),
 
 		regions: {
-			classesList: '#classes-list'
+			list: '#classes-list'
 		},
 
 		events: {
@@ -43,7 +40,7 @@ define([
 		},
 
 		//
-		// methods
+		// constructor
 		//
 
 		initialize: function() {
@@ -65,13 +62,11 @@ define([
 		},
 
 		showList: function() {
-			this.classesList.show(
-				new ClassesListView({
-					model: this.model,
-					collection: this.collection,
-					showDelete: true
-				})
-			);
+			this.showChildView('list', new ClassesListView({
+				model: this.model,
+				collection: this.collection,
+				showDelete: true
+			}));
 		},
 
 		fetchAndShowList: function() {
@@ -89,13 +84,11 @@ define([
 
 				error: function() {
 
-					// show error dialog
+					// show error message
 					//
-					Registry.application.modal.show(
-						new ErrorView({
-							message: "Could not get classes for this user."
-						})
-					);
+					application.error({
+						message: "Could not get classes for this user."
+					});
 				}
 			});
 		},
@@ -103,20 +96,18 @@ define([
 		showAddNewClassDialog: function(collection) {
 			var self = this;
 			require([
-				'views/users/classes/dialogs/add-new-class-view'
-			], function (AddNewClassView) {
-				Registry.application.modal.show(
-					new AddNewClassView({
-						model: self.model,
-						collection: collection,
+				'views/users/classes/dialogs/add-new-class-dialog-view'
+			], function (AddNewClassDialogView) {
+				application.show(new AddNewClassDialogView({
+					model: self.model,
+					collection: collection,
 
-						// callbacks
-						//
-						onSave: function() {
-							self.fetchAndShowList();
-						}
-					})
-				);
+					// callbacks
+					//
+					onSave: function() {
+						self.fetchAndShowList();
+					}
+				}));
 			});		
 		},
 
@@ -146,9 +137,9 @@ define([
 
 					if (collection.length == 0) {
 
-						// show notify dialog
+						// show notification
 						//
-						Registry.application.notify({
+						application.notify({
 							message: "There are no more classes to enroll in."
 						});
 					} else {
@@ -161,15 +152,13 @@ define([
 
 				error: function() {
 
-					// show error dialog
+					// show error message
 					//
-					Registry.application.modal.show(
-						new ErrorView({
-							message: "Could not get list of classes."
-						})
-					);		
+					application.error({
+						message: "Could not get list of classes."
+					});
 				}
-			})
+			});
 		}
 	});
 });

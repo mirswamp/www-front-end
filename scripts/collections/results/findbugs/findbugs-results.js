@@ -18,13 +18,13 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'models/results/findbugs/findbugs-result'
-], function($, _, Backbone, FindBugsResult) {
-	return Backbone.Collection.extend({
+	'models/results/findbugs/findbugs-result',
+	'collections/base-collection'
+], function($, _, FindBugsResult, BaseCollection) {
+	return BaseCollection.extend({
 
 		//
-		// overridden Backbone attributes
+		// constructor
 		//
 
 		initialize: function(models, options) {

@@ -18,10 +18,9 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
 	'models/files/file',
 	'utilities/scripting/file-utils'
-], function($, _, Backbone, File, FileUtils) {
+], function($, _, File, FileUtils) {
 
 	//
 	// utility methods
@@ -38,17 +37,20 @@ define([
 	// model
 	//
 
-	var Class = Backbone.Model.extend({
+	return Backbone.Model.extend({
 
 		//
-		// attributes
+		// constructor
 		//
 
-		/*
-		defaults: {
-			'name': './'
+		initialize: function() {
+
+			// set contents of non-empty directories
+			//
+			if (this.has('contents')) {
+				this.setContents(this.get('contents'));
+			}
 		},
-		*/
 
 		//
 		// path manipulation methods
@@ -88,15 +90,6 @@ define([
 			return targetPath;
 		},
 
-		initialize: function() {
-
-			// set contents of non-empty directories
-			//
-			if (this.has('contents')) {
-				this.setContents(this.get('contents'));
-			}
-		},
-
 		setContents: function(contents) {
 
 			// convert contents to files and directories
@@ -109,7 +102,7 @@ define([
 					// create new directory or file
 					//
 					if (item.name[item.name.length - 1] == '/') {
-						item = new Class(item);
+						item = new this.constructor(item);
 					} else {
 						item = new File(item);
 					}
@@ -124,6 +117,4 @@ define([
 			});	
 		}
 	});
-	
-	return Class;
 });

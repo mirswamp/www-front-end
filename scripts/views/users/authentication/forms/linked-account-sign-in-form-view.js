@@ -4,8 +4,7 @@
 |                                                                              |
 |******************************************************************************|
 |                                                                              |
-|        This defines a form for authenticating users using a federated        |
-|        authentication service.                                               |
+|        This defines a form for entering federated authentication info.       |
 |                                                                              |
 |        Author(s): Abe Megahed                                                |
 |                                                                              |
@@ -19,22 +18,21 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
 	'bootstrap/popover',
 	'text!templates/users/authentication/forms/linked-account-sign-in-form.tpl',
-	'registry',
+	'views/forms/form-view',
 	'views/users/authentication/selectors/auth-provider-selector-view',
-	'views/dialogs/notify-view'
-], function($, _, Backbone, Marionette, Popover, Template, Registry, AuthProviderSelectorView, NotifyView) {
-	return Backbone.Marionette.LayoutView.extend({
+], function($, _, Popover, Template, FormView, AuthProviderSelectorView) {
+	return FormView.extend({
 
 		//
 		// attributes
 		//
 
+		template: _.template(Template),
+
 		regions: {
-			authProviderSelector: '#auth-provider-selector'
+			selector: '#auth-provider-selector'
 		},
 
 		events: {
@@ -49,7 +47,7 @@ define([
 		//
 
 		initialize: function() {
-			this.useLinkedAccount = Registry.application.options.authProvider != undefined;
+			this.useLinkedAccount = application.options.authProvider != undefined;
 		},
 
 		//
@@ -57,7 +55,7 @@ define([
 		//
 
 		getProvider: function() {
-			return this.authProviderSelector.currentView.providers.findWhere({
+			return this.getChildView('selector').providers.findWhere({
 				name: this.$el.find('#auth-provider-selector select').val()
 			});
 		},
@@ -67,8 +65,8 @@ define([
 
 			// save name of auth provider for later
 			//
-			Registry.application.options.authProvider = provider.get('name');
-			Registry.application.saveOptions();
+			application.options.authProvider = provider.get('name');
+			application.saveOptions();
 			
 			require([
 				'models/users/session'
@@ -84,17 +82,17 @@ define([
 		// rendering methods
 		//
 
-		template: function(data) {
-			return _.template(Template, _.extend(data, {
-				config: Registry.application.config
-			}));
+		templateContext: function() {
+			return {
+				config: application.config
+			};
 		},
 
 		onRender: function() {
 
 			// show provider selector
 			//
-			if (Registry.application.config['linked_accounts_enabled']) {
+			if (application.config['linked_accounts_enabled']) {
 				this.showAuthProviderSelector();
 			}
 
@@ -107,17 +105,15 @@ define([
 
 		showAuthProviderSelector: function() {
 			var self = this;
-			this.authProviderSelector.show(
-				new AuthProviderSelectorView({		
+			this.showChildView('selector', new AuthProviderSelectorView({		
 
-					// callback
-					//
-					onChange: function() {
-						self.selectedProvider = self.authProviderSelector.currentView.selected;
-						self.onSelect();
-					}
-				})
-			);
+				// callback
+				//
+				onChange: function() {
+					self.selectedProvider = self.getChildView('selector').selected;
+					self.onSelect();
+				}
+			}));
 		},
 
 		showProviders: function() {
@@ -164,7 +160,7 @@ define([
 
 			// get provider
 			//
-			var provider = this.authProviderSelector.currentView.providers.findWhere({
+			var provider = this.getChildView('selector').providers.findWhere({
 				name: 'GitHub'
 			});
 
@@ -187,7 +183,7 @@ define([
 
 			// get provider
 			//
-			var provider = this.authProviderSelector.currentView.providers.findWhere({
+			var provider = this.getChildView('selector').providers.findWhere({
 				name: 'Google'
 			});
 

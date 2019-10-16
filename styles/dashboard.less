@@ -18,18 +18,17 @@
 .dashboard {
 	margin-top: 20px;
 
-	.column {
-		.make-md-column(4);
-		.make-xs-column(6);
-		display: table;
-		margin-bottom: 10px;
-		cursor: pointer;
-	}
+	.row {
+		column-count: 3;
 
-	@media (min-width: @screen-md-min) {
 		.column {
-			min-height: 125px;
-			margin-left: 0;
+			break-inside: avoid-column;
+			margin-bottom: 15px;
+			cursor: pointer;
+		}
+
+		a {
+			text-decoration: none;
 		}
 	}
 
@@ -48,25 +47,27 @@
 }
 
 //
-// medium dashboard styles
+// large dashboard styles
 //
 
-@media (max-width: @screen-md-min) {
+@media (min-width: @screen-md-min) {
 	.dashboard {
-		[class*="col-"] {
-			min-height: 0;
+		.column {
+			.description {
+				min-height: 100px;
+			}
 		}
 	}
 }
 
 //
-// small dashboard styles
+// medium dashboard styles
 //
 
-@media (max-width: @screen-sm-min) {
+@media (max-width: @screen-md-min) {
 	.dashboard {
-		.icon {
-			margin-top: 0;
+		.row {
+			column-count: 2;
 		}
 	}
 }
@@ -76,22 +77,22 @@
 //
 
 @media (max-width: @screen-xs-min) {
-	.content .dashboard {
-		.icon {
-			display: inline-block;
-			float: none;
-		}
+	.dashboard {
+		.row {
+			.column {
 
-		.icon-group {
-			text-align: center;
-		}
+				.icon-group {
+					text-align: center;
+				}
 
-		.description {
-			display: none;
-		}
+				.description {
+					display: none;
+				}
 
-		[class*="col-"] {
-			margin-bottom: 0;
+				[class*="col-"] {
+					margin-bottom: 0;
+				}
+			}
 		}
 	}
 }
@@ -105,8 +106,22 @@
 	// remove padding
 	//
 	.dashboard {
-		[class*="col-"] {
-			padding: 10px;
+
+		.icon {
+			margin-top: 0;
+			margin-left: auto;
+			margin-right: auto;
+			margin-bottom: 0;
+		}
+
+		.row {
+			.column {
+				flex-direction: column;
+				
+				h2 {
+					text-align: center;
+				}
+			}
 		}
 	}
 }

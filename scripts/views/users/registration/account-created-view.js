@@ -19,26 +19,19 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
-	'text!templates/users/registration/account-created.tpl'
-], function($, _, Backbone, Marionette, Template) {
-	return Backbone.Marionette.ItemView.extend({
+	'text!templates/users/registration/account-created.tpl',
+	'views/base-view'
+], function($, _, Template, BaseView) {
+	return BaseView.extend({
 
 		//
 		// attributes
 		//
 
+		template: _.template(Template),
+
 		events: {
 			'click #ok': 'onClickOk'
-		},
-
-		//
-		// rendering methods
-		//
-
-		template: function(data) {
-			return _.template(Template, data);
 		},
 
 		//

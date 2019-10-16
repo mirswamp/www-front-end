@@ -13,18 +13,17 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
 	'text!templates/layout/page.tpl',
+	'views/base-view',
 	'views/layout/header-view',
 	'views/layout/footer-view'
-], function($, _, Backbone, Marionette, Template, HeaderView, FooterView) {
+], function($, _, Template, BaseView, HeaderView, FooterView) {
 	
 	// pre-compile template
 	//
 	var _template = _.template(Template);
 
-	return Backbone.Marionette.LayoutView.extend({
+	return BaseView.extend({
 
 		//
 		// attributes
@@ -58,21 +57,17 @@ define([
 
 			// show header view
 			//
-			this.header.show(new HeaderView({
+			this.showChildView('header', new HeaderView({
 				nav: this.options.nav || "home"
 			}));
 
 			// show content view
 			//
-			this.content.show(
-				this.options.contentView
-			);
+			this.showChildView('content', this.options.contentView);
 
 			// show footer view
 			//
-			this.footer.show(
-				new FooterView()
-			);
+			this.showChildView('footer', new FooterView());
 		},
 
 		//
@@ -80,35 +75,36 @@ define([
 		//
 
 		onKeyDown: function(event) {
-			if (this.content.currentView.onKeyDown) {
+			if (this.getChildView('content').onKeyDown) {
 
 				// let view handle event
 				//
-				this.content.currentView.onKeyDown(event);
+				this.getChildView('content').onKeyDown(event);
 
 			// if return key is pressed, then trigger primary button
 			//
-			} else if (event.keyCode == 13) {
-				if (this.content.currentView && this.content.currentView.$el.find('.btn-primary').length > 0) {
+			} else if (event.keyCode == 13 && $('button:focus').length == 0) {
+				var button;
 
-					// let content handle event
+				// find primary button
+				//
+				if (this.hasChildView('content')) {
+					button = this.getChildView('content').$el.find('.btn-primary')[0];
+				}
+				if (!button && this.hasChildView('header')) {
+					button = this.getChildView('header').$el.find('.btn-primary')[0];
+				}
+
+				if (button) {
+
+					// activate button
 					//
-					this.content.currentView.$el.find('.btn-primary').trigger('click');
+					$(button).trigger('click');
 
-					// finish handling event
+					// prevent further handling of event
 					//
 					event.stopPropagation();
-					event.preventDefault();
-				} else if (this.header.currentView && this.header.currentView.$el.find('.btn-primary').length > 0) {
-					
-					// let header handle event
-					//
-					this.header.currentView.$el.find('.btn-primary').trigger('click');
-
-					// finish handling event
-					//
-					event.stopPropagation();
-					event.preventDefault();
+					event.preventDefault();		
 				}
 			}
 		}

@@ -1,6 +1,6 @@
 /******************************************************************************\
 |                                                                              |
-|                           package-version-profile-view.js                    |
+|                          package-version-profile-view.js                     |
 |                                                                              |
 |******************************************************************************|
 |                                                                              |
@@ -18,18 +18,17 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
-	'bootstrap/tooltip',
-	'bootstrap/popover',
 	'text!templates/packages/info/versions/info/details/package-version-profile/package-version-profile.tpl',
+	'views/base-view',
 	'utilities/time/date-utils'
-], function($, _, Backbone, Marionette, Tooltip, Popover, Template) {
-	return Backbone.Marionette.ItemView.extend({
+], function($, _, Template, BaseView) {
+	return BaseView.extend({
 
 		//
 		// attributes
 		//
+
+		template: _.template(Template),
 
 		events: {
 			'click #edit-version': 'onClickEditVersion',
@@ -39,12 +38,12 @@ define([
 		// rendering methods
 		//
 
-		template: function(data) {
-			return _.template(Template, _.extend(data, {
+		templateContext: function() {
+			return {
 				model: this.model,
 				package: this.options.package,
 				isOwned: this.options.package.isOwned()
-			}));
+			};
 		},
 
 		//

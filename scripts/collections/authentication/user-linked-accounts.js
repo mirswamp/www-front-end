@@ -18,11 +18,11 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
 	'config',
-	'models/authentication/user-linked-account'
-], function($, _, Backbone, Config, UserLinkedAccount) {
-	return Backbone.Collection.extend({
+	'models/authentication/user-linked-account',
+	'collections/base-collection'
+], function($, _, Config, UserLinkedAccount, BaseCollection) {
+	return BaseCollection.extend({
 
 		//
 		// Backbone attributes

@@ -20,11 +20,9 @@ define([
 	'jquery',
 	'underscore',
 	'config',
-	'registry',
 	'models/utilities/timestamped',
-	'views/dialogs/error-view'
-], function($, _, Config, Registry, Timestamped, ErrorView) {
-	var Class = Timestamped.extend({
+], function($, _, Config, Timestamped) {
+	return Timestamped.extend({
 
 		//
 		// Backbone attributes
@@ -38,7 +36,7 @@ define([
 		//
 
 		isOwned: function() {
-			return this.isOwnedBy(Registry.application.session.user);		
+			return this.isOwnedBy(application.session.user);		
 		},
 
 		isOwnedBy: function(user) {
@@ -92,7 +90,7 @@ define([
 
 			// fetch platform
 			//
-			var platform = new Class({
+			var platform = new this.prototype.constructor({
 				platform_uuid: platformUuid
 			});
 
@@ -106,17 +104,13 @@ define([
 
 				error: function() {
 
-					// show error dialog
+					// show error message
 					//
-					Registry.application.modal.show(
-						new ErrorView({
-							message: "Could not fetch platform."
-						})
-					);
+					application.error({
+						message: "Could not fetch platform."
+					});
 				}
 			});
 		}
 	});
-
-	return Class;
 });

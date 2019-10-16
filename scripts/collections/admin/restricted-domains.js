@@ -18,11 +18,10 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
 	'config',
 	'models/admin/restricted-domain',
 	'collections/base-collection'
-], function($, _, Backbone, Config, RestrictedDomain, BaseCollection) {
+], function($, _, Config, RestrictedDomain, BaseCollection) {
 	return BaseCollection.extend({
 
 		//

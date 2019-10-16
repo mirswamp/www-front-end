@@ -18,18 +18,22 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
 	'text!templates/users/classes/list/classes-list.tpl',
-	'views/widgets/lists/sortable-table-list-view',
+	'views/base-view',
+	'views/collections/tables/sortable-table-list-view',
 	'views/users/classes/list/classes-list-item-view'
-], function($, _, Backbone, Marionette, Template, SortableTableListView, ClassesListItemView) {
+], function($, _, Template, BaseView, SortableTableListView, ClassesListItemView) {
 	return SortableTableListView.extend({
 
 		//
 		// attributes
 		//
 		childView: ClassesListItemView,
+		template: _.template(Template),
+
+		emptyView: BaseView.extend({
+			template: _.template("No classes.")
+		}),
 
 		sorting: {
 
@@ -45,10 +49,6 @@ define([
 			//
 			sortList: [[1, 1]] 
 		},
-
-		noChildrenView: Marionette.ItemView.extend({
-			template: _.template("No classes have been created for this account.")
-		}),
 
 		//
 		// constructor
@@ -66,11 +66,11 @@ define([
 		// rendering methods
 		//
 
-		template: function(data) {
-			return _.template(Template, _.extend(data, {
+		templateContext: function() {
+			return {
 				collection: this.collection,
 				showDelete: this.options.showDelete
-			}));
+			};
 		},
 
 		onRender: function() {

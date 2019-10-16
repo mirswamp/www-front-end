@@ -18,10 +18,7 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
 	'text!templates/dashboard/dashboard.tpl',
-	'registry',
 	'collections/projects/projects',
 	'collections/packages/packages',
 	'collections/tools/tools',
@@ -29,10 +26,10 @@ define([
 	'collections/assessments/execution-records',
 	'collections/assessments/scheduled-runs',
 	'collections/events/user-events',
-	'views/dialogs/notify-view',
+	'views/base-view',
 	'utilities/time/date-utils'
-], function($, _, Backbone, Marionette, Template, Registry, Projects, Packages, Tools, AssessmentRuns, ExecutionRecords, ScheduledRuns, UserEvents, NotifyView) {
-	return Backbone.Marionette.ItemView.extend({
+], function($, _, Template, Projects, Packages, Tools, AssessmentRuns, ExecutionRecords, ScheduledRuns, UserEvents, BaseView) {
+	return BaseView.extend({
 
 		//
 		// attributes
@@ -40,6 +37,8 @@ define([
 
 		className: 'dashboard',
 		
+		template: _.template(Template),
+
 		events: {
 			'click #my-account': 'onClickMyAccount',
 			'click #sign-out': 'onClickSignOut'
@@ -49,11 +48,11 @@ define([
 		// rendering methods
 		//
 
-		template: function() {
-			return _.template(Template, {
-				user: Registry.application.session.user,
-				isAdmin: Registry.application.session.user.isAdmin()
-			});
+		templateContext: function() {
+			return {
+				user: application.session.user,
+				isAdmin: application.session.user.isAdmin()
+			};
 		},
 
 		onRender: function() {
@@ -62,7 +61,7 @@ define([
 			// fetch user's projects
 			//
 			var projects = new Projects();
-			projects.fetchByUser(Registry.application.session.user, {
+			projects.fetchByUser(application.session.user, {
 
 				// callbacks
 				//
@@ -73,7 +72,7 @@ define([
 
 			// show tools, if necessary
 			//
-			Tools.fetchNumByUser(Registry.application.session.user, {
+			Tools.fetchNumByUser(application.session.user, {
 				success: function(number) {
 					if (number > 0) {
 						self.$el.find("#tools").show();
@@ -109,7 +108,7 @@ define([
 
 			// add num tools badge
 			//
-			Tools.fetchNumByUser(Registry.application.session.user, {
+			Tools.fetchNumByUser(application.session.user, {
 				success: function(number) {
 					self.addBadge("#tools .icon", number);
 				}
@@ -171,7 +170,7 @@ define([
 		},
 
 		onClickSignOut: function() {
-			Registry.application.logout();
+			application.logout();
 		}
 	});
 });

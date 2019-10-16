@@ -18,20 +18,17 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
-	'registry',
 	'bootstrap/popover',
 	'text!templates/packages/info/versions/info/build/dependencies/editable-list/package-dependencies-editable-list-item.tpl',
-	'views/dialogs/error-view'
-], function($, _, Backbone, Marionette, Registry, Popover, Template, ErrorView) {
-	return Backbone.Marionette.ItemView.extend({
+	'views/collections/tables/table-list-item-view'
+], function($, _, Popover, Template, TableListItemView) {
+	return TableListItemView.extend({
 
 		//
 		// attributes
 		//
 
-		tagName: 'tr',
+		template: _.template(Template),
 
 		events: {
 			'blur .dependency-list input': 'onBlurDependencyListInput',
@@ -42,17 +39,17 @@ define([
 		// rendering methods
 		//
 
-		template: function(data) {
-			return _.template(Template, _.extend(data, {
+		templateContext: function() {
+			return {
 				index: this.options.index,
 				showNumbering: this.options.showNumbering,
 				platformVersionName: this.options.platformVersion? this.options.platformVersion.get('full_name') : '?',
 				platformVersionString: this.options.platformVersion? this.options.platformVersion.get('version_string') : '?',
 				platformUrl: undefined,
-				platformVersionUrl: Registry.application.getURL() + '#platforms/versions/' + this.model.get('platform_version_uuid'),
+				platformVersionUrl: application.getURL() + '#platforms/versions/' + this.model.get('platform_version_uuid'),
 				dependencyList: this.model.get('dependency_list'),
 				showDelete: this.options.showDelete
-			}));
+			};
 		},
 
 		onRender: function() {

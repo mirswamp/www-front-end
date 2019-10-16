@@ -18,14 +18,11 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
-	'bootstrap/tooltip',
-	'registry',	
 	'text!templates/layout/footer.tpl',
-	'views/dialogs/performance-view'
-], function($, _, Backbone, Marionette, Tooltip, Registry, Template, PerformanceView) {
-	return Backbone.Marionette.ItemView.extend({
+	'views/base-view',
+	'views/dialogs/performance-dialog-view'
+], function($, _, Template, BaseView, PerformanceDialogView) {
+	return BaseView.extend({
 
 		//
 		// attributes
@@ -51,9 +48,7 @@ define([
 		},
 
 		showPerformanceDialog: function() {
-			Registry.application.modal.show(
-				new PerformanceView()
-			);
+			application.show(new PerformanceDialogView());
 		},
 
 		//

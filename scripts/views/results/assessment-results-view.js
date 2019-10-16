@@ -18,30 +18,25 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
 	'text!templates/results/assessment-results.tpl',
-	'registry',
-	'views/dialogs/error-view'
-], function($, _, Backbone, Marionette, Template, Registry, ErrorView) {
-	return Backbone.Marionette.LayoutView.extend({
+	'views/base-view',
+], function($, _, Template, BaseView) {
+	return BaseView.extend({
 
 		//
 		// attributes
 		//
 
-		regions: {
-			assessmentResults: '#assessment-results'
-		},
+		template: _.template(Template),
 
 		//
 		// rendering methods
 		//
 
-		template: function(data) {
-			return _.template(Template, _.extend(data, {
+		templateContext: function() {
+			return {
 				project: this.options.project
-			}));
+			};
 		},
 
 		onRender: function() {
@@ -87,23 +82,19 @@ define([
 
 						// display error view / results status
 						//
-						Registry.application.modal.show(
-							new ErrorView({
-								message: "Error fetching assessment results: " + data.results_status
-							})
-						);					
+						application.error({
+							message: "Error fetching assessment results: " + data.results_status
+						});
 					}
 				},
 
 				error: function() {
 
-					// show error dialog
+					// show error message
 					//
-					Registry.application.modal.show(
-						new ErrorView({
-							message: "Could not fetch assessment results content."
-						})
-					);				
+					application.error({
+						message: "Could not fetch assessment results content."
+					});
 				}
 			});
 		}

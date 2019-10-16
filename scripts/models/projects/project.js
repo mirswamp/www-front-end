@@ -19,10 +19,9 @@ define([
 	'jquery',
 	'underscore',
 	'config',
-	'registry',
 	'models/utilities/timestamped',
 	'models/users/user'
-], function($, _, Config, Registry, Timestamped, User) {
+], function($, _, Config, Timestamped, User) {
 	return Timestamped.extend({
 
 		//
@@ -104,7 +103,7 @@ define([
 		//
 
 		isOwned: function() {
-			return this.isOwnedBy(Registry.application.session.user);		
+			return this.isOwnedBy(application.session.user);		
 		},
 
 		isOwnedBy: function(user) {
@@ -153,7 +152,7 @@ define([
 		//
 
 		deleteCurrentMember: function(options) {
-			this.deleteMember(Registry.application.session.user, options);
+			this.deleteMember(application.session.user, options);
 		},
 
 		deleteMember: function(member, options) {
@@ -177,10 +176,10 @@ define([
 		},
 
 		fetchCurrentTrial: function(options) {
-			if (Registry.application.session.user) {
-				this.fetchTrialByUser(Registry.application.session.user, options);
+			if (application.session.user) {
+				this.fetchTrialByUser(application.session.user, options);
 			} else {
-				Registry.application.sessionExpired();
+				application.sessionExpired();
 			}
 		},
 

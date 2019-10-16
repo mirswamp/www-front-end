@@ -65,15 +65,15 @@
 	box-shadow: none;
 
 	li a {
-		background-color: @veryVeryLightGrey;
+		background-color: @ultra-light-grey;
 	}
 }
 
 .nav-pills > .active > a,
 .nav-pills > .active > a:hover,
 .nav-pills > .active > a:focus {
-	background-color: @primaryColor;
-	.vertical-gradient(@primaryHighlightColor, @primaryColor);
+	background-color: @brand-primary;
+	.vertical-gradient(@brand-primary-highlight, @brand-primary);
 }
 
 //
@@ -112,11 +112,11 @@
 
 	> li:hover {
 		> a {
-			color: @primaryHoverColor;
+			color: @brand-primary-hover;
 			background-image: none;
 
 			i {
-				color: @primaryHoverColor;
+				color: @brand-primary-hover;
 			}
 		}
 	}
@@ -124,7 +124,7 @@
 	> li.active:hover {
 		> a {
 			color: white;
-			.vertical-gradient(@primaryHighlightColor, @primaryColor);
+			.vertical-gradient(@brand-primary-highlight, @brand-primary);
 
 			i {
 				color: white;

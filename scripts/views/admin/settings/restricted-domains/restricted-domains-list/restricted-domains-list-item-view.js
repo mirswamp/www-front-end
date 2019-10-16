@@ -19,21 +19,17 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
 	'text!templates/admin/settings/restricted-domains/restricted-domains-list/restricted-domains-list-item.tpl',
-	'registry',
 	'models/admin/restricted-domain',
-	'views/dialogs/error-view',
-	'views/dialogs/confirm-view'
-], function($, _, Backbone, Marionette, Template, Registry, RestrictedDomain, ErrorView, ConfirmView) {
-	return Backbone.Marionette.ItemView.extend({
+	'views/collections/tables/table-list-item-view',
+], function($, _, Template, RestrictedDomain, TableListItemView) {
+	return TableListItemView.extend({
 
 		//
 		// attributes
 		//
 
-		tagName: 'tr',
+		template: _.template(Template),
 
 		events: {
 			'click .delete button': 'onClickDelete',
@@ -45,10 +41,10 @@ define([
 		// rendering methods
 		//
 
-		template: function(data) {
-			return _.template(Template, _.extend(data, {
+		templateContext: function() {
+			return {
 				showDelete: this.options.showDelete
-			}));
+			};
 		},
 
 		//
@@ -65,38 +61,34 @@ define([
 				message = "Are you sure you want to delete this domain?";
 			}
 
-			// show confirm dialog
+			// show confirmation
 			//
-			Registry.application.modal.show(
-				new ConfirmView({
-					title: "Delete Restricted Domain",
-					message: message,
+			application.confirm({
+				title: "Delete Restricted Domain",
+				message: message,
 
-					// callbacks
-					//
-					accept: function() {
-						self.model.destroy({
+				// callbacks
+				//
+				accept: function() {
+					self.model.destroy({
 
-							// callbacks
+						// callbacks
+						//
+						success: function() {
+							self.render();
+						},
+
+						error: function() {
+
+							// show error message
 							//
-							success: function() {
-								self.render();
-							},
-
-							error: function() {
-
-								// show error dialog
-								//
-								Registry.application.modal.show(
-									new ErrorView({
-										message: "Could not delete restricted domain."
-									})
-								);
-							}
-						});
-					}
-				})
-			);
+							application.error({
+								message: "Could not delete restricted domain."
+							});
+						}
+					});
+				}
+			});
 		},
 
 		onBlurDomainName: function(event) {

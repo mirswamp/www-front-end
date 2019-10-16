@@ -18,23 +18,23 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
 	'text!templates/packages/info/versions/package-version.tpl',
-	'registry',
 	'collections/projects/projects',
 	'collections/assessments/assessment-runs',
 	'collections/assessments/execution-records',
 	'collections/assessments/scheduled-runs',
-], function($, _, Backbone, Marionette, Template, Registry, Projects, AssessmentRuns, ExecutionRecords, ScheduledRuns) {
-	return Backbone.Marionette.LayoutView.extend({
+	'views/base-view'
+], function($, _, Template, Projects, AssessmentRuns, ExecutionRecords, ScheduledRuns, BaseView) {
+	return BaseView.extend({
 
 		//
 		// attributes
 		//
 
+		template: _.template(Template),
+
 		regions: {
-			packageVersionInfo: '#package-version-info'
+			info: '#package-version-info'
 		},
 
 		events: {
@@ -52,12 +52,12 @@ define([
 		// rendering methods
 		//
 
-		template: function(data) {
-			return _.template(Template, _.extend(data, {
+		templateContext: function() {
+			return {
 				nav: this.options.nav,
 				package: this.options.package,
 				name: this.options.package.get('name')
-			}));
+			};
 		},
 
 		onRender: function() {
@@ -74,7 +74,7 @@ define([
 
 					// determine whether or not to display sharing
 					//
-					var showSharing = projects.length > 1 && (self.options.package.get('is_owned') || Registry.application.session.user.isAdmin());
+					var showSharing = projects.length > 1 && (self.options.package.get('is_owned') || application.session.user.isAdmin());
 
 					// hide / show sharing tab
 					//

@@ -19,20 +19,21 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
 	'text!templates/users/prompts/linked-account-login-prompt.tpl',
-	'models/users/session'
-], function($, _, Backbone, Marionette, Template, Session) {
-	return Backbone.Marionette.ItemView.extend({
+	'models/users/session',
+	'views/base-view'
+], function($, _, Template, Session, BaseView) {
+	return BaseView.extend({
+
+		//
+		// attributes
+		//
+
+		template: _.template(Template),
 
 		//
 		// rendering methods
 		//
-
-		template: function() {
-			return _.template(Template);
-		},
 
 		onRender: function(){
 			Session.linkedAccountLogin();

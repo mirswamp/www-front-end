@@ -1,6 +1,6 @@
 /******************************************************************************\
 |                                                                              |
-|                         platform-versions-list-item-view.js                  |
+|                        platform-versions-list-item-view.js                   |
 |                                                                              |
 |******************************************************************************|
 |                                                                              |
@@ -18,30 +18,28 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
 	'text!templates/platforms/info/versions/platform-versions-list/platform-versions-list-item.tpl',
-	'registry',
+	'views/collections/tables/table-list-item-view',
 	'utilities/time/date-utils'
-], function($, _, Backbone, Marionette, Template, Registry) {
-	return Backbone.Marionette.ItemView.extend({
+], function($, _, Template, TableListItemView) {
+	return TableListItemView.extend({
 
 		//
 		// attributes
 		//
 
-		tagName: 'tr',
+		template: _.template(Template),
 
 		//
 		// rendering methods
 		//
 
-		template: function(data) {
-			return _.template(Template, _.extend(data, {
+		templateContext: function() {
+			return {
 				model: this.model,
-				url: Registry.application.session.user? Registry.application.getURL() + '#platforms/versions/' + this.model.get('platform_version_uuid') : undefined,
+				url: application.session.user? application.getURL() + '#platforms/versions/' + this.model.get('platform_version_uuid') : undefined,
 				showDelete: false
-			}));
+			};
 		}
 	});
 });

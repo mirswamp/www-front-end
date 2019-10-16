@@ -18,22 +18,22 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
 	'bootstrap/collapse',
-	'modernizr',
 	'text!templates/users/filters/user-type-filter.tpl',
-	'utilities/browser/url-strings',
+	'utilities/web/url-strings',
+	'views/base-view',
 	'views/users/selectors/user-type-selector-view',
-], function($, _, Backbone, Marionette, Collapse, Modernizr, Template, UrlStrings, UserTypeSelectorView) {
-	return Backbone.Marionette.LayoutView.extend({
+], function($, _, Collapse, Template, UrlStrings, BaseView, UserTypeSelectorView) {
+	return BaseView.extend({
 
 		//
 		// attributes
 		//
 
+		template: _.template(Template),
+		
 		regions: {
-			userTypeSelector: '.user-type-selector',
+			selector: '.user-type-selector',
 		},
 
 		events: {
@@ -41,7 +41,7 @@ define([
 		},
 
 		//
-		// methods
+		// constructor
 		//
 
 		initialize: function() {
@@ -71,7 +71,7 @@ define([
 
 		getDescription: function() {
 			if (this.hasSelected()) {
-				var name = this.userTypeSelector.currentView.getSelectedName().toLowerCase();
+				var name = this.getChildView('selector').getSelectedName().toLowerCase();
 				if (name != 'Any') {
 					return name;
 				} else {
@@ -98,7 +98,7 @@ define([
 
 		getData: function() {
 			if (this.hasSelected()) {
-				var name = this.userTypeSelector.currentView.getSelectedValue();
+				var name = this.getChildView('selector').getSelectedValue();
 				if (name != 'Any') {
 					return {
 						type: name
@@ -108,7 +108,7 @@ define([
 				if (this.options.initialValue) {
 					return {
 						type: this.options.initialValue
-					}
+					};
 				}	
 			}
 		},
@@ -121,7 +121,7 @@ define([
 			var queryString = '';
 
 			if (this.hasSelected()) {
-				queryString += 'type=' + urlEncode(this.userTypeSelector.currentView.getSelectedValue());
+				queryString += 'type=' + urlEncode(this.getChildView('selector').getSelectedValue());
 			}
 
 			return queryString;
@@ -132,33 +132,27 @@ define([
 		//
 
 		reset: function(options) {
-			this.userTypeSelector.currentView.setSelectedName("Any", options);
+			this.getChildView('selector').setSelectedName("Any", options);
 		},
 
 		//
 		// rendering methods
 		//
 
-		template: function(data) {
-			return _.template(Template, data);
-		},
-
 		onRender: function() {
 			var self = this;
 
 			// show subviews
 			//
-			this.userTypeSelector.show(
-				new UserTypeSelectorView({
-					initialValue: this.options.initialValue,
+			this.showChildView('selector', new UserTypeSelectorView({
+				initialValue: this.options.initialValue,
 
-					// callbacks
-					//
-					onChange: function() {
-						self.onChange();
-					}
-				})
-			);
+				// callbacks
+				//
+				onChange: function() {
+					self.onChange();
+				}
+			}));
 
 			// update reset button
 			//
@@ -197,7 +191,7 @@ define([
 
 			// update selected
 			//
-			this.selected = this.userTypeSelector.currentView.getSelectedName();
+			this.selected = this.getChildView('selector').getSelectedName();
 
 			// update reset button
 			//

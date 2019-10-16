@@ -18,11 +18,11 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
 	'config',
-	'models/permissions/user-permission'
-], function($, _, Backbone, Config, UserPermission) {
-	return Backbone.Collection.extend({
+	'models/permissions/user-permission',
+	'collections/base-collection'
+], function($, _, Config, UserPermission, BaseCollection) {
+	return BaseCollection.extend({
 
 		//
 		// Backbone attributes

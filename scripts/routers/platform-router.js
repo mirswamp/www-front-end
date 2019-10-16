@@ -18,12 +18,12 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone'
-], function($, _, Backbone) {
+	'routers/base-router'
+], function($, _, BaseRouter) {
 
 	// create router
 	//
-	return Backbone.Router.extend({
+	return BaseRouter.extend({
 
 		//
 		// route definitions
@@ -50,17 +50,14 @@ define([
 
 		showPublicPlatforms: function() {
 			require([
-				'registry',
 				'views/platforms/public-platforms-view'
-			], function (Registry, PublicPlatformsView) {
+			], function (PublicPlatformsView) {
 
 				// show public platforms view
 				//
-				Registry.application.showMain(
-					new PublicPlatformsView(), {
-						nav: 'resources'
-					}
-				);
+				application.showMain(new PublicPlatformsView(), {
+					nav: 'resources'
+				});
 			});
 		},
 
@@ -71,36 +68,37 @@ define([
 		showPlatformView: function(platformUuid, options) {
 			var self = this;
 			require([
-				'registry',
 				'models/platforms/platform',
-				'views/dialogs/error-view',
 				'views/platforms/platform-view'
-			], function (Registry, Platform, ErrorView, PlatformView) {
+			], function (Platform, PlatformView) {
 				Platform.fetch(platformUuid, function(platform) {
 
 					// check if user is logged in
 					//
-					if (Registry.application.session.user) {
+					if (application.session.user) {
 
 						// show content view
 						//
-						Registry.application.showContent({
+						application.showContent({
 							nav1: platform.isOwned()? 'home' : 'resources',
 							nav2: platform.isOwned()? 'platforms' : undefined, 
 
 							// callbacks
 							//	
 							done: function(view) {
-								view.content.show(
-									new PlatformView({
-										model: platform,
-										nav: options.nav,
-										parent: view
-									})
-								);
 
+								// show platform
+								//
+								view.showChildView('content', new PlatformView({
+									model: platform,
+									nav: options.nav,
+									parent: view
+								}));
+
+								// perform callback
+								//
 								if (options.done) {
-									options.done(view.content.currentView);
+									options.done(view.getChildView('content'));
 								}				
 							}					
 						});
@@ -108,11 +106,10 @@ define([
 
 						// show single column platform view
 						//
-						Registry.application.showMain(
-							new PlatformView({
-								model: package,
-								nav: options.nav
-							}), {
+						application.showMain(new PlatformView({
+							model: package,
+							nav: options.nav
+						}), {
 							done: options.done
 						});
 					}
@@ -127,9 +124,8 @@ define([
 		showPlatform: function(platformUuid) {
 			var self = this;
 			require([
-				'registry',
 				'views/platforms/info/details/platform-details-view'
-			], function (Registry, PlatformDetailsView) {
+			], function (PlatformDetailsView) {
 
 				// show platform view
 				//
@@ -142,11 +138,9 @@ define([
 
 						// show platform details view
 						//
-						view.platformInfo.show(
-							new PlatformDetailsView({
-								model: view.model
-							})
-						);
+						view.showChildView('info', new PlatformDetailsView({
+							model: view.model
+						}));
 					}
 				});
 			});
@@ -159,38 +153,39 @@ define([
 		showPlatformVersion: function(platformVersionUuid, options) {
 			var self = this;
 			require([
-				'registry',
 				'models/platforms/platform',
 				'models/platforms/platform-version',
-				'views/dialogs/error-view',
 				'views/platforms/info/versions/platform-version/platform-version-view'
-			], function (Registry, Platform, PlatformVersion, ErrorView, PlatformVersionView) {
+			], function (Platform, PlatformVersion, PlatformVersionView) {
 				PlatformVersion.fetch(platformVersionUuid, function(platformVersion) {
 					Platform.fetch(platformVersion.get('platform_uuid'), function(platform) {
 
 						// check if user is logged in
 						//
-						if (Registry.application.session.user) {
+						if (application.session.user) {
 
 							// show content view
 							//
-							Registry.application.showContent({
+							application.showContent({
 								nav1: platform.isOwned()? 'home' : 'resources',
 								nav2: platform.isOwned()? 'platforms' : undefined, 
 
 								// callbacks
 								//	
 								done: function(view) {
-									view.content.show(
-										new PlatformVersionView({
-											model: platformVersion,
-											platform: platform,
-											parent: view
-										})
-									);
 
+									// show platform version
+									//
+									view.showChildView('content', new PlatformVersionView({
+										model: platformVersion,
+										platform: platform,
+										parent: view
+									}));
+
+									// perform callback
+									//
 									if (options && options.done) {
-										options.done(view.content.currentView);
+										options.done(view.getChildView('content'));
 									}				
 								}					
 							});
@@ -198,11 +193,10 @@ define([
 
 							// show single column package version view
 							//
-							Registry.application.showMain(
-								new PlatformVersionView({
-									model: platformVersion,
-									platform: platform
-								}), {
+							application.showMain(new PlatformVersionView({
+								model: platformVersion,
+								platform: platform
+							}), {
 								done: options.done
 							});
 						}
@@ -212,5 +206,3 @@ define([
 		},
 	});
 });
-
-

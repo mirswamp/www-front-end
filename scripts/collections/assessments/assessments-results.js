@@ -18,11 +18,11 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
 	'config',
-	'models/assessments/assessment-results'
-], function($, _, Backbone, Config, AssessmentResults) {
-	return Backbone.Collection.extend({
+	'models/assessments/assessment-results',
+	'collections/base-collection'
+], function($, _, Config, AssessmentResults, BaseCollection) {
+	return BaseCollection.extend({
 
 		//
 		// Backbone attributes

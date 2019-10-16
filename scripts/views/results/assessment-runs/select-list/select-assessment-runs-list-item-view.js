@@ -1,6 +1,6 @@
 /******************************************************************************\
 |                                                                              |
-|                      select-assessment-runs-list-item-view.js                |
+|                    select-assessment-runs-list-item-view.js                  |
 |                                                                              |
 |******************************************************************************|
 |                                                                              |
@@ -19,39 +19,32 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
-	'bootstrap/tooltip',
 	'text!templates/results/assessment-runs/select-list/select-assessment-runs-list-item.tpl',
 	'config',
-	'registry',
 	'models/packages/package',
 	'models/tools/tool',
+	'models/permissions/user-policy',
+	'models/assessments/assessment-results',
 	'views/results/assessment-runs/list/assessment-runs-list-item-view',
 	'utilities/time/date-utils'
-], function($, _, Backbone, Marionette, Tooltip, Template, Config, Registry, Package, Tool, AssessmentRunsListItemView) {
+], function($, _, Template, Config, Package, Tool, UserPolicy, AssessmentResults, AssessmentRunsListItemView) {
 	return AssessmentRunsListItemView.extend({
 
 		//
 		// attributes
 		//
 
-		tagName: 'tr',
+		template: _.template(Template),
 
 		events: _.extend(AssessmentRunsListItemView.prototype.events, {
 			'click .select input': 'onClickSelectInput',
 			'click .select-group input': 'onClickSelectGroupInput',
 			'click .scarf-results': 'onClickScarfResults'
-			// 'dblclick .select input': 'onDoubleClickSelectInput'
 		}),
 
 		//
 		// selection methods
 		//
-
-		isSelected: function() {
-			return this.$el.find('input[name="select"]').is(':checked');
-		},
 
 		setSelected: function(selected) {
 			if (selected) {
@@ -69,87 +62,26 @@ define([
 			return Tool.prototype.isCompatibleWith.call(this.model.attributes.tool, this.options.viewer);
 		},
 
-		isViewable: function() {
-			return !this.model.hasErrors() && this.model.hasResults() && this.model.hasWeaknesses();
+		isSelected: function() {
+			return this.$el.find('input[name="select"]').is(':checked');
 		},
-
-		getRunUrl: function(data) {
-			return Registry.application.getURL() + '#runs/' + data.execution_record_uuid + '/status' + (this.options.queryString != ''? '?' + this.options.queryString : '');
-		},
-
-		getProjectUrl: function(data) {
-			if (data.project.project_uuid) {
-				return Registry.application.getURL() + '#projects/' + data.project.project_uuid;
-			}
-		},
-
-		getPackageUrl: function(data) {
-			if (data.package.package_uuid) {
-				return Registry.application.getURL() + '#packages/' + data.package.package_uuid;
-			}
-		},
-
-		getPackageVersionUrl: function(data) {
-			if (data.package.package_version_uuid) {
-				return Registry.application.getURL() + '#packages/versions/' + data.package.package_version_uuid;
-			}
-		},
-
-		getToolUrl: function(data) {
-			if (data.tool.tool_uuid) {
-				return Registry.application.getURL() + '#tools/' + data.tool.tool_uuid;
-			}
-		},
-
-		getToolVersionUrl: function(data) {
-			if (data.tool.tool_version_uuid) {
-				return Registry.application.getURL() + '#tools/versions/' + data.tool.tool_version_uuid;
-			}
-		},
-
-		getPlatformUrl: function(data) {
-			if (data.platform.platform_uuid) {
-				return Registry.application.getURL() + '#platforms/' + data.platform.platform_uuid;
-			}
-		},
-
-		getPlatformVersionUrl: function(data) {
-			if (data.platform.platform_version_uuid) {
-				return Registry.application.getURL() + '#platforms/versions/' + data.platform.platform_version_uuid;
-			}
-		},
-
-		getErrorUrl: function() {
-			if (this.model.has('assessment_result_uuid') && this.model.has('project_uuid')) {
-				var assessmentResultUuid = this.model.get('assessment_result_uuid');
-				var viewer = this.options.errorViewer;
-				var projectUuid = this.model.get('project_uuid');
-				return Registry.application.getURL() + '#results/' + assessmentResultUuid + '/viewer/' + viewer.get('viewer_uuid') + '/project/' + projectUuid;
-			}
-		},
-
-		getResultsUrl: function() {
-			if (this.model.has('assessment_result_uuid')) {
-				return Config.servers.web + '/v1/assessment_results/' + this.model.get('assessment_result_uuid') + '/scarf';
-			}
-		},
-
+		
 		//
 		// rendering methods
 		//
 
-		template: function(data) {
-			return _.template(Template, _.extend(data, {
+		templateContext: function() {
+			return {
 				model: this.model,
 				index: this.options.index + 1,
-				runUrl: this.getRunUrl(data),
-				projectUrl: this.getProjectUrl(data),
-				packageUrl: this.getPackageUrl(data),
-				packageVersionUrl: this.getPackageVersionUrl(data),
-				toolUrl: this.getToolUrl(data),
-				toolVersionUrl: this.getToolVersionUrl(data),
-				platformUrl: this.getPlatformUrl(data),
-				platformVersionUrl: this.getPlatformVersionUrl(data),
+				runUrl: this.getRunUrl(),
+				projectUrl: this.getProjectUrl(),
+				packageUrl: this.getPackageUrl(),
+				packageVersionUrl: this.getPackageVersionUrl(),
+				toolUrl: this.getToolUrl(),
+				toolVersionUrl: this.getToolVersionUrl(),
+				platformUrl: this.getPlatformUrl(),
+				platformVersionUrl: this.getPlatformVersionUrl(),
 				resultsUrl: this.getResultsUrl(),
 				errorUrl: this.options.showErrors? this.getErrorUrl() : undefined,
 				isChecked: this.options.selected? this.options.selected.contains(this.model) : false,
@@ -161,8 +93,8 @@ define([
 				showErrors: this.options.showErrors,
 				showDelete: this.options.showDelete,
 				showSsh: this.options.showSsh,
-				sshEnabled: this.model.isVmReady() && Registry.application.session.user.hasSshAccess()
-			}));
+				sshEnabled: this.model.isVmReady() && application.session.user.hasSshAccess()
+			};
 		},
 
 		onRender: function() {
@@ -220,34 +152,75 @@ define([
 
 		onClickScarfResults: function(event) {
 			var self = this;
-			var tool = new Tool(this.model.get('tool'));
-			var package = new Package(this.model.get('package'));
+			var href = $(event.target).closest('a').attr('href');
 
-			if (tool.isRestricted() && tool.get('permission') != 'granted') {
+			// get results
+			//
+			var results = new AssessmentResults({
+				assessment_result_uuid: this.model.get('assessment_result_uuid')
+			}).fetch({
 
-				// cancel event
+				// callbacks
 				//
-				event.stopPropagation();
-				event.preventDefault();
+				success: function(data) {
+					var tool = new Tool(self.model.get('tool'));
+					var package = new Package(self.model.get('package'));
 
-				// ensure the user has permission and has accepted any pertinent EULAs
-				//
-				tool.confirmPolicy({
-
-					// callbacks
+					// set policy code from results
 					//
-					success: function() {
+					tool.set({
+						policy_code: data.get('policy_code')
+					});
 
-						// update tool permission
+					if (tool.isRestricted()) {
+
+						// cancel event
 						//
-						var tool = self.model.get('tool');
-						tool.permission = 'granted';
-						self.model.set({
-							tool: tool
+						event.stopPropagation();
+						event.preventDefault();
+
+						// ensure the user has permission and has accepted any pertinent EULAs
+						//
+						new UserPolicy({
+							policy_code: data.get('policy_code')
+						}).confirm({
+
+							// callbacks
+							//
+							success: function() {
+
+								// update tool permission
+								//
+								var tool = self.model.get('tool');
+								tool.permission = 'granted';
+								self.model.set({
+									tool: tool
+								});
+
+								// open resuls
+								//
+								window.open(href);
+							}
 						});
+					} else {
+						window.open(href);
 					}
-				});
-			}
+				},
+
+				error: function() {
+
+					//
+					//
+					application.error({
+						message: "Could not get scarf results."
+					});
+				}
+			});
+
+			// cancel event
+			//
+			event.stopPropagation();
+			event.preventDefault();
 		}
 
 		/*

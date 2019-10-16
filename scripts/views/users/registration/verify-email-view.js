@@ -19,14 +19,10 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
 	'text!templates/users/registration/verify-email.tpl',
-	'registry',
-	'views/dialogs/notify-view',
-	'views/dialogs/error-view'
-], function($, _, Backbone, Marionette, Template, Registry, NotifyView, ErrorView) {
-	return Backbone.Marionette.ItemView.extend({
+	'views/base-view',
+], function($, _, Template, BaseView) {
+	return BaseView.extend({
 
 		//
 		// attributes
@@ -52,46 +48,39 @@ define([
 				//
 				success: function() {
 
-					// show success notification dialog
+					// show success notification message
 					//
-					Registry.application.modal.show(
-						new NotifyView({
-							message: "Your email address has been verified.  You may now begin to use the SWAMP.",
+					application.notify({
+						message: "Your email address has been verified.  You may now begin to use the SWAMP.",
 
-							// callbacks
+						// callbacks
+						//
+						accept: function() {
+
+							// go to welcome view
 							//
-							accept: function() {
-
-								// go to welcome view
-								//
-								Backbone.history.navigate('#sign-in', {
-									trigger: true
-								});
-							}
-						})
-					);
+							Backbone.history.navigate('#sign-in', {
+								trigger: true
+							});
+						}
+					});
 				},
 
 				error: function(response) {
-
 					if (response.status <= 500) {
 
-						// show notify dialog
+						// show notification
 						//
-						Registry.application.modal.show(
-							new NotifyView({
-								message: response.responseText
-							})
-						);
+						application.notify({
+							message: response.responseText
+						});
 					} else {
 
-						// show error dialog
+						// show error message
 						//
-						Registry.application.modal.show(
-							new ErrorView({
-								message: response.responseText
-							})
-						);
+						application.error({
+							message: response.responseText
+						});
 					}
 				}
 			});

@@ -4,7 +4,7 @@
 |                                                                              |
 |******************************************************************************|
 |                                                                              |
-|        This defines a dialog used to filter results by bug code.             |
+|        This defines a dialog box used to filter results by bug code.         |
 |                                                                              |
 |        Author(s): Abe Megahed                                                |
 |                                                                              |
@@ -18,16 +18,17 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
 	'text!templates/results/native-viewer/dialogs/results-filter-dialog.tpl',
-	'registry'
-], function($, _, Backbone, Marionette, Template, Registry) {
-	return Backbone.Marionette.ItemView.extend({
+	'views/dialogs/dialog-view'
+], function($, _, Template, DialogView) {
+	return DialogView.extend({
 
 		//
 		// attributes
 		//
+
+		template: _.template(Template),
+		width: 800,
 
 		events: {
 			'click #all': 'onClickAll',
@@ -77,13 +78,13 @@ define([
 		// rendering methods
 		//
 
-		template: function() {
-			return _.template(Template, {
+		templateContext: function() {
+			return {
 				title: this.options.title,
 				catalog: this.options.catalog,
 				filter_type: this.options.filter_type,
 				filter: this.options.filter,
-			});
+			};
 		},
 
 		checkAll: function() {
@@ -109,9 +110,9 @@ define([
 
 		onClickOk: function() {
 
-			// dismiss modal dialog
+			// close dialog
 			//
-			Registry.application.modal.hide();
+			this.hide();
 
 			// perform callback
 			//

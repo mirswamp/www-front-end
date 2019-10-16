@@ -18,17 +18,24 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
 	'models/users/user',
 	'models/projects/project',
 	'views/events/list/events-list-item-view',
-], function($, _, Backbone, Marionette, User, Project, EventsListItemView) {
+], function($, _, User, Project, EventsListItemView) {
 	return EventsListItemView.extend({
 
 		//
 		// methods
 		//
+
+		templateContext: function() {
+			return {
+				index: this.options.index,
+				showNumbering: this.options.showNumbering,
+				projectUrl: application.getURL() + '#projects/' + this.model.get('project_uid'),
+				date: this.getDate()
+			};
+		},
 
 		onRender: function() {
 			this.showProject();

@@ -18,23 +18,17 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
 	'text!templates/users/linked-accounts/list/linked-accounts-list-item.tpl',
-	'registry',
-	'config',
 	'models/authentication/user-linked-account',
-	'views/dialogs/confirm-view',
-	'views/dialogs/notify-view',
-	'views/dialogs/error-view',
-], function($, _, Backbone, Marionette, Template, Registry, Config, UserLinkedAccount, ConfirmView, NotifyView, ErrorView) {
-	return Backbone.Marionette.ItemView.extend({
+	'views/collections/tables/table-list-item-view'
+], function($, _, Template, UserLinkedAccount, TableListItemView) {
+	return TableListItemView.extend({
 
 		//
 		// attributes
 		//
 
-		tagName: 'tr',
+		template: _.template(Template),
 
 		events: {
 			'change select.status': 'onChangeStatus',
@@ -45,13 +39,12 @@ define([
 		// rendering methods
 		//
 
-		template: function(data) {
-			return _.template(Template, { 
-				admin: Registry.application.session.user.get('admin_flag'),
-				account: data,
+		templateContext: function() {
+			return { 
+				admin: application.session.user.get('admin_flag'),
 				showStatus: this.options.showStatus,
 				showDelete: this.options.showDelete
-			});
+			};
 		},
 
 		//
@@ -61,45 +54,41 @@ define([
 		onClickDelete: function() {
 			var self = this;
 
-			// show confirm dialog
+			// show confirmation
 			//
-			Registry.application.modal.show(
-				new ConfirmView({
-					title: "Unlink Account",
-					message: "Are you sure you wish to unlink this " + self.model.get('title') + " account?",
+			application.confirm({
+				title: "Unlink Account",
+				message: "Are you sure you wish to unlink this " + self.model.get('title') + " account?",
 
-					// callbacks
-					//
-					accept: function() {
-						var account = new UserLinkedAccount({
-							'linked_account_id': self.model.get('linked_account_id')
-						});
+				// callbacks
+				//
+				accept: function() {
+					var account = new UserLinkedAccount({
+						'linked_account_id': self.model.get('linked_account_id')
+					});
 
-						account.destroy({
+					account.destroy({
 
-							// callbacks
+						// callbacks
+						//
+						success: function() {
+
+							// update view
 							//
-							success: function() {
+							self.options.parent.render();
+						},
 
-								// update view
-								//
-								self.options.parent.render();
-							},
+						error: function() {
 
-							error: function() {
-
-								// show error dialog
-								//
-								Registry.application.modal.show(
-									new ErrorView({
-										message: "Could not unlink this account."
-									})
-								);
-							}
-						});
-					}
-				})
-			);
+							// show error message
+							//
+							application.error({
+								message: "Could not unlink this account."
+							});
+						}
+					});
+				}
+			});
 		},
 
 		onChangeStatus: function(event) {
@@ -111,22 +100,18 @@ define([
 
 					// show success notify view
 					//
-					Registry.application.modal.show(
-						new NotifyView({
-							message: "Linked account status updated."
-						})
-					);
+					application.notify({
+						message: "Linked account status updated."
+					});
 				},
 
 				error: function() {
 
-					// show error dialog
+					// show error message
 					//
-					Registry.application.modal.show(
-						new ErrorView({
-							message: "Could not update this linked account's status."
-						})
-					);
+					application.error({
+						message: "Could not update this linked account's status."
+					});
 				}
 			});
 		}

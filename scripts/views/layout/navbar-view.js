@@ -18,26 +18,25 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
 	'bootstrap/popover',
 	'text!templates/layout/navbar.tpl',
-	'registry',
 	'collections/tools/tools',
-	'views/dialogs/notify-view'
-], function($, _, Backbone, Marionette, PopOver, Template, Registry, Tools, NotifyView) {
-	return Backbone.Marionette.LayoutView.extend({
+	'views/base-view',
+], function($, _, PopOver, Template, Tools, BaseView) {
+	return BaseView.extend({
 
 		//
 		// attributes
 		//
+
+		template: _.template(Template),
 
 		events: {
 			'click #side-nav': 'onClickSideNav'
 		},
 
 		setLayout: function(layout) {
-			Registry.application.setLayout(layout);
+			application.setLayout(layout);
 
 			// refresh
 			//
@@ -47,7 +46,7 @@ define([
 		},
 
 		getOrientation: function() {
-			var layout = Registry.application.options.layout;
+			var layout = application.options.layout;
 			if (layout && layout.indexOf("bottom") > -1) {
 				return 'bottom';
 			} else {
@@ -59,14 +58,14 @@ define([
 		// rendering methods
 		//
 
-		template: function(data) {
-			return _.template(Template, _.extend(data, {
+		templateContext: function() {
+			return {
 				nav: this.options.nav,
 				showHome: this.options.showHome,
 				orientation: this.getOrientation(),
 				showChangeIcons: this.options.showChangeIcons,
-				isAdmin: Registry.application.session.user.isAdmin()
-			}));
+				isAdmin: application.session.user.isAdmin()
+			};
 		},
 
 		onRender: function() {
@@ -85,7 +84,7 @@ define([
 
 			// show tools, if necessary
 			//
-			Tools.fetchNumByUser(Registry.application.session.user, {
+			Tools.fetchNumByUser(application.session.user, {
 				success: function(number) {
 					if (number > 0) {
 						self.$el.find('#tools').closest('li').show();

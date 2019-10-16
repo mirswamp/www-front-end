@@ -18,23 +18,22 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
 	'text!templates/projects/select-list/select-projects-list.tpl',
 	'collections/projects/projects',
-	'views/widgets/lists/table-list-view',
+	'views/projects/list/projects-list-view',
 	'views/projects/select-list/select-projects-list-item-view'
-], function($, _, Backbone, Marionette, Template, Projects, TableListView, SelectProjectsListItemView) {
-	return TableListView.extend({
+], function($, _, Template, Projects, ProjectsListView, SelectProjectsListItemView) {
+	return ProjectsListView.extend({
 
 		//
 		// attributes
 		//
 
+		template: _.template(Template),
 		childView: SelectProjectsListItemView,
 
 		//
-		// methods
+		// constructor
 		//
 
 		initialize: function() {
@@ -46,9 +45,17 @@ define([
 			}
 		},
 
+		//
+		// querying methods
+		//
+
 		isEnabled: function() {
 			return this.options.enabled;
 		},
+
+		//
+		// setting methods
+		//
 
 		setEnabled: function(enabled) {
 			if (this.options.enabled !== enabled) {
@@ -81,20 +88,15 @@ define([
 		// rendering methods
 		//
 
-		template: function(data) {
-			return _.template(Template, _.extend(data, {
+		templateContext: function() {
+			return {
 				collection: this.collection,
 				selectedProjectsUuids: this.options.selectedProjectsUuids
-			}));
+			};
 		},
 
-		attachHtml: function(collectionView, childView) {
-			if (!childView.model.isTrialProject() || this.options.showTrialProjects) {
-
-				// call superclass method
-				//
-				TableListView.prototype.attachHtml.call(this, collectionView, childView);
-			}
+		viewFilter: function(view, index, children) {
+			return !view.model.isTrialProject() || this.options.showTrialProjects;
 		},
 
 		onRender: function() {

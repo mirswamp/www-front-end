@@ -1,6 +1,6 @@
 /******************************************************************************\
 |                                                                              |
-|                           passwords-list-item-view.js                        |
+|                          passwords-list-item-view.js                         |
 |                                                                              |
 |******************************************************************************|
 |                                                                              |
@@ -18,21 +18,17 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
 	'text!templates/users/passwords/list/passwords-list-item.tpl',
-	'registry',
 	'models/authentication/app-password',
-	'views/dialogs/confirm-view',
-	'views/dialogs/error-view',
-], function($, _, Backbone, Marionette, Template, Registry, AppPassword, ConfirmView, ErrorView) {
-	return Backbone.Marionette.ItemView.extend({
+	'views/collections/tables/table-list-item-view'
+], function($, _, Template, AppPassword, TableListItemView) {
+	return TableListItemView.extend({
 
 		//
 		// attributes
 		//
 
-		tagName: 'tr',
+		template: _.template(Template),
 
 		events: {
 			'click a': 'onClickLabel',
@@ -43,11 +39,11 @@ define([
 		// rendering methods
 		//
 
-		template: function(data) {
-			return _.template(Template, _.extend(data, {
+		templateContext: function() {
+			return {
 				readOnly: this.options.readOnly,
 				showDelete: this.options.showDelete
-			}));
+			};
 		},
 
 		//
@@ -57,47 +53,41 @@ define([
 		onClickLabel: function() {
 			var self = this;
 			require([
-				'views/users/passwords/dialogs/edit-password-view',
-			], function (EditPasswordView) {
-				Registry.application.modal.show(
-					new EditPasswordView({
-						model: self.model
-					})
-				);
+				'views/users/passwords/dialogs/edit-password-dialog-view',
+			], function (EditPasswordDialogView) {
+				application.show(new EditPasswordDialogView({
+					model: self.model
+				}));
 			});
 		},
 
 		onClickDelete: function() {
 			var self = this;
 
-			// show confirm dialog
+			// show confirmation
 			//
-			Registry.application.modal.show(
-				new ConfirmView({
-					title: "Delete Password",
-					message: "Are you sure you wish to delete this password?",
+			application.confirm({
+				title: "Delete Password",
+				message: "Are you sure you wish to delete this password?",
 
-					// callbacks
-					//
-					accept: function() {
-						self.model.destroy({
+				// callbacks
+				//
+				accept: function() {
+					self.model.destroy({
 
-							// callbacks
+						// callbacks
+						//
+						error: function() {
+
+							// show error message
 							//
-							error: function() {
-
-								// show error dialog
-								//
-								Registry.application.modal.show(
-									new ErrorView({
-										message: "Could not delete this password."
-									})
-								);
-							}
-						});
-					}
-				})
-			);
+							application.error({
+								message: "Could not delete this password."
+							});
+						}
+					});
+				}
+			});
 		}
 	});
 });

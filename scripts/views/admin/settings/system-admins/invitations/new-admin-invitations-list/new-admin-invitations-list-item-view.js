@@ -1,6 +1,6 @@
 /******************************************************************************\
 |                                                                              |
-|                           new-admin-invitations-view.js                      |
+|                   new-admin-invitations-list-item-view.js                    |
 |                                                                              |
 |******************************************************************************|
 |                                                                              |
@@ -19,21 +19,18 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
 	'jquery.validate',
 	'text!templates/admin/settings/system-admins/invitations/new-admin-invitations-list/new-admin-invitations-list-item.tpl',
-	'registry',
 	'models/admin/admin-invitation',
-	'views/dialogs/confirm-view'
-], function($, _, Backbone, Marionette, Validate, Template, Registry, AdminInvitation, ConfirmView) {
-	return Backbone.Marionette.ItemView.extend({
+	'views/collections/tables/table-list-item-view'
+], function($, _, Validate, Template, AdminInvitation, TableListItemView) {
+	return TableListItemView.extend({
 
 		//
 		// attributes
 		//
 
-		tagName: 'tr',
+		template: _.template(Template),
 
 		events: {
 			'click .delete button': 'onClickDelete',
@@ -46,12 +43,24 @@ define([
 		// rendering methods
 		//
 
-		template: function(data) {
-			return _.template(Template, _.extend(data, {
+		templateContext: function() {
+			return {
 				model: this.model,
-				config: Registry.application.config,
+				config: application.config,
 				showDelete: this.options.showDelete
-			}));
+			};
+		},
+
+		//
+		// form validation methods
+		//
+
+		isValid: function() {
+			if (application.config['email_enabled']) {
+				return this.$el.find('.email input').val() != '';
+			} else {
+				return this.$el.find('.username input').val() != '';
+			}
 		},
 
 		//
@@ -68,20 +77,18 @@ define([
 				message = "Are you sure you want to delete this administrator invitation?";
 			}
 
-			// show confirm dialog
+			// show confirmation
 			//
-			Registry.application.modal.show(
-				new ConfirmView({
-					title: "Delete New Administrator Invitation",
-					message: message,
+			application.confirm({
+				title: "Delete New Administrator Invitation",
+				message: message,
 
-					// callbacks
-					//
-					accept: function() {
-						self.model.destroy();
-					}
-				})
-			);
+				// callbacks
+				//
+				accept: function() {
+					self.model.destroy();
+				}
+			});
 		},
 
 		onBlurName: function() {

@@ -1,6 +1,6 @@
 /******************************************************************************\
 |                                                                              |
-|                              platforms-list-item-view.js                     |
+|                           platforms-list-item-view.js                        |
 |                                                                              |
 |******************************************************************************|
 |                                                                              |
@@ -19,34 +19,32 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
 	'text!templates/platforms/list/platforms-list-item.tpl',
-	'registry',
+	'views/collections/tables/table-list-item-view',
 	'utilities/time/date-format'
-], function($, _, Backbone, Marionette, Template, Registry, DateFormat) {
-	return Backbone.Marionette.ItemView.extend({
+], function($, _, Template, TableListItemView, DateFormat) {
+	return TableListItemView.extend({
 
 		//
 		// attributes
 		//
 
-		tagName: 'tr',
+		template: _.template(Template),
 
 		//
 		// rendering methods
 		//
 
-		template: function(data) {
-			return _.template(Template, _.extend(data, {
+		templateContext: function() {
+			return {
 				collection: this.collection,
-				user: Registry.application.session.user,
+				user: application.session.user,
 				model: this.model,
 				index: this.options.index + 1,
 				showDelete: this.options.showDelete,
 				showNumbering: this.options.showNumbering,
 				showDeactivatedPackages: this.options.showDeactivatedPackages
-			}));
+			};
 		}
 	});
 });

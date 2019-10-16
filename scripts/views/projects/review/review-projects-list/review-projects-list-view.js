@@ -18,18 +18,17 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
 	'text!templates/projects/review/review-projects-list/review-projects-list.tpl',
-	'views/widgets/lists/sortable-table-list-view',
+	'views/projects/list/projects-list-view',
 	'views/projects/review/review-projects-list/review-projects-list-item-view'
-], function($, _, Backbone, Marionette, Template, SortableTableListView, ReviewProjectsListItemView) {
-	return SortableTableListView.extend({
+], function($, _, Template, ProjectsListView, ReviewProjectsListItemView) {
+	return ProjectsListView.extend({
 
 		//
 		// attributes
 		//
 
+		template: _.template(Template),
 		childView: ReviewProjectsListItemView,
 
 		sorting: {
@@ -48,27 +47,45 @@ define([
 		},
 
 		//
+		// querying methods
+		//
+
+		viewFilter: function (child, index, collection) {
+			return !child.model.isDeactivated() || this.options.showDeactivatedProjects;
+		},
+
+		//
 		// rendering methods
 		//
 
-		template: function(data) {
-			return _.template(Template, _.extend(data, {
+		templateContext: function() {
+			return {
 				collection: this.collection,
 				showNumbering: this.options.showNumbering
-			}));
+			};
 		},
 
-		childViewOptions: function(model, index) {
+		childViewOptions: function(model) {
+
+			// check if empty view
+			//
+			if (!model) {
+				return {};
+			}
+
+			// return view options
+			//
 			return {
-				index: index,
+				index: this.collection.indexOf(model),
 				collection: this.collection,
 				showDeactivatedProjects: this.options.showDeactivatedProjects,
 				showNumbering: this.options.showNumbering,
 				onChange: this.options.onChange,
 				parent: this
-			}
+			};
 		},
 
+		/*
 		onRender: function() {
 
 			// remove broken rows and shout out the indicies
@@ -84,7 +101,8 @@ define([
 
 			// call superclass method
 			//
-			SortableTableListView.prototype.onRender.call(this);
+			ProjectsListView.prototype.onRender.call(this);
 		}
+		*/
 	});
 });

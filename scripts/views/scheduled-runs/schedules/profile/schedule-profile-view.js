@@ -18,18 +18,15 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
-	'text!templates/scheduled-runs/schedules/profile/schedule-profile.tpl'
-], function($, _, Backbone, Marionette, Template) {
-	return Backbone.Marionette.ItemView.extend({
+	'text!templates/scheduled-runs/schedules/profile/schedule-profile.tpl',
+	'views/base-view'
+], function($, _, Template, BaseView) {
+	return BaseView.extend({
 
 		//
-		// rendering methods
+		// attributes
 		//
 
-		template: function(data) {
-			return _.template(Template, data);
-		}
+		template: _.template(Template)
 	});
 });

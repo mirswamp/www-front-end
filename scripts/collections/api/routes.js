@@ -18,13 +18,10 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
 	'config',
-	'registry',
 	'models/api/route',
 	'collections/base-collection',
-	'views/dialogs/error-view'
-], function($, _, Backbone, Config, Registry, Route, BaseCollection, ErrorView) {
+], function($, _, Config, Route, BaseCollection) {
 	return BaseCollection.extend({
 
 		//
@@ -74,7 +71,7 @@ define([
 							method: strings[0],
 							route: strings[1],
 							server: server
-						}))
+						}));
 					}
 
 					if (options && options.success) {
@@ -84,13 +81,11 @@ define([
 
 				error: function() {
 
-					// show error dialog
+					// show error message
 					//
-					Registry.application.modal.show(
-						new ErrorView({
-							message: "Could not fetch routes from " + server + " server."
-						})
-					);
+					application.error({
+						message: "Could not fetch routes from " + server + " server."
+					});
 				}
 			});
 		}

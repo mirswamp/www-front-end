@@ -19,14 +19,10 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
 	'text!templates/users/registration/verify-email-changed.tpl',
-	'registry',
-	'views/dialogs/notify-view',
-	'views/dialogs/error-view'
-], function($, _, Backbone, Marionette, Template, Registry, NotifyView, ErrorView) {
-	return Backbone.Marionette.ItemView.extend({
+	'views/base-view',
+], function($, _, Template, BaseView) {
+	return BaseView.extend({
 
 		//
 		// attributes
@@ -52,62 +48,56 @@ define([
 				//
 				success: function() {
 
-					// show success notification dialog
+					// show success notification message
 					//
-					Registry.application.modal.show(
-						new NotifyView({
-							message: "Your new email address has been verified.",
+					application.notify({
+						message: "Your new email address has been verified.",
 
-							// callbacks
-							//
-							accept: function() {
-								if( Registry.application.session.user ){
-									Registry.application.session.user.set({ user_uid: 'current' });
-									Registry.application.session.user.fetch({ 
+						// callbacks
+						//
+						accept: function() {
+							if( application.session.user ){
+								application.session.user.set({ user_uid: 'current' });
+								application.session.user.fetch({ 
 
-										// callbacks
-										//
-										success: function(){
-
-											// go to home view
-											//
-											Backbone.history.navigate('#home', {
-												trigger: true
-											});
-										}
-									});
-								} else {
-
-									// go to home view
+									// callbacks
 									//
-									Backbone.history.navigate('#home', {
-										trigger: true
-									});
-								}
+									success: function(){
+
+										// go to home view
+										//
+										Backbone.history.navigate('#home', {
+											trigger: true
+										});
+									}
+								});
+							} else {
+
+								// go to home view
+								//
+								Backbone.history.navigate('#home', {
+									trigger: true
+								});
 							}
-						})
-					);
+						}
+					});
 				},
 
 				error: function(response) {
 					if (response.status <= 500) {
 
-						// show notify dialog
+						// show notification
 						//
-						Registry.application.modal.show(
-							new NotifyView({
-								message: response.responseText
-							})
-						);
+						application.notify({
+							message: response.responseText
+						});
 					} else {
 
-						// show error dialog
+						// show error message
 						//
-						Registry.application.modal.show(
-							new ErrorView({
-								message: response.responseText
-							})
-						);
+						application.error({
+							message: response.responseText
+						});
 					}
 				}
 			});

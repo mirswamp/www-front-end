@@ -18,19 +18,15 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
 	'text!templates/users/registration/user-registration.tpl',
-	'registry',
 	'models/users/user',
 	'models/users/email-verification',
 	'collections/users/user-classes',
-	'views/dialogs/error-view',
-	'views/dialogs/notify-view',
-	'views/users/dialogs/user-validation-error-view',
+	'views/base-view',
+	'views/users/dialogs/user-validation-error-dialog-view',
 	'views/users/user-profile/new-user-profile-form-view'
-], function($, _, Backbone, Marionette, Template, Registry, User, EmailVerification, UserClasses, ErrorView, NotifyView, UserValidationErrorView, NewUserProfileFormView) {
-	return Backbone.Marionette.LayoutView.extend({
+], function($, _, Template, User, EmailVerification, UserClasses, BaseView, UserValidationErrorDialogView, NewUserProfileFormView) {
+	return BaseView.extend({
 
 		//
 		// attributes
@@ -39,7 +35,7 @@ define([
 		template: _.template(Template),
 
 		regions: {
-			newUserProfile: '#new-user-profile'
+			profile: '#new-user-profile'
 		},
 
 		events: {
@@ -50,12 +46,16 @@ define([
 		},
 
 		//
-		// methods
+		// constructor
 		//
 
 		initialize: function() {
 			this.model = new User({});
 		},
+
+		//
+		// methods
+		//
 
 		verifyEmail: function() {
 			var self = this;
@@ -78,25 +78,22 @@ define([
 					require([
 						'views/users/registration/email-verification-view',
 					], function (EmailVerificationView) {
-						// show email verification view
+
+						// show email verification
 						//
-						Registry.application.showMain(
-							new EmailVerificationView({
-								model: self.model
-							})
-						);
+						application.showMain(new EmailVerificationView({
+							model: self.model
+						}));
 					});
 				},
 
 				error: function() {
 
-					// show error dialog
+					// show error message
 					//
-					Registry.application.modal.show(
-						new ErrorView({
-							message: "Could not save email verification."
-						})
-					);
+					application.error({
+						message: "Could not save email verification."
+					});
 				}
 			});
 		},
@@ -107,13 +104,11 @@ define([
 				'views/users/registration/account-created-view'
 			], function (AccountCreatedView) {
 
-				// show account created view
+				// show account created page
 				//
-				Registry.application.showMain(
-					new AccountCreatedView({
-						model: self.model
-					})
-				);
+				application.showMain(new AccountCreatedView({
+					model: self.model
+				}));
 			});
 		},
 
@@ -126,7 +121,7 @@ define([
 
 			// check for student registration
 			//
-			if (Registry.application.config['classes_enabled']) {
+			if (application.config.classes_enabled) {
 
 				// fetch user classes
 				//
@@ -138,34 +133,28 @@ define([
 
 						// display user profile form
 						//
-						self.newUserProfile.show(
-							new NewUserProfileFormView({
-								model: self.model,
-								classes: collection
-							})
-						);
+						self.showChildView('profile', new NewUserProfileFormView({
+							model: self.model,
+							classes: collection
+						}));
 					},
 
 					error: function() {
 
-						// show error dialog
+						// show error message
 						//
-						Registry.application.modal.show(
-							new ErrorView({
-								message: "Could not fetch user classes."
-							})
-						);
+						application.error({
+							message: "Could not fetch user classes."
+						});
 					}
 				});
 			} else {
 
 				// display user profile form
 				//
-				this.newUserProfile.show(
-					new NewUserProfileFormView({
-						model: this.model
-					})
-				);	
+				this.showChildView('profile', new NewUserProfileFormView({
+					model: this.model
+				}));	
 			}
 
 			// scroll to top
@@ -205,11 +194,11 @@ define([
 
 			// check validation
 			//
-			if (this.newUserProfile.currentView.isValid()) {
+			if (this.getChildView('profile').isValid()) {
 
-				// update model from form
+				// update model
 				//
-				this.newUserProfile.currentView.update(this.model);
+				this.getChildView('profile').applyTo(this.model);
 
 				// check to see if model is valid
 				//
@@ -229,7 +218,7 @@ define([
 
 								// complete registration
 								//
-								if (Registry.application.config['email_enabled']) {
+								if (application.config['email_enabled']) {
 									self.verifyEmail();
 								} else {
 									self.accountCreated();
@@ -258,13 +247,11 @@ define([
 									}
 								}
 
-								// show notify dialog
+								// show notification
 								//
-								Registry.application.modal.show(
-									new NotifyView({
-										message: "Could not create new user" + (responseText? ' because "' + responseText + '"' : '') + "."
-									})
-								);
+								application.notify({
+									message: "Could not create new user" + (responseText? ' because "' + responseText + '"' : '') + "."
+								});
 							}
 						});
 					},
@@ -274,11 +261,9 @@ define([
 
 						// show user validation dialog
 						//
-						Registry.application.modal.show(
-							new UserValidationErrorView({
-								errors: errors
-							})
-						);
+						application.show(new UserValidationErrorDialogView({
+							errors: errors
+						}));
 					}
 				});
 			} else {

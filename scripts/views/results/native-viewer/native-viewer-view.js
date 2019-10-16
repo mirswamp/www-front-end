@@ -18,35 +18,34 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
 	'bootstrap/tab',
 	'text!templates/results/native-viewer/native-viewer.tpl',
-	'registry',
 	'models/files/directory',
 	'models/packages/package-version',
 	'models/assessments/assessment-results',
+	'views/base-view',
 	'views/results/native-viewer/list/weaknesses-list-view',
 	'views/files/directory-tree/directory-tree-view',
 	'views/results/native-viewer/directory-tree/package-version-directory-tree-view',
 	'views/results/native-viewer/button-bars/nav-button-bar-view',
 	'views/keyboard/keycodes',
-	'views/dialogs/error-view',
-	'utilities/browser/url-strings',
-	'utilities/browser/query-strings',
+	'utilities/web/url-strings',
+	'utilities/web/query-strings',
 	'utilities/time/date-format',
 	'utilities/time/date-utils'
-], function($, _, Backbone, Marionette, Tab, Template, Registry, Directory, PackageVersion, AssessmentResults, WeaknessesListView, DirectoryTreeView, PackageVersionDirectoryTreeView, NavButtonBarView, KeyCodes, ErrorView) {
-	return Backbone.Marionette.LayoutView.extend({
+], function($, _, Tab, Template, Directory, PackageVersion, AssessmentResults, BaseView, WeaknessesListView, DirectoryTreeView, PackageVersionDirectoryTreeView, NavButtonBarView, KeyCodes) {
+	return BaseView.extend({
 
 		//
 		// attributes
 		//
 
+		template: _.template(Template),
+
 		regions: {
-			weaknessList: '#weakness-list',
-			navButtonBar: '#nav-button-bar',
-			sourceTree: '#source-tree'
+			list: '#weakness-list',
+			nav: '#nav-button-bar',
+			tree: '#source-tree'
 		},
 
 		events: {
@@ -56,6 +55,7 @@ define([
 		},
 
 		filter: [],
+		defaultItemsPerPage: 100,
 
 		//
 		// constructor
@@ -72,10 +72,27 @@ define([
 			if (hasQueryVariable(queryString, 'to')) {
 				this.to = parseInt(getQueryVariable(queryString, 'to'));
 			}
+
+			// compute items per page
+			//
 			if (this.from && this.to) {
 				this.itemsPerPage = this.to - this.from + 1;
 			} else if (this.to) {
 				this.itemsPerPage = this.to;
+			} else {
+				this.itemsPerPage = this.defaultItemsPerPage;
+			}
+
+			// set filter
+			//
+			var data = queryStringToData(queryString);
+			if (data['include']) {
+				this.filter_type = 'include';
+				this.filter = data['include'].split(',');
+			}
+			if (data['exclude']) {
+				this.filter_type = 'exclude';
+				this.filter = data['exclude'].split(',');
 			}
 		},
 
@@ -103,36 +120,53 @@ define([
 			}
 		},
 
+		getFilterData: function(data) {
+			if (!data) {
+				data = {};
+			}
+			if (this.filter) {
+				switch (this.filter_type) {
+					case 'include':
+						data['include'] = this.filter;
+						break;
+					case 'exclude':
+						data['exclude'] = this.filter;
+						break;
+				}
+			}
+			return data;
+		},
+
 		//
 		// rendering methods
 		//
 
-		template: function(data) {
+		templateContext: function() {
 			var report = this.options.json.AnalyzerReport;
 
-			return _.template(Template, {
+			return {
 				report: report,
 				// pageNumber: this.pageOf(this.from || 1),
 				// numPages: this.numPages(),
 
 				packageUrl: report.package && report.package.package_uuid?
-					Registry.application.getURL() + '#packages/' + report.package.package_uuid : '',
+					application.getURL() + '#packages/' + report.package.package_uuid : '',
 				packageVersionUrl: report.package && report.package.package_version_uuid?
-					Registry.application.getURL() + '#packages/versions/' + report.package.package_version_uuid : '',
+					application.getURL() + '#packages/versions/' + report.package.package_version_uuid : '',
 			
 				toolUrl: report.tool && report.tool.tool_uuid?
-					Registry.application.getURL() + '#tools/' + report.tool.tool_uuid : '',
+					application.getURL() + '#tools/' + report.tool.tool_uuid : '',
 				toolVersionUrl: report.tool && report.tool.tool_version_uuid?
-					Registry.application.getURL() + '#tools/versions/' + report.tool.tool_version_uuid : '',
+					application.getURL() + '#tools/versions/' + report.tool.tool_version_uuid : '',
 
 				platformUrl: report.platform && report.platform.platform_uuid?
-					Registry.application.getURL() + '#platforms/' + report.platform.platform_uuid : '',
+					application.getURL() + '#platforms/' + report.platform.platform_uuid : '',
 				platformVersionUrl: report.platform && report.platform.platform_version_uuid?
-					Registry.application.getURL() + '#platforms/versions/' + report.platform.platform_version_uuid : '',
+					application.getURL() + '#platforms/versions/' + report.platform.platform_version_uuid : '',
 	
-				showNumbering: Registry.application.options.showNumbering,
-				showGrouping: Registry.application.options.showGrouping
-			});
+				showNumbering: application.options.showNumbering,
+				showGrouping: application.options.showGrouping
+			};
 		},
 
 		onRender: function() {
@@ -140,18 +174,18 @@ define([
 
 			// show subviews
 			//
-			this.showWeaknessList();
+			this.showList();
 			this.showNavButtonBar();
-			this.showSourceTree(new PackageVersion({
+			this.fetchAndShowSourceTree(new PackageVersion({
 				package_version_uuid: report.package.package_version_uuid
 			}));
 		},
 
-		showWeaknessList: function() {
-			this.weaknessList.show(new WeaknessesListView({
+		showList: function() {
+			this.showChildView('list', new WeaknessesListView({
 				collection: new Backbone.Collection(this.options.json.AnalyzerReport.BugInstances),
-				showNumbering: Registry.application.options.showNumbering,
-				showGrouping: Registry.application.options.showGrouping,
+				showNumbering: application.options.showNumbering,
+				showGrouping: application.options.showGrouping,
 				start: this.from? this.from - 1: 0,
 				results: this.options.results,
 				projectUuid: this.options.projectUuid,
@@ -160,7 +194,7 @@ define([
 			}));
 		},
 
-		showSourceTree: function(packageVersion) {
+		fetchAndShowSourceTree: function(packageVersion) {
 			var self = this;
 			var data = null;
 
@@ -189,116 +223,92 @@ define([
 				// callbacks
 				//
 				success: function(data) {
-
-					// show incremental directory tree
-					//
-					if (_.isArray(data)) {
-
-						// top level is a directory listing
-						//
-						self.sourceTree.show(
-							new PackageVersionDirectoryTreeView({
-								model: new Directory({
-									contents: data
-								}),
-								packageVersion: packageVersion,
-								assessmentResultUuid: self.options.assessmentResultUuid,
-								bugInstances: self.options.json.AnalyzerReport.BugInstances,
-								results: self.options.results,
-								projectUuid: self.options.projectUuid,
-								filter_type: self.filter_type,
-								filter: self.filter,
-								expanded: false
-							})
-						);
-					} else if (isDirectoryName(data.name)) {
-
-						// top level is a directory
-						//
-						self.sourceTree.show(
-							new PackageVersionDirectoryTreeView({
-								model: new Directory({
-									name: data.name,
-								}),
-								packageVersion: packageVersion,
-								assessmentResultUuid: self.options.assessmentResultUuid,
-								bugInstances: self.options.json.AnalyzerReport.BugInstances,
-								results: self.options.results,
-								projectUuid: self.options.projectUuid,
-								filter_type: self.filter_type,
-								filter: self.filter,
-								expanded: false
-							})
-						);		
-					} else {
-
-						// top level is a file
-						//
-						self.sourceTree.show(
-							new PackageVersionDirectoryTreeView({
-								model: new Directory({
-									contents: new File({
-										name: data.name
-									})
-								}),
-								packageVersion: packageVersion,
-								assessmentResultUuid: self.options.assessmentResultUuid,
-								bugInstances: self.options.json.AnalyzerReport.BugInstances,
-								results: self.options.results,
-								projectUuid: self.options.projectUuid,
-								filter_type: self.filter_type,
-								filter: self.filter,
-								expanded: false
-							})
-						);	
-					}
+					self.showSourceTree(data, packageVersion);
 				},
 
 				error: function() {
 
-					// show error dialog
+					// show error message
 					//
-					Registry.application.modal.show(
-						new ErrorView({
-							message: "Could not get a file tree for this package version."
-						})
-					);	
+					application.error({
+						message: "Could not get a file tree for this package version."
+					});
 				}
 			});
 		},
 
+		showSourceTree: function(data, packageVersion) {
+
+			// show incremental directory tree
+			//
+			if (_.isArray(data)) {
+
+				// top level is a directory listing
+				//
+				this.showChildView('tree', new PackageVersionDirectoryTreeView({
+					model: new Directory({
+						contents: data
+					}),
+					packageVersion: packageVersion,
+					assessmentResultUuid: this.options.assessmentResultUuid,
+					bugInstances: this.options.json.AnalyzerReport.BugInstances,
+					results: this.options.results,
+					projectUuid: this.options.projectUuid,
+					filter_type: this.filter_type,
+					filter: this.filter,
+					expanded: false
+				}));
+			} else if (isDirectoryName(data.name)) {
+
+				// top level is a directory
+				//
+				this.showChildView('tree', new PackageVersionDirectoryTreeView({
+					model: new Directory({
+						name: data.name,
+					}),
+					packageVersion: packageVersion,
+					assessmentResultUuid: this.options.assessmentResultUuid,
+					bugInstances: this.options.json.AnalyzerReport.BugInstances,
+					results: this.options.results,
+					projectUuid: this.options.projectUuid,
+					filter_type: this.filter_type,
+					filter: this.filter,
+					expanded: false
+				}));		
+			} else {
+
+				// top level is a file
+				//
+				this.showChildView('tree', new PackageVersionDirectoryTreeView({
+					model: new Directory({
+						contents: new File({
+							name: data.name
+						})
+					}),
+					packageVersion: packageVersion,
+					assessmentResultUuid: this.options.assessmentResultUuid,
+					bugInstances: this.options.json.AnalyzerReport.BugInstances,
+					results: this.options.results,
+					projectUuid: this.options.projectUuid,
+					filter_type: this.filter_type,
+					filter: this.filter,
+					expanded: false
+				}));	
+			}
+		},
+
 		showNavButtonBar: function() {
-			this.navButtonBar.show(
-				new NavButtonBarView({
-					itemsPerPage: this.itemsPerPage,
-					maxItemsPerPage: this.constructor.maxItemsPerPage,
-					pageNumber: this.pageOf(this.from),
-					numPages: this.numPages(),
-					parent: this
-				})
-			);
+			this.showChildView('nav', new NavButtonBarView({
+				itemsPerPage: this.itemsPerPage,
+				maxItemsPerPage: this.constructor.maxItemsPerPage,
+				pageNumber: this.pageOf(this.from),
+				numPages: this.numPages(),
+				parent: this
+			}));
 		},
 
 		update: function() {
 			var self = this;
-			var data = null;
-
-			// set filtering params
-			//
-			if (this.filter) {
-				switch (this.filter_type) {
-					case 'include':
-						data = {
-							include: this.filter
-						};
-						break;
-					case 'exclude':
-						data = {
-							exclude: this.filter
-						};
-						break;
-				}
-			}
 
 			new AssessmentResults({
 				assessment_result_uuid: this.options.assessmentResultUuid
@@ -306,7 +316,7 @@ define([
 				data: _.extend({
 					from: this.from,
 					to: this.to
-				}, data),
+				}, this.getFilterData()),
 
 				// callbacks
 				//
@@ -317,11 +327,11 @@ define([
 
 				error: function(response) {
 
-					Registry.application.modal.show(
-						new ErrorView({
-							message: "Could not get results."
-						})
-					);	
+					// show error message
+					//
+					application.error({
+						message: "Could not get results."
+					});
 				}
 			});
 		},
@@ -335,9 +345,9 @@ define([
 
 				// first page
 				//
-				setQueryString({
+				setQueryString(toQueryString(_.extend({
 					'to': this.itemsPerPage
-				});
+				}, this.getFilterData())));
 			} else {
 				if (pageNumber) {
 
@@ -359,10 +369,10 @@ define([
 
 				// middle or last page
 				//
-				setQueryString({
+				setQueryString(toQueryString(_.extend({
 					'from': (pageNumber - 1) * this.itemsPerPage + 1,
 					'to': pageNumber * this.itemsPerPage
-				});
+				}, this.getFilterData())));
 			}
 		},
 
@@ -382,59 +392,80 @@ define([
 					require([
 						'views/results/native-viewer/dialogs/results-filter-dialog-view'
 					], function (ResultsFilterDialogView) {
-						Registry.application.modal.show(
-							new ResultsFilterDialogView({
-								catalog: data,
-								filter_type: self.filter_type,
-								filter: self.filter,
+						application.show(new ResultsFilterDialogView({
+							catalog: data,
+							filter_type: self.filter_type,
+							filter: self.filter,
 
-								// callbacks
+							// callbacks
+							//
+							accept: function(data) {
+								self.filter_type = data.filter_type;
+								self.filter = data.filter;
+
+								// show first page
 								//
-								accept: function(data) {
-									self.filter_type = data.filter_type;
-									self.filter = data.filter;
-									self.update();
+								self.from = undefined;
+								self.to = self.itemsPerPage;
+								self.update();
+
+								// get query string data
+								//
+								var data = queryStringToData(getQueryString());
+
+								// go to first page
+								//
+								if (data['from']) {
+									delete data['from'];
 								}
-							}), {
-								size: 'large'
+								data['to'] = self.itemsPerPage;							
+
+								// add filter data
+								//
+								data = self.getFilterData(data);
+
+								// set url
+								//
+								var queryString = dataToQueryString(data);
+								var state = window.history.state;
+								var url = getWindowBaseLocation() + (queryString? ('?' + queryString) : '');
+								window.history.pushState(state, '', url);
 							}
-						);
+						}));
 					});
 				},
 
 				error: function() {
 
-					// show error dialog
+					// show error message
 					//
-					Registry.application.modal.show(
-						new ErrorView({
-							message: "Could not get bug catalog."
-						})
-					);	
+					application.error({
+						message: "Could not get bug catalog."
+					});
 				}
 			});
 		},
 
 		onClickShowNumbering: function(event) {
-			Registry.application.setShowNumbering($(event.target).is(':checked'));
+			application.setShowNumbering($(event.target).is(':checked'));
 			this.showList();
 		},
 
 		onClickShowGrouping: function(event) {
-			Registry.application.setShowGrouping($(event.target).is(':checked'));
+			application.setShowGrouping($(event.target).is(':checked'));
 			this.showList();
 		},
 
 		onKeyDown: function(event) {
 			switch (event.which) {
 				case KeyCodes.left:
-					this.setPage(this.navButtonBar.currentView.pageNumber - 1);
+					this.setPage(this.getChildView('nav').pageNumber - 1);
 					break;
 				case KeyCodes.right:
-					this.setPage(this.navButtonBar.currentView.pageNumber + 1);
+					this.setPage(this.getChildView('nav').pageNumber + 1);
 					break;
 				case KeyCodes.up:
-					this.setPage(this.navButtonBar.currentView.numPages);
+					this.setPage(this.getChildView('nav').numPages);
 					break;
 				case KeyCodes.down:
 					this.setPage(1);

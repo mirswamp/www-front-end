@@ -19,34 +19,30 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
 	'text!templates/results/delete/delete-assessments-results.tpl',
-	'registry',
-	'config',
 	'models/projects/project',
 	'models/run-requests/run-request',
 	'collections/projects/projects',
 	'collections/assessments/assessment-runs',
 	'collections/assessments/execution-records',
 	'collections/assessments/scheduled-runs',
-	'views/dialogs/confirm-view',
-	'views/dialogs/notify-view',
-	'views/dialogs/error-view',
+	'views/base-view',
 	'views/results/assessment-runs/filters/assessment-runs-filters-view',
 	'views/results/assessment-runs/select-list/select-assessment-runs-list-view',
 	'views/widgets/selectors/version-filter-selector-view'
-], function($, _, Backbone, Marionette, Template, Registry, Config, Project, RunRequest, Projects, AssessmentRuns, ExecutionRecords, ScheduledRuns, ConfirmView, NotifyView, ErrorView, AssessmentRunsFiltersView, SelectAssessmentRunsListView, VersionFilterSelectorView) {
-	return Backbone.Marionette.LayoutView.extend({
+], function($, _, Template, Project, RunRequest, Projects, AssessmentRuns, ExecutionRecords, ScheduledRuns, BaseView, AssessmentRunsFiltersView, SelectAssessmentRunsListView, VersionFilterSelectorView) {
+	return BaseView.extend({
 
 		//
 		// attributes
 		//
 		refreshInterval: 10000,
 
+		template: _.template(Template),
+
 		regions: {
-			assessmentRunsFilters: '#assessment-runs-filters',
-			assessmentRunsList: '#assessment-runs-list'
+			filters: '#assessment-runs-filters',
+			list: '#assessment-runs-list'
 		},
 
 		events: {
@@ -126,8 +122,8 @@ define([
 		},
 		
 		getSelected: function() {
-			if (this.assessmentRunsList.currentView) {
-				return this.assessmentRunsList.currentView.getSelected();
+			if (this.getChildView('list')) {
+				return this.getChildView('list').getSelected();
 			}
 		},
 
@@ -159,15 +155,15 @@ define([
 		//
 
 		getQueryString: function() {
-			return this.assessmentRunsFilters.currentView.getQueryString();
+			return this.getChildView('filters').getQueryString();
 		},
 
 		getFilterData: function(attributes) {
-			return this.assessmentRunsFilters.currentView.getData(attributes);
+			return this.getChildView('filters').getData(attributes);
 		},
 
 		getFilterAttrs: function(attributes) {
-			return this.assessmentRunsFilters.currentView.getAttrs(attributes);
+			return this.getChildView('filters').getAttrs(attributes);
 		},
 
 		//
@@ -193,13 +189,11 @@ define([
 
 				error: function() {
 
-					// show error dialog
+					// show error message
 					//
-					Registry.application.modal.show(
-						new ErrorView({
-							message: "Could not get execution records for this project."
-						})
-					);
+					application.error({
+						message: "Could not get execution records for this project."
+					});
 				}
 			});
 		},
@@ -223,13 +217,11 @@ define([
 
 				error: function() {
 
-					// show error dialog
+					// show error message
 					//
-					Registry.application.modal.show(
-						new ErrorView({
-							message: "Could not get execution records for these projects."
-						})
-					);
+					application.error({
+						message: "Could not get execution records for these projects."
+					});
 				}
 			});
 		},
@@ -261,17 +253,17 @@ define([
 		// rendering methods
 		//
 
-		template: function(data) {
-			return _.template(Template, _.extend(data, {
+		templateContext: function() {
+			return {
 				title: this.getTitle(),
 				shortTitle: this.getShortTitle(),
 				showNavigation: Object.keys(this.options.data).length > 0,
 				viewers: this.options.viewers,
-				showProjects: Registry.application.session.user.get('has_projects'),
-				showNumbering: Registry.application.options.showNumbering,
-				showGrouping: Registry.application.options.showGrouping,
-				autoRefresh: Registry.application.options.autoRefresh
-			}));
+				showProjects: application.session.user.get('has_projects'),
+				showNumbering: application.options.showNumbering,
+				showGrouping: application.options.showGrouping,
+				autoRefresh: application.options.autoRefresh
+			};
 		},
 
 		onRender: function() {
@@ -290,35 +282,33 @@ define([
 			
 			// show assessment results filters view
 			//
-			this.assessmentRunsFilters.show(
-				new AssessmentRunsFiltersView({
-					model: this.model,
-					data: this.options.data,
+			this.showChildView('filters', new AssessmentRunsFiltersView({
+				model: this.model,
+				data: this.options.data,
 
-					// callbacks
+				// callbacks
+				//
+				onChange: function() {
+					// setQueryString(self.getQueryString());
+
+					// update filter data
 					//
-					onChange: function() {
-						// setQueryString(self.getQueryString());
+					var projects = self.options.data.projects;
+					self.options.data = self.getFilterData();
+					self.options.data.projects = projects;
 
-						// update filter data
-						//
-						var projects = self.options.data.projects;
-						self.options.data = self.getFilterData();
-						self.options.data.projects = projects;
-
-						// update url
-						//
-						var queryString = self.getQueryString();
-						var state = window.history.state;
-						var url = getWindowBaseLocation() + (queryString? ('?' + queryString) : '');
-						window.history.pushState(state, '', url);
-						
-						// update view
-						//
-						self.onChange();			
-					}
-				})
-			);
+					// update url
+					//
+					var queryString = self.getQueryString();
+					var state = window.history.state;
+					var url = getWindowBaseLocation() + (queryString? ('?' + queryString) : '');
+					window.history.pushState(state, '', url);
+					
+					// update view
+					//
+					self.onChange();			
+				}
+			}));
 		},
 
 		fetchAndShowList: function(done) {
@@ -345,33 +335,31 @@ define([
 
 			// preserve existing sorting order
 			//
-			if (this.assessmentRunsList.currentView && this.collection.length > 0) {
-				this.options.sortList = this.assessmentRunsList.currentView.getSortList();
+			if (this.getChildView('list') && this.collection.length > 0) {
+				this.options.sortList = this.getChildView('list').getSortList();
 			}
 			
 			// show assessment runs list view
 			//
-			this.assessmentRunsList.show(
-				new SelectAssessmentRunsListView({
-					model: this.model,
-					collection: this.collection,
-					viewer: this.options.viewer,
-					viewers: this.options.viewers,
-					selectedExecutionRecords: this.options.selectedExecutionRecords,
-					errorViewer: this.options.viewers.getNative(),
-					selected: selected,
-					sortList: this.options.sortList,
-					queryString: this.getQueryString(),
-					editable: true,
-					showProjects: Registry.application.session.user.get('has_projects'),
-					showNumbering: Registry.application.options.showNumbering,
-					showGrouping: Registry.application.options.showGrouping,
-					showStatus: true,
-					showErrors: true,
-					showDelete: true,
-					showSsh: true
-				})
-			);
+			this.showChildView('list', new SelectAssessmentRunsListView({
+				model: this.model,
+				collection: this.collection,
+				viewer: this.options.viewer,
+				viewers: this.options.viewers,
+				selectedExecutionRecords: this.options.selectedExecutionRecords,
+				errorViewer: this.options.viewers.getNative(),
+				selected: selected,
+				sortList: this.options.sortList,
+				queryString: this.getQueryString(),
+				editable: true,
+				showProjects: application.session.user.get('has_projects'),
+				showNumbering: application.options.showNumbering,
+				showGrouping: application.options.showGrouping,
+				showStatus: true,
+				showErrors: true,
+				showDelete: true,
+				showSsh: true
+			}));
 		},
 
 		//
@@ -391,22 +379,22 @@ define([
 		},
 
 		onClickResetFilters: function() {
-			this.assessmentRunsFilters.currentView.reset();
+			this.getChildView('filters').reset();
 		},
 
 		onClickShowNumbering: function(event) {
-			Registry.application.setShowNumbering($(event.target).is(':checked'));
+			application.setShowNumbering($(event.target).is(':checked'));
 			this.showList();
 		},
 
 		onClickShowGrouping: function(event) {
-			Registry.application.setShowGrouping($(event.target).is(':checked'));
+			application.setShowGrouping($(event.target).is(':checked'));
 			this.showList();
 		},
 
 		onClickDelete: function() {
 			var self = this;
-			var selectedExecutionRecords = this.assessmentRunsList.currentView.getSelected();
+			var selectedExecutionRecords = this.getChildView('list').getSelected();
 
 			if (selectedExecutionRecords.length > 0) {
 
@@ -416,50 +404,44 @@ define([
 					var message = "Are you sure that you would like to delete this assessment result?";
 				}
 
-				// show confirm dialog
+				// show confirmation
 				//
-				Registry.application.modal.show(
-					new ConfirmView({
-						title: "Delete Assessment Results",
-						message: message,
+				application.confirm({
+					title: "Delete Assessment Results",
+					message: message,
 
-						// callbacks
-						//
-						accept: function() {
-							selectedExecutionRecords.destroy({
+					// callbacks
+					//
+					accept: function() {
+						selectedExecutionRecords.destroy({
 
-								// callbacks
+							// callbacks
+							//
+							success: function() {
+
+								// update list of assessment runs
 								//
-								success: function() {
+								self.showList();
+							},
 
-									// update list of assessment runs
-									//
-									self.showList();
-								},
+							error: function() {
 
-								error: function() {
-
-									// show error dialog
-									//
-									Registry.application.modal.show(
-										new ErrorView({
-											message: "Could not delete assessment results."
-										})
-									);
-								}
-							});
-						}
-					})
-				);
+								// show error message
+								//
+								application.error({
+									message: "Could not delete assessment results."
+								});
+							}
+						});
+					}
+				});
 			} else {
 
 				// show no assessments selected notify view
 				//
-				Registry.application.modal.show(
-					new NotifyView({
-						message: "No assessments were selected.  To delete an assessment, please select at least one item from the list of assessments."
-					})
-				);
+				application.notify({
+					message: "No assessments were selected.  To delete an assessment, please select at least one item from the list of assessments."
+				});
 			}
 		},
 
@@ -473,7 +455,7 @@ define([
 
 				// show content view
 				//
-				Registry.application.showContent({
+				application.showContent({
 					nav1: 'home',
 					nav2: 'results', 
 
@@ -483,14 +465,12 @@ define([
 
 						// show assessments results view
 						//
-						view.content.show(
-							new AssessmentsResultsView({
-								data: self.options.data,
-								model: view.model,
-								viewers: self.options.viewers,
-								selectedExecutionRecords: selectedExecutionRecords
-							})
-						);
+						view.showChildView('content', new AssessmentsResultsView({
+							data: self.options.data,
+							model: view.model,
+							viewers: self.options.viewers,
+							selectedExecutionRecords: selectedExecutionRecords
+						}));
 					}
 				});
 			});	

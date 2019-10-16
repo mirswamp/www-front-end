@@ -19,17 +19,20 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
 	'moment',
 	'text!templates/admin/status/uuid-item-list/uuid-item-list-item.tpl',
-	'registry',
 	'views/admin/status/item-list/item-list-item-view',
-	'utilities/browser/html-utils',
+	'utilities/web/html-utils',
 	'utilities/time/date-utils',
 	'library/moment/moment-timezone-with-data'
-], function($, _, Backbone, Marionette, Moment, Template, Registry, ItemListItemView) {
+], function($, _, Moment, Template, ItemListItemView) {
 	return ItemListItemView.extend({
+
+		//
+		// attributes
+		//
+
+		template: _.template(Template),
 
 		// utility methods
 		//
@@ -49,19 +52,19 @@ define([
 						// link to assessment run status view
 						// 
 						data[key] = item.replace('{execrunuid}', '');
-						urls[key] = Registry.application.getURL() + '#runs/' + data[key] + '/status';
+						urls[key] = application.getURL() + '#runs/' + data[key] + '/status';
 					} else if (item.startsWith('{packageuid}')) {
 
 						// link to package view
 						//
 						data[key] = item.replace('{packageuid}', '');
-						urls[key] = Registry.application.getURL() + '#packages/' + data[key];
+						urls[key] = application.getURL() + '#packages/' + data[key];
 					} else if (item.startsWith('{projectuid}')) {
 
 						// link to project view
 						//
 						data[key] = item.replace('{projectuid}', '');
-						urls[key] = Registry.application.getURL() + '#projects/' + data[key];
+						urls[key] = application.getURL() + '#projects/' + data[key];
 					}
 				}
 			}
@@ -100,14 +103,14 @@ define([
 		// rendering methods
 		//
 
-		template: function(data) {
-			return _.template(Template, {
+		templateContext: function() {
+			return {
 				index: this.options.index + 1, 
-				data: this.getData(data),
-				urls: this.getUrls(data),	
+				data: this.getData(this.model.attributes),
+				urls: this.getUrls(this.model.attributes),	
 				fieldnames: this.options.fieldnames,
 				showNumbering: this.options.showNumbering
-			});
+			};
 		}
 	});
 });

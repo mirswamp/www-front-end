@@ -18,18 +18,11 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
 	'jquery.cookie',
 	'config',
+	'backbone',
 	'marionette',
 	'text!templates/layout/application.tpl',
-	'registry',
-	'utilities/scripting/string-utils',
-	'utilities/scripting/array-utils',
-	'utilities/browser/html-utils',
-	'utilities/time/time-utils',
-	'utilities/time/date-utils',
-	'utilities/browser/browser-support',
 	'routers/main-router',
 	'routers/package-router',
 	'routers/tool-router',
@@ -38,22 +31,29 @@ define([
 	'routers/assessment-router',
 	'routers/results-router',
 	'routers/run-requests-router',
-	'routers/api-router',
 	'models/users/session',
 	'views/layout/page-view',
+	'views/layout/main-view',
+	'views/dialogs/dialog-view',
 	'views/keyboard/keyboard',
-	'views/dialogs/modal-region'
-], function($, _, Backbone, Cookie, Config, Marionette, Template, Registry, StringUtils, ArrayUtils, TimeUtils, HTMLUtils, DateUtils, BrowserSupport, MainRouter, PackageRouter, ToolRouter, PlatformRouter, ProjectRouter, AssessmentRouter, ResultsRouter, RunRequestsRouter, ApiRouter, Session, PageView, Keyboard, ModalRegion) {
+	'utilities/scripting/string-utils',
+	'utilities/scripting/array-utils',
+	'utilities/web/html-utils',
+	'utilities/time/time-utils',
+	'utilities/time/date-utils',
+	'utilities/web/browser',
+], function($, _, Cookie, Config, Backbone, Marionette, Template, MainRouter, PackageRouter, ToolRouter, PlatformRouter, ProjectRouter, AssessmentRouter, ResultsRouter, RunRequestsRouter, Session, PageView, MainView, DialogView, Keyboard, StringUtils, ArrayUtils, HTMLUtils, TimeUtils, DateUtils, Browser) {
 	return Marionette.Application.extend({
 
 		// attributes
 		//
 		template: _.template(Template),
 
-		regions: {
-			main: "#main",
-			modal: ModalRegion
-		},
+		//
+		// attributes
+		//
+
+		region: 'body',
 
 		//
 		// constructor
@@ -101,7 +101,7 @@ define([
 
 			// in the event of a javascript error, reset the pending ajax spinner
 			//
-			$(window).error(function(){
+			$(window).on('error', function() {
 				if ($.active > 0) {
 					$.active = 0;
 					$.event.trigger('ajaxStop');
@@ -122,10 +122,20 @@ define([
 				if (self.session.user) {
 					if (jqXHR.responseText === 'SESSION_INVALID') {
 						self.sessionExpired();
+
+						// prevent further handling of event
+						//
+						event.stopPropagation();
+						event.preventDefault();
 					} else if (jqXHR.status == 401) {
 						data = JSON.parse(jqXHR.responseText);
 						if (data.status == 'NO_SESSION') {
-							self.sessionExpired();					
+							self.sessionExpired();
+
+							// prevent further handling of event
+							//
+							event.stopPropagation();
+							event.preventDefault();			
 						}
 					}
 				}
@@ -154,103 +164,9 @@ define([
 				}
 			});
 
-			// store handle to application in registry
+			// load sounds
 			//
-			Registry.addKey("application", this);
-
-			// set resize handler to look for changes in number of columns
-			//
-			/*
-			this.onResizeHandler = $(window).resize(function() {
-				if (self.numColumns != undefined && self.numColumns != self.getNumColumns()) {
-
-					// redraw
-					//
-					Backbone.history.stop();
-					Backbone.history.start();
-				}
-			});
-			*/
-
-			// create regions
-			//
-			this.addRegions(this.regions);
-
-			// create new sounds
-			//
-			this.createSounds();
-		},
-
-		createRouters: function() {
-			this.mainRouter = new MainRouter();
-			this.packageRouter = new PackageRouter();
-			this.toolRouter = new ToolRouter();
-			this.platformRouter = new PlatformRouter();
-			this.projectRouter = new ProjectRouter();
-			this.assessmentRouter = new AssessmentRouter();
-			this.resultsRouter = new ResultsRouter();
-			this.runRequestsRouter = new RunRequestsRouter();
-			this.apiRouter = new ApiRouter();
-
-			this.routers = [
-				this.mainRouter,
-				this.packageRouter,
-				this.toolRouter,
-				this.platformRouter,
-				this.projectRouter,
-				this.assessmentRouter,
-				this.resultsRouter,
-				this.runRequestsRouter,
-				this.apiRouter
-			];
-		},
-
-		startRouters: function() {
-			var self = this;
-
-			this.createRouters();
-
-			// after any route change, clear modal dialogs
-			//
-			for (var i = 0; i < this.routers.length; i++) {
-				this.routers[i].on("route", function(route, params) {
-					if (self.modal.currentView) {
-						self.modal.currentView.destroy();
-					}
-				});
-			}
-
-			if (!Backbone.history.start()) {
-				this.mainRouter.showNotFound();
-			}
-		},
-
-		checkBrowserSupport: function() {
-			var browserList = "<ul>" + 
-				"<li>Chrome 7.0 or later</li>" + 
-				"<li>Firefox 4.0 or later</li>" + 
-				"<li>IE 10.0 or later</li>" +
-				"<li>Safari 5.0 or later</li>" +
-				"<li>Opera 12.0 or later</li>" +
-				"</ul>";
-			var errorView;
-			
-			if (!browserSupportsCors()) {
-				this.notify({
-					message: "Sorry, your web browser does not support cross origin resources sharing.  You will need to upgrade your web browser to a newer version in order to use this application." +
-						"<p>We suggest the following: " + browserList + "</p>"
-				});
-			} else if (!browserSupportsHTTPRequestUploads()) {
-				this.notify({
-					message: "Sorry, your web browser does not support the XMLHttpRequest2 object which is needed for uploading files.  You will need to upgrade your web browser to a newer version in order to upload files using this application." +
-						"<p>We suggest the following: " + browserList + "</p>"
-				});		
-			} else if (!browserSupportsFormData()) {
-				this.notify({
-					message: "Sorry, your web browser does not support the FormData object which is needed for uploading files.  You will need to upgrade your web browser to a newer version in order to upload files using this application." +
-						"<p>We suggest the following: " + browserList + "</p>"
-				});			
-			}
+			// this.createSounds();
 		},
 
 		//
@@ -274,6 +190,82 @@ define([
 					})
 				};
 			});
+		},
+	
+		//
+		// routing methods
+		//
+
+		createRouters: function() {
+			this.mainRouter = new MainRouter();
+			this.packageRouter = new PackageRouter();
+			this.toolRouter = new ToolRouter();
+			this.platformRouter = new PlatformRouter();
+			this.projectRouter = new ProjectRouter();
+			this.assessmentRouter = new AssessmentRouter();
+			this.resultsRouter = new ResultsRouter();
+			this.runRequestsRouter = new RunRequestsRouter();
+
+			this.routers = [
+				this.mainRouter,
+				this.packageRouter,
+				this.toolRouter,
+				this.platformRouter,
+				this.projectRouter,
+				this.assessmentRouter,
+				this.resultsRouter,
+				this.runRequestsRouter,
+			];
+		},
+
+		startRouters: function() {
+			var self = this;
+
+			this.createRouters();
+
+			// after any route change, clear modal dialogs
+			//
+			/*
+			for (var i = 0; i < this.routers.length; i++) {
+				this.routers[i].on("route", function(route, params) {
+					if (self.modal.currentView) {
+						self.modal.currentView.destroy();
+					}
+				});
+			}
+			*/
+
+			if (!Backbone.history.start()) {
+				this.mainRouter.showNotFound();
+			}
+		},
+
+		checkBrowserSupport: function() {
+			var browserList = "<ul>" + 
+				"<li>Chrome 7.0 or later</li>" + 
+				"<li>Firefox 4.0 or later</li>" + 
+				"<li>IE 10.0 or later</li>" +
+				"<li>Safari 5.0 or later</li>" +
+				"<li>Opera 12.0 or later</li>" +
+				"</ul>";
+			var errorView;
+			
+			if (!Browser.supportsCors) {
+				this.notify({
+					message: "Sorry, your web browser does not support cross origin resources sharing.  You will need to upgrade your web browser to a newer version in order to use this application." +
+						"<p>We suggest the following: " + browserList + "</p>"
+				});
+			} else if (!Browser.supportsHTTPRequestUploads) {
+				this.notify({
+					message: "Sorry, your web browser does not support the XMLHttpRequest2 object which is needed for uploading files.  You will need to upgrade your web browser to a newer version in order to upload files using this application." +
+						"<p>We suggest the following: " + browserList + "</p>"
+				});		
+			} else if (!Browser.supportsFormData) {
+				this.notify({
+					message: "Sorry, your web browser does not support the FormData object which is needed for uploading files.  You will need to upgrade your web browser to a newer version in order to upload files using this application." +
+						"<p>We suggest the following: " + browserList + "</p>"
+				});			
+			}
 		},
 
 		//
@@ -423,10 +415,6 @@ define([
 			//
 			Marionette.Application.prototype.start.call(this);
 
-			// call initializer
-			//
-			this.initialize();
-
 			// initial render
 			//
 			this.render();
@@ -457,7 +445,7 @@ define([
 
 					// set server configuration info
 					//
-					Registry.application.config = user.get('config');
+					self.config = user.get('config');
 					user.unset('config', {
 						silent: true
 					});
@@ -479,9 +467,9 @@ define([
 					//
 					if (response.status == 401) {
 						var json = JSON.parse(response.responseText);
-						Registry.application.config = json.config;
+						self.config = json.config;
 					} else {
-						Registry.application.config = {};
+						self.config = {};
 					}
 
 					// start application
@@ -511,7 +499,7 @@ define([
 				
 				error: function(jqxhr, textstatus, errorThrown) {
 
-					// show error dialog
+					// show error message
 					//
 					self.error({
 						message: "Could not log out: " + errorThrown + "."
@@ -532,7 +520,7 @@ define([
 				// callbacks
 				//
 				accept: function() {
-					Registry.application.session.logout({
+					application.session.logout({
 
 						// callbacks
 						// 
@@ -550,19 +538,37 @@ define([
 		},
 		*/
 
+		setUser: function(user) {
+
+			// set attributes
+			//
+			this.session.user = user;
+
+			// update header
+			//
+			this.getView().getChildView('header').render();
+		},
+
 		sessionExpired: function() {
 			var self = this;
+
+			// check if we are already signing in
+			//
+			if (this.signingIn) {
+				return;
+			} else {
+				this.signingIn = true;
+			}
+
 			require([
-				'views/users/authentication/dialogs/sign-in-view'
-			], function (SignInView) {
+				'views/users/authentication/dialogs/sign-in-dialog-view'
+			], function (SignInDialogView) {
 
 				// show sign in dialog
 				//
-				Registry.application.modal.show(
-					new SignInView(), {
-						focus: '#ok'
-					}
-				);
+				self.show(new SignInDialogView(), {
+					focus: '#ok'
+				});
 			});
 		},
 
@@ -577,8 +583,20 @@ define([
 			$("body").html(this.template({}));
 		},
 
-		show: function(view) {
-			this.main.show(view);
+		show: function(view, options) {
+			if (view instanceof DialogView) {
+
+				// show modal dialog
+				//
+				view.show(options);
+			} else {
+
+				// show main view
+				//
+				this.showPage(new MainView({
+					contentView: view
+				}));
+			}
 		},
 
 		showPage: function(view, options) {
@@ -587,7 +605,7 @@ define([
 				nav: options && options.nav? options.nav : undefined
 			});
 
-			this.show(pageView);
+			this.showView(pageView);
 
 			// add class for full (non-scrolling) pages
 			//
@@ -605,9 +623,8 @@ define([
 		showContent: function(options) {
 			var self = this;
 			require([
-				'registry',
 				'views/layout/multi-column-view'
-			], function (Registry, MultiColumnView) {
+			], function (MultiColumnView) {
 				var layout = self.getLayout();
 
 				// show multi column view
@@ -630,14 +647,13 @@ define([
 		showMain: function(view, options) {	
 			var self = this;
 			require([
-				'registry',
 				'views/layout/main-view'
-			], function (Registry, MainView) {
-				if (Registry.application.session.user) {
+			], function (MainView) {
+				if (self.session.user) {
 
 					// user is logged in, show nav + content
 					//
-					Registry.application.showContent({
+					self.showContent({
 						nav1: options? options.nav : undefined,
 						nav2: options? options.nav2 : undefined,
 						full: options? options.full : undefined,
@@ -645,7 +661,7 @@ define([
 						// callbacks
 						//
 						done: function(mainView) {
-							mainView.content.show(view);
+							mainView.showChildView('content', view);
 						}
 					});
 				} else {
@@ -670,51 +686,67 @@ define([
 		notify: function(options) {
 			var self = this;
 			require([
-				'views/dialogs/notify-view'
-			], function(NotifyView) {
+				'views/dialogs/notify-dialog-view'
+			], function(NotifyDialogView) {
 
-				// show notify view
+				// show notify dialog
 				//
-				self.modal.show(
-					new NotifyView(options)
-				);
+				self.show(new NotifyDialogView(options));
 			});
 		},
 
 		confirm: function(options) {
 			var self = this;
 			require([
-				'views/dialogs/confirm-view'
-			], function(ConfirmView) {
+				'views/dialogs/confirm-dialog-view'
+			], function(ConfirmDialogView) {
 
-				// show confirm view
+				// show confirm dialog
 				//
-				self.modal.show(
-					new ConfirmView(options)
-				);
+				self.show(new ConfirmDialogView(options));
 			});
 		},
 
 		error: function(options) {
 			var self = this;
-			require([
-				'views/dialogs/error-view'
-			], function(ErrorView) {
 
-				// show error view
+			// wait a moment for application to handle error
+			//
+			window.setTimeout(function() {
+
+				// check if we are already signing in
 				//
-				self.modal.show(
-					new ErrorView(options)
-				);
-			});
+				if (self.signingIn) {
+					return;
+				}
+
+				require([
+					'views/dialogs/error-dialog-view'
+				], function(ErrorDialogView) {
+
+					// show error dialog
+					//
+					self.show(new ErrorDialogView(options));
+				});
+			}, 100);
 		},
 
 		getActiveView: function() {
-			if (this.modal.isShowing()) {
-				return this.modal;
-			} else {
-				return this.main.currentView;
+
+			// get current dialog
+			//
+			if (DialogView.dialogs.length > 0) {
+				return DialogView.dialogs[DialogView.dialogs.length - 1];
 			}
+
+			// get main view
+			//
+			var view = this.getView();
+			if (view && view.hasChildView('main')) {
+				view = view.getChildView('main');
+			}
+
+			return view;
 		},
 
 		//
@@ -723,12 +755,6 @@ define([
 
 		onKeyDown: function(event) {
 			var activeView = this.getActiveView();
-
-			// handle return key events
-			//
-			if (event.keyCode == 13 && event.target.tagName.toLowerCase() == 'textarea') {
-				return;
-			}
 
 			// let active view handle event
 			//

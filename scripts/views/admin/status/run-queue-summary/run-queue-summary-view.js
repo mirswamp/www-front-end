@@ -18,26 +18,16 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
 	'text!templates/admin/status/run-queue-summary/run-queue-summary.tpl',
-], function($, _, Backbone, Marionette, Template) {
-	return Backbone.Marionette.ItemView.extend({
+	'views/base-view'
+], function($, _, Template, BaseView) {
+	return BaseView.extend({
 
 		//
 		// attributes
 		//
 
-		tagName: 'form',
-		className: 'form-horizontal',
-
-		//
-		// rendering methods
-		//
-
-		template: function(data) {
-			return _.template(Template, _.extend(data, {
-			}));
-		},
+		tagName: 'table',
+		template: _.template(Template)
 	});
 });

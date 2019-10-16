@@ -18,22 +18,17 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
 	'text!templates/scheduled-runs/schedules/select-list/select-schedules-list-item.tpl',
-	'registry',
 	'models/run-requests/run-request',
-	'views/dialogs/confirm-view',
-	'views/dialogs/notify-view',
-	'views/dialogs/error-view'
-], function($, _, Backbone, Marionette, Template, Registry, RunRequest, ConfirmView, NotifyView, ErrorView) {
-	return Backbone.Marionette.ItemView.extend({
+	'views/scheduled-runs/schedules/list/schedules-list-item-view',
+], function($, _, Template, RunRequest, SchedulesListItemView) {
+	return SchedulesListItemView.extend({
 
 		//
 		// attributes
 		//
 
-		tagName: 'tr',
+		template: _.template(Template),
 
 		events: {
 			'click .delete button': 'onClickDelete'
@@ -54,13 +49,13 @@ define([
 		// rendering methods
 		//
 
-		template: function(data) {
-			return _.template(Template, _.extend(data, {
+		templateContext: function() {
+			return {
 				itemIndex: this.options.itemIndex,
 				url: this.getUrl(),
 				showProjects: this.options.showProjects,
 				showDelete: this.options.showDelete
-			}));
+			};
 		},
 
 		//
@@ -70,37 +65,33 @@ define([
 		onClickDelete: function() {
 			var self = this;
 
-			// show confirm dialog
+			// show confirmation
 			//
-			Registry.application.modal.show(
-				new ConfirmView({
-					title: "Delete Schedule",
-					message: "Are you sure that you want to delete this " + self.model.get('name') + " schedule from this project?",
+			application.confirm({
+				title: "Delete Schedule",
+				message: "Are you sure that you want to delete this " + self.model.get('name') + " schedule from this project?",
 
-					// callbacks
-					//
-					accept: function() {
-						var runRequest = new RunRequest();
-						self.model.url = runRequest.url;
+				// callbacks
+				//
+				accept: function() {
+					var runRequest = new RunRequest();
+					self.model.url = runRequest.url;
 
-						self.model.destroy({
+					self.model.destroy({
 
-							// callbacks
+						// callbacks
+						//
+						error: function() {
+
+							// show error message
 							//
-							error: function() {
-
-								// show error dialog
-								//
-								Registry.application.modal.show(
-									new ErrorView({
-										message: "Could not delete this run request schedule."
-									})
-								);
-							}
-						});
-					}
-				})
-			);
+							application.error({
+								message: "Could not delete this run request schedule."
+							});
+						}
+					});
+				}
+			});
 		}
 	});
 });

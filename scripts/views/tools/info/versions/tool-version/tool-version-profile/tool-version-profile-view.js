@@ -18,23 +18,26 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
-	'bootstrap/tooltip',
-	'bootstrap/popover',
 	'text!templates/tools/info/versions/tool-version/tool-version-profile/tool-version-profile.tpl',
+	'views/base-view',
 	'utilities/time/date-utils'
-], function($, _, Backbone, Marionette, Tooltip, Popover, Template) {
-	return Backbone.Marionette.ItemView.extend({
+], function($, _, Template, BaseView) {
+	return BaseView.extend({
+
+		//
+		// attributes
+		//
+
+		template: _.template(Template),
 
 		//
 		// rendering methods
 		//
 
-		template: function(data) {
-			return _.template(Template, _.extend(data, {
+		templateContext: function() {
+			return {
 				model: this.model
-			}));
+			};
 		}
 	});
 });

@@ -19,12 +19,10 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
 	'text!templates/packages/info/versions/directory-tree/package-version-file.tpl',
 	'views/files/directory-tree/file-view',
 	'utilities/scripting/file-utils'
-], function($, _, Backbone, Marionette, Template, FileView, FileUtils) {
+], function($, _, Template, FileView, FileUtils) {
 
 	//
 	// static attributes
@@ -56,6 +54,12 @@ define([
 	return FileView.extend({
 
 		//
+		// attributes
+		//
+
+		template: _.template(Template),
+
+		//
 		// querying methods
 		//
 
@@ -85,12 +89,12 @@ define([
 		// rendering methods
 		//
 
-		template: function(data) {
-			return _.template(Template, _.extend(data, {
+		templateContext: function() {
+			return {
 				selectable: this.isSelectable(),
 				selected: this.options.selected,
 				buildFile: this.isBuildFile()
-			}));
+			};
 		}
 	});
 });

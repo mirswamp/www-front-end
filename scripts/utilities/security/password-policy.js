@@ -21,9 +21,8 @@ var passwordPolicy = "Passwords must be at least 10 characters long and include 
 define([
 	'jquery',
 	'underscore',
-	'backbone',
 	'jquery.validate.bootstrap',
-], function($, _, Backbone, Validate) {
+], function($, _, Validate) {
 
 	//
 	// character regular expressions

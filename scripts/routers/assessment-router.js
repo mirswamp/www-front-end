@@ -18,12 +18,12 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone'
-], function($, _, Backbone) {
+	'routers/base-router'
+], function($, _, BaseRouter) {
 
 	// create router
 	//
-	return Backbone.Router.extend({
+	return BaseRouter.extend({
 
 		//
 		// route definitions
@@ -45,14 +45,13 @@ define([
 		showAssessments: function(queryString) {
 			var self = this;
 			require([
-				'registry',
 				'routers/query-string-parser',
 				'views/assessments/assessments-view'
-			], function (Registry, QueryStringParser, AssessmentsView) {
+			], function (QueryStringParser, AssessmentsView) {
 
 				// show content view
 				//
-				Registry.application.showContent({
+				application.showContent({
 					nav1: 'home',
 					nav2: 'assessments', 
 
@@ -66,12 +65,10 @@ define([
 
 							// show project assessments view
 							//
-							view.content.show(
-								new AssessmentsView({
-									data: data,
-									model: view.model
-								})
-							);
+							view.showChildView('content', new AssessmentsView({
+								data: data,
+								model: view.model
+							}));
 						});
 					}
 				});
@@ -81,14 +78,13 @@ define([
 		showDeleteAssessments: function(queryString) {
 			var self = this;
 			require([
-				'registry',
 				'routers/query-string-parser',
 				'views/assessments/delete/delete-assessments-view'
-			], function (Registry, QueryStringParser, DeleteAssessmentsView) {
+			], function (QueryStringParser, DeleteAssessmentsView) {
 
 				// show content view
 				//
-				Registry.application.showContent({
+				application.showContent({
 					nav1: 'home',
 					nav2: 'assessments', 
 
@@ -102,12 +98,10 @@ define([
 
 							// show delete assessments view
 							//
-							view.content.show(
-								new DeleteAssessmentsView({
-									data: data,
-									model: view.model
-								})
-							);
+							view.showChildView('content', new DeleteAssessmentsView({
+								data: data,
+								model: view.model
+							}));
 						});
 					}
 				});
@@ -117,14 +111,13 @@ define([
 		showRunAssessment: function(queryString) {
 			var self = this;
 			require([
-				'registry',
 				'routers/query-string-parser',
 				'views/assessments/run/run-assessment-view'
-			], function (Registry, QueryStringParser, RunAssessmentView) {
+			], function (QueryStringParser, RunAssessmentView) {
 
 				// show content view
 				//
-				Registry.application.showContent({
+				application.showContent({
 					nav1: 'home',
 					nav2: 'assessments', 
 
@@ -138,12 +131,10 @@ define([
 
 							// show run assessment view
 							//
-							view.content.show(
-								new RunAssessmentView({
-									data: data,
-									project: view.model
-								})
-							);
+							view.showChildView('content', new RunAssessmentView({
+								data: data,
+								project: view.model
+							}));
 						});
 					}
 				});
@@ -151,5 +142,3 @@ define([
 		}
 	});
 });
-
-

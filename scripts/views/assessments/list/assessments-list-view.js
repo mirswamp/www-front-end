@@ -19,26 +19,31 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
 	'text!templates/assessments/list/assessments-list.tpl',
-	'views/widgets/lists/sortable-table-list-view',
+	'views/base-view',
+	'views/collections/tables/sortable-table-list-view',
 	'views/assessments/list/assessments-list-item-view'
-], function($, _, Backbone, Marionette, Template, SortableTableListView, AssessmentsListItemView) {
+], function($, _, Template, BaseView, SortableTableListView, AssessmentsListItemView) {
 	return SortableTableListView.extend({
 
 		//
 		// attributes
 		//
 
+		template: _.template(Template),
 		childView: AssessmentsListItemView,
+
+		emptyView: BaseView.extend({
+			template: _.template("No assessments.")
+		}),
+
 
 		sorting: {
 
 			// disable sorting on delete column
 			//
 			headers: {
-				3: { 
+				4: { 
 					sorter: false 
 				}
 			},
@@ -52,18 +57,27 @@ define([
 		// rendering methods
 		//
 
-		template: function(data) {
-			return _.template(Template, _.extend(data, {
+		templateContext: function() {
+			return {
 				collection: this.collection,
 				showNumbering: this.options.showNumbering
-			}));
+			};
 		},
 
-		childViewOptions: function(model, index) {
-			return {
-				index: index,
-				showNumbering: this.options.showNumbering
+		childViewOptions: function(model) {
+
+			// check if empty view
+			//
+			if (!model) {
+				return {};
 			}
+
+			// return view options
+			//
+			return {
+				index: this.collection.indexOf(model),
+				showNumbering: this.options.showNumbering
+			};
 		}
 	});
 });

@@ -18,12 +18,7 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
-	'bootstrap/tooltip',
-	'bootstrap/popover',
 	'text!templates/scheduled-runs/list/scheduled-runs-list-item.tpl',
-	'registry',
 	'models/packages/package',
 	'models/packages/package-version',
 	'models/tools/tool',
@@ -32,16 +27,15 @@ define([
 	'models/platforms/platform-version',
 	'models/assessments/assessment-run',
 	'models/run-requests/run-request',
-	'views/dialogs/confirm-view',
-	'views/dialogs/error-view'
-], function($, _, Backbone, Marionette, Tooltip, Popover, Template, Registry, Package, PackageVersion, Tool, ToolVersion, Platform, PlatformVersion, AssessmentRun, RunRequest, ConfirmView, ErrorView) {
-	return Backbone.Marionette.ItemView.extend({
+	'views/collections/tables/table-list-item-view'
+], function($, _, Template, Package, PackageVersion, Tool, ToolVersion, Platform, PlatformVersion, AssessmentRun, RunRequest, TableListItemView) {
+	return TableListItemView.extend({
 
 		//
 		// attributes
 		//
 
-		tagName: 'tr',
+		template: _.template(Template),
 
 		events: {
 			'click .delete button': 'onClickDelete'
@@ -51,45 +45,45 @@ define([
 		// querying methods
 		//
 
-		getProjectUrl: function(data) {
-			if (data.project_uuid) {
-				return Registry.application.getURL() + '#projects/' + data.project_uuid;
+		getProjectUrl: function() {
+			if (this.model.has('project_uuid')) {
+				return application.getURL() + '#projects/' + this.model.get('project_uuid');
 			}
 		},
 
-		getPackageUrl: function(data) {
-			if (data.package_uuid) {
-				return Registry.application.getURL() + '#packages/' + data.package_uuid;
+		getPackageUrl: function() {
+			if (this.model.has('package_uuid')) {
+				return application.getURL() + '#packages/' + this.model.get('package_uuid');
 			}
 		},
 
-		getPackageVersionUrl: function(data) {
-			if (data.package_version_uuid) {
-				return Registry.application.getURL() + '#packages/versions/' + data.package_version_uuid;
+		getPackageVersionUrl: function() {
+			if (this.model.has('package_version_uuid')) {
+				return application.getURL() + '#packages/versions/' + this.model.get('package_version_uuid');
 			}
 		},
 
-		getToolUrl: function(data) {
-			if (data.tool_uuid) {
-				return Registry.application.getURL() + '#tools/' + data.tool_uuid;
+		getToolUrl: function() {
+			if (this.model.has('tool_uuid')) {
+				return application.getURL() + '#tools/' + this.model.get('tool_uuid');
 			}
 		},
 
-		getToolVersionUrl: function(data) {
-			if (data.tool_version_uuid) {
-				return Registry.application.getURL() + '#tools/versions/' + data.tool_version_uuid;
+		getToolVersionUrl: function() {
+			if (this.model.has('tool_version_uuid')) {
+				return application.getURL() + '#tools/versions/' + this.model.get('tool_version_uuid');
 			}
 		},
 
-		getPlatformUrl: function(data) {
-			if (data.platform_uuid) {
-				return Registry.application.getURL() + '#platforms/' + data.platform_uuid;
+		getPlatformUrl: function() {
+			if (this.model.has('platform_uuid')) {
+				return application.getURL() + '#platforms/' + this.model.get('platform_uuid');
 			}
 		},
 
-		getPlatformVersionUrl: function(data) {
-			if (data.platform_version_uuid) {
-				return Registry.application.getURL() + '#platforms/versions/' + data.platform_version_uuid;
+		getPlatformVersionUrl: function() {
+			if (this.model.has('platform_version_uuid')) {
+				return application.getURL() + '#platforms/versions/' + this.model.get('platform_version_uuid');
 			}
 		},
 
@@ -97,25 +91,25 @@ define([
 		// rendering methods
 		//
 
-		template: function(data) {
+		templateContext: function() {
 			var runRequest = this.model.get('run_request');
 
-			return _.template(Template, _.extend(data, {
+			return {
 				index: this.options.index + 1,
 				runRequest: runRequest,
 				runRequestUrl: '#run-requests/schedules/' + runRequest.get('run_request_uuid'),
-				projectUrl: this.getProjectUrl(data),
-				packageUrl: this.getPackageUrl(data),
-				packageVersionUrl: this.getPackageVersionUrl(data),
-				toolUrl: this.getToolUrl(data),
-				toolVersionUrl: this.getToolVersionUrl(data),
-				platformUrl: this.getPlatformUrl(data),
-				platformVersionUrl: this.getPlatformVersionUrl(data),
+				projectUrl: this.getProjectUrl(),
+				packageUrl: this.getPackageUrl(),
+				packageVersionUrl: this.getPackageVersionUrl(),
+				toolUrl: this.getToolUrl(),
+				toolVersionUrl: this.getToolVersionUrl(),
+				platformUrl: this.getPlatformUrl(),
+				platformVersionUrl: this.getPlatformVersionUrl(),
 				showProjects: this.options.showProjects,
 				showNumbering: this.options.showNumbering,
 				showSchedule: this.options.showSchedule,
 				showDelete: this.options.showDelete
-			}));
+			};
 		},
 
 		onRender: function() {
@@ -134,52 +128,50 @@ define([
 		onClickDelete: function() {
 			var self = this;
 
-			// show confirm dialog
+			// show confirmation
 			//
-			Registry.application.modal.show(
-				new ConfirmView({
-					title: "Delete Scheduled Run",
-					message: "Are you sure that you want to delete this " + this.model.get('run_request').get('name') + " scheduled run of " + this.model.get('package_name') + " using " + this.model.get('tool_name') + " on " + this.model.get('platform_name') + "?",
+			application.confirm({
+				title: "Delete Scheduled Run",
+				message: "Are you sure that you want to delete this " + this.model.get('run_request').get('name') + " scheduled run of " + this.model.get('package_name') + " using " + this.model.get('tool_name') + " on " + this.model.get('platform_name') + "?",
 
-					// callbacks
-					//
-					accept: function() {
-						var runRequest = new RunRequest({
-							'run_request_uuid': self.model.get('run_request').get('run_request_uuid')
-						});
-						var assessmentRun = new AssessmentRun({
-							'assessment_run_uuid': self.model.get('assessment_run_uuid')
-						});
+				// callbacks
+				//
+				accept: function() {
+					var runRequest = new RunRequest({
+						'run_request_uuid': self.model.get('run_request').get('run_request_uuid')
+					});
+					var assessmentRun = new AssessmentRun({
+						'assessment_run_uuid': self.model.get('assessment_run_uuid')
+					});
 
-						runRequest.deleteRunRequest(assessmentRun, {
+					runRequest.deleteRunRequest(assessmentRun, {
 
-							// callbacks
+						// callbacks
+						//
+						success: function() {
+
+							// remove item from collection
 							//
-							success: function() {
+							self.collection.remove(self.model);
 
-								// remove item from collection
-								//
-								self.collection.remove(self.model);
-
-								// update parent view
-								//
-								self.options.parent.options.parent.options.parent.render();
-							},
-
-							error: function() {
-
-								// show error dialog
-								//
-								Registry.application.modal.show(
-									new ErrorView({
-										message: "Could not delete this assessment run request."
-									})
-								);
+							// perform callback
+							//
+							if (self.options.onDelete) {
+								self.options.onDelete();
 							}
-						});
-					}
-				})
-			);
+						},
+
+						error: function() {
+
+							// show error message
+							//
+							application.error({
+								message: "Could not delete this assessment run request."
+							});
+						}
+					});
+				}
+			});
 		}
 	});
 });

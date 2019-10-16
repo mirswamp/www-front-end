@@ -18,36 +18,34 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
 	'jquery.validate',
 	'bootstrap/collapse',
-	'modernizr',
 	'text!templates/results/assessment-runs/filters/assessment-runs-filters.tpl',
-	'registry',
 	'models/projects/project',
 	'collections/projects/projects',
-	'views/dialogs/confirm-view',
+	'views/base-view',
 	'views/projects/filters/project-filter-view',
 	'views/packages/filters/package-filter-view',
 	'views/tools/filters/tool-filter-view',
 	'views/platforms/filters/platform-filter-view',
 	'views/widgets/filters/date-filter-view',
 	'views/widgets/filters/limit-filter-view'
-], function($, _, Backbone, Marionette, Validate, Collapse, Modernizr, Template, Registry, Project, Projects, ConfirmView, ProjectFilterView, PackageFilterView, ToolFilterView, PlatformFilterView, DateFilterView, LimitFilterView) {
-	return Backbone.Marionette.LayoutView.extend({
+], function($, _, Validate, Collapse, Template, Project, Projects, BaseView, ProjectFilterView, PackageFilterView, ToolFilterView, PlatformFilterView, DateFilterView, LimitFilterView) {
+	return BaseView.extend({
 
 		//
 		// attributes
 		//
 
+		template: _.template(Template),
+
 		regions: {
-			projectFilter: '#project-filter',
-			packageFilter: '#package-filter',
-			toolFilter: '#tool-filter',
-			platformFilter: '#platform-filter',
-			dateFilter: '#date-filter',
-			limitFilter: '#limit-filter'
+			project: '#project-filter',
+			package: '#package-filter',
+			tool: '#tool-filter',
+			platform: '#platform-filter',
+			date: '#date-filter',
+			limit: '#limit-filter'
 		},
 
 		events: {
@@ -63,14 +61,14 @@ define([
 
 			// add tags
 			//
-			if (Registry.application.session.user.get('has_projects')) {
-				tags += this.projectFilter.currentView.getTag();
+			if (application.session.user.get('has_projects')) {
+				tags += this.getChildView('project').getTag();
 			}
-			tags += this.packageFilter.currentView.getTag();
-			tags += this.toolFilter.currentView.getTag();
-			tags += this.platformFilter.currentView.getTag();
-			tags += this.dateFilter.currentView.getTags();
-			tags += this.limitFilter.currentView.getTag();
+			tags += this.getChildView('package').getTag();
+			tags += this.getChildView('tool').getTag();
+			tags += this.getChildView('platform').getTag();
+			tags += this.getChildView('date').getTags();
+			tags += this.getChildView('limit').getTag();
 
 			return tags;
 		},
@@ -81,22 +79,22 @@ define([
 			// add info for filters
 			//
 			if (!attributes || _.contains(attributes, 'project')) {
-				_.extend(data, this.projectFilter.currentView.getData());
+				_.extend(data, this.getChildView('project').getData());
 			}
 			if (!attributes || _.contains(attributes, 'package')) {
-				_.extend(data, this.packageFilter.currentView.getData());
+				_.extend(data, this.getChildView('package').getData());
 			}
 			if (!attributes || _.contains(attributes, 'tool')) {
-				_.extend(data, this.toolFilter.currentView.getData());
+				_.extend(data, this.getChildView('tool').getData());
 			}
 			if (!attributes || _.contains(attributes, 'platform')) {
-				_.extend(data, this.platformFilter.currentView.getData());
+				_.extend(data, this.getChildView('platform').getData());
 			}
 			if (!attributes || _.contains(attributes, 'date')) {
-				_.extend(data, this.dateFilter.currentView.getData());
+				_.extend(data, this.getChildView('date').getData());
 			}
 			if (!attributes || _.contains(attributes, 'limit')) {
-				_.extend(data, this.limitFilter.currentView.getData());
+				_.extend(data, this.getChildView('limit').getData());
 			}
 
 			return data;
@@ -108,22 +106,22 @@ define([
 			// add info for filters
 			//
 			if (!attributes || _.contains(attributes, 'project')) {
-				_.extend(attrs, this.projectFilter.currentView.getAttrs());
+				_.extend(attrs, this.getChildView('project').getAttrs());
 			}
 			if (!attributes || _.contains(attributes, 'package')) {
-				_.extend(attrs, this.packageFilter.currentView.getAttrs());
+				_.extend(attrs, this.getChildView('package').getAttrs());
 			}
 			if (!attributes || _.contains(attributes, 'tool')) {
-				_.extend(attrs, this.toolFilter.currentView.getAttrs());
+				_.extend(attrs, this.getChildView('tool').getAttrs());
 			}
 			if (!attributes || _.contains(attributes, 'platform')) {
-				_.extend(attrs, this.platformFilter.currentView.getAttrs());
+				_.extend(attrs, this.getChildView('platform').getAttrs());
 			}
 			if (!attributes || _.contains(attributes, 'date')) {
-				_.extend(attrs, this.dateFilter.currentView.getAttrs());
+				_.extend(attrs, this.getChildView('date').getAttrs());
 			}
 			if (!attributes || _.contains(attributes, 'limit')) {
-				_.extend(attrs, this.limitFilter.currentView.getAttrs());
+				_.extend(attrs, this.getChildView('limit').getAttrs());
 			}
 
 			return attrs;
@@ -134,12 +132,12 @@ define([
 
 			// add info for filters
 			//
-			queryString = addQueryString(queryString, this.projectFilter.currentView.getQueryString());
-			queryString = addQueryString(queryString, this.packageFilter.currentView.getQueryString());
-			queryString = addQueryString(queryString, this.toolFilter.currentView.getQueryString());
-			queryString = addQueryString(queryString, this.platformFilter.currentView.getQueryString());
-			queryString = addQueryString(queryString, this.dateFilter.currentView.getQueryString());
-			queryString = addQueryString(queryString, this.limitFilter.currentView.getQueryString());
+			queryString = addQueryString(queryString, this.getChildView('project').getQueryString());
+			queryString = addQueryString(queryString, this.getChildView('package').getQueryString());
+			queryString = addQueryString(queryString, this.getChildView('tool').getQueryString());
+			queryString = addQueryString(queryString, this.getChildView('platform').getQueryString());
+			queryString = addQueryString(queryString, this.getChildView('date').getQueryString());
+			queryString = addQueryString(queryString, this.getChildView('limit').getQueryString());
 
 			return queryString;
 		},
@@ -152,37 +150,37 @@ define([
 
 			// reset filter dependencies
 			//
-			this.packageFilter.currentView.setProject(undefined, {
+			this.getChildView('package').setProject(undefined, {
 				silent: true
 			})
-			this.toolFilter.currentView.setPackage(undefined, {
+			this.getChildView('tool').setPackage(undefined, {
 				silent: true
 			})
-			this.platformFilter.currentView.setTool(undefined, {
+			this.getChildView('platform').setTool(undefined, {
 				silent: true
 			});
 
 			// reset sub filters
 			//
-			this.projectFilter.currentView.reset({
+			this.getChildView('project').reset({
 				silent: true
 			});
-			this.packageFilter.currentView.reset({
+			this.getChildView('package').reset({
 				silent: true,
 				update: true
 			});
-			this.toolFilter.currentView.reset({
+			this.getChildView('tool').reset({
 				silent: true,
 				update: true
 			});
-			this.platformFilter.currentView.reset({
+			this.getChildView('platform').reset({
 				silent: true,
 				update: true
 			});
-			this.dateFilter.currentView.reset({
+			this.getChildView('date').reset({
 				silent: true
 			});
-			this.limitFilter.currentView.reset({
+			this.getChildView('limit').reset({
 				silent: true
 			});
 			
@@ -201,8 +199,8 @@ define([
 		// rendering methods
 		//
 
-		template: function(data) {
-			return _.template(Template, _.extend(data, {
+		templateContext: function() {
+			return {
 				highlighted: {
 					'project-filter': this.options.data['project'] != undefined,
 					'package-filter': this.options.data['package'] != undefined || this.options.data['package-version'] != undefined,
@@ -211,7 +209,7 @@ define([
 					'date-filter': this.options.data['after'] != undefined || this.options.data['before'] != undefined,
 					'limit-filter': this.options.data['limit'] !== null
 				}
-			}));
+			};
 		},
 
 		onRender: function() {
@@ -221,21 +219,20 @@ define([
 			
 			// show subviews
 			//
-			this.projectFilter.show(new ProjectFilterView({
+			this.showChildView('project', new ProjectFilterView({
 				collection: hasProjects? this.options.data['project'] : undefined,
-				//defaultValue: !hasProjects? this.model : undefined,
 				defaultValue: undefined,
 				initialValue: !hasProjects? this.options.data['project'] : undefined,
 				
 				// callbacks
 				//
 				onChange: function(changes) {
-					self.packageFilter.currentView.setProject(changes.project);
+					self.getChildView('package').setProject(changes.project);
 					self.onChange();
 				}
 			}));
-			this.packageFilter.show(new PackageFilterView({
-				model: this.projectFilter.currentView.getSelected(),
+			this.showChildView('package', new PackageFilterView({
+				model: this.getChildView('project').getSelected(),
 				projects: this.options.data['projects'],
 				initialSelectedPackage: this.options.data['package'],
 				initialSelectedPackageVersion: this.options.data['package-version'],
@@ -245,12 +242,12 @@ define([
 				// callbacks
 				//
 				onChange: function(changes) {
-					self.toolFilter.currentView.setPackage(changes.package);
+					self.getChildView('tool').setPackage(changes.package);
 					self.onChange();
 				}
 			}));
-			this.toolFilter.show(new ToolFilterView({
-				model: this.projectFilter.currentView.getSelected(),
+			this.showChildView('tool', new ToolFilterView({
+				model: this.getChildView('project').getSelected(),
 				initialSelectedTool: this.options.data['tool'],
 				initialSelectedToolVersion: this.options.data['tool-version'],
 				packageSelected: this.options.data['package'],
@@ -260,12 +257,12 @@ define([
 				// callbacks
 				//
 				onChange: function(changes) {
-					self.platformFilter.currentView.setTool(changes.tool);
+					self.getChildView('platform').setTool(changes.tool);
 					self.onChange();
 				}
 			}));
-			this.platformFilter.show(new PlatformFilterView({
-				model: this.projectFilter.currentView.getSelected(),
+			this.showChildView('platform', new PlatformFilterView({
+				model: this.getChildView('project').getSelected(),
 				initialSelectedPlatform: this.options.data['platform'],
 				initialSelectedPlatformVersion: this.options.data['platform-version'],
 				toolSelected: this.options.data['tool'],
@@ -278,7 +275,7 @@ define([
 					self.onChange(changes);
 				}
 			}));
-			this.dateFilter.show(new DateFilterView({
+			this.showChildView('date', new DateFilterView({
 				initialAfterDate: this.options.data['after'],
 				initialBeforeDate: this.options.data['before'],
 
@@ -288,7 +285,7 @@ define([
 					self.onChange(changes);
 				}
 			}));
-			this.limitFilter.show(new LimitFilterView({
+			this.showChildView('limit', new LimitFilterView({
 				defaultValue: 50,
 				initialValue: this.options.data['limit'],
 

@@ -18,23 +18,19 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
 	'text!templates/users/accounts/user-account.tpl',
-	'config',
-	'registry',
-	'views/dialogs/confirm-view',
-	'views/dialogs/notify-view',
-	'views/dialogs/error-view'
-], function($, _, Backbone, Marionette, Template, Config, Registry, ConfirmView, NotifyView, ErrorView) {
-	return Backbone.Marionette.LayoutView.extend({
+	'views/base-view',
+], function($, _, Template, BaseView) {
+	return BaseView.extend({
 
 		//
 		// attributes
 		//
 
+		template: _.template(Template),
+
 		regions: {
-			userProfile: '#user-profile'
+			profile: '#user-profile'
 		},
 
 		events: {
@@ -53,11 +49,11 @@ define([
 		// rendering methods
 		//
 
-		template: function(data) {
-			return _.template(Template, _.extend(data, {
+		templateContext: function() {
+			return {
 				model: this.model,
-				config: Registry.application.config
-			}));
+				config: application.config
+			};
 		},
 
 		onRender: function() {
@@ -124,12 +120,10 @@ define([
 			require([
 				'views/users/user-profile/user-profile-view'
 			], function (UserProfileView) {
-				self.userProfile.show(
-					new UserProfileView({
-						model: self.model,
-						parent: self
-					})
-				);
+				self.showChildView('profile', new UserProfileView({
+					model: self.model,
+					parent: self
+				}));
 			});
 		},
 
@@ -138,12 +132,10 @@ define([
 			require([
 				'views/users/accounts/edit/edit-user-account-view'
 			], function (EditUserAccountView) {
-				self.userProfile.show(
-					new EditUserAccountView({
-						model: self.model,
-						parent: self
-					})
-				);
+				self.showChildView('profile', new EditUserAccountView({
+					model: self.model,
+					parent: self
+				}));
 			});
 		},
 
@@ -152,12 +144,10 @@ define([
 			require([
 				'views/users/permissions/user-permissions-view'
 			], function (UserPermissionsView) {
-				self.userProfile.show(
-					new UserPermissionsView({
-						model: self.model,
-						parent: self
-					})
-				);
+				self.showChildView('profile', new UserPermissionsView({
+					model: self.model,
+					parent: self
+				}));
 			});
 		},
 
@@ -166,12 +156,10 @@ define([
 			require([
 				'views/users/linked-accounts/user-linked-accounts-view',
 			], function (UserLinkedAccountsView) {
-				self.userProfile.show(
-					new UserLinkedAccountsView({
-						model: self.model,
-						parent: self
-					})
-				);
+				self.showChildView('profile', new UserLinkedAccountsView({
+					model: self.model,
+					parent: self
+				}));
 			});
 		},
 
@@ -180,12 +168,10 @@ define([
 			require([
 				'views/users/passwords/user-passwords-view',
 			], function (UserPasswordsView) {
-				self.userProfile.show(
-					new UserPasswordsView({
-						model: self.model,
-						parent: self
-					})
-				);
+				self.showChildView('profile', new UserPasswordsView({
+					model: self.model,
+					parent: self
+				}));
 			});
 		},
 
@@ -194,12 +180,10 @@ define([
 			require([
 				'views/users/classes/user-classes-view',
 			], function (UserClassesView) {
-				self.userProfile.show(
-					new UserClassesView({
-						model: self.model,
-						parent: self
-					})
-				);
+				self.showChildView('profile', new UserClassesView({
+					model: self.model,
+					parent: self
+				}));
 			});
 		},
 
@@ -246,96 +230,86 @@ define([
 		onClickChangePassword: function() {
 			var self = this;
 			require([
-				'views/users/accounts/dialogs/change-password/change-user-password-view'
-			], function (ChangeUserPasswordView) {
+				'views/users/accounts/dialogs/change-password/change-user-password-dialog-view'
+			], function (ChangeUserPasswordDialogView) {
 
-				// show change user password view
+				// show change user password dialog
 				//
-				Registry.application.modal.show(
-					new ChangeUserPasswordView({
-						model: self.model,
-						parent: this
-					})
-				);
+				application.show(new ChangeUserPasswordDialogView({
+					model: self.model,
+					parent: this
+				}));
 			});
 		},
 
 		onClickResetPassword: function() {
 			var self = this;
 			require([
-				'views/users/authentication/dialogs/reset-password-view'
-			], function (ResetPasswordView) {
+				'views/users/authentication/dialogs/reset-password-dialog-view'
+			], function (ResetPasswordDialogView) {
 
-				// show reset password view
+				// show reset password dialog
 				//
-				Registry.application.modal.show(
-					new ResetPasswordView({
-						user: self.model,
-						parent: self
-					})
-				);
+				application.show(new ResetPasswordDialogView({
+					user: self.model,
+					parent: self
+				}));
 			});
 		},
 
 		onClickDeleteAccount: function() {
 			var self = this;
 
-			// show confirm dialog
+			// show confirmation
 			//
-			Registry.application.modal.show(
-				new ConfirmView({
-					title: "Delete User Account",
-					message: "Are you sure that you would like to delete " +
-						this.model.getFullName() + "'s user account? " +
-						"When you delete an account, all of the user data will continue to be retained.",
+			application.confirm({
+				title: "Delete User Account",
+				message: "Are you sure that you would like to delete " +
+					this.model.getFullName() + "'s user account? " +
+					"When you delete an account, all of the user data will continue to be retained.",
 
-					// callbacks
+				// callbacks
+				//
+				accept: function() {
+
+					// delete user
 					//
-					accept: function() {
+					self.model.destroy({
 
-						// delete user
+						// callbacks
 						//
-						self.model.destroy({
+						success: function() {
 
-							// callbacks
+							// show success notify message
 							//
-							success: function() {
+							application.notify({
+								title: "User Account Deleted",
+								message: "This user account has been successfuly deleted.",
 
-								// show success notification dialog
+								// callbacks
 								//
-								Registry.application.modal.show(
-									new NotifyView({
-										title: "User Account Deleted",
-										message: "This user account has been successfuly deleted.",
+								accept: function() {
 
-										// callbacks
-										//
-										accept: function() {
+									// return to review accounts view
+									//
+									Backbone.history.navigate('#accounts/review', {
+										trigger: true
+									});
+								}
+							});
+						},
 
-											// return to review accounts view
-											//
-											Backbone.history.navigate('#accounts/review', {
-												trigger: true
-											});
-										}
-									})
-								);
-							},
+						error: function() {
 
-							error: function() {
-
-								// show error dialog
-								//
-								Registry.application.modal.show(
-									new ErrorView({
-										message: "Could not delete this user account."
-									})
-								);
-							}
-						});
-					}
-				})
-			);
+							// show error message
+							//
+							application.error({
+								message: "Could not delete this user account."
+							});
+						}
+					});
+				}
+			});
 		},
 
 		onClickCancel: function() {

@@ -19,19 +19,24 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
 	'text!templates/admin/status/uuid-item-select-list/uuid-item-select-list.tpl',
+	'views/base-view',
 	'views/admin/status/uuid-item-list/uuid-item-list-view',
 	'views/admin/status/uuid-item-select-list/uuid-item-select-list-item-view'
-], function($, _, Backbone, Marionette, Template, UuidItemListView, UuidItemSelectListItemView) {
+], function($, _, Template, BaseView, UuidItemListView, UuidItemSelectListItemView) {
 	return UuidItemListView.extend({
 
 		//
 		// attributes
 		//
 
+		template: _.template(Template),
+
 		childView: UuidItemSelectListItemView,
+
+		emptyView: BaseView.extend({
+			template: _.template("No items.")
+		}),
 		
 		events: {
 			'click .select-all': 'onClickSelectAll'
@@ -64,29 +69,40 @@ define([
 		// rendering methods
 		//
 
-		template: function(data) {
-			if (this.collection.length > 0) {
-				return _.template(Template, _.extend(data, {
-					fieldnames: this.options.fieldnames,
-					showNumbering: this.options.showNumbering
-				}));
-			} else {
-				return _.template("No items.")
-			}
+		templateContext: function() {
+			return {
+				fieldnames: this.options.fieldnames,
+				showNumbering: this.options.showNumbering
+			};
 		},
 
-		childViewOptions: function(model, index) {
+		childViewOptions: function(model) {
+
+			// check if empty view
+			//
+			if (!model) {
+				return {};
+			}
+
+			var execRunUuid = model.get('EXECRUNUID');
+			var end = execRunUuid.indexOf('}');
+			if (end != -1) {
+				execRunUuid = execRunUuid.substr(end + 1);
+			}
+
+			// return view options
+			//
 			selected = this.options.selected? this.options.selected.findWhere({
-				EXECRUNUID: model.get('EXECRUNUID')
+				EXECRUNUID: execRunUuid
 			}) : null;
 
 			return {
 				model: model,
-				index: index,
+				index: this.collection.indexOf(model),
 				selected: (selected != null),
 				fieldnames: this.options.fieldnames,
 				showNumbering: this.options.showNumbering
-			}
+			};
 		},
 
 		//

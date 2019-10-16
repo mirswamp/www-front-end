@@ -39,23 +39,16 @@
 		</div>
 
 		<div class="form-group">
-			<% var showConfigure = (config_dir || config_cmd || config_opt); %>
-			<% var showBuild = build_dir || build_file || build_opt || build_target || !build_system || build_system == 'no-build' || build_system == 'none' || exclude_paths; %>
-
 			<div id="advanced-settings" class="panel">
 				<div class="panel-group">
 
 					<div class="panel-heading">
 						<label>Advanced settings</label>
-						<span class="tags">
-							<span id="configure-tag" class="<% if (!showConfigure) { %>collapsed <% } %>toggle tag accordion-toggle" data-toggle="collapse" data-parent="#filters" href="#configure-settings"><i class="fa fa-tasks"></i>Configure</span>
-							<span id="build-tag" class="<% if (!showBuild) { %>collapsed <% } %>toggle tag accordion-toggle" data-toggle="collapse" data-parent="#filters" href="#build-settings"><i class="fa fa-puzzle-piece"></i>Build</span>
-						</span>
 					</div>
 
 					<div class="nested">
-						<div id="configure-settings" class="well collapse<% if (showConfigure) { %> in<% } %>">
-							<h3><i class="fa fa-tasks"></i>Configure settings<i class="fa fa-minus-circle close accordion-toggle" data-toggle="collapse" href="#configure-settings" /></h3>
+						<div id="configure-settings" class="well">
+							<h3><i class="fa fa-tasks"></i>Configure settings</h3>
 
 							<div id="configure-path" class="form-group">
 								<label class="control-label">Configure path</label>
@@ -97,8 +90,8 @@
 							</div>
 						</div>
 
-						<div id="build-settings" class="well collapse<% if (showBuild) { %> in<% } %>">
-							<h3><i class="fa fa-puzzle-piece"></i>Build settings<i class="fa fa-minus-circle close accordion-toggle" data-toggle="collapse" href="#build-settings" /></h3>
+						<div id="build-settings" class="well">
+							<h3><i class="fa fa-puzzle-piece"></i>Build settings</h3>
 
 							<div id="build-path" class="form-group">
 								<label class="control-label">Build path</label>

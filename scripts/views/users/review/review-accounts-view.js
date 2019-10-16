@@ -19,70 +19,72 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
 	'text!templates/users/review/review-accounts.tpl',
-	'config',
-	'registry',
 	'collections/users/users',
-	'views/dialogs/notify-view',
-	'views/dialogs/error-view',
+	'views/base-view',
 	'views/users/filters/user-filters-view',
 	'views/users/review/review-accounts-list/review-accounts-list-view'
-], function($, _, Backbone, Marionette, Template, Config, Registry, Users, NotifyView, ErrorView, UserFiltersView, ReviewAccountsListView) {
-	return Backbone.Marionette.LayoutView.extend({
+], function($, _, Template, Users, BaseView, UserFiltersView, ReviewAccountsListView) {
+	return BaseView.extend({
 
 		//
 		// attributes
 		//
 
+		template: _.template(Template),
+
 		regions: {
-			userFilters: '#user-filters',
-			reviewAccountsList: '#review-accounts-list'
+			filters: '#user-filters',
+			list: '#review-accounts-list'
 		},
 
 		events: {
 			//'change select': 'onChangeSelect',
 			'click #save': 'onClickSave',
 			'click #cancel': 'onClickCancel',
+			'click #show-signed-in-accounts': 'onClickShowSignedInAccounts',
 			'click #show-disabled-accounts': 'onClickShowDisabledAccounts',
 			'click #show-numbering': 'onClickShowNumbering'
 		},
 
 		//
-		// methods
+		// constructor
 		//
 
 		initialize: function() {
 			this.collection = new Users();
 		},
 
-		showDisabledAccounts: function() {
-			return this.$el.find('#show-disabled-accounts').is(':checked');
-		},
-
 		//
 		// querying methods
 		//
 
+		getShowSignedInAccounts: function() {
+			return this.$el.find('#show-signed-in-accounts').is(':checked');
+		},
+
+		getShowDisabledAccounts: function() {
+			return this.$el.find('#show-disabled-accounts').is(':checked');
+		},
+		
 		getQueryString: function() {
-			return this.userFilters.currentView.getQueryString();
+			return this.getChildView('filters').getQueryString();
 		},
 
 		getFilterData: function() {
-			return this.userFilters.currentView.getData();
+			return this.getChildView('filters').getData();
 		},
 
 		//
 		// ajax methods
 		//
 
-		fetchAccounts: function(done) {
+		fetchAll: function(done) {
 
 			// fetch user accounts
 			//
 			this.collection.fetchAll({
-				data: this.userFilters.currentView? this.userFilters.currentView.getAttrs() : null,
+				data: this.getChildView('filters')? this.getChildView('filters').getAttrs() : null,
 
 				// callbacks
 				//
@@ -92,15 +94,74 @@ define([
 
 				error: function() {
 
-					// show error dialog
+					// show error message
 					//
-					Registry.application.modal.show(
-						new ErrorView({
-							message: "Could not load users."
-						})
-					);
+					application.error({
+						message: "Could not fetch all users."
+					});
 				}
 			});
+		},
+
+		fetchEnabled: function(done) {
+
+			// fetch user accounts
+			//
+			this.collection.fetchEnabled({
+				data: this.getChildView('filters')? this.getChildView('filters').getAttrs() : null,
+
+				// callbacks
+				//
+				success: function() {
+					done();
+				},
+
+				error: function() {
+
+					// show error message
+					//
+					application.error({
+						message: "Could not fetch enabled users."
+					});
+				}
+			});
+		},
+
+		fetchSignedIn: function(done) {
+
+			// fetch user accounts
+			//
+			this.collection.fetchSignedIn({
+				data: this.getChildView('filters')? this.getChildView('filters').getAttrs() : null,
+
+				// callbacks
+				//
+				success: function() {
+					done();
+				},
+
+				error: function() {
+
+					// show error message
+					//
+					application.error({
+						message: "Could not fetch signed in users."
+					});
+				}
+			});
+		},
+
+		fetchUsers: function(done) {
+			var signedInAccounts = this.getShowSignedInAccounts();
+			var disabledAccounts = this.getShowDisabledAccounts();
+
+			if (signedInAccounts) {
+				return this.fetchSignedIn(done);
+			} else if (disabledAccounts) {
+				return this.fetchAll(done);
+			} else {
+				return this.fetchEnabled(done);
+			}
 		},
 
 		saveAccounts: function() {
@@ -112,23 +173,19 @@ define([
 
 					// show success notification dialog
 					//
-					Registry.application.modal.show(
-						new NotifyView({
-							title: "User Account Changes Saved",
-							message: "Your user account changes have been successfully saved."
-						})
-					);
+					application.notify({
+						title: "User Account Changes Saved",
+						message: "Your user account changes have been successfully saved."
+					});
 				},
 
 				error: function() {
 
-					// show error dialog
+					// show error message
 					//
-					Registry.application.modal.show(
-						new ErrorView({
-							message: "Your user account changes could not be saved."
-						})
-					);
+					application.error({
+						message: "Your user account changes could not be saved."
+					});
 				}
 			});
 		},
@@ -137,12 +194,13 @@ define([
 		// rendering methods
 		//
 
-		template: function(){
-			return _.template(Template, {
+		templateContext: function() {
+			return {
 				userType: this.options.data['type']? this.options.data['type'].replace('-', ' ').toTitleCase() : undefined,
+				showSignedInAccounts: this.options.showSignedInAccounts ? true : false,	
 				showDisabledAccounts: this.options.showDisabledAccounts ? true : false,
-				showNumbering: Registry.application.options.showNumbering
-			});
+				showNumbering: application.options.showNumbering
+			};
 		},
 
 		onRender: function() {
@@ -161,40 +219,37 @@ define([
 
 			// show user filters
 			//
-			this.userFilters.show(
-				new UserFiltersView({
-					model: this.model,
-					data: this.options.data? this.options.data : {},
+			this.showChildView('filters', new UserFiltersView({
+				model: this.model,
+				data: this.options.data? this.options.data : {},
 
-					// callbacks
+				// callbacks
+				//
+				onChange: function() {
+				
+					// update filter data
 					//
-					onChange: function() {
-						// setQueryString(self.userFilters.currentView.getQueryString());			
-					
-						// update filter data
-						//
-						var projects = self.options.data.projects;
-						self.options.data = self.getFilterData();
-						self.options.data.projects = projects;
+					var projects = self.options.data.projects;
+					self.options.data = self.getFilterData();
+					self.options.data.projects = projects;
 
-						// update url
-						//
-						var queryString = self.getQueryString();
-						var state = window.history.state;
-						var url = getWindowBaseLocation() + (queryString? ('?' + queryString) : '');
-						window.history.pushState(state, '', url);
+					// update url
+					//
+					var queryString = self.getQueryString();
+					var state = window.history.state;
+					var url = getWindowBaseLocation() + (queryString? ('?' + queryString) : '');
+					window.history.pushState(state, '', url);
 
-						// update view
-						//
-						self.onChange();
-					}
-				})
-			);
+					// update view
+					//
+					self.onChange();
+				}
+			}));
 		},
 
 		fetchAndShowList: function() {
 			var self = this;
-			this.fetchAccounts(function() {
+			this.fetchUsers(function() {
 				self.showList();
 			});
 		},
@@ -204,24 +259,22 @@ define([
 
 			// show review user accounts list
 			//
-			this.reviewAccountsList.show(
-				new ReviewAccountsListView({
-					collection: this.showDisabledAccounts()? this.collection : this.collection.getEnabled(),
-					showNumbering: Registry.application.options.showNumbering,
-					showForcePasswordReset: Registry.application.config['email_enabled'],
-					showHibernate: Registry.application.config['email_enabled'],
-					showLinkedAccount: Registry.application.config['linked_accounts_enabled'],
+			this.showChildView('list', new ReviewAccountsListView({
+				collection: this.collection,
+				showNumbering: application.options.showNumbering,
+				showForcePasswordReset: application.config['email_enabled'],
+				showHibernate: application.config['email_enabled'],
+				showLinkedAccount: application.config['linked_accounts_enabled'],
 
-					// callbacks
+				// callbacks
+				//
+				onChange: function() {
+
+					// enable save button
 					//
-					onChange: function() {
-
-						// enable save button
-						//
-						self.$el.find('#save').prop('disabled', false);
-					}
-				})
-			);
+					self.$el.find('#save').prop('disabled', false);
+				}
+			}));
 		},
 
 		//
@@ -262,12 +315,16 @@ define([
 			});
 		},
 
+		onClickShowSignedInAccounts: function() {
+			this.fetchAndShowList();
+		},
+
 		onClickShowDisabledAccounts: function() {
-			this.showList();
+			this.fetchAndShowList();
 		},
 
 		onClickShowNumbering: function(event) {
-			Registry.application.setShowNumbering($(event.target).is(':checked'));
+			application.setShowNumbering($(event.target).is(':checked'));
 			this.showList();
 		}
 	});

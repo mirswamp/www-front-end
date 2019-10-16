@@ -18,12 +18,12 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone'
-], function($, _, Backbone) {
+	'routers/base-router'
+], function($, _, BaseRouter) {
 
 	// create router
 	//
-	return Backbone.Router.extend({
+	return BaseRouter.extend({
 
 		//
 		// route definitions
@@ -66,14 +66,13 @@ define([
 
 		showPackages: function(queryString) {
 			require([
-				'registry',
 				'routers/query-string-parser',
 				'views/packages/packages-view'
-			], function (Registry, QueryStringParser, PackagesView) {
+			], function (QueryStringParser, PackagesView) {
 
 				// show content view
 				//
-				Registry.application.showContent({
+				application.showContent({
 					nav1: 'home',
 					nav2: 'packages', 
 
@@ -87,12 +86,10 @@ define([
 							
 							// show packages view
 							//
-							view.content.show(
-								new PackagesView({
-									model: view.model,
-									data: data
-								})
-							);
+							view.showChildView('content', new PackagesView({
+								model: view.model,
+								data: data
+							}));
 						});
 					}
 				});
@@ -101,32 +98,28 @@ define([
 
 		showPublicPackages: function(queryString) {
 			require([
-				'registry',
 				'routers/query-string-parser',
 				'views/packages/public-packages-view'
-			], function (Registry, QueryStringParser, PublicPackagesView) {
+			], function (QueryStringParser, PublicPackagesView) {
 
 				// show public packages view
 				//
-				Registry.application.showMain(
-					new PublicPackagesView({
-						data: QueryStringParser.parse(queryString)
-					}), {
-						nav: 'resources'
-					}
-				);
+				application.showMain(new PublicPackagesView({
+					data: QueryStringParser.parse(queryString)
+				}), {
+					nav: 'resources'
+				});
 			});
 		},
 
 		showAddNewPackage: function() {
 			require([
-				'registry',
 				'views/packages/add/add-new-package-view'
-			], function (Registry, AddNewPackageView) {
+			], function (AddNewPackageView) {
 
 				// show content view
 				//
-				Registry.application.showContent({
+				application.showContent({
 					nav1: 'home',
 					nav2: 'packages', 
 
@@ -136,9 +129,7 @@ define([
 
 						// show add new package view
 						//
-						view.content.show(
-							new AddNewPackageView()
-						);
+						view.showChildView('content', new AddNewPackageView());
 					}
 				});
 			});
@@ -150,14 +141,13 @@ define([
 
 		showReviewPackages: function(queryString) {
 			require([
-				'registry',
 				'routers/query-string-parser',
 				'views/packages/review/review-packages-view',
-			], function (Registry, QueryStringParser, ReviewPackagesView) {
+			], function (QueryStringParser, ReviewPackagesView) {
 
 				// show content view
 				//
-				Registry.application.showContent({
+				application.showContent({
 					'nav1': 'home',
 					'nav2': 'overview', 
 
@@ -167,11 +157,9 @@ define([
 
 						// show review packages view
 						//
-						view.content.show(
-							new ReviewPackagesView({
-								data: QueryStringParser.parse(queryString, view.model)
-							})
-						);
+						view.showChildView('content', new ReviewPackagesView({
+							data: QueryStringParser.parse(queryString, view.model)
+						}));
 					}
 				});
 			});
@@ -184,36 +172,37 @@ define([
 		showPackageView: function(packageUuid, options) {
 			var self = this;
 			require([
-				'registry',
 				'models/packages/package',
-				'views/dialogs/error-view',
 				'views/packages/package-view'
-			], function (Registry, Package, ErrorView, PackageView) {
+			], function (Package, PackageView) {
 				Package.fetch(packageUuid, function(package) {
 
 					// check if user is logged in
 					//
-					if (Registry.application.session.user) {
+					if (application.session.user) {
 
 						// show content view
 						//
-						Registry.application.showContent({
+						application.showContent({
 							nav1: package.isOwned()? 'home' : 'resources',
 							nav2: package.isOwned()? 'packages' : undefined, 
 
 							// callbacks
 							//	
 							done: function(view) {
-								view.content.show(
-									new PackageView({
-										model: package,
-										nav: options.nav,
-										parent: view
-									})
-								);
 
+								// show package view
+								//
+								view.showChildView('content', new PackageView({
+									model: package,
+									nav: options.nav,
+									parent: view
+								}));
+
+								// perform callback
+								//
 								if (options.done) {
-									options.done(view.content.currentView);
+									options.done(view.getChildView('content'));
 								}				
 							}					
 						});
@@ -221,11 +210,10 @@ define([
 
 						// show single column package view
 						//
-						Registry.application.showMain(
-							new PackageView({
-								model: package,
-								nav: options.nav
-							}), {
+						application.showMain(new PackageView({
+							model: package,
+							nav: options.nav
+						}), {
 							done: options.done
 						});
 					}
@@ -240,9 +228,8 @@ define([
 		showPackage: function(packageUuid) {
 			var self = this;
 			require([
-				'registry',
 				'views/packages/info/details/package-details-view'
-			], function (Registry, PackageDetailsView) {
+			], function (PackageDetailsView) {
 
 				// show package view
 				//
@@ -255,11 +242,9 @@ define([
 
 						// show package details view
 						//
-						view.packageInfo.show(
-							new PackageDetailsView({
-								model: view.model
-							})
-						);
+						view.showChildView('info', new PackageDetailsView({
+							model: view.model
+						}));
 					}
 				});
 			});
@@ -268,9 +253,8 @@ define([
 		showPackageCompatibility: function(packageUuid) {
 			var self = this;
 			require([
-				'registry',
 				'views/packages/info/compatibility/package-compatibility-view'
-			], function (Registry, PackageCompatibilityView) {
+			], function (PackageCompatibilityView) {
 
 				// show package view
 				//
@@ -283,11 +267,9 @@ define([
 
 						// show package compatibility view
 						//
-						view.packageInfo.show(
-							new PackageCompatibilityView({
-								model: view.model
-							})
-						);
+						view.showChildView('info', new PackageCompatibilityView({
+							model: view.model
+						}));
 					}
 				});
 			});
@@ -296,9 +278,8 @@ define([
 		showEditPackage: function(packageUuid) {
 			var self = this;
 			require([
-				'registry',
 				'views/packages/info/details/edit-package-details-view',
-			], function (Registry, EditPackageDetailsView) {
+			], function (EditPackageDetailsView) {
 
 				// show package view
 				//
@@ -311,11 +292,9 @@ define([
 
 						// show edit package details view
 						//
-						view.options.parent.content.show(
-							new EditPackageDetailsView({
-								model: view.model
-							})
-						);
+						view.options.parent.showChildView('content', new EditPackageDetailsView({
+							model: view.model
+						}));
 					}
 				});
 			});
@@ -324,9 +303,8 @@ define([
 		showAddNewPackageVersion: function(packageUuid) {
 			var self = this;
 			require([
-				'registry',
 				'views/packages/info/versions/add/add-new-package-version-view'
-			], function (Registry, AddNewPackageVersionView) {
+			], function (AddNewPackageVersionView) {
 
 				// show package view
 				//
@@ -339,11 +317,9 @@ define([
 
 						// show add new package version view
 						//
-						view.options.parent.content.show(
-							new AddNewPackageVersionView({
-								package: view.model
-							})
-						);
+						view.options.parent.showChildView('content', new AddNewPackageVersionView({
+							package: view.model
+						}));
 					}
 				});
 			});
@@ -356,39 +332,40 @@ define([
 		showPackageVersionView: function(packageVersionUuid, options) {
 			var self = this;
 			require([
-				'registry',
 				'models/packages/package',
 				'models/packages/package-version',
-				'views/dialogs/error-view',
 				'views/packages/info/versions/package-version-view'
-			], function (Registry, Package, PackageVersion, ErrorView, PackageVersionView) {
+			], function (Package, PackageVersion, PackageVersionView) {
 				PackageVersion.fetch(packageVersionUuid, function(packageVersion) {
 					Package.fetch(packageVersion.get('package_uuid'), function(package) {
 
 						// check if user is logged in
 						//
-						if (Registry.application.session.user) {
+						if (application.session.user) {
 
 							// show content view
 							//
-							Registry.application.showContent({
+							application.showContent({
 								nav1: package.isOwned()? 'home' : 'resources',
 								nav2: package.isOwned()? 'packages' : undefined, 
 
 								// callbacks
 								//	
 								done: function(view) {
-									view.content.show(
-										new PackageVersionView({
-											model: packageVersion,
-											package: package,
-											nav: options.nav,
-											parent: view
-										})
-									);
 
+									// show package version
+									//
+									view.showChildView('content', new PackageVersionView({
+										model: packageVersion,
+										package: package,
+										nav: options.nav,
+										parent: view
+									}));
+
+									// perform callback
+									//
 									if (options.done) {
-										options.done(view.content.currentView);
+										options.done(view.getChildView('content'));
 									}				
 								}					
 							});
@@ -396,12 +373,11 @@ define([
 
 							// show single column package version view
 							//
-							Registry.application.showMain(
-								new PackageVersionView({
-									model: packageVersion,
-									package: package,
-									nav: options.nav
-								}), {
+							application.showMain(new PackageVersionView({
+								model: packageVersion,
+								package: package,
+								nav: options.nav
+							}), {
 								done: options.done
 							});
 						}
@@ -417,9 +393,8 @@ define([
 		showPackageVersion: function(packageVersionUuid) {
 			var self = this;
 			require([
-				'registry',
 				'views/packages/info/versions/info/details/package-version-details-view'
-			], function (Registry, PackageVersionDetailsView) {
+			], function (PackageVersionDetailsView) {
 
 				// show package version view
 				//
@@ -432,12 +407,10 @@ define([
 
 						// show package version details view
 						//
-						view.packageVersionInfo.show(
-							new PackageVersionDetailsView({
-								model: view.model,
-								package: view.options.package
-							})
-						);
+						view.showChildView('info', new PackageVersionDetailsView({
+							model: view.model,
+							package: view.options.package
+						}));
 					}
 				});
 			});
@@ -446,9 +419,8 @@ define([
 		showEditPackageVersion: function(packageVersionUuid) {
 			var self = this;
 			require([
-				'registry',
 				'views/packages/info/versions/info/details/edit-package-version-details-view'
-			], function (Registry, EditPackageVersionDetailsView) {
+			], function (EditPackageVersionDetailsView) {
 
 				// show package version view
 				//
@@ -461,12 +433,10 @@ define([
 
 						// show edit package version details view
 						//
-						view.options.parent.content.show(
-							new EditPackageVersionDetailsView({
-								model: view.model,
-								package: view.options.package
-							})
-						);
+						view.options.parent.showChildView('content', new EditPackageVersionDetailsView({
+							model: view.model,
+							package: view.options.package
+						}));
 					}
 				});
 			});
@@ -475,9 +445,8 @@ define([
 		showPackageVersionSource: function(packageVersionUuid) {
 			var self = this;
 			require([
-				'registry',
 				'views/packages/info/versions/info/source/package-version-source-view',
-			], function (Registry, PackageVersionSourceView) {
+			], function (PackageVersionSourceView) {
 
 				// show package version view
 				//
@@ -490,12 +459,10 @@ define([
 
 						// show package version source view
 						//
-						view.packageVersionInfo.show(
-							new PackageVersionSourceView({
-								model: view.model,
-								package: view.options.package
-							})
-						);
+						view.showChildView('info', new PackageVersionSourceView({
+							model: view.model,
+							package: view.options.package
+						}));
 					}
 				});
 			});
@@ -504,9 +471,8 @@ define([
 		showEditPackageVersionSource: function(packageVersionUuid) {
 			var self = this;
 			require([
-				'registry',
 				'views/packages/info/versions/info/source/edit-package-version-source-view',
-			], function (Registry, EditPackageVersionSourceView) {
+			], function (EditPackageVersionSourceView) {
 
 				// show package version view
 				//
@@ -519,12 +485,10 @@ define([
 
 						// show edit package version source view
 						//
-						view.options.parent.content.show(
-							new EditPackageVersionSourceView({
-								model: view.model,
-								package: view.options.package
-							})
-						);
+						view.options.parent.showChildView('content', new EditPackageVersionSourceView({
+							model: view.model,
+							package: view.options.package
+						}));
 					}
 				});
 			});
@@ -533,9 +497,8 @@ define([
 		showPackageVersionBuild: function(packageVersionUuid) {
 			var self = this;
 			require([
-				'registry',
 				'views/packages/info/versions/info/build/package-version-build-view',
-			], function (Registry, PackageVersionBuildView) {
+			], function (PackageVersionBuildView) {
 
 				// show package version view
 				//
@@ -548,12 +511,10 @@ define([
 
 						// show package version build view
 						//
-						view.packageVersionInfo.show(
-							new PackageVersionBuildView({
-								model: view.model,
-								package: view.options.package
-							})
-						);
+						view.showChildView('info', new PackageVersionBuildView({
+							model: view.model,
+							package: view.options.package
+						}));
 					}
 				});
 			});
@@ -562,9 +523,8 @@ define([
 		showEditPackageVersionBuild: function(packageVersionUuid) {
 			var self = this;
 			require([
-				'registry',
 				'views/packages/info/versions/info/build/edit-package-version-build-view',
-			], function (Registry, EditPackageVersionBuildView) {
+			], function (EditPackageVersionBuildView) {
 
 				// show package version view
 				//
@@ -577,12 +537,10 @@ define([
 
 						// show edit package version build view
 						//
-						view.options.parent.content.show(
-							new EditPackageVersionBuildView({
-								model: view.model,
-								package: view.options.package
-							})
-						);
+						view.options.parent.showChildView('content', new EditPackageVersionBuildView({
+							model: view.model,
+							package: view.options.package
+						}));
 					}
 				});
 			});
@@ -591,9 +549,8 @@ define([
 		showPackageVersionCompatibility: function(packageVersionUuid) {
 			var self = this;
 			require([
-				'registry',
 				'views/packages/info/versions/info/compatibility/package-version-compatibility-view',
-			], function (Registry, PackageVersionCompatibilityView) {
+			], function (PackageVersionCompatibilityView) {
 
 				// show package version view
 				//
@@ -606,12 +563,10 @@ define([
 
 						// show package version compatibility view
 						//
-						view.packageVersionInfo.show(
-							new PackageVersionCompatibilityView({
-								model: view.model,
-								package: view.options.package
-							})
-						);
+						view.showChildView('info', new PackageVersionCompatibilityView({
+							model: view.model,
+							package: view.options.package
+						}));
 					}
 				});
 			});
@@ -620,10 +575,8 @@ define([
 		showPackageVersionSharing: function(packageVersionUuid) {
 			var self = this;
 			require([
-				'registry',
-				'views/dialogs/error-view',
 				'views/packages/info/versions/info/sharing/package-version-sharing-view',
-			], function (Registry, ErrorView, PackageVersionSharingView) {
+			], function (PackageVersionSharingView) {
 
 				// show package version view
 				//
@@ -636,25 +589,21 @@ define([
 
 						// check sharing permissions
 						//
-						if (view.options.package.get('is_owned') || Registry.application.session.user.isAdmin()) {
+						if (view.options.package.get('is_owned') || application.session.user.isAdmin()) {
 							
 							// show package version sharing view
 							//
-							view.packageVersionInfo.show(
-								new PackageVersionSharingView({
-									model: view.model,
-									package: view.options.package
-								})
-							);
+							view.showChildView('info', new PackageVersionSharingView({
+								model: view.model,
+								package: view.options.package
+							}));
 						} else {
 
-							// show error dialog
+							// show error message
 							//
-							Registry.application.modal.show(
-								new ErrorView({
-									message: "You must be the package owner or an admin to view sharing."
-								})
-							);	
+							application.error({
+								message: "You must be the package owner or an admin to view sharing."
+							});
 						}
 					}
 				});
@@ -662,5 +611,3 @@ define([
 		}
 	});
 });
-
-

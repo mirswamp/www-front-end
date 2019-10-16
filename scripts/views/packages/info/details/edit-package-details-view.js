@@ -18,21 +18,20 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
 	'text!templates/packages/info/details/edit-package-details.tpl',
-	'registry',
-	'views/dialogs/error-view',
+	'views/base-view',
 	'views/packages/info/details/package-profile/package-profile-form-view'
-], function($, _, Backbone, Marionette, Template, Registry, ErrorView, PackageProfileFormView) {
-	return Backbone.Marionette.LayoutView.extend({
+], function($, _, Template, BaseView, PackageProfileFormView) {
+	return BaseView.extend({
 
 		//
 		// attributes
 		//
 
+		template: _.template(Template),
+
 		regions: {
-			packageProfileForm: '#package-profile-form'
+			form: '#package-profile-form'
 		},
 
 		events: {
@@ -46,21 +45,19 @@ define([
 		// rendering methods
 		//
 
-		template: function(data) {
-			return _.template(Template, _.extend(data, {
+		templateContext: function() {
+			return {
 				package: this.model
-			}));
+			};
 		},
 
 		onRender: function() {
 
 			// display package profile form view
 			//
-			this.packageProfileForm.show(
-				new PackageProfileFormView({
-					model: this.model
-				})
-			);
+			this.showChildView('form', new PackageProfileFormView({
+				model: this.model
+			}));
 		},
 
 		//
@@ -79,11 +76,11 @@ define([
 
 			// check validation
 			//
-			if (this.packageProfileForm.currentView.isValid()) {
+			if (this.getChildView('form').isValid()) {
 
 				// update model
 				//
-				this.packageProfileForm.currentView.update(this.model);
+				this.getChildView('form').applyTo(this.model);
 
 				// disable save button
 				//
@@ -106,13 +103,11 @@ define([
 
 					error: function() {
 
-						// show error dialog
+						// show error message
 						//
-						Registry.application.modal.show(
-							new ErrorView({
-								message: "Could not save package changes."
-							})
-						);
+						application.error({
+							message: "Could not save package changes."
+						});
 					}
 				});
 			}

@@ -20,12 +20,11 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette'
-], function($, _, Backbone, Marionette) {
+	'views/base-view'
+], function($, _, BaseView) {
 	'use strict';
 	
-	return Marionette.View.extend({
+	return BaseView.extend({
 
 		//
 		// attributes

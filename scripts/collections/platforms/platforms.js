@@ -18,11 +18,10 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
 	'config',
 	'models/platforms/platform',
 	'collections/utilities/named-items'
-], function($, _, Backbone, Config, Platform, NamedItems) {
+], function($, _, Config, Platform, NamedItems) {
 	return NamedItems.extend({
 
 		//
@@ -33,11 +32,34 @@ define([
 		url: Config.servers.web + '/platforms',
 
 		//
+		// filtering methods
+		//
+
+		getByTool: function(tool) {
+			var platformNames = tool.get('platform_names');
+
+			// create empty collection
+			//
+			var collection = new this.constructor([], {
+				model: this.model,
+				comparator: this.comparator
+			});
+
+			this.each(function(platform, index, list) {
+				if (platformNames.contains(platform.get('name'))) {
+					collection.push(platform);
+				}
+			});
+
+			return collection;
+		},
+
+		//
 		// ajax methods
 		//
 
 		fetch: function(options) {
-			return this.fetchByUser(Registry.application.session.user, options);
+			return this.fetchByUser(application.session.user, options);
 		},
 
 		fetchByUser: function(user, options) {

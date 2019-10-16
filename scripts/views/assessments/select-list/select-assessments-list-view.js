@@ -19,21 +19,25 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
 	'bootstrap/popover',
 	'text!templates/assessments/select-list/select-assessments-list.tpl',
 	'collections/assessments/assessment-runs',
-	'views/widgets/lists/sortable-table-list-view',
+	'views/base-view',
+	'views/collections/tables/sortable-table-list-view',
 	'views/assessments/select-list/select-assessments-list-item-view'
-], function($, _, Backbone, Marionette, Popover, Template, AssessmentRuns, SortableTableListView, SelectAssessmentsListItemView) {
+], function($, _, Popover, Template, AssessmentRuns, BaseView, SortableTableListView, SelectAssessmentsListItemView) {
 	return SortableTableListView.extend({
 
 		//
 		// attributes
 		//
 
+		template: _.template(Template),
 		childView: SelectAssessmentsListItemView,
+
+		emptyView: BaseView.extend({
+			template: _.template("No assessments.")
+		}),
 
 		events: {
 			'click .select-all': 'onClickSelectAll',
@@ -52,9 +56,6 @@ define([
 				1: { 
 					sorter: false 
 				},
-				5: { 
-					sorter: false 
-				},
 				6: { 
 					sorter: false 
 				}
@@ -65,8 +66,10 @@ define([
 			sortList: [[2, 0]]
 		},
 
+		groupExcept: ['select-group', 'select', 'results', 'delete'],
+
 		//
-		// methods
+		// constructor
 		//
 
 		initialize: function(options) {
@@ -94,8 +97,7 @@ define([
 			// call superclass method
 			//
 			SortableTableListView.prototype.initialize.call(this, _.extend(options, {
-				showSortingColumn: true,
-				groupExcept: ['select-group', 'select', 'results', 'delete']
+				showSortingColumn: true
 			}));
 		},
 
@@ -223,19 +225,28 @@ define([
 		// rendering methods
 		//
 
-		template: function(data) {
-			return _.template(Template, _.extend(data, {
+		templateContext: function() {
+			return {
 				collection: this.collection,
 				showProjects: this.options.showProjects,
 				showNumbering: this.options.showNumbering,
 				showGrouping: this.options.showGrouping,
 				showDelete: this.options.showDelete
-			}));
+			};
 		},
 
-		childViewOptions: function(model, index) {
+		childViewOptions: function(model) {
+
+			// check if empty view
+			//
+			if (!model) {
+				return {};
+			}
+
+			// return view options
+			//
 			return {
-				index: index,
+				index: this.collection.indexOf(model),
 				showProjects: this.options.showProjects,
 				showNumbering: this.options.showNumbering,
 				showGrouping: this.options.showGrouping,
@@ -243,7 +254,7 @@ define([
 				project: this.options.project,
 				data: this.options.data,
 				parent: this
-			}
+			};
 		},
 
 		onRender: function() {

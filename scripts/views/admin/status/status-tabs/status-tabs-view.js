@@ -18,19 +18,19 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
 	'bootstrap/tab',
 	'text!templates/admin/status/status-tabs/status-tabs.tpl',
-	'registry',
+	'views/base-view',
 	'views/admin/status/uuid-item-list/uuid-item-list-view',
 	'views/admin/status/uuid-item-select-list/uuid-item-select-list-view'
-], function($, _, Backbone, Marionette, Tab, Template, Registry, UuidItemListView, UuidItemSelectListView) {
-	return Backbone.Marionette.LayoutView.extend({
+], function($, _, Tab, Template, BaseView, UuidItemListView, UuidItemSelectListView) {
+	return BaseView.extend({
 
 		//
 		// attributes
 		//
+
+		template: _.template(Template),
 
 		events: {
 			'click a[role="tab"]': 'onClickTab',
@@ -40,7 +40,7 @@ define([
 		// rendering methods
 		//
 
-		template: function(data) {
+		templateContext: function() {
 
 			// check if active tab is not found in list of tabs
 			//
@@ -50,10 +50,10 @@ define([
 				}
 			}
 		 		
-			return _.template(Template, _.extend(data, {
+			return {
 				tabs: Object.keys(this.options.data),
 				activeTab: this.options.activeTab
-			}));
+			};
 		},
 
 		onRender: function() {
@@ -82,7 +82,7 @@ define([
 							region.show(new UuidItemSelectListView({
 								fieldnames: item.fieldnames,
 								collection: new Backbone.Collection(item.data),
-								showNumbering: Registry.application.options.showNumbering,
+								showNumbering: application.options.showNumbering,
 								sortList: this.options.tabState[tab] ? this.options.tabState[tab].sortList : undefined,
 								selected: this.options.tabState[tab] ? this.options.tabState[tab].selected : undefined
 							}));
@@ -90,7 +90,7 @@ define([
 							region.show(new UuidItemListView({
 								fieldnames: item.fieldnames,
 								collection: new Backbone.Collection(item.data),
-								showNumbering: Registry.application.options.showNumbering,
+								showNumbering: application.options.showNumbering,
 								sortList: this.options.tabState[tab] ? this.options.tabState[tab].sortList : undefined
 							}));
 						}

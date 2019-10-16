@@ -19,24 +19,19 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
 	'bootstrap/dropdown',
 	'text!templates/packages/review/review-packages-list/review-packages-list-item.tpl',
-	'registry',
+	'views/packages/list/packages-list-item-view',
 	'utilities/time/date-format',
-	'views/dialogs/error-view',
-	'views/dialogs/notify-view',
-	'views/dialogs/confirm-view',
 	'utilities/time/date-utils'
-], function($, _, Backbone, Marionette, Dropdown, Template, Registry, DateFormat, ErrorView, NotifyView, ConfirmView) {
-	return Backbone.Marionette.ItemView.extend({
+], function($, _, Dropdown, Template, PackagesListItemView) {
+	return PackagesListItemView.extend({
 
 		//
 		// attributes
 		//
 
-		tagName: 'tr',
+		template: _.template(Template),
 		
 		events: {
 			'click a.approved': 'onClickApproved',
@@ -51,16 +46,16 @@ define([
 		// rendering methods
 		//
 
-		template: function(data) {
-			return _.template(Template, _.extend(data, {
+		templateContext: function() {
+			return {
 				model: this.model,
 				collection: this.collection,
 				index: this.options.index + 1,
-				url: Registry.application.getURL() + '#packages/' + this.model.get('package_uuid'),
+				url: application.getURL() + '#packages/' + this.model.get('package_uuid'),
 				showDelete: this.options.showDelete,
 				showNumbering: this.options.showNumbering,
 				showDeactivatedPackages: this.options.showDeactivatedPackages
-			}));
+			};
 		},
 
 		//
@@ -95,34 +90,30 @@ define([
 		onClickDelete: function() {
 			var self = this;
 
-			// show confirm dialog
+			// show confirmation
 			//
-			Registry.application.modal.show(
-				new ConfirmView({
-					title: "Delete Package",
-					message: "Are you sure that you want to delete package " + this.model.get('name') + "?",
+			application.confirm({
+				title: "Delete Package",
+				message: "Are you sure that you want to delete package " + this.model.get('name') + "?",
 
-					// callbacks
-					//
-					accept: function() {
-						self.model.destroy({
+				// callbacks
+				//
+				accept: function() {
+					self.model.destroy({
 
-							// callbacks
+						// callbacks
+						//
+						error: function() {
+
+							// show error message
 							//
-							error: function() {
-
-								// show error dialog
-								//
-								Registry.application.modal.show(
-									new ErrorView({
-										message: "Could not delete this package."
-									})
-								);
-							}
-						});
-					}
-				})
-			);
+							application.error({
+								message: "Could not delete this package."
+							});
+						}
+					});
+				}
+			});
 		}
 	});
 });

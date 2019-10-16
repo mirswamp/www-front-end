@@ -19,24 +19,21 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
-	'bootstrap/tooltip',
-	'bootstrap/popover',
 	'text!templates/packages/info/versions/info/source/edit-package-version-source.tpl',
-	'registry',
-	'views/dialogs/error-view',
+	'views/base-view',
 	'views/packages/info/versions/info/source/source-profile/package-version-source-profile-form-view',
-	'views/packages/info/versions/info/source/dialogs/package-version-file-types-view'
-], function($, _, Backbone, Marionette, Tooltip, Popover, Template, Registry, ErrorView, PackageVersionSourceProfileFormView, PackageVersionFileTypesView) {
-	return Backbone.Marionette.LayoutView.extend({
+	'views/packages/info/versions/info/source/dialogs/package-version-file-types-dialog-view'
+], function($, _, Template, BaseView, PackageVersionSourceProfileFormView, PackageVersionFileTypesDialogView) {
+	return BaseView.extend({
 
 		//
 		// attributes
 		//
 
+		template: _.template(Template),
+
 		regions: {
-			packageVersionSourceProfileForm: '#package-version-source-profile-form'
+			form: '#package-version-source-profile-form'
 		},
 
 		events: {
@@ -76,13 +73,11 @@ define([
 
 				error: function() {
 
-					// show error dialog
+					// show error message
 					//
-					Registry.application.modal.show(
-						new ErrorView({
-							message: "Could not save package version changes."
-						})
-					);
+					application.error({
+						message: "Could not save package version changes."
+					});
 				}
 			});
 		},
@@ -91,11 +86,11 @@ define([
 		// rendering methods
 		//
 
-		template: function(data) {
-			return _.template(Template, _.extend(data, {
+		templateContext: function() {
+			return {
 				model: this.model,
 				package: this.options.package
-			}));
+			};
 		},
 
 		onRender: function() {
@@ -103,22 +98,20 @@ define([
 
 			// show profile
 			//
-			this.packageVersionSourceProfileForm.show(
-				new PackageVersionSourceProfileFormView({
-					model: this.model,
-					package: this.options.package,
-					parent: this,
+			this.showChildView('form', new PackageVersionSourceProfileFormView({
+				model: this.model,
+				package: this.options.package,
+				parent: this,
 
-					// callbacks
+				// callbacks
+				//
+				onChange: function() {
+
+					// enable save button
 					//
-					onChange: function() {
-
-						// enable save button
-						//
-						self.$el.find('#save').prop('disabled', false);
-					}
-				})
-			);
+					self.$el.find('#save').prop('disabled', false);
+				}
+			}));
 		},
 
 		showWarning: function(message) {
@@ -157,11 +150,11 @@ define([
 
 			// check validation
 			//
-			if (this.packageVersionSourceProfileForm.currentView.isValid()) {
+			if (this.getChildView('form').isValid()) {
 
 				// update model
 				//
-				this.packageVersionSourceProfileForm.currentView.update(this.model);
+				this.getChildView('form').applyTo(this.model);
 
 				// check build system
 				//
@@ -177,7 +170,7 @@ define([
 					},
 
 					error: function(data) {
-						Registry.application.confirm({
+						application.confirm({
 							title: 'Build System Warning',
 							message: data.responseText + "  Would you like to continue anyway?",
 
@@ -204,12 +197,10 @@ define([
 
 			// show package version file types dialog
 			//
-			Registry.application.modal.show(
-				new PackageVersionFileTypesView({
-					model: this.model,
-					packagePath: this.packageVersionSourceProfileForm.currentView.getPackagePath()
-				})
-			);
+			application.show(new PackageVersionFileTypesDialogView({
+				model: this.model,
+				packagePath: this.getChildView('form').getPackagePath()
+			}));
 		},
 
 		onClickCancel: function() {

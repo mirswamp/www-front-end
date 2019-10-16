@@ -22,7 +22,7 @@
 	padding-bottom: 2px;
 	margin-top: -4px;
 	vertical-align: middle;
-	.vertical-gradient(@primaryHighlightColor, @primaryColor);
+	.vertical-gradient(@brand-primary-highlight, @brand-primary);
 	border: 2px solid white;
 	box-shadow: 2px 2px 5px -2px rgba(0, 0, 0, 0.5);
 
@@ -43,11 +43,11 @@
 	}
 
 	a i {
-		color: @darkGrey;
+		color: @dark-grey;
 	}
 
 	a:hover i {
-		color: @primaryColor;
+		color: @brand-primary;
 	}
 }
 
@@ -65,5 +65,5 @@
 //
 
 .badge-important {
-	.vertical-gradient(@mediumGrey, @veryDarkGrey);
+	.vertical-gradient(@medium-grey, @very-dark-grey);
 }

@@ -19,19 +19,16 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
 	'text!templates/packages/platforms/list/package-platforms-list-item.tpl',
-	'registry',
-	'views/dialogs/confirm-view',
-], function($, _, Backbone, Marionette, Template, Registry, ConfirmView) {
-	return Backbone.Marionette.ItemView.extend({
+	'views/collections/tables/table-list-item-view'
+], function($, _, Template, TableListItemView) {
+	return TableListItemView.extend({
 
 		//
 		// attributes
 		//
 
-		tagName: 'tr',
+		template: _.template(Template),
 
 		events: {
 			'click .delete button': 'onClickDelete'
@@ -41,16 +38,16 @@ define([
 		// rendering methods
 		//
 
-		template: function(data) {
-			return _.template(Template, _.extend(data, {
+		templateContext: function() {
+			return {
 				model: this.model,
 				index: this.options.index + 1,
-				package_url: Registry.application.session.user? '#packages/' + data.package.get('package_uuid'): undefined,
+				package_url: application.session.user? '#packages/' + data.package.get('package_uuid'): undefined,
 				platform_url: null,
 				platform_version_url: null,
 				showDelete: this.options.showDelete,
 				showNumbering: this.options.showNumbering
-			}));
+			};
 		}
 	});
 });

@@ -18,11 +18,10 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
-	'text!templates/layout/main.tpl'
-], function($, _, Backbone, Marionette, Template) {
-	return Backbone.Marionette.LayoutView.extend({
+	'text!templates/layout/main.tpl',
+	'views/base-view'
+], function($, _, Template, BaseView) {
+	return BaseView.extend({
 
 		//
 		// attributes
@@ -42,9 +41,7 @@ define([
 
 			// show content view
 			//
-			this.content.show(
-				this.options.contentView
-			);
+			this.showChildView('content', this.options.contentView);
 		}
 	});
 });

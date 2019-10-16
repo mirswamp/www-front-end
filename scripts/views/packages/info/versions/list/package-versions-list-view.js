@@ -18,21 +18,24 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
 	'text!templates/packages/info/versions/list/package-versions-list.tpl',
-	'registry',
 	'models/utilities/version',
-	'views/widgets/lists/sortable-table-list-view',
+	'views/base-view',
+	'views/collections/tables/sortable-table-list-view',
 	'views/packages/info/versions/list/package-versions-list-item-view'
-], function($, _, Backbone, Marionette, Template, Registry, Version, SortableTableListView, PackageVersionsListItemView) {
+], function($, _, Template, Version, BaseView, SortableTableListView, PackageVersionsListItemView) {
 	return SortableTableListView.extend({
 
 		//
 		// attributes
 		//
 
+		template: _.template(Template),
 		childView: PackageVersionsListItemView,
+
+		emptyView: BaseView.extend({
+			template: _.template("No package versions.")
+		}),
 
 		sorting: {
 
@@ -44,6 +47,10 @@ define([
 				},
 				
 				3: { 
+					sorter: false 
+				},
+
+				4: { 
 					sorter: false 
 				}
 			},
@@ -79,20 +86,29 @@ define([
 		// rendering methods
 		//
 
-		template: function(data) {
-			return _.template(Template, _.extend(data, {
+		templateContext: function() {
+			return {
 				model: this.model,
 				collection: this.collection,
 				showProjects: this.options.showProjects,
 				showNumbering: this.options.showNumbering,
 				showDelete: this.model.isOwned()
-			}));
+			};
 		},
 
-		childViewOptions: function(model, index) {
+		childViewOptions: function(model) {
+
+			// check if empty view
+			//
+			if (!model) {
+				return {};
+			}
+
+			// return view options
+			//
 			return {
 				model: model,
-				index: index,
+				index: this.collection.indexOf(model),
 				package: this.model,
 				collection: this.collection,
 				showProjects: this.options.showProjects,

@@ -19,11 +19,10 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
 	'collections/platforms/platform-versions',
 	'text!templates/packages/info/versions/info/build/build-profile/build-profile.tpl',
 	'widgets/accordions',
+	'views/base-view',
 	'views/packages/info/versions/info/build/dependencies/list/package-dependencies-list-view',
 	'views/packages/info/versions/info/build/build-profile/package-type/c/c-package-view',
 	'views/packages/info/versions/info/build/build-profile/package-type/java-source/java-source-package-view',
@@ -34,26 +33,28 @@ define([
 	'views/packages/info/versions/info/build/build-profile/package-type/ruby/ruby-package-view',
 	'views/packages/info/versions/info/build/build-profile/package-type/web-scripting/web-scripting-package-view',
 	'views/packages/info/versions/info/build/build-profile/package-type/dot-net/dot-net-package-view'
-], function($, _, Backbone, Marionette, PlatformVersions, Template, Accordions, PackageDependenciesListView, CPackageView, JavaSourcePackageView, JavaBytecodePackageView, AndroidSourcePackageView, AndroidBytecodePackageView, PythonPackageView, RubyPackageView, WebScriptingPackageView, DotNetPackageView) {
-	return Backbone.Marionette.LayoutView.extend({
+], function($, _, PlatformVersions, Template, Accordions, BaseView, PackageDependenciesListView, CPackageView, JavaSourcePackageView, JavaBytecodePackageView, AndroidSourcePackageView, AndroidBytecodePackageView, PythonPackageView, RubyPackageView, WebScriptingPackageView, DotNetPackageView) {
+	return BaseView.extend({
 
 		//
 		// attributes
 		//
 
+		template: _.template(Template),
+
 		regions: {
-			packageType: '#package-type',
-			packageDependencies: '#package-dependencies'
+			package_type: '#package-type',
+			dependencies: '#package-dependencies'
 		},
 
 		//
 		// rendering methods
 		//
 
-		template: function(data) {
-			return _.template(Template, _.extend(data, {
+		templateContext: function() {
+			return {
 				model: this.model
-			}));
+			};
 		},
 
 		onRender: function() {
@@ -82,21 +83,19 @@ define([
 				// callbacks
 				//
 				success: function() {
-					self.packageDependencies.show(
-						new PackageDependenciesListView({
-							collection: self.options.packageVersionDependencies,
-							platformVersions: platformVersions,
-							model: self.model,
-							parent: self
-						})
-					);
+					self.showChildView('dependencies', new PackageDependenciesListView({
+						collection: self.options.packageVersionDependencies,
+						platformVersions: platformVersions,
+						model: self.model,
+						parent: self
+					}));
 				},
 
 				error: function() {
 
-					// show error dialog
+					// show error message
 					//
-					Registry.application.error({
+					application.error({
 						message: "Could not fetch package dependencies."
 					});
 				}
@@ -109,64 +108,52 @@ define([
 				// C/C++ package types
 				//
 				case 'c-source':
-					this.packageType.show(
-						new CPackageView({
-							model: this.model,
-							parent: this
-						})
-					);
+					this.showChildView('package_type', new CPackageView({
+						model: this.model,
+						parent: this
+					}));
 					break;
 
 				// java package types
 				//
 				case 'java7-source':
 				case 'java8-source':
-					this.packageType.show(
-						new JavaSourcePackageView({
-							model: this.model,
-							parent: this
-						})
-					);
+					this.showChildView('package_type', new JavaSourcePackageView({
+						model: this.model,
+						parent: this
+					}));
 					break;
 				case 'java7-bytecode':
 				case 'java8-bytecode':
-					this.packageType.show(
-						new JavaBytecodePackageView({
-							model: this.model,
-							parent: this
-						})
-					);
+					this.showChildView('package_type', new JavaBytecodePackageView({
+						model: this.model,
+						parent: this
+					}));
 					break;
 
 				// android package types
 				//
 				case 'android-source':
-					this.packageType.show(
-						new AndroidSourcePackageView({
-							model: this.model,
-							parent: this
-						})
-					);
+					this.showChildView('package_type', new AndroidSourcePackageView({
+						model: this.model,
+						parent: this
+					}));
 					break;
 				case 'android-bytecode':
-					this.packageType.show(
-						new AndroidBytecodePackageView({
-							model: this.model,
-							parent: this
-						})
-					);
+					this.showChildView('package_type', new AndroidBytecodePackageView({
+						model: this.model,
+						parent: this
+					}));
 					break;
 
 				// python package types
 				//
 				case 'python2':
 				case 'python3':
-					this.packageType.show(
-						new PythonPackageView({
-							model: this.model,
-							parent: this
-						})
-					);
+					this.showChildView('package_type', new PythonPackageView({
+						model: this.model,
+						parent: this
+					}));
 					break;
 
 				// ruby package types
@@ -175,34 +162,28 @@ define([
 				case 'sinatra':
 				case 'rails':
 				case 'padrino':
-					this.packageType.show(
-						new RubyPackageView({
-							model: this.model,
-							parent: this
-						})
-					);
+					this.showChildView('package_type', new RubyPackageView({
+						model: this.model,
+						parent: this
+					}));
 					break;	
 
 				// web scripting package type
 				//
 				case 'web-scripting':
-					this.packageType.show(
-						new WebScriptingPackageView({
-							model: this.model,
-							parent: this
-						})
-					);
+					this.showChildView('package_type', new WebScriptingPackageView({
+						model: this.model,
+						parent: this
+					}));
 					break;
 
 				// .net package type
 				//
 				case '.net':
-					this.packageType.show(
-						new DotNetPackageView({
-							model: this.model,
-							parent: this
-						})
-					);
+					this.showChildView('package_type', new DotNetPackageView({
+						model: this.model,
+						parent: this
+					}));
 					break;
 			}
 		},

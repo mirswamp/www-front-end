@@ -19,35 +19,39 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
 	'text!templates/admin/settings/restricted-domains/restricted-domains-list/restricted-domains-list.tpl',
-	'views/widgets/lists/table-list-view',
+	'views/base-view',
+	'views/collections/tables/table-list-view',
 	'views/admin/settings/restricted-domains/restricted-domains-list/restricted-domains-list-item-view'
-], function($, _, Backbone, Marionette, Template, TableListView, RestrictedDomainsListItemView) {
+], function($, _, Template, BaseView, TableListView, RestrictedDomainsListItemView) {
 	return TableListView.extend({
 
 		//
 		// attributes
 		//
 
+		template: _.template(Template),
 		childView: RestrictedDomainsListItemView,
+
+		emptyView: BaseView.extend({
+			template: _.template("No restricted domains.")
+		}),
 
 		//
 		// rendering methods
 		//
 
-		template: function(data) {
-			return _.template(Template, _.extend(data, {
+		templateContext: function() {
+			return {
 				collection: this.collection,
 				showDelete: this.options.showDelete
-			}));
+			};
 		},
 
 		childViewOptions: function() {
 			return {
 				showDelete: this.options.showDelete
-			}
+			};
 		}
 	});
 });

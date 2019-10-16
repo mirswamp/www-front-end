@@ -17,7 +17,7 @@
 	<% if (urls[key]) { %>
 	<a href="<%= urls[key] %>" target="_blank"><%= data[key] %></a>
 	<% } else if (typeof data[key] == 'string') { %>
-	<%= stringToHTML(data[key]) %>
+	<%= textToHtml(data[key]) %>
 	<% } else { %>
 	<%= data[key] %>
 	<% } %>

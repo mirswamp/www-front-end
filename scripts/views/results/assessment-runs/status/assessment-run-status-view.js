@@ -18,15 +18,11 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
 	'text!templates/results/assessment-runs/status/assessment-run-status.tpl',
-	'registry',
+	'views/base-view',
 	'views/results/assessment-runs/assessment-run-profile/assessment-run-profile-view',
-	'views/dialogs/confirm-view',
-	'views/dialogs/error-view'
-], function($, _, Backbone, Marionette, Template, Registry, AssessmentRunProfileView, ConfirmView, ErrorView) {
-	return Backbone.Marionette.LayoutView.extend({
+], function($, _, Template, BaseView, AssessmentRunProfileView) {
+	return BaseView.extend({
 
 		//
 		// attributes
@@ -34,8 +30,10 @@ define([
 
 		refreshInterval: 5000,
 
+		template: _.template(Template),
+
 		regions: {
-			assessmentRunProfile: '#assessment-run-profile'
+			profile: '#assessment-run-profile'
 		},
 
 		events: {
@@ -146,13 +144,13 @@ define([
 		// rendering methods
 		//
 
-		template: function(data) {
-			return _.template(Template, _.extend(data, {
+		templateContext: function() {
+			return {
 				project: this.options.project,
 				queryString: this.options.queryString,
-				autoRefresh: Registry.application.options.autoRefresh,
+				autoRefresh: application.options.autoRefresh,
 				showKillButton: this.model.isKillable()
-			}));
+			};
 		},
 
 		onRender: function() {
@@ -167,11 +165,9 @@ define([
 
 		showAssessmentRunProfile: function() {
 			if (this.model) {
-				this.assessmentRunProfile.show(
-					new AssessmentRunProfileView({
-						model: this.model
-					})
-				);
+				this.showChildView('profile', new AssessmentRunProfileView({
+					model: this.model
+				}));
 			} else {
 				this.$el.find('#assessment-run-profile').html("No execution record found.");	
 			}	
@@ -209,11 +205,11 @@ define([
 
 			// store refresh in cookie
 			//
-			Registry.application.setAutoRefresh(this.getAutoRefresh());
+			application.setAutoRefresh(this.getAutoRefresh());
 
 			// enable / disable refresh
 			//
-			if (Registry.application.options.autoRefresh) {
+			if (application.options.autoRefresh) {
 				this.enableAutoRefresh();
 			} else {
 				this.disableAutoRefresh();
@@ -223,7 +219,7 @@ define([
 		onClickOk: function() {
 			var queryString = this.options.queryString;
 
-			if (!Registry.application.session.user.isAdmin()) {
+			if (!application.session.user.isAdmin()) {
 
 				// go to assessment results view
 				//
@@ -242,72 +238,70 @@ define([
 
 		onClickKill: function() {
 			var self = this;
-			Registry.application.modal.show(
-				new ConfirmView({
-					title: "Kill Assessment Run",
-					message: "Are you sure you want to kill / stop this assessment run?",
 
-					// callbacks
-					//
-					accept: function() {
-						self.model.kill({
+			// show confirmation
+			//
+			application.confirm({
+				title: "Kill Assessment Run",
+				message: "Are you sure you want to kill / stop this assessment run?",
 
-							// callbacks
+				// callbacks
+				//
+				accept: function() {
+					self.model.kill({
+
+						// callbacks
+						//
+						success: function() {
+							self.update();
+						},
+
+						error: function() {
+
+							// show error message
 							//
-							success: function() {
-								self.update();
-							},
-
-							error: function() {
-
-								// show error dialog
-								//
-								Registry.application.modal.show(
-									new ErrorView({
-										message: "Could not kill assessment run."
-									})
-								);
-							}
-						});
-					}
-				})
-			);
+							application.error({
+								message: "Could not kill assessment run."
+							});
+						}
+					});
+				}
+			});
 		},
 
 		onClickDelete: function() {
 			var self = this;
-			Registry.application.modal.show(
-				new ConfirmView({
-					title: "Delete Assessment Run",
-					message: "Are you sure you want to delete this assessment run?",
 
-					// callbacks
-					//
-					accept: function() {
-						var copy = self.model.clone();
-						self.model.destroy({
+			// show confirmation
+			//
+			application.confirm({
+				title: "Delete Assessment Run",
+				message: "Are you sure you want to delete this assessment run?",
 
-							// callbacks
+				// callbacks
+				//
+				accept: function() {
+					var copy = self.model.clone();
+					self.model.destroy({
+
+						// callbacks
+						//
+						success: function() {
+							self.model = copy;
+							self.update();
+						},
+
+						error: function() {
+
+							// show error message
 							//
-							success: function() {
-								self.model = copy;
-								self.update();
-							},
-
-							error: function() {
-
-								// show error dialog
-								//
-								Registry.application.modal.show(
-									new ErrorView({
-										message: "Could not delete assessment run."
-									})
-								);
-							}
-						});
-					}
-				})
-			);
+							application.error({
+								message: "Could not delete assessment run."
+							});
+						}
+					});
+				}
+			});
 		},
 
 		//

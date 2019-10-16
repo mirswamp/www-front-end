@@ -4,11 +4,11 @@
 </td>
 <% } %>
 
-<td class="username">
+<td class="username first">
 	<a href="<%- url %>"><%- model.get('username') %></a>
 </td>
 
-<td class="user first">
+<td class="name">
 	<% if (model.has('email')) { %>
 	<a href="mailto:<%- model.get('email') %>"><%- model.getFullName() %></a>
 	<% } else { %>

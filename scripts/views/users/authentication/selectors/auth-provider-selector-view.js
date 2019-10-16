@@ -18,13 +18,9 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'text!templates/widgets/selectors/grouped-name-selector.tpl',
-	'registry',
 	'collections/authentication/auth-providers',
-	'views/dialogs/error-view',
 	'views/widgets/selectors/grouped-name-selector-view'
-], function($, _, Backbone, Template, Registry, AuthProviders, ErrorView, GroupedNameSelectorView) {
+], function($, _, AuthProviders, GroupedNameSelectorView) {
 	return GroupedNameSelectorView.extend({
 
 		//
@@ -100,9 +96,9 @@ define([
 
 					// set initial selected
 					//
-					if (Registry.application.options.authProvider) {
+					if (application.options.authProvider) {
 						self.selected = self.providers.findWhere({
-							name: Registry.application.options.authProvider
+							name: application.options.authProvider
 						});
 					}
 					
@@ -119,13 +115,11 @@ define([
 
 				error: function() {
 
-					// show error dialog
+					// show error message
 					//
-					Registry.application.modal.show(
-						new ErrorView({
-							message: "Could not fetch authentication providers."
-						})
-					);
+					application.error({
+						message: "Could not fetch authentication providers."
+					});
 				}
 			});
 		}

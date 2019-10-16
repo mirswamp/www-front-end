@@ -19,24 +19,24 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
 	'text!templates/packages/info/versions/info/build/package-version-build.tpl',
-	'registry',
 	'widgets/accordions',
 	'models/packages/package-version',
 	'collections/packages/package-version-dependencies',
+	'views/base-view',
 	'views/packages/info/versions/info/build/build-profile/build-profile-view',
 	'views/packages/info/versions/info/build/build-script/build-script-view'
-], function($, _, Backbone, Marionette, Template, Registry, Accordions, PackageVersion, PackageVersionDependencies, BuildProfileView, BuildScriptView) {
-	return Backbone.Marionette.LayoutView.extend({
+], function($, _, Template, Accordions, PackageVersion, PackageVersionDependencies, BaseView, BuildProfileView, BuildScriptView) {
+	return BaseView.extend({
 
 		//
 		// attributes
 		//
 
+		template: _.template(Template),
+
 		regions: {
-			buildProfile: '#build-profile'
+			profile: '#build-profile'
 		},
 
 		events: {
@@ -54,13 +54,13 @@ define([
 		// rendering methods
 		//
 
-		template: function(data) {
-			return _.template(Template, _.extend(data, {
+		templateContext: function() {
+			return {
 				package: this.options.package,
 				show_navigation: this.options.showNavigation,
 				show_source_files: !this.options.package.isBuildable() && !this.model.isAtomic(),
 				show_build_script: this.model.hasBuildScript() && this.options.package.hasBuildScript()
-			}));
+			};
 		},
 
 		onRender: function() {
@@ -78,19 +78,20 @@ define([
 			var self = this;
 			self.packageVersionDependencies = new PackageVersionDependencies();
 			self.packageVersionDependencies.fetchByPackageVersion( self.model.get('package_version_uuid'), {
-				success: function(){
+				
+				// callbacks
+				//
+				success: function() {
 
 					// show build profile
 					//
-					self.buildProfile.show(
-						new BuildProfileView({
-							model: self.model,
-							package: self.options.package,
-							packageVersionDependencies: self.packageVersionDependencies,
-							readonly: true,
-							parent: self
-						})
-					);
+					self.showChildView('profile', new BuildProfileView({
+						model: self.model,
+						package: self.options.package,
+						packageVersionDependencies: self.packageVersionDependencies,
+						readonly: true,
+						parent: self
+					}));
 				}
 
 			});
@@ -128,12 +129,10 @@ define([
 			require([
 				'views/packages/dialogs/source-files-dialog-view'
 			], function (SourceFilesDialogView) {
-				Registry.application.modal.show(
-					new SourceFilesDialogView({
-						model: packageVersion,
-						package: self.options.package
-					})
-				);
+				application.show(new SourceFilesDialogView({
+					model: packageVersion,
+					package: self.options.package
+				}));
 			});
 		},
 
@@ -171,12 +170,10 @@ define([
 			require([
 				'views/packages/dialogs/build-script-dialog-view'
 			], function (BuildScriptDialogView) {
-				Registry.application.modal.show(
-					new BuildScriptDialogView({
-						model: packageVersion,
-						package: self.options.package
-					})
-				);
+				application.show(new BuildScriptDialogView({
+					model: packageVersion,
+					package: self.options.package
+				}));
 			});
 		},
 

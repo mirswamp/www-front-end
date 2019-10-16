@@ -18,25 +18,27 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
 	'text!templates/tools/info/details/tool-profile/tool-profile.tpl',
-	'registry',
 	'models/users/user',
-	'views/dialogs/error-view',
+	'views/base-view',
 	'utilities/time/date-utils'
-], function($, _, Backbone, Marionette, Template, Registry, User, ErrorView) {
-	return Backbone.Marionette.ItemView.extend({
+], function($, _, Template, User, BaseView) {
+	return BaseView.extend({
+
+		//
+		// attributes
+		//
+
+		template: _.template(Template),
 
 		//
 		// rendering methods
 		//
 
-		template: function(data) {
-			var user = Registry.application.session.user;
-			return _.template(Template, _.extend(data, {
+		templateContext: function() {
+			return {
 				model: this.model
-			}));
+			};
 		},
 
 		onRender: function() {

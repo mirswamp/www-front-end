@@ -19,23 +19,21 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
-	'bootstrap/tooltip',
-	'bootstrap/popover',
 	'text!templates/packages/info/versions/info/source/new-package-version-source.tpl',
-	'registry',
+	'views/base-view',
 	'views/packages/info/versions/info/source/source-profile/package-version-source-profile-form-view',
-	'views/packages/info/versions/info/source/dialogs/package-version-file-types-view'
-], function($, _, Backbone, Marionette, Tooltip, Popover, Template, Registry, PackageVersionSourceProfileFormView, PackageVersionFileTypesView) {
-	return Backbone.Marionette.LayoutView.extend({
+	'views/packages/info/versions/info/source/dialogs/package-version-file-types-dialog-view'
+], function($, _, Template, BaseView, PackageVersionSourceProfileFormView, PackageVersionFileTypesDialogView) {
+	return BaseView.extend({
 
 		//
 		// attributes
 		//
 
+		template: _.template(Template),
+
 		regions: {
-			packageVersionSourceProfileForm: '#package-version-source-profile-form'
+			form: '#package-version-source-profile-form'
 		},
 
 		events: {
@@ -49,24 +47,22 @@ define([
 		// rendering methods
 		//
 
-		template: function(data) {
-			return _.template(Template, _.extend(data, {
+		templateContext: function() {
+			return {
 				model: this.model,
 				package: this.options.package
-			}));
+			};
 		},
 
 		onRender: function() {
 
 			// show profile
 			//
-			this.packageVersionSourceProfileForm.show(
-				new PackageVersionSourceProfileFormView({
-					model: this.model,
-					package: this.options.package,
-					parent: this
-				})
-			);
+			this.showChildView('form', new PackageVersionSourceProfileFormView({
+				model: this.model,
+				package: this.options.package,
+				parent: this
+			}));
 		},
 
 		//
@@ -77,11 +73,11 @@ define([
 
 			// check validation
 			//
-			if (this.packageVersionSourceProfileForm.currentView.isValid()) {
+			if (this.getChildView('form').isValid()) {
 
 				// update model
 				//
-				this.packageVersionSourceProfileForm.currentView.update(this.model);
+				this.getChildView('form').applyTo(this.model);
 				
 				// show next view
 				//
@@ -100,14 +96,12 @@ define([
 
 			// show package version file types dialog
 			//
-			Registry.application.modal.show(
-				new PackageVersionFileTypesView({
-					model: this.model,
-					packagePath: this.$el.find('#package-path').val()
-				})
-			);
+			application.show(new PackageVersionFileTypesDialogView({
+				model: this.model,
+				packagePath: this.$el.find('#package-path').val()
+			}));
 
-			// prevent event defaults
+			// prevent further handling of event
 			//
 			event.stopPropagation();
 			event.preventDefault();

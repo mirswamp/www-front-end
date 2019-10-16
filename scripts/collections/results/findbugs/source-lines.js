@@ -18,15 +18,19 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'models/results/findbugs/source-line'
-], function($, _, Backbone, SourceLine) {
-	return Backbone.Collection.extend({
+	'models/results/findbugs/source-line',
+	'collections/base-collection'
+], function($, _, SourceLine, BaseCollection) {
+	return BaseCollection.extend({
+
+		//
+		// attributes
+		//
 
 		model: SourceLine,
 
 		//
-		// overridden Backbone attributes
+		// constructor
 		//
 
 		initialize: function(data) {

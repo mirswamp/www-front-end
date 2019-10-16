@@ -4,8 +4,7 @@
 |                                                                              |
 |******************************************************************************|
 |                                                                              |
-|        This defines a form for signing up users using a federated            |
-|        authentication service.                                               |
+|        This defines a form for entering linked account registration info.    |
 |                                                                              |
 |        Author(s): Abe Megahed                                                |
 |                                                                              |
@@ -19,19 +18,17 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
-	'bootstrap/popover',
 	'text!templates/users/registration/forms/linked-account-sign-up-form.tpl',
-	'registry',
+	'views/forms/form-view',
 	'views/users/authentication/selectors/auth-provider-selector-view',
-	'views/dialogs/notify-view'
-], function($, _, Backbone, Marionette, Popover, Template, Registry, AuthProviderSelectorView, NotifyView) {
-	return Backbone.Marionette.LayoutView.extend({
+], function($, _, Template, FormView, AuthProviderSelectorView) {
+	return FormView.extend({
 
 		//
 		// attributes
 		//
+
+		template: _.template(Template),
 
 		events: {
 			'click #linked-account-signup': 'onClickLinkedAccountSignUp'
@@ -41,29 +38,27 @@ define([
 		// rendering methods
 		//
 
-		template: function(data) {
-			return _.template(Template, _.extend(data, {
-				config: Registry.application.config
-			}));
+		templateContext: function() {
+			return {
+				config: application.config
+			};
 		},
 
 		onRender: function() {
 
 			// add linked account sign in
 			//
-			if (Registry.application.config['linked_accounts_enabled']) {
+			if (application.config['linked_accounts_enabled']) {
 
 				// add regions
 				//
 				this.addRegions({
-					linkedAccountSelector: '#linked-account-selector'
+					selector: '#linked-account-selector'
 				});
 
 				// show subviews
 				//
-				this.linkedAccountSelector.show(
-					new AuthProviderSelectorView()
-				);
+				this.getRegion('selector').show(new AuthProviderSelectorView());
 			}
 
 			// display popovers on hover
@@ -78,7 +73,7 @@ define([
 		//
 
 		onClickLinkedAccountSignUp: function() {
-			var provider = this.linkedAccountSelector.currentView.providers.findWhere({
+			var provider = this.getChildView('selector').providers.findWhere({
 				name: this.$el.find('#linked-account-selector select').val()
 			});
 

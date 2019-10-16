@@ -18,24 +18,22 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
 	'text!templates/tools/info/versions/add-tool-version/add-tool-version.tpl',
-	'registry',
 	'models/tools/tool',
 	'models/tools/tool-version',
-	'views/dialogs/notify-view',
-	'views/dialogs/error-view',
+	'views/base-view',
 	'views/tools/info/versions/tool-version/tool-version-profile/new-tool-version-profile-form-view'
-], function($, _, Backbone, Marionette, Template, Registry, Tool, ToolVersion, NotifyView, ErrorView, NewToolVersionProfileFormView) {
-	return Backbone.Marionette.LayoutView.extend({
+], function($, _, Template, Tool, ToolVersion, BaseView, NewToolVersionProfileFormView) {
+	return BaseView.extend({
 
 		//
 		// attributes
 		//
 
+		template: _.template(Template),
+
 		regions: {
-			newToolVersionProfile: '#new-tool-version-profile'
+			profile: '#new-tool-version-profile'
 		},
 
 		events: {
@@ -45,7 +43,7 @@ define([
 		},
 
 		//
-		// methods
+		// constructor
 		//
 
 		initialize: function() {
@@ -53,6 +51,10 @@ define([
 				tool_uuid: this.options.tool.get('tool_uuid')
 			});
 		},
+
+		//
+		// methods
+		//
 
 		save: function() {
 			var self = this;
@@ -79,26 +81,22 @@ define([
 
 						error: function(response) {
 
-							// show error dialog
+							// show error message
 							//
-							Registry.application.modal.show(
-								new ErrorView({
-									message: response.responseText
-								})
-							);
+							application.error({
+								message: response.responseText
+							});
 						}
 					});
 				},
 
 				error: function() {
 
-					// show error dialog
+					// show error message
 					//
-					Registry.application.modal.show(
-						new ErrorView({
-							message: "Could not save tool version."
-						})
-					);
+					application.error({
+						message: "Could not save tool version."
+					});
 				}
 			});
 		},
@@ -107,22 +105,20 @@ define([
 		// rendering methods
 		//
 
-		template: function(data) {
-			return _.template(Template, _.extend(data, {
+		templateContext: function() {
+			return {
 				tool: this.options.tool,
 				model: this.model
-			}));
+			};
 		},
 
 		onRender: function() {
 
 			// display tool profile form
 			//
-			this.newToolVersionProfile.show(
-				new NewToolVersionProfileFormView({
-					model: this.model
-				})
-			);
+			this.showChildView('form', new NewToolVersionProfileFormView({
+				model: this.model
+			}));
 		},
 
 		showWarning: function() {
@@ -146,11 +142,11 @@ define([
 
 			// check validation
 			//
-			if (this.newToolVersionProfile.currentView.isValid()) {
+			if (this.getChildView('profile').isValid()) {
 
-				// update models
+				// update model
 				//
-				this.newToolVersionProfile.currentView.update(this.model);
+				this.getChildView('profile').applyTo(this.model);
 
 				// get data to upload
 				//
@@ -159,7 +155,7 @@ define([
 				// append pertitnent model data
 				//
 				data.append('tool_owner_uuid', this.options.tool.get('tool_owner_uuid'));
-				data.append('user_uid', Registry.application.session.user.get('user_uid'));
+				data.append('user_uid', application.session.user.get('user_uid'));
 
 				// upload
 				//
@@ -188,13 +184,11 @@ define([
 
 					error: function(response) {
 
-						// show error dialog
+						// show error message
 						//
-						Registry.application.modal.show(
-							new ErrorView({
-								message: "Tool " + response.statusText
-							})
-						);
+						application.error({
+							message: "Tool " + response.statusText
+						});
 					}
 				});
 

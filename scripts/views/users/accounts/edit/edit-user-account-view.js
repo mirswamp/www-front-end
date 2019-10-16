@@ -18,16 +18,12 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
 	'text!templates/users/accounts/edit/edit-user-account.tpl',
-	'registry',
-	'views/dialogs/notify-view',
-	'views/dialogs/error-view',
-	'views/users/dialogs/user-validation-error-view',
+	'views/base-view',
+	'views/users/dialogs/user-validation-error-dialog-view',
 	'views/users/user-profile/user-profile-form-view'
-], function($, _, Backbone, Marionette, Template, Registry, NotifyView, ErrorView, UserValidationErrorView, UserProfileFormView) {
-	return Backbone.Marionette.LayoutView.extend({
+], function($, _, Template, BaseView, UserValidationErrorDialogView, UserProfileFormView) {
+	return BaseView.extend({
 
 		//
 		// attributes
@@ -36,7 +32,7 @@ define([
 		template: _.template(Template),
 
 		regions: {
-			userProfileForm: '#user-profile-form'
+			form: '#user-profile-form'
 		},
 
 		events: {
@@ -52,18 +48,16 @@ define([
 		// rendering methods
 		//
 
-		template: function(data) {
-			return _.template(Template, _.extend(data, {
+		templateContext: function() {
+			return {
 				model: this.model
-			}));
+			};
 		},
 
 		onRender: function() {
-			this.userProfileForm.show(
-				new UserProfileFormView({
-					model: this.model
-				})
-			);
+			this.showChildView('form', new UserProfileFormView({
+				model: this.model
+			}));
 		},
 
 		showWarning: function() {
@@ -94,11 +88,11 @@ define([
 
 			// check validation
 			//
-			if (this.userProfileForm.currentView.isValid()) {
+			if (this.getChildView('form').isValid()) {
 
 				// update model from form
 				//
-				this.userProfileForm.currentView.update(this.model);
+				this.getChildView('form').applyTo(this.model);
 
 				// check to see if model is valid
 				//
@@ -130,25 +124,23 @@ define([
 								//
 								if (self.model.changed.email) {
 
-									// show success notification dialog
+									// show success notification message
 									//
-									Registry.application.modal.show(
-										new NotifyView({
-											title: "User Email Updated",
-											message: "An email verification link has been sent to the new email address. The previous email address will remain in effect until the new address is verified.",
+									application.notify({
+										title: "User Email Updated",
+										message: "An email verification link has been sent to the new email address. The previous email address will remain in effect until the new address is verified.",
 
-											// callbacks
+										// callbacks
+										//
+										accept: function() {
+
+											// return to user account view
 											//
-											accept: function() {
-
-												// return to user account view
-												//
-												Backbone.history.navigate('#accounts/' + self.model.get('user_uid'), {
-													trigger: true
-												});
-											}
-										})
-									);
+											Backbone.history.navigate('#accounts/' + self.model.get('user_uid'), {
+												trigger: true
+											});
+										}
+									});
 								} else {
 									
 									// return to user account view
@@ -163,13 +155,11 @@ define([
 
 							error: function() {
 
-								// show error dialog
+								// show error message
 								//
-								Registry.application.modal.show(
-									new ErrorView({
-										message: "Could not save user profile changes."
-									})
-								);
+								application.error({
+									message: "Could not save user profile changes."
+								});
 							}
 						});
 					},
@@ -179,11 +169,9 @@ define([
 
 						// show user validation dialog
 						//
-						Registry.application.modal.show(
-							new UserValidationErrorView({
-								errors: errors
-							})
-						);
+						application.show(new UserValidationErrorDialogView({
+							errors: errors
+						}));
 					}
 				});
 			} else {

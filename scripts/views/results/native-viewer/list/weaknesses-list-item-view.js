@@ -1,6 +1,6 @@
 /******************************************************************************\
 |                                                                              |
-|                            weaknesses-list-item-view.js                      |
+|                         weaknesses-list-item-view.js                         |
 |                                                                              |
 |******************************************************************************|
 |                                                                              |
@@ -18,27 +18,24 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
-	'registry',
-	'bootstrap/tooltip',
 	'bootstrap/popover',
 	'text!templates/results/native-viewer/list/weaknesses-list-item.tpl',
-	'utilities/browser/html-utils',
-	'utilities/browser/query-strings'
-], function($, _, Backbone, Marionette, Registry, Tooltip, Popover, Template) {
-	return Backbone.Marionette.ItemView.extend({
+	'views/collections/tables/table-list-item-view',
+	'utilities/web/html-utils',
+	'utilities/web/query-strings'
+], function($, _, Popover, Template, TableListItemView) {
+	return TableListItemView.extend({
 
 		//
 		// attributes
 		//
 
-		tagName: 'tr',
+		template: _.template(Template),
 
 		events: {
 			'mousedown': 'onMouseDown',
-			'mousedown a': 'onMouseDownLink',
-			'mousedown .popover':  'onMouseDownPopover'
+			'mousedown .popover':  'onMouseDownPopover',
+			'click a.suggestion, .suggestion a': 'onClickSuggestionLink'
 		},
 
 		getBugLocationIndex: function(BugLocations) {
@@ -50,21 +47,27 @@ define([
 			return 0;
 		},
 
-		getUrl: function() {
-			return Registry.application.getURL() + 
-				'#results/' + this.options.parent.options.results.get('assessment_result_uuid') + 
-				'/projects/' + this.options.parent.options.projectUuid +
-				'/source' + '?bugindex=' + this.options.index +
+		getQueryString: function() {
+			return ('bugindex=' + (this.model.get('BugId') - 1)) +
 				(this.options.filter_type == 'include'? '&' + arrayToQueryString('include', this.options.filter) : '') +
 				(this.options.filter_type == 'exclude'? '&' + arrayToQueryString('exclude', this.options.filter) : '');
+		},
+
+		getUrl: function() {
+			return application.getURL() + 
+				'#results/' + this.options.parent.options.results.get('assessment_result_uuid') + 
+				'/projects/' + this.options.parent.options.projectUuid +
+				'/source';
 		},
 
 		//
 		// rendering methods
 		//
 
-		template: function(data) {
-			var bugLocation = data['BugLocations']? data['BugLocations'][this.getBugLocationIndex(data['BugLocations'])] : undefined;
+		templateContext: function() {
+			var bugLocations = this.model.get('BugLocations');
+			var index = this.getBugLocationIndex(bugLocations);
+			var bugLocation = bugLocations? bugLocations[index] : undefined;
 			var filename = bugLocation? bugLocation.SourceFile : '';
 
 			// strip artificial dereference from file path
@@ -73,14 +76,15 @@ define([
 				filename = filename.replace('pkg1/', '');
 			}
 
-			return _.template(Template, _.extend(data, {
+			return {
 				model: this.model,
 				index: this.options.index + 1,
 				showNumbering: this.options.showNumbering,
 				filename: filename,
 				url: this.getUrl(),
+				queryString: this.getQueryString(),
 				bugLocation: bugLocation
-			}));
+			};
 		},
 
 		onRender: function() {
@@ -114,13 +118,12 @@ define([
 			this.options.parent.$el.find('.popover').remove();
 		},
 
-		onMouseDownLink: function(event) {
-			this.options.parent.$el.find('.popover').remove();
-			//$(event.target).closest('a').popover('show');
+		onMouseDownPopover: function(event) {
 			event.stopPropagation();
 		},
 
-		onMouseDownPopover: function(event) {
+		onClickSuggestionLink: function(event) {
+			event.preventDefault();
 			event.stopPropagation();
 		}
 	});

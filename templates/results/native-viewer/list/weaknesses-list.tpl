@@ -12,15 +12,15 @@
 		<% } %>
 
 		<% if (typeof BugLocations != 'undefined') { %>
-		<th class="line-number">
-			<i class="fa fa-list"></i>
-			<span>Row</span>
+		<th class="line">
+			<i class="fa fa-bars"></i>
+			<span>Line</span>
 		</th>
 		<% } %>
 
 		<% if (typeof BugLocations != 'undefined') { %>
-		<th class="column-number">
-			<i class="fa fa-columns"></i>
+		<th class="column">
+			<i class="fa fa-ellipsis-h"></i>
 			<span>Col</span>
 		</th>
 		<% } %>
@@ -47,5 +47,6 @@
 		<% } %>
 	</tr>
 </thead>
+
 <tbody>
 </tbody>

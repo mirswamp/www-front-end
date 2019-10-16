@@ -18,11 +18,10 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
 	'config',
 	'models/packages/package-version',
 	'collections/utilities/versions'
-], function($, _, Backbone, Config, PackageVersion, Versions) {
+], function($, _, Config, PackageVersion, Versions) {
 	return Versions.extend({
 
 		//

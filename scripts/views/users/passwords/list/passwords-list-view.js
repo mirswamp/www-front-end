@@ -18,19 +18,24 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
 	'text!templates/users/passwords/list/passwords-list.tpl',
 	'collections/authentication/app-passwords',
-	'views/widgets/lists/sortable-table-list-view',
+	'views/base-view',
+	'views/collections/tables/sortable-table-list-view',
 	'views/users/passwords/list/passwords-list-item-view'
-], function($, _, Backbone, Marionette, Template, AppPasswords, SortableTableListView, PasswordsListItemView) {
+], function($, _, Template, AppPasswords, BaseView, SortableTableListView, PasswordsListItemView) {
 	return SortableTableListView.extend({
 
 		//
 		// attributes
 		//
+
+		template: _.template(Template),
 		childView: PasswordsListItemView,
+
+		emptyView: BaseView.extend({
+			template: _.template("No passwords.")
+		}),
 
 		sorting: {
 
@@ -47,67 +52,22 @@ define([
 			sortList: [[1, 1]] 
 		},
 
-		noChildrenView: Marionette.ItemView.extend({
-			template: _.template("No application passwords have been created for this account.")
-		}),
-
-		//
-		// constructor
-		//
-
-		initialize: function() {
-			this.listenTo(this.collection, 'change', this.onChange);
-		},
-
 		//
 		// rendering methods
 		//
 
-		template: function(data) {
-			return _.template(Template, _.extend(data, {
-				collection: this.collection,
-				showDelete: this.options.showDelete
-			}));
-		},
-
-		onRender: function() {
-			this.update();
-		},
-
-		childViewOptions: function() {
-			this.update();
-			
+		templateContext: function() {
 			return {
-				readOnly: this.options.readOnly,
+				count: this.collection.length,
 				showDelete: this.options.showDelete
 			};
 		},
 
-		getEmptyView: function() {
-			return this.noChildrenView;
-		},
-
-		update: function() {
-
-			// ugly hack to hide / show table header 
-			//
-			if (this.collection.length == 0) {
-				this.$el.find('thead').hide();
-			} else {
-				this.$el.find('thead').show();
-			}
-
-			// renumber (if list is numbered)
-			//
-			this.renumber();
-		},
-
-		//
-		// event handling methods
-		//
-
-		onChange: function() {
-			this.render();
+		childViewOptions: function() {			
+			return {
+				readOnly: this.options.readOnly,
+				showDelete: this.options.showDelete
+			};
 		}
 	});
 });

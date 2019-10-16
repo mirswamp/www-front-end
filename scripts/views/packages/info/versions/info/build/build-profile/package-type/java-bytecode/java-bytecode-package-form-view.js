@@ -1,11 +1,11 @@
 /******************************************************************************\
 |                                                                              |
-|                         java-bytecode-package-form-view.js                   |
+|                      java-bytecode-package-form-view.js                      |
 |                                                                              |
 |******************************************************************************|
 |                                                                              |
-|        This defines an editable form view of a package versions's            |
-|        language / type specific profile information.                         |
+|        This defines a form for entering a package versions's                 |
+|        language / type specific profile info.                                |
 |                                                                              |
 |        Author(s): Abe Megahed                                                |
 |                                                                              |
@@ -19,21 +19,20 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
 	'text!templates/packages/info/versions/info/build/build-profile/package-type/java-bytecode/java-bytecode-package-form.tpl',
-	'registry',
 	'widgets/accordions',
 	'models/files/directory',
 	'views/packages/info/versions/info/build/build-profile/package-type/package-type-form-view',
-	'views/packages/info/versions/info/build/build-profile/dialogs/select-package-version-item-view'
-], function($, _, Backbone, Marionette,Template, Registry, Accordions, Directory, PackageTypeFormView, SelectPackageVersionItemView) {
+	'views/packages/info/versions/info/build/build-profile/dialogs/select-package-version-item-dialog-view'
+], function($, _, Template, Accordions, Directory, PackageTypeFormView, SelectPackageVersionItemDialogView) {
 	return PackageTypeFormView.extend({
 		
 		//
 		// attributes
 		//
 		
+		template: _.template(Template),
+
 		events: {
 			'click #add-class-path': 'onClickAddClassPath',
 			'click #add-aux-class-path': 'onClickAddAuxClassPath',
@@ -52,27 +51,21 @@ define([
 		// rendering methods
 		//
 
-		template: function(data) {
-			return _.template(Template, _.extend(data, {
+		templateContext: function() {
+			return {
 				model: this.model
-			}));
+			};
 		},
 
 		onRender: function() {
-
-			// display popovers on hover
-			//
-			this.$el.find('[data-toggle="popover"]').popover({
-				trigger: 'hover'
-			});
 
 			// change accordion icon
 			//
 			new Accordions(this.$el.find('.panel'));
 
-			// validate the form
+			// call superclass method
 			//
-			this.validator = this.validate();
+			PackageTypeFormView.prototype.onRender.call(this);
 		},
 		
 		//
@@ -120,42 +113,40 @@ define([
 
 			// show select package version item dialog
 			//
-			Registry.application.modal.show(
-				new SelectPackageVersionItemView({
-					model: this.model,
-					title: "Add Class Path",
-					
-					// callbacks
-					//
-					accept: function(selectedItemName) {
-						if (selectedItemName) {
+			application.show(new SelectPackageVersionItemDialogView({
+				model: this.model,
+				title: "Add Class Path",
+				
+				// callbacks
+				//
+				accept: function(selectedItemName) {
+					if (selectedItemName) {
 
-							// make path relative to package path
-							//
-							var directory = new Directory({
-								name: self.model.get('source_path')
-							});
-							selectedItemName = directory.getRelativePathTo(selectedItemName);
+						// make path relative to package path
+						//
+						var directory = new Directory({
+							name: self.model.get('source_path')
+						});
+						selectedItemName = directory.getRelativePathTo(selectedItemName);
 
-							// paths are colon separated
-							//
-							var textArea = self.$el.find('#class-path');
-							if (textArea.val() != '') {
-								textArea.val(textArea.val() + ':');
-							}
-
-							// append path
-							//
-							textArea.val(textArea.val() + selectedItemName);
-							self.options.parent.onChange();
+						// paths are colon separated
+						//
+						var textArea = self.$el.find('#class-path');
+						if (textArea.val() != '') {
+							textArea.val(textArea.val() + ':');
 						}
-					}
-				}), {
-					size: 'large'
-				}
-			);
 
-			// prevent event defaults
+						// append path
+						//
+						textArea.val(textArea.val() + selectedItemName);
+						self.options.parent.onChange();
+					}
+				}
+			}), {
+				size: 'large'
+			});
+
+			// prevent further handling of event
 			//
 			event.stopPropagation();
 			event.preventDefault();
@@ -166,42 +157,40 @@ define([
 
 			// show select package version item dialog
 			//
-			Registry.application.modal.show(
-				new SelectPackageVersionItemView({
-					model: this.model,
-					title: "Add Aux Class Path",
-					
-					// callbacks
-					//
-					accept: function(selectedItemName) {
-						if (selectedItemName) {
+			application.show(new SelectPackageVersionItemDialogView({
+				model: this.model,
+				title: "Add Aux Class Path",
+				
+				// callbacks
+				//
+				accept: function(selectedItemName) {
+					if (selectedItemName) {
 
-							// make path relative to package path
-							//
-							var directory = new Directory({
-								name: self.model.get('source_path')
-							});
-							selectedItemName = directory.getRelativePathTo(selectedItemName);
+						// make path relative to package path
+						//
+						var directory = new Directory({
+							name: self.model.get('source_path')
+						});
+						selectedItemName = directory.getRelativePathTo(selectedItemName);
 
-							// paths are colon separated
-							//
-							var textArea = self.$el.find('#aux-class-path');
-							if (textArea.val() != '') {
-								textArea.val(textArea.val() + ':');
-							}
-
-							// append path
-							//
-							textArea.val(textArea.val() + selectedItemName);
-							self.options.parent.onChange();
+						// paths are colon separated
+						//
+						var textArea = self.$el.find('#aux-class-path');
+						if (textArea.val() != '') {
+							textArea.val(textArea.val() + ':');
 						}
-					}
-				}), {
-					size: 'large'
-				}
-			);
 
-			// prevent event defaults
+						// append path
+						//
+						textArea.val(textArea.val() + selectedItemName);
+						self.options.parent.onChange();
+					}
+				}
+			}), {
+				size: 'large'
+			});
+
+			// prevent further handling of event
 			//
 			event.stopPropagation();
 			event.preventDefault();
@@ -212,42 +201,40 @@ define([
 
 			// show select package version item dialog
 			//
-			Registry.application.modal.show(
-				new SelectPackageVersionItemView({
-					model: this.model,
-					title: "Add Source Path",
-					
-					// callbacks
-					//
-					accept: function(selectedItemName) {
-						if (selectedItemName) {
+			application.show(new SelectPackageVersionItemDialogView({
+				model: this.model,
+				title: "Add Source Path",
+				
+				// callbacks
+				//
+				accept: function(selectedItemName) {
+					if (selectedItemName) {
 
-							// make path relative to package path
-							//
-							var directory = new Directory({
-								name: self.model.get('source_path')
-							});
-							selectedItemName = directory.getRelativePathTo(selectedItemName);
+						// make path relative to package path
+						//
+						var directory = new Directory({
+							name: self.model.get('source_path')
+						});
+						selectedItemName = directory.getRelativePathTo(selectedItemName);
 
-							// paths are colon separated
-							//
-							var textArea = self.$el.find('#source-path');
-							if (textArea.val() != '') {
-								textArea.val(textArea.val() + ':');
-							}
-
-							// append path
-							//
-							textArea.val(textArea.val() + selectedItemName);
-							self.options.parent.onChange();
+						// paths are colon separated
+						//
+						var textArea = self.$el.find('#source-path');
+						if (textArea.val() != '') {
+							textArea.val(textArea.val() + ':');
 						}
-					}
-				}), {
-					size: 'large'
-				}
-			);
 
-			// prevent event defaults
+						// append path
+						//
+						textArea.val(textArea.val() + selectedItemName);
+						self.options.parent.onChange();
+					}
+				}
+			}), {
+				size: 'large'
+			});
+
+			// prevent further handling of event
 			//
 			event.stopPropagation();
 			event.preventDefault();

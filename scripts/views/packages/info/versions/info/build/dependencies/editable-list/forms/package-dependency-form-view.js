@@ -1,10 +1,10 @@
 /******************************************************************************\
 |                                                                              |
-|                         package-dependency-form-view.js                      |
+|                       package-dependency-form-view.js                        |
 |                                                                              |
 |******************************************************************************|
 |                                                                              |
-|        This defines a form for creating new package dependencies.            |
+|        This defines a form for entering package dependency info.             |
 |                                                                              |
 |        Author(s): Abe Megahed                                                |
 |                                                                              |
@@ -18,15 +18,11 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
-	'jquery.validate',
-	'bootstrap/popover',
 	'text!templates/packages/info/versions/info/build/dependencies/editable-list/forms/package-dependency-form.tpl',
-	'views/dialogs/error-view',
+	'views/forms/form-view',
 	'views/platforms/selectors/platform-selector-view',
-], function($, _, Backbone, Marionette, Validate, Popover, Template, ErrorView, PlatformSelectorView) {
-	return Backbone.Marionette.LayoutView.extend({
+], function($, _, Template, FormView, PlatformSelectorView) {
+	return FormView.extend({
 
 		//
 		// attributes
@@ -35,21 +31,29 @@ define([
 		template: _.template(Template),
 
 		regions: {
-			platformSelector: '#platform-selector',
-			platformVersionSelector: '#platform-version-selector'
+			selector: '#platform-selector',
+			version_selector: '#platform-version-selector'
+		},
+
+		events: {
+
+			// input events
+			//
+			'change select': 'onChange',
+			'input input': 'onChange',
 		},
 
 		//
-		// methods
+		// rendering methods
 		//
 
-		initialize: function() {
+		onRender: function() {
 			var self = this;
-
-			// create subviews
+			
+			// show subviews
 			//
-			this.platformSelectorView = new PlatformSelectorView([], {
-				versionSelector: this.platformVersionSelector,
+			this.showChildView('selector', new PlatformSelectorView({
+				versionSelectorRegion: this.getRegion('version_selector'),
 				allowLatest: false,
 				platformVersionFilter: this.options.platformVersionFilter,
 
@@ -58,59 +62,44 @@ define([
 				onChange: function(source) {
 					self.onChange();
 				}
-			});
-		},
+			}));
 
-		//
-		// rendering methods
-		//
-
-		onRender: function() {
-
-			// display popovers on hover
+			// call superclass method
 			//
-			this.$el.find('[data-toggle="popover"]').popover({
-				trigger: 'hover'
-			});
-
-			// show subviews
-			//
-			this.platformSelector.show(this.platformSelectorView);
-
-			// validate the form
-			//
-			this.validator = this.validate();
+			FormView.prototype.onRender.call(this);
 		},
 
 		//
 		// form methods
 		//
 
-		update: function(model) {
-
-			// get form values
-			//
-			var dependencyList = this.$el.find('#dependency-list input').val();
-			var platformVersion = this.platformVersionSelector.currentView.getSelected();
-
-			// set model attributes
-			//
-			this.model.set({
-				'platform_version_uuid': platformVersion.get('platform_version_uuid'),
-				'dependency_list': dependencyList
-			});
+		getValue: function(key) {
+			switch (key) {
+				case 'platform_version_uuid':
+					return this.getChildView('version_selector').getSelected().get('platform_version_uuid');
+				case 'dependency_list':
+					return this.$el.find('#dependency-list input').val();
+			}
 		},
 
-		//
-		// form validation methods
-		//
+		hasValue: function(key) {
+			switch (key) {
+				case 'platform_version_uuid':
+					return this.getChildView('selector').hasSelected();
+				case 'dependency_list':
+					return this.getValue('dependency_list') != '';
+			}
+		},
 
-		validate: function() {
-			return this.$el.find('form').validate();
+		getValues: function() {
+			return {
+				'platform_version_uuid': this.getValue('platform_version_uuid'),
+				'dependency_list': this.getValue('dependency_list')
+			};
 		},
 
 		isValid: function() {
-			return this.validator.form();
+			return this.hasValue('platform_version_uuid') && this.hasValue('dependency_list');
 		},
 
 		//
@@ -122,7 +111,7 @@ define([
 			// perform callback
 			//
 			if (this.options.onChange) {
-				this.options.onChange();
+				this.options.onChange(this.isValid());
 			}
 		}
 	});

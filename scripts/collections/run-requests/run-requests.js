@@ -18,11 +18,11 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
 	'config',
-	'models/run-requests/run-request'
-], function($, _, Backbone, Config, RunRequest) {
-	return Backbone.Collection.extend({
+	'models/run-requests/run-request',
+	'collections/base-collection'
+], function($, _, Config, RunRequest, BaseCollection) {
+	return BaseCollection.extend({
 
 		//
 		// Backbone attributes

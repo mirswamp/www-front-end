@@ -18,19 +18,23 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
 	'text!templates/projects/info/members/list/project-members-list.tpl',
-	'views/widgets/lists/sortable-table-list-view',
+	'views/base-view',
+	'views/collections/tables/sortable-table-list-view',
 	'views/projects/info/members/list/project-members-list-item-view'
-], function($, _, Backbone, Marionette, Template, SortableTableListView, ProjectMembersListItemView) {
+], function($, _, Template, BaseView, SortableTableListView, ProjectMembersListItemView) {
 	return SortableTableListView.extend({
 
 		//
 		// attributes
 		//
 
+		template: _.template(Template),
 		childView: ProjectMembersListItemView,
+
+		emptyView: BaseView.extend({
+			template: _.template("No project members.")
+		}),
 
 		sorting: {
 
@@ -54,31 +58,39 @@ define([
 		// rendering methods
 		//
 
-		template: function(data) {
-			return _.template(Template, _.extend(data, {
+		templateContext: function() {
+			return {
 				collection: this.collection,
 				showEmail: this.options.showEmail,
 				showUsername: this.options.showUsername,
 				showDelete: this.options.showDelete,
 				showNumbering: this.options.showNumbering,
 				readOnly: this.options.readOnly
-			}));
+			};
 		},
 
-		childViewOptions: function(model, index) {
+		childViewOptions: function(model) {
+
+			// check if empty view
+			//
+			if (!model) {
+				return {};
+			}
+
+			// return view options
+			//
+			var index = this.collection.indexOf(model);
 			return {
 				index: index,
 				model: model,
 				collection: this.collection,
 				project: this.options.model,
-				projectMembership: this.options.projectMemberships.at(index),
-				projectMemberships: this.options.projectMemberships,
 				showEmail: this.options.showEmail,
 				showUsername: this.options.showUsername,
 				showDelete: this.options.showDelete,
 				showNumbering: this.options.showNumbering,
 				readOnly: this.options.readOnly
-			}   
+			};
 		}
 	});
 });

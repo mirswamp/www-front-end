@@ -1,6 +1,6 @@
 /******************************************************************************\
 |                                                                              |
-|                             review-projects-view.js                          |
+|                            review-projects-view.js                           |
 |                                                                              |
 |******************************************************************************|
 |                                                                              |
@@ -19,25 +19,23 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
 	'text!templates/projects/review/review-projects.tpl',
-	'registry',
 	'collections/projects/projects',
-	'views/dialogs/notify-view',
-	'views/dialogs/error-view',
+	'views/base-view',
 	'views/projects/filters/project-filters-view',
 	'views/projects/review/review-projects-list/review-projects-list-view'
-], function($, _, Backbone, Marionette, Template, Registry, Projects, NotifyView, ErrorView, ProjectFiltersView, ReviewProjectsListView) {
-	return Backbone.Marionette.LayoutView.extend({
+], function($, _, Template, Projects, BaseView, ProjectFiltersView, ReviewProjectsListView) {
+	return BaseView.extend({
 
 		//
 		// attributes
 		//
 
+		template: _.template(Template),
+
 		regions: {
-			projectFilters: '#project-filters',
-			reviewProjectsList: '#review-projects-list'
+			filters: '#project-filters',
+			list: '#review-projects-list'
 		},
 
 		events: {
@@ -60,11 +58,11 @@ define([
 		//
 
 		getQueryString: function() {
-			return this.projectFilters.currentView.getQueryString();
+			return this.getChildView('filters').getQueryString();
 		},
 
 		getFilterData: function() {
-			return this.projectFilters.currentView.getData();
+			return this.getChildView('filters').getData();
 		},
 
 		//
@@ -77,7 +75,7 @@ define([
 			// fetch projects
 			//
 			this.collection.fetchAll({
-				data: this.projectFilters.currentView? this.projectFilters.currentView.getAttrs() : null,
+				data: this.getChildView('filters')? this.getChildView('filters').getAttrs() : null,
 
 				// callbacks
 				//
@@ -87,13 +85,11 @@ define([
 
 				error: function() {
 
-					// show error dialog
+					// show error message
 					//
-					Registry.application.modal.show(
-						new ErrorView({
-							message: "Could not fetch projects."
-						})
-					);
+					application.error({
+						message: "Could not fetch projects."
+					});
 				}
 			});	
 		},
@@ -107,23 +103,19 @@ define([
 
 					// show success notification dialog
 					//
-					Registry.application.modal.show(
-						new NotifyView({
-							title: "Project Changes Saved",
-							message: "Your project changes have been successfully saved."
-						})
-					);
+					application.notify({
+						title: "Project Changes Saved",
+						message: "Your project changes have been successfully saved."
+					});
 				},
 
 				error: function() {
 
-					// show error dialog
+					// show error message
 					//
-					Registry.application.modal.show(
-						new ErrorView({
-							message: "Your project changes could not be saved."
-						})
-					);
+					application.error({
+						message: "Your project changes could not be saved."
+					});
 				}
 			});
 		},
@@ -132,11 +124,11 @@ define([
 		// rendering methods
 		//
 
-		template: function(){
-			return _.template(Template,{
+		templateContext: function() {
+			return {
 				showDeactivatedProjects: this.options.showDeactivatedProjects ? true : false,
-				showNumbering: Registry.application.options.showNumbering
-			});
+				showNumbering: application.options.showNumbering
+			};
 		},
 		
 		onRender: function() {
@@ -155,35 +147,33 @@ define([
 
 			// show project filters
 			//
-			this.projectFilters.show(
-				new ProjectFiltersView({
-					model: this.model,
-					data: this.options.data? this.options.data : {},
+			this.showChildView('filters', new ProjectFiltersView({
+				model: this.model,
+				data: this.options.data? this.options.data : {},
 
-					// callbacks
+				// callbacks
+				//
+				onChange: function() {
+					// setQueryString(self.getChildView('filters').getQueryString());
+
+					// update filter data
 					//
-					onChange: function() {
-						// setQueryString(self.projectFilters.currentView.getQueryString());
+					var projects = self.options.data.projects;
+					self.options.data = self.getFilterData();
+					self.options.data.projects = projects;
 
-						// update filter data
-						//
-						var projects = self.options.data.projects;
-						self.options.data = self.getFilterData();
-						self.options.data.projects = projects;
+					// update url
+					//
+					var queryString = self.getQueryString();
+					var state = window.history.state;
+					var url = getWindowBaseLocation() + (queryString? ('?' + queryString) : '');
+					window.history.pushState(state, '', url);
 
-						// update url
-						//
-						var queryString = self.getQueryString();
-						var state = window.history.state;
-						var url = getWindowBaseLocation() + (queryString? ('?' + queryString) : '');
-						window.history.pushState(state, '', url);
-
-						// update view
-						//
-						self.onChange();			
-					}
-				})
-			);
+					// update view
+					//
+					self.onChange();			
+				}
+			}));
 		},
 
 		showList: function() {
@@ -191,22 +181,20 @@ define([
 
 			// show review projects list
 			//
-			this.reviewProjectsList.show(
-				new ReviewProjectsListView({
-					collection: this.collection,
-					showDeactivatedProjects: this.options.showDeactivatedProjects,
-					showNumbering: Registry.application.options.showNumbering,
+			this.showChildView('list', new ReviewProjectsListView({
+				collection: this.collection,
+				showDeactivatedProjects: this.options.showDeactivatedProjects,
+				showNumbering: application.options.showNumbering,
 
-					// callbacks
+				// callbacks
+				//
+				onChange: function() {
+
+					// enable save button
 					//
-					onChange: function() {
-
-						// enable save button
-						//
-						self.$el.find('#save').prop('disabled', false);
-					}
-				})
-			);
+					self.$el.find('#save').prop('disabled', false);
+				}
+			}));
 		},
 
 		fetchAndShowList: function() {
@@ -253,7 +241,7 @@ define([
 		},
 
 		onClickShowNumbering: function(event) {
-			Registry.application.setShowNumbering($(event.target).is(':checked'));
+			application.setShowNumbering($(event.target).is(':checked'));
 			this.showList();
 		}
 	});

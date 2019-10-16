@@ -18,22 +18,22 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
 	'bootstrap/collapse',
-	'modernizr',
 	'text!templates/platforms/filters/platform-filter.tpl',
+	'views/base-view',
 	'views/platforms/selectors/platform-filter-selector-view'
-], function($, _, Backbone, Marionette, Collapse, Modernizr, Template, PlatformFilterSelectorView) {
-	return Backbone.Marionette.LayoutView.extend({
+], function($, _, Collapse, Template, BaseView, PlatformFilterSelectorView) {
+	return BaseView.extend({
 
 		//
 		// attributes
 		//
 
+		template: _.template(Template),
+
 		regions: {
-			platformFilterSelector: '.name-selector',
-			platformVersionFilterSelector: '.version-filter-selector'
+			selector: '.name-selector',
+			version_selector: '.version-filter-selector'
 		},
 
 		events: {
@@ -43,7 +43,7 @@ define([
 		maxTagLength: 40,
 
 		//
-		// methods
+		// constructor
 		//
 
 		initialize: function() {
@@ -60,7 +60,7 @@ define([
 		//
 
 		setTool: function(tool, options) {
-			this.platformFilterSelector.currentView.setTool(tool, options);
+			this.getChildView('selector').setTool(tool, options);
 		},
 
 		reset: function(options) {
@@ -72,7 +72,7 @@ define([
 
 			// reset selector
 			//
-			this.platformFilterSelector.currentView.reset({
+			this.getChildView('selector').reset({
 				silent: true
 			});
 
@@ -80,7 +80,7 @@ define([
 		},
 
 		update: function(options) {
-			this.platformFilterSelector.currentView.update({
+			this.getChildView('selector').update({
 				silent: true
 			});
 			this.onChange(options);
@@ -91,7 +91,7 @@ define([
 		//
 
 		hasSelected: function() {
-			return this.platformFilterSelector.currentView.hasSelected();
+			return this.selected != undefined;
 		},
 
 		getSelected: function() {
@@ -103,7 +103,7 @@ define([
 		},
 
 		getDescription: function() {
-			return  this.platformFilterSelector.currentView.getDescription();
+			return  this.getChildView('selector').getDescription();
 		},
 
 		tagify: function(text) {
@@ -189,33 +189,27 @@ define([
 		// rendering methods
 		//
 
-		template: function(data) {
-			return _.template(Template, data);
-		},
-
 		onRender: function() {
 			var self = this;
 
 			// show sub views
 			//
-			this.platformFilterSelector.show(
-				new PlatformFilterSelectorView([], {
-					project: this.model,
-					initialValue: this.options.initialSelectedPlatform,
-					initialVersion: this.options.initialSelectedPlatformVersion,
-					versionFilterSelector: this.platformVersionFilterSelector,
-					versionFilterLabel: this.$el.find('.version label'),
-					versionDefaultOptions: this.options.versionDefaultOptions,
-					versionSelectedOptions: this.options.versionSelectedOptions,
-					toolSelected: this.options.toolSelected,
+			this.showChildView('selector', new PlatformFilterSelectorView({
+				project: this.model,
+				initialValue: this.options.initialSelectedPlatform,
+				initialVersion: this.options.initialSelectedPlatformVersion,
+				versionFilterSelector: this.getRegion('version_selector'),
+				versionFilterLabel: this.$el.find('.version label'),
+				versionDefaultOptions: this.options.versionDefaultOptions,
+				versionSelectedOptions: this.options.versionSelectedOptions,
+				toolSelected: this.options.toolSelected,
 
-					// callbacks
-					//
-					onChange: function() {
-						self.onChange();
-					}
-				})
-			);
+				// callbacks
+				//
+				onChange: function() {
+					self.onChange();
+				}
+			}));
 
 			// update reset button
 			//
@@ -250,12 +244,12 @@ define([
 
 			// update platform
 			//
-			this.selected = this.platformFilterSelector.currentView.getSelected();
+			this.selected = this.getChildView('selector').getSelected();
 
 			// update platform version
 			//
-			this.selectedVersion = this.platformVersionFilterSelector.currentView?
-				this.platformVersionFilterSelector.currentView.getSelected() : undefined;
+			this.selectedVersion = this.getChildView('version_selector')?
+				this.getChildView('version_selector').getSelected() : undefined;
 
 			// update reset button
 			//

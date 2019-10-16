@@ -18,20 +18,21 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
+	'bootstrap/popover',
 	'text!templates/layout/header.tpl',
 	'config',
-	'registry',
 	'collections/projects/project-invitations',
 	'collections/admin/admin-invitations',
-	'collections/permissions/user-permissions'
-], function($, _, Backbone, Marionette, Template, Config, Registry, ProjectInvitations, AdminInvitations, UserPermissions) {
-	return Backbone.Marionette.ItemView.extend({
+	'collections/permissions/user-permissions',
+	'views/base-view'
+], function($, _, Popover, Template, Config, ProjectInvitations, AdminInvitations, UserPermissions, BaseView) {
+	return BaseView.extend({
 
 		//
 		// attributes
 		//
+
+		template: _.template(Template),
 
 		events: {
 			'click #brand': 'onClickBrand',
@@ -54,7 +55,7 @@ define([
 
 			// fetch number of project invitations
 			//
-			ProjectInvitations.fetchNumPendingByUser(Registry.application.session.user, {
+			ProjectInvitations.fetchNumPendingByUser(application.session.user, {
 				
 				// callback
 				//
@@ -63,14 +64,14 @@ define([
 
 					// fetch number of admin invitations
 					//
-					AdminInvitations.fetchNumPendingByUser(Registry.application.session.user, {
+					AdminInvitations.fetchNumPendingByUser(application.session.user, {
 						
 						// callback
 						//
 						success: function(numAdminInvitations) {
 							numAdminInvitations = parseInt(numAdminInvitations);
 
-							if (Registry.application.session.user.isAdmin()) {
+							if (application.session.user.isAdmin()) {
 
 								// fetch number of pending permissions
 								//
@@ -102,12 +103,12 @@ define([
 		// rendering methods
 		//
 
-		template: function(data) {
-			return _.template(Template, _.extend(data, {
+		templateContext: function() {
+			return {
 				nav: this.options.nav,
-				user: Registry.application.session.user,
+				user: application.session.user,
 				showContact: Config.contact != undefined
-			}));
+			};
 		},
 
 		onRender: function() {
@@ -115,11 +116,10 @@ define([
 
 			// display badge with number of notifications
 			//
-			if (Registry.application.session.user) {
+			if (application.session.user) {
 				var self = this;
 				this.fetchNumNotifications(function(number) {
 					if (number > 0) {
-						// self.addBadge('i.fa-user', number);
 						self.$el.find('#notifications-alert').show();
 						self.addBadge('#notifications-alert i', number);
 					}
@@ -137,16 +137,11 @@ define([
 		},
 
 		showPopovers: function() {
-			var self = this;
-			require([
-				'bootstrap/popover',
-			], function () {
 
-				// display popovers on hover
-				//
-				self.$el.find('[data-toggle="popover"]').popover({
-					trigger: 'hover'
-				});
+			// display popovers on hover
+			//
+			this.$el.find('[data-toggle="popover"]').popover({
+				trigger: 'hover'
 			});
 		},
 
@@ -185,7 +180,7 @@ define([
 		//
 
 		onClickBrand: function() {
-			if (Registry.application.session.user) {
+			if (application.session.user) {
 
 				// if user logged in, go to home view
 				//
@@ -241,37 +236,37 @@ define([
 		onClickSignIn: function() {
 			var self = this;
 			require([
-				'views/users/authentication/dialogs/sign-in-view'
-			], function (SignInView) {
+				'views/users/authentication/dialogs/sign-in-dialog-view'
+			], function (SignInDialogView) {
 
 				// show sign in dialog
 				//
-				Registry.application.modal.show(
-					new SignInView(), {
-						focus: '#ok'
-					}
-				);
+				application.show(new SignInDialogView(), {
+					focus: '#ok'
+				});
 			});
 		},
 
 		onClickNotifications: function(event) {
+
+			// prevent further handling of event
+			//
 			event.stopPropagation();
+			event.preventDefault();
 
 			var self = this;
 			require([
-				'views/notifications/dialogs/notifications-view'
-			], function (NotificationsView) {
+				'views/notifications/dialogs/notifications-dialog-view'
+			], function (NotificationsDialogView) {
 
 				// show notifications dialog
 				//
-				Registry.application.modal.show(
-					new NotificationsView()
-				)
+				application.show(new NotificationsDialogView());
 			});
 		},
 
 		onClickSignOut: function() {
-			Registry.application.logout();
+			application.logout();
 		}
 	});
 });

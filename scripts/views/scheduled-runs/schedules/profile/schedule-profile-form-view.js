@@ -1,11 +1,10 @@
 /******************************************************************************\
 |                                                                              |
-|                          schedule-profile-form-view.js                       |
+|                        schedule-profile-form-view.js                         |
 |                                                                              |
 |******************************************************************************|
 |                                                                              |
-|        This defines an editable form view of a schedule's profile            |
-|        information.                                                          |
+|        This defines a form for entering a schedule's profile info.           |
 |                                                                              |
 |        Author(s): Abe Megahed                                                |
 |                                                                              |
@@ -19,17 +18,39 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
-	'jquery.validate',
-	'bootstrap/tooltip',
-	'bootstrap/popover',
-	'text!templates/scheduled-runs/schedules/profile/schedule-profile-form.tpl'
-], function($, _, Backbone, Marionette, Validate, Tooltip, Popover, Template) {
-	return Backbone.Marionette.ItemView.extend({
+	'text!templates/scheduled-runs/schedules/profile/schedule-profile-form.tpl',
+	'views/forms/form-view'
+], function($, _, Template, FormView) {
+	return FormView.extend({
 
 		//
-		// methods
+		// attributes
+		//
+
+		template: _.template(Template),
+
+		//
+		// form attributes
+		//
+
+		rules: {
+			'name': {
+				required: true,
+				uniqueName: true
+			},
+			'description': {
+				required: true
+			}
+		},
+
+		messages: {
+			'description': {
+				required: "Please provide a short description of this schedule."
+			}
+		},
+
+		//
+		// constructor
 		//
 
 		initialize: function() {
@@ -43,70 +64,17 @@ define([
 		},
 
 		//
-		// rendering methods
-		//
-
-		template: function(data) {
-			return _.template(Template, data);
-		},
-
-		onRender: function() {
-
-			// display popovers on hover
-			//
-			this.$el.find('[data-toggle="popover"]').popover({
-				trigger: 'hover'
-			});
-
-			// validate the form
-			//
-			this.validator = this.validate();
-		},
-
-		//
-		// form validation methods
-		//
-
-		validate: function() {
-			return this.$el.find('form').validate({
-				rules: {
-					'name': {
-						required: true,
-						uniqueName: true
-					},
-					'description': {
-						required: true
-					}
-				},
-				messages: {
-					'description': {
-						required: "Please provide a short description of this schedule."
-					}
-				}
-			});
-		},
-
-		isValid: function() {
-			return this.validator.form();
-		},
-
-		//
 		// form methods
 		//
 
-		update: function(model) {
+		getValues: function() {
 
-			// get values from form
+			// return values from form
 			//
-			var name = this.$el.find('#name').val();
-			var description = this.$el.find('#description').val();
-
-			// update model
-			//
-			model.set({
-				'name': name,
-				'description': description
-			});
+			return {
+				name: this.$el.find('#name').val(),
+				description: this.$el.find('#description').val()
+			};
 		}
 	});
 });

@@ -19,22 +19,27 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
 	'bootstrap/collapse',
 	'text!templates/packages/info/versions/info/build/build-profile/package-type/java-bytecode/java-bytecode-package.tpl',
+	'views/base-view',
 	'widgets/accordions'
-], function($, _, Backbone, Marionette, Collapse, Template, Accordions) {
-	return Backbone.Marionette.ItemView.extend({
+], function($, _, Collapse, Template, BaseView, Accordions) {
+	return BaseView.extend({
+
+		//
+		// attributes
+		//
+
+		template: _.template(Template),
 
 		//
 		// rendering methods
 		//
 
-		template: function(data) {
-			return _.template(Template, _.extend(data, {
+		templateContext: function() {
+			return {
 				model: this.model
-			}));
+			};
 		},
 
 		onRender: function() {

@@ -1,6 +1,6 @@
 /******************************************************************************\
 |                                                                              |
-|                            system-admins-list-view.js                        |
+|                         system-admins-list-item-view.js                      |
 |                                                                              |
 |******************************************************************************|
 |                                                                              |
@@ -18,21 +18,16 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
 	'text!templates/admin/settings/system-admins/system-admins-list/system-admins-list-item.tpl',
-	'config',
-	'registry',
-	'views/dialogs/error-view',
-	'views/dialogs/confirm-view',
-], function($, _, Backbone, Marionette, Template, Config, Registry, ErrorView, ConfirmView) {
-	return Backbone.Marionette.ItemView.extend({
+	'views/collections/tables/table-list-item-view'
+], function($, _, Template, TableListItemView) {
+	return TableListItemView.extend({
 
 		//
 		// attributes
 		//
 
-		tagName: 'tr',
+		template: _.template(Template),
 
 		events: {
 			'click .delete button': 'onClickDelete'
@@ -42,13 +37,13 @@ define([
 		// rendering methods
 		//
 
-		template: function(data) {
-			return _.template(Template, _.extend(data, {
+		templateContext: function() {
+			return {
 				model: this.model,
-				config: Registry.application.config,
-				url: Registry.application.getURL() + '#accounts',
+				config: application.config,
+				url: application.getURL() + '#accounts',
 				showDelete: this.options.showDelete
-			}));
+			};
 		},
 
 		//
@@ -58,44 +53,40 @@ define([
 		onClickDelete: function() {
 			var self = this;
 
-			// show confirm dialog
+			// show confirmation
 			//
-			Registry.application.modal.show(
-				new ConfirmView({
-					title: "Delete Administrator Priviledges",
-					message: "Are you sure that you want to delete " + this.model.getFullName() + "'s administrator priviledges?",
+			application.confirm({
+				title: "Delete Administrator Priviledges",
+				message: "Are you sure that you want to delete " + this.model.getFullName() + "'s administrator priviledges?",
 
-					// callbacks
+				// callbacks
+				//
+				accept: function() {
+
+					// delete user's admin priviledges
 					//
-					accept: function() {
+					self.model.deleteAdminPriviledges({
 
-						// delete user's admin priviledges
+						// callbacks
 						//
-						self.model.deleteAdminPriviledges({
+						success: function() {
 
-							// callbacks
+							// remove item from collection
 							//
-							success: function() {
+							self.model.collection.remove(self.model);
+						},
 
-								// remove item from collection
-								//
-								self.model.collection.remove(self.model);
-							},
+						error: function() {
 
-							error: function() {
-
-								// show error dialog
-								//
-								Registry.application.modal.show(
-									new ErrorView({
-										message: "Could not delete this user's administrator priviledges."
-									})
-								);
-							}
-						});
-					}
-				})
-			);
+							// show error message
+							//
+							application.error({
+								message: "Could not delete this user's administrator priviledges."
+							});
+						}
+					});
+				}
+			});
 		}
 	});
 });

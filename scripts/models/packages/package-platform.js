@@ -20,12 +20,11 @@ define([
 	'jquery',
 	'underscore',
 	'config',
-	'registry',
 	'models/utilities/timestamped',
 	'models/packages/package',
 	'models/platforms/platform',
 	'models/platforms/platform-version'
-], function($, _, Config, Registry, Timestamped, Package, Platform, PlatformVersion) {
+], function($, _, Config, Timestamped, Package, Platform, PlatformVersion) {
 	return Timestamped.extend({
 
 		//

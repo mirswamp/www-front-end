@@ -18,22 +18,22 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
 	'bootstrap/collapse',
-	'modernizr',
 	'text!templates/tools/filters/tool-filter.tpl',
+	'views/base-view',
 	'views/tools/selectors/tool-filter-selector-view'
-], function($, _, Backbone, Marionette, Collapse, Modernizr, Template, ToolFilterSelectorView) {
-	return Backbone.Marionette.LayoutView.extend({
+], function($, _, Collapse, Template, BaseView, ToolFilterSelectorView) {
+	return BaseView.extend({
 
 		//
 		// attributes
 		//
 
+		template: _.template(Template),
+
 		regions: {
-			toolFilterSelector: '.name-selector',
-			toolVersionFilterSelector: '.version-filter-selector'
+			selector: '.name-selector',
+			version_selector: '.version-filter-selector'
 		},
 
 		events: {
@@ -43,7 +43,7 @@ define([
 		maxTagLength: 40,
 
 		//
-		// methods
+		// constructor
 		//
 
 		initialize: function() {
@@ -60,7 +60,7 @@ define([
 		//
 
 		setPackage: function(package, options) {
-			this.toolFilterSelector.currentView.setPackage(package, options);
+			this.getChildView('selector').setPackage(package, options);
 		},
 
 		reset: function(options) {
@@ -72,7 +72,7 @@ define([
 
 			// reset selector
 			//
-			this.toolFilterSelector.currentView.reset({
+			this.getChildView('selector').reset({
 				silent: true
 			});
 
@@ -80,7 +80,7 @@ define([
 		},
 
 		update: function(options) {
-			this.toolFilterSelector.currentView.update({
+			this.getChildView('selector').update({
 				silent: true
 			});
 			this.onChange(options);
@@ -91,7 +91,7 @@ define([
 		//
 
 		hasSelected: function() {
-			return this.toolFilterSelector.currentView.hasSelected();
+			return this.selected != undefined;
 		},
 
 		getSelected: function() {
@@ -103,7 +103,7 @@ define([
 		},
 
 		getDescription: function() {
-			return this.toolFilterSelector.currentView.getDescription();
+			return this.getChildView('selector').getDescription();
 		},
 
 		tagify: function(text) {
@@ -189,33 +189,27 @@ define([
 		// rendering methods
 		//
 
-		template: function(data) {
-			return _.template(Template, data);
-		},
-
 		onRender: function() {
 			var self = this;
 
 			// show sub views
 			//
-			this.toolFilterSelector.show(
-				new ToolFilterSelectorView([], {
-					project: this.model,
-					initialValue: this.options.initialSelectedTool,
-					initialVersion: this.options.initialSelectedToolVersion,
-					versionFilterSelector: this.toolVersionFilterSelector,
-					versionFilterLabel: this.$el.find('.version label'),
-					versionDefaultOptions: this.options.versionDefaultOptions,
-					versionSelectedOptions: this.options.versionSelectedOptions,
-					packageSelected: this.options.packageSelected,
+			this.showChildView('selector', new ToolFilterSelectorView({
+				project: this.model,
+				initialValue: this.options.initialSelectedTool,
+				initialVersion: this.options.initialSelectedToolVersion,
+				versionFilterSelector: this.getRegion('version_selector'),
+				versionFilterLabel: this.$el.find('.version label'),
+				versionDefaultOptions: this.options.versionDefaultOptions,
+				versionSelectedOptions: this.options.versionSelectedOptions,
+				packageSelected: this.options.packageSelected,
 
-					// callbacks
-					//
-					onChange: function() {
-						self.onChange();
-					}
-				})
-			);
+				// callbacks
+				//
+				onChange: function() {
+					self.onChange();
+				}
+			}));
 
 			// update reset button
 			//
@@ -250,12 +244,12 @@ define([
 
 			// update tool
 			//
-			this.selected = this.toolFilterSelector.currentView.getSelected();
+			this.selected = this.getChildView('selector').getSelected();
 
 			// update tool version
 			//
-			this.selectedVersion = this.toolVersionFilterSelector.currentView?
-				this.toolVersionFilterSelector.currentView.getSelected() : undefined;
+			this.selectedVersion = this.getChildView('version_selector')?
+				this.getChildView('version_selector').getSelected() : undefined;
 
 			// update reset button
 			//

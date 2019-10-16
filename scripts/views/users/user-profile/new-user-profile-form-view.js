@@ -1,11 +1,10 @@
 /******************************************************************************\
 |                                                                              |
-|                           new-user-profile-form-view.js                      |
+|                         new-user-profile-form-view.js                        |
 |                                                                              |
 |******************************************************************************|
 |                                                                              |
-|        This defines an editable form view of a new user's profile            |
-|        information.                                                          |
+|        This defines a form for entering a new user's profile info.           |
 |                                                                              |
 |        Author(s): Abe Megahed                                                |
 |                                                                              |
@@ -19,26 +18,22 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
-	'jquery.validate',
-	'bootstrap/tooltip',
 	'bootstrap/popover',
-	'config',
 	'text!templates/users/user-profile/new-user-profile-form.tpl',
-	'registry',
-	'utilities/security/password-policy',
-	'views/dialogs/notify-view',
-	'views/widgets/selectors/country-selector-view'
-], function($, _, Backbone, Marionette, Validate, Tooltip, Popover, Config, Template, Registry, PasswordPolicy, NotifyView, CountrySelectorView) {
-	return Backbone.Marionette.LayoutView.extend({
+	'views/forms/form-view',
+	'views/widgets/selectors/country-selector-view',
+	'utilities/security/password-policy'
+], function($, _, Popover, Template, FormView, CountrySelectorView, PasswordPolicy) {
+	return FormView.extend({
 
 		//
 		// attributes
 		//
 
+		template: _.template(Template),
+
 		regions: {
-			countrySelector: '#country-selector'
+			selector: '#country-selector'
 		},
 
 		events: {
@@ -51,7 +46,73 @@ define([
 		showPasswordMeter: false,
 
 		//
-		// methods
+		// form attributes
+		//
+
+		rules: {
+			'username': {
+				required: true,
+				username: true						
+			},
+			'confirm-email': {
+				required: true,
+				equalTo: '#email'
+			},
+			'password': {
+				required: true,
+				passwordValid: true
+			},
+			'confirm-password': {
+				required: true,
+				equalTo: '#password'
+			},
+			'country-code': {
+				numericOnly: true
+			},
+			'area-code': {
+				numericOnly: true
+			},
+			'state': {
+				alphaOnly: true
+			},
+			'phone-number': {
+				numericOrDashesOnly: true
+			}
+		},
+
+		messages: {
+			'first-name': {
+				required: "Enter your given / first name."
+			},
+			'last-name': {
+				required: "Enter your family / last name."
+			},
+			'preferred-name': {
+				required: "Enter your preferred / nickname."
+			},
+			'email': {
+				required: "Enter a valid email address.",
+				email: "This email address is not valid."
+			},
+			'confirm-email': {
+				required: "Re-enter your email address.",
+				equalTo: "Retype the email address above."
+			},
+			'username': {
+				required: "Enter a username / login.",
+				minlength: $.validator.format("Enter at least {0} characters.")
+			},
+			'swamp-password': {
+				required: "Enter a password."
+			},
+			'confirm-password': {
+				required: "Re-enter your password.",
+				equalTo: "Enter the same password as above."
+			}
+		},
+
+		//
+		// constructor
 		//
 
 		initialize: function() {
@@ -115,12 +176,12 @@ define([
 		// rendering methods
 		//
 
-		template: function(data) {
-			return _.template(Template, _.extend(data, {
+		templateContext: function() {
+			return {
 				model: this.model,
 				classes: this.options.classes,
-				config: Registry.application.config
-			}));
+				config: application.config
+			};
 		},
 
 		onRender: function() {
@@ -144,17 +205,15 @@ define([
 
 			// show country selector
 			//
-			this.countrySelector.show(
-				new CountrySelectorView({
-					initialValue: this.model.has('address')? this.model.get('address').get('country') : undefined
-				})
-			);
+			this.showChildView('selector', new CountrySelectorView({
+				initialValue: this.model.has('address')? this.model.get('address').get('country') : undefined
+			}));
 
 			// add country selector callback
 			//
 			var self = this;
-			this.countrySelector.currentView.onclickmenuitem = this.countrySelector.currentView.onrender = function() {
-				var country = self.countrySelector.currentView.getSelected();
+			this.getChildView('selector').onclickmenuitem = this.getChildView('selector').onrender = function() {
+				var country = self.getChildView('selector').getSelected();
 				var countryCode = country.get('phone_code');
 
 				// set default phone code
@@ -171,150 +230,43 @@ define([
 		//
 
 		validate: function() {
-			return this.$el.find('form').validate({
+			return this.$el.validate({
 
 				// validation classes
 				//
 				ignore: ".ignore",
-
-				// validation rules
-				//
-				rules: {
-					'username': {
-						required: true,
-						username: true						
-					},
-					'confirm-email': {
-						required: true,
-						equalTo: '#email'
-					},
-					'password': {
-						required: true,
-						passwordValid: true
-					},
-					'confirm-password': {
-						required: true,
-						equalTo: '#password'
-					},
-					'country-code': {
-						numericOnly: true
-					},
-					'area-code': {
-						numericOnly: true
-					},
-					'state': {
-						alphaOnly: true
-					},
-					'phone-number': {
-						numericOrDashesOnly: true
-					}
-				},
-
-				messages: {
-					'first-name': {
-						required: "Enter your given / first name."
-					},
-					'last-name': {
-						required: "Enter your family / last name."
-					},
-					'preferred-name': {
-						required: "Enter your preferred / nickname."
-					},
-					'email': {
-						required: "Enter a valid email address.",
-						email: "This email address is not valid."
-					},
-					'confirm-email': {
-						required: "Re-enter your email address.",
-						equalTo: "Retype the email address above."
-					},
-					'username': {
-						required: "Enter a username / login.",
-						minlength: $.validator.format("Enter at least {0} characters.")
-					},
-					'swamp-password': {
-						required: "Enter a password."
-					},
-					'confirm-password': {
-						required: "Re-enter your password.",
-						equalTo: "Enter the same password as above."
-					}
-				}
+				rules: this.rules,
+				messages: this.messages
 			});
-		},
-
-		isValid: function() {
-			return this.validator.form();
 		},
 
 		//
 		// form methods
 		//
 
-		update: function(model) {
+		getValues: function() {
 
 			// get values from form
 			//
 			var firstName = this.$el.find('#first-name').val();
 			var lastName = this.$el.find('#last-name').val();
-			//var preferredName = this.$el.find('#preferred-name').val();
-			//var affiliation = this.$el.find('#affiliation').val();
 			var promo = this.$el.find('#promo-code').val();
 			var email = this.$el.find('#email').val();
 			var username = this.$el.find('#username').val();
 			var password = this.$el.find('#password').val();
 			var classCode = this.$el.find('#class-code').val();
 			
-			// update model
+			// return form values
 			//
-			model.set({
+			return {
 				'first_name': firstName,
 				'last_name': lastName,
-				//'preferred_name': preferredName,
-				//'affiliation': affiliation,
 				'promo': promo,
 				'email': email,
 				'username': username,
 				'password': password,
 				'class_code': classCode != 'none'? classCode : null
-			});
-
-			//this.updateAddress(model);
-			//this.updatePhone(model);
-		},
-
-		updateAddress: function(model) {
-			var streetAddress1 = this.$el.find('#street-address1').val();
-			var streetAddress2 = this.$el.find('#street-address2').val();
-			var city = this.$el.find('#city').val();
-			var state = this.$el.find('#state').val();
-			var postalCode = this.$el.find('#postal-code').val();
-			var country = this.countrySelector.currentView.getSelected().get('name');
-
-			// update model
-			//
-			model.get('address').set({
-				'street-address1': streetAddress1,
-				'street-address2': streetAddress2,
-				'city': city,
-				'state': state,
-				'postal-code': postalCode,
-				'country': country
-			});
-		},
-
-		updatePhone: function(model) {
-			var countryCode = this.$el.find('#country-code').val();
-			var areaCode = this.$el.find('#area-code').val();
-			var phoneNumber = this.$el.find('#phone-number').val();
-
-			// update model
-			//
-			model.get('phone').set({
-				'country-code': countryCode,
-				'area-code': areaCode,
-				'phone-number': phoneNumber
-			});
+			};
 		},
 
 		//

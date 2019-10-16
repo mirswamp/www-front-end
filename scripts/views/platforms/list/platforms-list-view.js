@@ -18,19 +18,23 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
 	'text!templates/platforms/list/platforms-list.tpl',
-	'views/widgets/lists/sortable-table-list-view',
+	'views/base-view',
+	'views/collections/tables/sortable-table-list-view',
 	'views/platforms/list/platforms-list-item-view'
-], function($, _, Backbone, Marionette, Template, SortableTableListView, PlatformsListItemView) {
+], function($, _, Template, BaseView, SortableTableListView, PlatformsListItemView) {
 	return SortableTableListView.extend({
 
 		//
 		// attributes
 		//
 
+		template: _.template(Template),
 		childView: PlatformsListItemView,
+
+		emptyView: BaseView.extend({
+			template: _.template("No platforms.")
+		}),
 
 		sorting: {
 
@@ -43,20 +47,29 @@ define([
 		// rendering methods
 		//
 
-		template: function(data) {
-			return _.template(Template, _.extend(data, {
+		templateContext: function() {
+			return {
 				collection: this.collection,
 				showDelete: this.options.showDelete,
 				showNumbering: this.options.showNumbering
-			}));
+			};
 		},
 
-		childViewOptions: function(model, index) {
+		childViewOptions: function(model) {
+
+			// check if empty view
+			//
+			if (!model) {
+				return {};
+			}
+
+			// return view options
+			//
 			return {
-				index: index,
+				index: this.collection.indexOf(model),
 				showDelete: this.options.showDelete,
 				showNumbering: this.options.showNumbering
-			}
+			};
 		}
 	});
 });

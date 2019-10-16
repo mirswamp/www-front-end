@@ -18,11 +18,11 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
 	'config',
-	'models/authentication/app-password'
-], function($, _, Backbone, Config, AppPassword) {
-	return Backbone.Collection.extend({
+	'models/authentication/app-password',
+	'collections/base-collection'
+], function($, _, Config, AppPassword, BaseCollection) {
+	return BaseCollection.extend({
 
 		//
 		// Backbone attributes

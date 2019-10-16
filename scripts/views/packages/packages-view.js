@@ -18,20 +18,17 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
 	'text!templates/packages/packages.tpl',
-	'registry',
-	'utilities/browser/query-strings',
-	'utilities/browser/url-strings',
+	'utilities/web/query-strings',
+	'utilities/web/url-strings',
 	'models/projects/project',
 	'collections/projects/projects',
 	'collections/packages/packages',
-	'views/dialogs/error-view',
+	'views/base-view',
 	'views/packages/filters/package-filters-view',
 	'views/packages/list/packages-list-view'
-], function($, _, Backbone, Marionette, Template, Registry, QueryStrings, UrlStrings, Project, Projects, Packages, ErrorView, PackageFiltersView, PackagesListView) {
-	return Backbone.Marionette.LayoutView.extend({
+], function($, _, Template, QueryStrings, UrlStrings, Project, Projects, Packages, BaseView, PackageFiltersView, PackagesListView) {
+	return BaseView.extend({
 
 		//
 		// attributes
@@ -40,8 +37,8 @@ define([
 		template: _.template(Template),
 
 		regions: {
-			packageFilters: '#package-filters',
-			packagesList: '#packages-list'
+			filters: '#package-filters',
+			list: '#packages-list'
 		},
 
 		events: {
@@ -51,7 +48,7 @@ define([
 		},
 
 		//
-		// methods
+		// consstructor
 		//
 
 		initialize: function() {
@@ -63,18 +60,18 @@ define([
 		//
 
 		getQueryString: function() {
-			return this.packageFilters.currentView.getQueryString();
+			return this.getChildView('filters').getQueryString();
 		},
 
 		getFilterData: function() {
-			if (this.packageFilters.currentView) {
-				return this.packageFilters.currentView.getData();
+			if (this.getChildView('filters')) {
+				return this.getChildView('filters').getData();
 			}
 		},
 
 		getFilterAttrs: function() {
-			if (this.packageFilters.currentView) {
-				return this.packageFilters.currentView.getAttrs();
+			if (this.getChildView('filters')) {
+				return this.getChildView('filters').getAttrs();
 			}
 		},
 
@@ -102,13 +99,11 @@ define([
 
 				error: function() {
 
-					// show error dialog
+					// show error message
 					//
-					Registry.application.modal.show(
-						new ErrorView({
-							message: "Could not get packages for this project."
-						})
-					);
+					application.error({
+						message: "Could not get packages for this project."
+					});
 				}
 			});
 		},
@@ -133,13 +128,11 @@ define([
 
 				error: function() {
 
-					// show error dialog
+					// show error message
 					//
-					Registry.application.modal.show(
-						new ErrorView({
-							message: "Could not get packages for all projects."
-						})
-					);
+					application.error({
+						message: "Could not get packages for all projects."
+					});
 				}
 			});
 		},
@@ -171,13 +164,13 @@ define([
 		// rendering methods
 		//
 
-		template: function(data) {
-			return _.template(Template, _.extend(data, {
+		templateContext: function() {
+			return {
 				project: this.options.data['project'],
 				packageType: this.options.data['type'],
-				loggedIn: Registry.application.session.user != null,
-				showNumbering: Registry.application.options.showNumbering
-			}));
+				loggedIn: application.session.user != null,
+				showNumbering: application.options.showNumbering
+			};
 		},
 
 		onRender: function() {
@@ -196,46 +189,41 @@ define([
 			
 			// show package filters view
 			//
-			this.packageFilters.show(
-				new PackageFiltersView({
-					model: this.model,
-					data: this.options.data? this.options.data : {},
+			this.showChildView('filters', new PackageFiltersView({
+				model: this.model,
+				data: this.options.data? this.options.data : {},
 
-					// callbacks
+				// callbacks
+				//
+				onChange: function() {
+				
+					// update filter data
 					//
-					onChange: function() {
-						//setQueryString(self.packageFilters.currentView.getQueryString());			
-					
-						// update filter data
-						//
-						var projects = self.options.data.projects;
-						self.options.data = self.getFilterData();
-						self.options.data.projects = projects;
+					var projects = self.options.data.projects;
+					self.options.data = self.getFilterData();
+					self.options.data.projects = projects;
 
-						// update url
-						//
-						var queryString = self.getQueryString();
-						var state = window.history.state;
-						var url = getWindowBaseLocation() + (queryString? ('?' + queryString) : '');
-						window.history.pushState(state, '', url);
+					// update url
+					//
+					var queryString = self.getQueryString();
+					var state = window.history.state;
+					var url = getWindowBaseLocation() + (queryString? ('?' + queryString) : '');
+					window.history.pushState(state, '', url);
 
-						// update view
-						//
-						self.onChange();
-					}
-				})
-			);
+					// update view
+					//
+					self.onChange();
+				}
+			}));
 		},
 
 		showList: function() {
-			this.packagesList.show(
-				new PackagesListView({
-					collection: this.collection,
-					showProjects: Registry.application.session.user.get('has_projects'),
-					showNumbering: Registry.application.options.showNumbering,
-					showDelete: true,
-				})
-			);
+			this.showChildView('list', new PackagesListView({
+				collection: this.collection,
+				showProjects: application.session.user.get('has_projects'),
+				showNumbering: application.options.showNumbering,
+				showDelete: true,
+			}));
 		},
 
 		fetchAndShowList: function() {
@@ -257,7 +245,7 @@ define([
 		},
 
 		onClickResetFilters: function() {
-			this.packageFilters.currentView.reset();
+			this.getChildView('filters').reset();
 		},
 
 		onClickAddNewPackage: function() {
@@ -270,7 +258,7 @@ define([
 		},
 
 		onClickShowNumbering: function(event) {
-			Registry.application.setShowNumbering($(event.target).is(':checked'));
+			application.setShowNumbering($(event.target).is(':checked'));
 			this.showList();
 		}
 	});

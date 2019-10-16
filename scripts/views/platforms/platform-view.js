@@ -1,10 +1,10 @@
 /******************************************************************************\
 |                                                                              |
-|                                platform-view.js                              |
+|                              platform-view.js                                |
 |                                                                              |
 |******************************************************************************|
 |                                                                              |
-|        This defines the view for showing a platforms's information.          |
+|        This defines the view for showing a platforms's info.                 |
 |                                                                              |
 |        Author(s): Abe Megahed                                                |
 |                                                                              |
@@ -18,23 +18,23 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
 	'text!templates/platforms/platform.tpl',
-	'registry',
 	'collections/projects/projects',
 	'collections/assessments/assessment-runs',
 	'collections/assessments/execution-records',
 	'collections/assessments/scheduled-runs',
-], function($, _, Backbone, Marionette, Template, Registry, Projects, AssessmentRuns, ExecutionRecords, ScheduledRuns) {
-	return Backbone.Marionette.LayoutView.extend({
+	'views/base-view'
+], function($, _, Template, Projects, AssessmentRuns, ExecutionRecords, ScheduledRuns, BaseView) {
+	return BaseView.extend({
 
 		//
 		// attributes
 		//
 
+		template: _.template(Template),
+
 		regions: {
-			platformInfo: '#platform-info'
+			info: '#platform-info'
 		},
 
 		events: {
@@ -46,10 +46,6 @@ define([
 		//
 		// rendering methods
 		//
-
-		template: function(data) {
-			return _.template(Template, data);
-		},
 
 		onRender: function() {
 			var self = this;

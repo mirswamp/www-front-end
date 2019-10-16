@@ -19,8 +19,9 @@ define([
 	'jquery',
 	'underscore',
 	'config',
-	'models/utilities/timestamped'
-], function($, _, Config, Timestamped) {
+	'models/utilities/timestamped',
+	'models/users/user'
+], function($, _, Config, Timestamped, User) {
 	return Timestamped.extend({
 
 		//
@@ -46,6 +47,25 @@ define([
 
 		belongsTo: function(user) {
 			return this.get('user_uid') == user.get('user_uid');
+		},
+
+		//
+		// overridden Backbone methods
+		//
+
+		parse: function(response) {
+
+			// call superclass method
+			//
+			response = Timestamped.prototype.parse.call(this, response);
+
+			// convert attributes to models
+			//
+			if (response.user) {
+				response.user = new User(response.user);
+			}
+
+			return response;
 		}
 	});
 });

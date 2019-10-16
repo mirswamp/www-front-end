@@ -19,23 +19,22 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
 	'text!templates/packages/info/versions/info/source/source-profile/package-version-source-profile.tpl',
-	'registry',
 	'utilities/scripting/file-utils',
 	'models/files/file',
 	'models/files/directory',
-	'views/dialogs/error-view',
+	'views/base-view',
 	'views/files/directory-tree/directory-tree-view',
 	'views/packages/info/versions/directory-tree/package-version-directory-tree-view'
-], function($, _, Backbone, Marionette, Template, Registry, FileUtils, File, Directory, ErrorView, DirectoryTreeView, PackageVersionDirectoryTreeView) {
-	return Backbone.Marionette.LayoutView.extend({
+], function($, _, Template, FileUtils, File, Directory, BaseView, DirectoryTreeView, PackageVersionDirectoryTreeView) {
+	return BaseView.extend({
 
 		//
 		// attributes
 		//
 		incremental: true,
+
+		template: _.template(Template),
 
 		regions: {
 			contents: '#contents'
@@ -49,18 +48,18 @@ define([
 		// rendering methods
 		//
 
-		template: function(data) {
-			return _.template(Template, _.extend(data, {
+		templateContext: function() {
+			return {
 				model: this.model,
 				package: this.options.package
-			}));
+			};
 		},
 
 		onRender: function() {
-			this.showContents();
+			this.fetchAndShowContents();
 		},
 
-		showContents: function() {
+		fetchAndShowContents: function() {
 			var self = this;
 
 			// fetch package version directory tree
@@ -73,107 +72,96 @@ define([
 				// callbacks
 				//
 				success: function(data) {
-					if (self.incremental) {
-
-						// show incremental directory tree
-						//
-						if (_.isArray(data)) {
-
-							// top level is a directory listing
-							//
-							self.contents.show(
-								new PackageVersionDirectoryTreeView({
-									model: new Directory({
-										contents: data
-									}),
-									packageVersion: self.model
-								})
-							);
-						} else if (isDirectoryName(data.name)) {
-
-							// top level is a directory
-							//
-							self.contents.show(
-								new PackageVersionDirectoryTreeView({
-									model: new Directory({
-										name: data.name,
-									}),
-									packageVersion: self.model
-								})
-							);		
-						} else {
-
-							// top level is a file
-							//
-							self.contents.show(
-								new PackageVersionDirectoryTreeView({
-									model: new Directory({
-										contents: new File({
-											name: data.name
-										})
-									}),
-									packageVersion: self.model
-								})
-							);	
-						}
-					} else {
-
-						// show complete directory tree
-						//
-						if (_.isArray(data)) {
-
-							// top level is a directory listing
-							//
-							self.contents.show(
-								new DirectoryTreeView({
-									model: new Directory({
-										contents: data
-									}),
-									packageVersion: self.model
-								})
-							);
-						} else if (isDirectoryName(data.name)) {
-
-							// top level is a directory
-							//
-							self.contents.show(
-								new DirectoryTreeView({
-									model: new Directory({
-										name: data.name
-									}),
-									packageVersion: self.model
-								})
-							);
-						} else {
-
-							// top level is a file
-							//
-							self.contents.show(
-								new DirectoryTreeView({
-									model: new Directory({
-										contents: new File({
-											name: data.name
-										})
-									}),
-									packageVersion: self.model
-								})
-							);		
-						}
-
-					}
+					self.showContents(data);
 				},
 
 				error: function() {
 
-					// show error dialog
+					// show error message
 					//
-					Registry.application.modal.show(
-						new ErrorView({
-							message: "Could not get a file tree for this package version."
-						})
-					);	
+					application.error({
+						message: "Could not get a file tree for this package version."
+					});
 				}
 			});
+		},
+
+		showContents: function(data) {
+			if (this.incremental) {
+
+				// show incremental directory tree
+				//
+				if (_.isArray(data)) {
+
+					// top level is a directory listing
+					//
+					this.showChildView('contents', new PackageVersionDirectoryTreeView({
+						model: new Directory({
+							contents: data
+						}),
+						packageVersion: this.model
+					}));
+				} else if (isDirectoryName(data.name)) {
+
+					// top level is a directory
+					//
+					this.showChildView('contents', new PackageVersionDirectoryTreeView({
+						model: new Directory({
+							name: data.name,
+						}),
+						packageVersion: this.model
+					}));		
+				} else {
+
+					// top level is a file
+					//
+					this.showChildView('contents', new PackageVersionDirectoryTreeView({
+						model: new Directory({
+							contents: new File({
+								name: data.name
+							})
+						}),
+						packageVersion: this.model
+					}));	
+				}
+			} else {
+
+				// show complete directory tree
+				//
+				if (_.isArray(data)) {
+
+					// top level is a directory listing
+					//
+					this.showChildView('contents', new DirectoryTreeView({
+						model: new Directory({
+							contents: data
+						}),
+						packageVersion: this.model
+					}));
+				} else if (isDirectoryName(data.name)) {
+
+					// top level is a directory
+					//
+					this.showChildView('contents', new DirectoryTreeView({
+						model: new Directory({
+							name: data.name
+						}),
+						packageVersion: this.model
+					}));
+				} else {
+
+					// top level is a file
+					//
+					this.showChildView('content', new DirectoryTreeView({
+						model: new Directory({
+							contents: new File({
+								name: data.name
+							})
+						}),
+						packageVersion: this.model
+					}));		
+				}
+			}
 		},
 
 		//

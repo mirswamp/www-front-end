@@ -18,24 +18,22 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
 	'text!templates/scheduled-runs/schedule-run-requests/schedule-run-requests.tpl',
-	'registry',
 	'models/run-requests/run-request',
 	'collections/run-requests/run-requests',
-	'views/dialogs/notify-view',
-	'views/dialogs/error-view',
+	'views/base-view',
 	'views/scheduled-runs/schedules/select-list/select-schedules-list-view'
-], function($, _, Backbone, Marionette, Template, Registry, RunRequest, RunRequests, NotifyView, ErrorView, SelectSchedulesListView) {
-	return Backbone.Marionette.LayoutView.extend({
+], function($, _, Template, RunRequest, RunRequests, BaseView, SelectSchedulesListView) {
+	return BaseView.extend({
 
 		//
 		// attributes
 		//
 
+		template: _.template(Template),
+
 		regions: {
-			selectSchedulesList: '#select-schedules-list'
+			list: '#select-schedules-list'
 		},
 
 		events: {
@@ -45,7 +43,7 @@ define([
 		},
 
 		//
-		// methods
+		// constructor
 		//
 
 		initialize: function() {
@@ -55,6 +53,10 @@ define([
 			//
 			this.assessmentRunUuids = this.options.data['assessments'].split('+');
 		},
+
+		//
+		// methods
+		//
 
 		saveRunRequest: function(runRequest) {
 			var self = this;
@@ -84,13 +86,11 @@ define([
 
 				error: function() {
 
-					// show error dialog
+					// show error message
 					//
-					Registry.application.modal.show(
-						new ErrorView({
-							message: "Could not save collection of run request assocs."
-						})
-					);		
+					application.error({
+						message: "Could not save collection of run request assocs."
+					});
 				}
 			});
 		},
@@ -125,12 +125,12 @@ define([
 		// rendering methods
 		//
 
-		template: function(data) {
-			return _.template(Template, _.extend(data, {
+		templateContext: function() {
+			return {
 				model: this.model,
 				numberOfAssessments: this.assessmentRunUuids.length,
-				config: Registry.application.config
-			}));
+				config: application.config
+			};
 		},
 
 		onRender: function() {
@@ -143,28 +143,28 @@ define([
 				// callbacks
 				//
 				success: function() {
-
-					// show select schedules list view
-					//
-					self.selectSchedulesList.show(
-						new SelectSchedulesListView({
-							collection: self.collection,
-							showDelete: true
-						})
-					);
+					self.showList();
 				},
 
 				error: function() {
 
-					// show error dialog
+					// show error message
 					//
-					Registry.application.modal.show(
-						new ErrorView({
-							message: "Could not fetch collection of run requests."
-						})
-					);
+					application.error({
+						message: "Could not fetch collection of run requests."
+					});
 				}
 			});
+		},
+
+		showList: function() {
+
+			// show select schedules list view
+			//
+			this.showChildView('list', new SelectSchedulesListView({
+				collection: this.collection,
+				showDelete: true
+			}));	
 		},
 
 		//
@@ -182,17 +182,16 @@ define([
 		},
 
 		onClickScheduleAssessments: function() {
-			var selectedRunRequest = this.selectSchedulesList.currentView.getSelected();
+			var selectedRunRequest = this.getChildView('list').getSelected();
 			if (selectedRunRequest) {
 				this.saveRunRequest(selectedRunRequest);
 			} else {
-					// show notify dialog
-					//
-					Registry.application.modal.show(
-						new NotifyView({
-							message: "You must select a schedule."
-						})
-					);	
+				
+				// show notification
+				//
+				application.notify({
+					message: "You must select a schedule."
+				});
 			}
 		},
 

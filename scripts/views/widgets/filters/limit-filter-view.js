@@ -18,18 +18,18 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
 	'jquery.validate',
 	'bootstrap/collapse',
-	'modernizr',
-	'text!templates/widgets/filters/limit-filter.tpl'
-], function($, _, Backbone, Marionette, Validate, Collapse, Modernizr, Template) {
-	return Backbone.Marionette.ItemView.extend({
+	'text!templates/widgets/filters/limit-filter.tpl',
+	'views/base-view'
+], function($, _, Validate, Collapse, Template, BaseView) {
+	return BaseView.extend({
 
 		//
 		// attributes
 		//
+
+		template: _.template(Template),
 
 		events: {
 			'blur #limit': 'onBlurLimit',
@@ -38,7 +38,17 @@ define([
 		},
 
 		//
-		// methods
+		// form attributes
+		//
+
+		rules: {
+			'filter-number': {
+				positiveNumber: true
+			}
+		},
+
+		//
+		// constructor
 		//
 
 		initialize: function() {
@@ -151,10 +161,10 @@ define([
 		// rendering methods
 		//
 
-		template: function(data) {
-			return _.template(Template, _.extend(data, {
+		templateContext: function() {
+			return {
 				limit: this.getInitialValue()
-			}));
+			};
 		},
 
 		onRender: function() {
@@ -194,11 +204,7 @@ define([
 
 		validate: function() {
 			return this.$el.find('form').validate({
-				rules: {
-					'filter-number': {
-						positiveNumber: true
-					}
-				}
+				rules: this.rules
 			});
 		},
 

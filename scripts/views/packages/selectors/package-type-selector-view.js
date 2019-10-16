@@ -19,21 +19,24 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
 	'text!templates/widgets/selectors/name-selector.tpl',
-	'registry',
 	'collections/packages/packages',
 	'collections/packages/package-types',
-	'views/dialogs/error-view',
 	'views/widgets/selectors/name-selector-view'
-], function($, _, Backbone, Template, Registry, Packages, PackageTypes, ErrorView, NameSelectorView) {
+], function($, _, Template, Packages, PackageTypes, NameSelectorView) {
 	return NameSelectorView.extend({
 
 		//
-		// methods
+		// attributes
 		//
 
-		initialize: function(attributes, options) {
+		template: _.template(Template),
+
+		//
+		// constructor
+		//
+
+		initialize: function(options) {
 			var self = this;
 			this.collection = new Backbone.Collection();
 
@@ -81,13 +84,11 @@ define([
 
 				error: function() {
 
-					// show error dialog
+					// show error message
 					//
-					Registry.application.modal.show(
-						new ErrorView({
-							message: "Could not fetch package types."
-						})
-					);
+					application.error({
+						message: "Could not fetch package types."
+					});
 				}			
 			});
 		},
@@ -96,10 +97,10 @@ define([
 		// rendering methods
 		//
 
-		template: function(data) {
-			return _.template(Template, _.extend(data, {
+		templateContext: function() {
+			return {
 				selected: this.selected? this.selected.get('name') : undefined
-			}));
+			};
 		},
 
 		//
@@ -109,7 +110,7 @@ define([
 		getSelectedName: function() {
 			var selected = this.getSelected();
 			if (selected) {
-				return selected.get('name')
+				return selected.get('name');
 			} else {
 				return 'any type';
 			}

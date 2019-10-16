@@ -19,34 +19,26 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
-	'bootstrap/tooltip',
 	'bootstrap/popover',
 	'text!templates/users/prompts/linked-account-prompt.tpl',
 	'text!templates/policies/linked-account-policy.tpl',
-	'registry',
-	'config',
 	'utilities/security/password-policy',
 	'models/users/user',
 	'models/users/session',
 	'collections/users/user-classes',
+	'views/base-view',
 	'views/users/registration/sign-aup-view',
 	'views/users/prompts/linked-account-link-prompt-view',
 	'views/users/registration/email-verification-view',
-	'views/users/classes/dialogs/class-enrollment-view',
-	'views/dialogs/notify-view',
-	'views/dialogs/error-view'
-], function($, _, Backbone, Marionette, Tooltip, Popover, Template, LinkedAccountPolicyTemplate, Registry, Config, PasswordPolicy, User, Session, UserClasses, SignAupView, LinkedAccountLinkPromptView, EmailVerificationView, ClassEnrollmentView, NotifyView, ErrorView) {
-	return Backbone.Marionette.LayoutView.extend({
+	'views/users/classes/dialogs/class-enrollment-dialog-view',
+], function($, _, Popover, Template, LinkedAccountPolicyTemplate, PasswordPolicy, User, Session, UserClasses, BaseView, SignAupView, LinkedAccountLinkPromptView, EmailVerificationView, ClassEnrollmentDialogView) {
+	return BaseView.extend({
 
 		//
 		// attributes
 		//
 
-		regions: {
-			linkedAccountPolicyText: '#linked-account-policy-text'
-		},
+		template: _.template(Template),
 
 		events: {
 			'click .alert .close': 'onClickAlertClose',
@@ -56,11 +48,27 @@ define([
 		},
 
 		//
+		// form attributes
+		//
+
+		rules: {
+			'accept': {
+				required: true
+			}
+		},
+
+		messages: {
+			'accept': {
+				required: "You must accept the terms to continue."
+			}
+		},
+
+		//
 		// querying methods
 		//
 
 		isAcademicLinkedAccount: function() {
-			var authProvider = Registry.application.options.authProvider;
+			var authProvider = application.options.authProvider;
 			return authProvider && (
 				authProvider.contains('University', false) ||
 				authProvider.contains('College', false) || 
@@ -87,17 +95,15 @@ define([
 
 						// display class enrollment dialog
 						//
-						Registry.application.modal.show(
-							new ClassEnrollmentView({
-								collection: collection,
+						application.show(new ClassEnrollmentDialogView({
+							collection: collection,
 
-								// callbacks
-								//
-								accept: function(userClass) {
-									callback(userClass);
-								}
-							})
-						);
+							// callbacks
+							//
+							accept: function(userClass) {
+								callback(userClass);
+							}
+						}));
 					} else {
 
 						// no classes available
@@ -108,13 +114,11 @@ define([
 
 				error: function() {
 
-					// show error dialog
+					// show error message
 					//
-					Registry.application.modal.show(
-						new ErrorView({
-							message: "Could not fetch user classes."
-						})
-					);
+					application.error({
+						message: "Could not fetch user classes."
+					});
 				}
 			});
 		},
@@ -129,30 +133,29 @@ define([
 				//
 				success: function(response) {
 					if (response.primary_verified) {
-						Registry.application.modal.show(
-							new NotifyView({
-								message: "Your Account has successfuly been linked to the SWAMP!",
-								
-								// callbacks
-								//
-								accept: function() {
-									window.location = Registry.application.getURL();
-								}
-							})
-						);
+
+						// show notification
+						//
+						application.notify({
+							message: "Your Account has successfuly been linked to the SWAMP!",
+							
+							// callbacks
+							//
+							accept: function() {
+								window.location = application.getURL();
+							}
+						});
 					} else {
-						Registry.application.showMain(
-							new EmailVerificationView({
-								model: new User(response.user)
-							})
-						);
+						application.showMain(new EmailVerificationView({
+							model: new User(response.user)
+						}));
 					}
 				}
 			});
 		},
 
 		//
-		// rendering methods
+		// querying methods
 		//
 
 		getPolicyText: function(data) {
@@ -161,10 +164,14 @@ define([
 			});
 		},
 
-		template: function() {
-			return _.template(Template, {
-				config: Registry.application.config
-			});
+		//
+		// rendering methods
+		//
+
+		templateContext: function() {
+			return {
+				config: application.config
+			};
 		},
 
 		onRender: function() {
@@ -195,16 +202,8 @@ define([
 
 		validate: function() {
 			return this.$el.find('#accept-form').validate({
-				rules: {
-					'accept': {
-						required: true
-					}
-				},
-				messages: {
-					'accept': {
-						required: "You must accept the terms to continue."
-					}
-				}
+				rules: this.rules,
+				messages: this.messages
 			});
 		},
 
@@ -222,19 +221,20 @@ define([
 				// callbacks
 				//
 				error: function(response) {
-					Registry.application.modal.show(
-						new NotifyView({
-							message: response.responseText,
 
-							// callbacks
-							//
-							accept: function() {
-								Backbone.history.navigate('#home', {
-									trigger: true
-								});
-							}
-						})
-					);
+					// show notification
+					//
+					application.notify({
+						message: response.responseText,
+
+						// callbacks
+						//
+						accept: function() {
+							Backbone.history.navigate('#home', {
+								trigger: true
+							});
+						}
+					});
 				}
 			}));
 		},
@@ -245,19 +245,20 @@ define([
 				// callbacks
 				//
 				error: function(response) {
-					Registry.application.modal.show(
-						new ErrorView({
-							message: response.responseText,
 
-							// callbacks
-							//
-							accept: function(){
-								Backbone.history.navigate('#home', {
-									trigger: true
-								});
-							}
-						})
-					);
+					// show confirm dialog
+					//
+					application.confirm({
+						message: response.responseText,
+
+						// callbacks
+						//
+						accept: function(){
+							Backbone.history.navigate('#home', {
+								trigger: true
+							});
+						}
+					});
 				}
 			}));
 		},
@@ -274,13 +275,11 @@ define([
 					// callbacks
 					//
 					success: function(response) {
-						Registry.application.showMain(
-							new LinkedAccountLinkPromptView({
-								oauth2_id: 	response.user_external_id,
-								username: 	response.username,
-								email: 		response.email
-							})
-						);
+						application.showMain(new LinkedAccountLinkPromptView({
+							oauth2_id: response.user_external_id,
+							username: response.username,
+							email: response.email
+						}));
 					}
 				});
 			}
@@ -293,41 +292,39 @@ define([
 			//
 			if (this.isValid()) {
 				this.undelegateEvents();
-				Registry.application.showMain(
-					new SignAupView({
+				application.showMain(new SignAupView({
 
-						// callbacks
-						//
-						accept: function() {
-							if (Registry.application.config['classes_enabled'] &&
-								self.isAcademicLinkedAccount()) {
+					// callbacks
+					//
+					accept: function() {
+						if (application.config['classes_enabled'] &&
+							self.isAcademicLinkedAccount()) {
 
-								// check class enrollment
-								//
-								self.checkClassEnrollment(function(userClass) {
-									if (userClass) {
+							// check class enrollment
+							//
+							self.checkClassEnrollment(function(userClass) {
+								if (userClass) {
 
-										// user class was selected
-										//
-										self.registerLinkedAccount({
-											'user-class': userClass
-										});
-									} else {
+									// user class was selected
+									//
+									self.registerLinkedAccount({
+										'user-class': userClass
+									});
+								} else {
 
-										// no class selected - register with no class enrollment
-										//
-										self.registerLinkedAccount();	
-									}
-								});
-							} else {
+									// no class selected - register with no class enrollment
+									//
+									self.registerLinkedAccount();	
+								}
+							});
+						} else {
 
-								// register with no class enrollment
-								//
-								self.registerLinkedAccount();
-							}
+							// register with no class enrollment
+							//
+							self.registerLinkedAccount();
 						}
-					})
-				);
+					}
+				}));
 			}
 		},
 

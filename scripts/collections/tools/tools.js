@@ -18,13 +18,11 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
 	'config',
-	'registry',
 	'models/tools/tool',
 	'collections/utilities/named-items'
-], function($, _, Backbone, Config, Registry, Tool, NamedItems) {
-	var Class = NamedItems.extend({
+], function($, _, Config, Tool, NamedItems) {
+	return NamedItems.extend({
 
 		//
 		// Backbone attributes
@@ -54,9 +52,14 @@ define([
 		},
 
 		getOpen: function() {
-			var collection = this.clone();
 
-			collection.reset();
+			// create empty collection
+			//
+			var collection = new this.constructor([], {
+				model: this.model,
+				comparator: this.comparator
+			});
+
 			this.each(function(item) {
 				if (item.isOpen()) {
 					collection.add(item);
@@ -67,12 +70,53 @@ define([
 		},
 
 		getRestricted: function() {
-			var collection = this.clone();
 
-			collection.reset();
+			// create empty collection
+			//
+			var collection = new this.constructor([], {
+				model: this.model,
+				comparator: this.comparator
+			});
+
 			this.each(function(item) {
 				if (item.isRestricted()) {
 					collection.add(item);
+				}
+			});
+
+			return collection;
+		},
+
+		getByPackageType: function(packageType) {
+
+			// create empty collection
+			//
+			var collection = new this.constructor([], {
+				model: this.model,
+				comparator: this.comparator
+			});
+
+			this.each(function(tool, index, list) {
+				if (tool.supports(packageType)) {
+					collection.push(tool);
+				}
+			});
+
+			return collection;
+		},
+
+		getByPlatform: function(platform) {
+
+			// create empty collection
+			//
+			var collection = new this.constructor([], {
+				model: this.model,
+				comparator: this.comparator
+			});
+
+			this.each(function(tool, index, list) {
+				if (platform.supports(tool)) {
+					collection.push(tool);
 				}
 			});
 
@@ -84,7 +128,7 @@ define([
 		//
 
 		fetch: function(options) {
-			return this.fetchByUser(Registry.application.session.user, options);
+			return this.fetchByUser(application.session.user, options);
 		},
 
 		fetchByUser: function(user, options) {
@@ -132,6 +176,4 @@ define([
 			return $.ajax(Config.servers.web + '/tools/users/' + user.get('user_uid') + '/num', options);
 		},
 	});
-
-	return Class;
 });

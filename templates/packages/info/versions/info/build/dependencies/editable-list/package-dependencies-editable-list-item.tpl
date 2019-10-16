@@ -6,15 +6,15 @@
 
 <td class="platform description first">
 	<% if (platformUrl) { %>
-	<a href="<%- platformUrl %>"><span class="name"><%= stringToHTML(platformVersionName) %></span></a>
+	<a href="<%- platformUrl %>"><span class="name"><%= textToHtml(platformVersionName) %></span></a>
 	<% } else { %>
-	<span class="name"><%= stringToHTML(platformVersionName) %></span>
+	<span class="name"><%= textToHtml(platformVersionName) %></span>
 	<% } %>
 
 	<% if (platformVersionUrl) { %>
-	<a href="<%- platformVersionUrl %>"><span class="version"><%= stringToHTML(platformVersionString) %></span></a>
+	<a href="<%- platformVersionUrl %>"><span class="version"><%= textToHtml(platformVersionString) %></span></a>
 	<% } else { %>
-	<span class="version"><%= stringToHTML(platformVersionString) %></span>
+	<span class="version"><%= textToHtml(platformVersionString) %></span>
 	<% } %>
 </td>
 

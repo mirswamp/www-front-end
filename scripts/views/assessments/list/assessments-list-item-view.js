@@ -1,6 +1,6 @@
 /******************************************************************************\
 |                                                                              |
-|                            assessments-list-item-view.js                     |
+|                        assessments-list-item-view.js                         |
 |                                                                              |
 |******************************************************************************|
 |                                                                              |
@@ -18,11 +18,8 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
-	'bootstrap/tooltip',
+	'bootstrap/popover',
 	'text!templates/assessments/list/assessments-list-item.tpl',
-	'registry',
 	'models/assessments/assessment-run',
 	'models/packages/package',
 	'models/packages/package-version',
@@ -30,17 +27,15 @@ define([
 	'models/tools/tool-version',
 	'models/platforms/platform',
 	'models/platforms/platform-version',
-	'views/dialogs/confirm-view',
-	'views/dialogs/notify-view',
-	'views/dialogs/error-view',
-], function($, _, Backbone, Marionette, Tooltip, Template, Registry, AssessmentRun, Package, PackageVersion, Tool, ToolVersion, Platform, PlatformVersion, ConfirmView, NotifyView, ErrorView) {
-	return Backbone.Marionette.ItemView.extend({
+	'views/collections/tables/table-list-item-view'
+], function($, _, Popover, Template, AssessmentRun, Package, PackageVersion, Tool, ToolVersion, Platform, PlatformVersion, TableListItemView) {
+	return TableListItemView.extend({
 
 		//
 		// attributes
 		//
 
-		tagName: 'tr',
+		template: _.template(Template),
 
 		events: {
 			'click .results .badge-group': 'onClickResults',
@@ -77,21 +72,64 @@ define([
 			return toQueryString(data);
 		},
 
+		getProjectUrl: function() {
+			if (this.model.has('project_uuid') && this.model.get('project_uuid') != 'undefined') {
+				return application.getURL() + '#projects/' + this.model.get('project_uuid');
+			}
+		},
+
+		getPackageUrl: function() {
+			if (this.model.has('package_uuid') && this.model.get('package_uuid') != 'undefined') {
+				return application.getURL() + '#packages/' + this.model.get('package_uuid');	
+			}
+		},
+
+		getPackageVersionUrl: function() {
+			if (this.model.get('package_version_uuid') && this.model.get('package_version_uuid') != 'undefined') {
+				return application.getURL() + '#packages/versions/' + this.model.get('package_version_uuid');
+			}
+		},
+
+		getToolUrl: function() {
+			if (this.model.get('tool_uuid') && this.model.get('tool_uuid') != 'undefined') {
+				return application.getURL() + '#tools/' + this.model.get('tool_uuid');
+			}
+		},
+
+		getToolVersionUrl: function() {
+			if (this.model.get('tool_version_uuid') && this.model.get('tool_version_uuid') != 'undefined') {
+				return application.getURL() + '#tools/versions/' + this.model.get('tool_version_uuid');
+			}
+		},
+
+		getPlatformUrl: function() {
+			if (this.model.get('platform_uuid') && this.model.get('platform_uuid') != 'undefined') {
+				return application.getURL() + '#platforms/' + this.model.get('platform_uuid');
+			}
+		},
+
+		getPlatformVersionUrl: function(data) {
+			if (this.model.get('platform_version_uuid') && this.model.get('platform_version_uuid') != 'undefined') {
+				return application.getURL() + '#platforms/versions/' + this.model.get('platform_version_uuid');
+			}
+		},
+
 		//
 		// rendering methods
 		//
 
-		template: function(data) {
-			return _.template(Template, _.extend(data, {
+		templateContext: function() {
+			return {
 				index: this.options.index,
 				showNumbering: this.options.showNumbering,
-				packageUrl:  data.package_uuid? Registry.application.getURL() + '#packages/' + data.package_uuid : undefined,
-				packageVersionUrl: data.package_version_uuid? Registry.application.getURL() + '#packages/versions/' + data.package_version_uuid : undefined,
-				toolUrl: data.tool_uuid? Registry.application.getURL() + '#tools/' + data.tool_uuid : undefined,
-				toolVersionUrl: data.tool_version_uuid? Registry.application.getURL() + '#tools/versions/' + data.tool_version_uuid : undefined,
-				platformUrl: data.platform_uuid? Registry.application.getURL() + '#platforms/' + data.platform_uuid : undefined,
-				platformVersionUrl: data.platform_version_uuid? Registry.application.getURL() + '#platforms/versions/' + data.platform_version_uuid : undefined
-			}));
+				projectUrl: this.getProjectUrl(),
+				packageUrl: this.getPackageUrl(),
+				packageVersionUrl: this.getPackageVersionUrl(),
+				toolUrl: this.getToolUrl(),
+				toolVersionUrl: this.getToolVersionUrl(),
+				platformUrl: this.getPlatformUrl(),
+				platformVersionUrl: this.getPlatformVersionUrl(),
+			};
 		},
 
 		onRender: function() {
@@ -120,39 +158,35 @@ define([
 		onClickDelete: function() {
 			var self = this;
 
-			// show confirm dialog
+			// show confirmation
 			//
-			Registry.application.modal.show(
-				new ConfirmView({
-					title: "Delete Assessment",
-					message: "Are you sure that you want to delete this assessment of " + this.model.get('package_name') + " using " + this.model.get('tool_name') + " on " + this.model.get('platform_name') + "?",
+			application.confirm({
+				title: "Delete Assessment",
+				message: "Are you sure that you want to delete this assessment of " + this.model.get('package_name') + " using " + this.model.get('tool_name') + " on " + this.model.get('platform_name') + "?",
 
-					// callbacks
+				// callbacks
+				//
+				accept: function() {
+					var assessmentRun = new AssessmentRun();
+					self.model.url = assessmentRun.url;
+
+					// delete model from database
 					//
-					accept: function() {
-						var assessmentRun = new AssessmentRun();
-						self.model.url = assessmentRun.url;
+					self.model.destroy({
 
-						// delete model from database
+						// callbacks
 						//
-						self.model.destroy({
+						error: function() {
 
-							// callbacks
+							// show error message
 							//
-							error: function() {
-
-								// show error dialog
-								//
-								Registry.application.modal.show(
-									new ErrorView({
-										message: "Could not delete this assessment."
-									})
-								);
-							}
-						});
-					}
-				})
-			);
+							application.error({
+								message: "Could not delete this assessment."
+							});
+						}
+					});
+				}
+			});
 		}
 	});
 });

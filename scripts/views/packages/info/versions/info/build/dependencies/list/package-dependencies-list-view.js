@@ -18,19 +18,23 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
 	'text!templates/packages/info/versions/info/build/dependencies/list/package-dependencies-list.tpl',
-	'views/widgets/lists/sortable-table-list-view',
+	'views/base-view',
+	'views/collections/tables/sortable-table-list-view',
 	'views/packages/info/versions/info/build/dependencies/list/package-dependencies-list-item-view'
-], function($, _, Backbone, Marionette, Template, SortableTableListView, PackageDependenciesListItemView) {
+], function($, _, Template, BaseView, SortableTableListView, PackageDependenciesListItemView) {
 	return SortableTableListView.extend({
 
 		//
 		// attributes
 		//
 
+		template: _.template(Template),
 		childView: PackageDependenciesListItemView,
+
+		emptyView: BaseView.extend({
+			template: _.template("No package dependencies.")
+		}),
 
 		sorting: {
 
@@ -51,27 +55,31 @@ define([
 		// rendering methods
 		//
 
-		template: function(data) {
-			return _.template(Template, _.extend(data, {
+		templateContext: function() {
+			return {
 				collection: this.collection,
 				showNumbering: this.options.showNumbering
-			}));
+			};
 		},
 
-		childViewOptions: function(model, index) {
+		childViewOptions: function(model) {
 
-			// find dependency's platform
+			// check if empty view
 			//
-			var platformVersion = this.options.platformVersions.where({
-				'platform_version_uuid': model.get('platform_version_uuid')
-			})[0];
+			if (!model) {
+				return {};
+			}
 
+			// return view options
+			//
 			return {
 				model: model,
-				index: index,
+				index: this.collection.indexOf(model),
 				showNumbering: this.options.showNumbering,
-				platformVersion: platformVersion
-			}
+				platformVersion: this.options.platformVersions.where({
+					'platform_version_uuid': model.get('platform_version_uuid')
+				})[0]
+			};
 		},
 
 		//

@@ -18,25 +18,24 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
 	'text!templates/packages/info/build/new-package-build.tpl',
-	'registry',
 	'widgets/accordions',
 	'models/projects/project',
 	'collections/projects/projects',
-	'views/dialogs/error-view',
+	'views/base-view',
 	'views/packages/info/versions/info/build/build-script/build-script-view',
 	'views/packages/info/versions/info/build/build-profile/build-profile-form-view',
-], function($, _, Backbone, Marionette, Template, Registry, Accordions, Project, Projects, ErrorView, BuildScriptView, BuildProfileFormView) {
-	return Backbone.Marionette.LayoutView.extend({
+], function($, _, Template, Accordions, Project, Projects, BaseView, BuildScriptView, BuildProfileFormView) {
+	return BaseView.extend({
 
 		//
 		// attributes
 		//
 
+		template: _.template(Template),
+
 		regions: {
-			buildProfileForm: '#build-profile-form'
+			form: '#build-profile-form'
 		},
 
 		events: {
@@ -94,26 +93,22 @@ define([
 
 							error: function() {
 
-								// show error dialog
+								// show error message
 								//
-								Registry.application.modal.show(
-									new ErrorView({
-										message: "Could not save package versions's project sharing."
-									})
-								);
+								application.error({
+									message: "Could not save package versions's project sharing."
+								});
 							}
 						});
 					},
 
 					error: function() {
 
-						// show error dialog
+						// show error message
 						//
-						Registry.application.modal.show(
-							new ErrorView({
-								message: "Could not fetch trial project."
-							})
-						);
+						application.error({
+							message: "Could not fetch trial project."
+						});
 					}
 				});
 			});	
@@ -123,13 +118,13 @@ define([
 		// rendering methods
 		//
 
-		template: function(data) {
-			return _.template(Template, _.extend(data, {
+		templateContext: function() {
+			return {
 				package: this.model,
 				show_save: this.options.showSave,
 				show_source_files: !this.model.isBuildable() && !this.options.packageVersion.isAtomic(),
 				show_build_script: this.model.hasBuildScript() && this.options.packageVersion.hasBuildScript()
-			}));
+			};
 		},
 
 		onRender: function() {
@@ -145,20 +140,18 @@ define([
 
 			// show build profile form view
 			//
-			this.buildProfileForm.show(
-				new BuildProfileFormView({
-					model: this.options.packageVersion,
-					packageVersionDependencies: this.options.packageVersionDependencies,
-					package: this.model,
-					parent: this,
+			this.showChildView('form', new BuildProfileFormView({
+				model: this.options.packageVersion,
+				packageVersionDependencies: this.options.packageVersionDependencies,
+				package: this.model,
+				parent: this,
 
-					// update build script upon change
-					//
-					onChange: function() {
-						self.onChange();	
-					}
-				})
-			);
+				// update build script upon change
+				//
+				onChange: function() {
+					self.onChange();	
+				}
+			}));
 		},
 
 		showSourceFiles: function() {
@@ -166,7 +159,7 @@ define([
 
 			// get current model
 			//
-			var model = this.buildProfileForm.currentView.getCurrentModel();
+			var model = this.getChildView('form').getCurrentModel();
 
 			// fetch build info
 			//
@@ -193,12 +186,10 @@ define([
 			require([
 				'views/packages/dialogs/source-files-dialog-view'
 			], function (SourceFilesDialogView) {
-				Registry.application.modal.show(
-					new SourceFilesDialogView({
-						model: packageVersion,
-						package: self.model
-					})
-				);
+				application.show(new SourceFilesDialogView({
+					model: packageVersion,
+					package: self.model
+				}));
 			});
 		},
 
@@ -207,7 +198,7 @@ define([
 
 			// get current model
 			//
-			var model = this.buildProfileForm.currentView.getCurrentModel();
+			var model = this.getChildView('form').getCurrentModel();
 
 			// fetch build info
 			//
@@ -236,12 +227,10 @@ define([
 			require([
 				'views/packages/dialogs/build-script-dialog-view'
 			], function (BuildScriptDialogView) {
-				Registry.application.modal.show(
-					new BuildScriptDialogView({
-						model: packageVersion,
-						package: self.model
-					})
-				);
+				application.show(new BuildScriptDialogView({
+					model: packageVersion,
+					package: self.model
+				}));
 			});
 		},
 
@@ -305,12 +294,12 @@ define([
 
 			// update package version
 			//
-			this.buildProfileForm.currentView.update(this.options.packageVersion);
+			this.getChildView('form').applyTo(this.options.packageVersion);
 
 			// check validation
 			//
-			if (this.buildProfileForm.currentView.isValid()) {
-				var model = this.buildProfileForm.currentView.getCurrentModel();
+			if (this.getChildView('form').isValid()) {
+				var model = this.getChildView('form').getCurrentModel();
 
 				// check build system
 				//
@@ -330,7 +319,7 @@ define([
 					},
 
 					error: function(data) {
-						Registry.application.confirm({
+						application.confirm({
 							title: 'Build System Warning',
 							message: data.responseText + "  Would you like to continue anyway?",
 
@@ -358,12 +347,12 @@ define([
 
 			// update package version
 			//
-			this.buildProfileForm.currentView.update(this.options.packageVersion);
+			this.getChildView('form').applyTo(this.options.packageVersion);
 
 			// check validation
 			//
-			if (this.buildProfileForm.currentView.isValid()) {
-				var model = this.buildProfileForm.currentView.getCurrentModel();
+			if (this.getChildView('form').isValid()) {
+				var model = this.getChildView('form').getCurrentModel();
 
 				// check build system
 				//
@@ -379,7 +368,7 @@ define([
 					},
 
 					error: function(data) {
-						Registry.application.confirm({
+						application.confirm({
 							title: 'Build System Warning',
 							message: data.responseText + "  Would you like to continue anyway?",
 

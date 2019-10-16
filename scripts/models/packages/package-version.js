@@ -19,11 +19,9 @@ define([
 	'jquery',
 	'underscore',
 	'config',
-	'registry',
 	'models/utilities/shared-version',
-	'views/dialogs/error-view'
-], function($, _, Config, Registry, SharedVersion, ErrorView) {
-	var Class = SharedVersion.extend({
+], function($, _, Config, SharedVersion) {
+	return SharedVersion.extend({
 
 		//
 		// Backbone attributes
@@ -33,7 +31,7 @@ define([
 		urlRoot: Config.servers.web + '/packages/versions',
 
 		//
-		// methods
+		// constructor
 		//
 
 		initialize: function(attributes) {
@@ -106,7 +104,7 @@ define([
 		},
 
 		//
-		// query methods
+		// querying methods
 		//
 
 		getFilename: function() {
@@ -422,6 +420,7 @@ define([
 		},
 
 		fetchRubyVersion: function() {
+			var self = this;
 
 			// fetch type of ruby gem
 			//
@@ -430,7 +429,7 @@ define([
 				// callbacks
 				//
 				success: function(data) {
-					success([Class.gemInfoToRubyVersion(data)]);
+					success([self.constructor.gemInfoToRubyVersion(data)]);
 				},
 
 				error: function(jqXHR, textStatus, errorThrown) {
@@ -539,8 +538,8 @@ define([
 					// callbacks
 					//
 					success: function(data) {
-						success([Class.gemInfoToPackageType(data)], 
-							[Class.gemInfoToRubyVersion(data)]);
+						success([self.constructor.gemInfoToPackageType(data)], 
+							[self.constructor.gemInfoToRubyVersion(data)]);
 					},
 
 					error: function(jqXHR, textStatus, errorThrown) {
@@ -582,7 +581,7 @@ define([
 					// callbacks
 					//
 					success: function(data) {
-						success([Class.wheelInfoToPackageType(data)]);
+						success([self.constructor.wheelInfoToPackageType(data)]);
 					},
 
 					error: function(jqXHR, textStatus, errorThrown) {
@@ -626,8 +625,8 @@ define([
 							// callbacks
 							//
 							success: function(data) {
-								var rubyPackageType = Class.gemInfoToPackageType(data);
-								var languageVersion = Class.gemInfoToRubyVersion(data);
+								var rubyPackageType = self.constructor.gemInfoToPackageType(data);
+								var languageVersion = self.constructor.gemInfoToRubyVersion(data);
 
 								// replace ruby with specific gem type
 								//
@@ -766,7 +765,7 @@ define([
 				//
 				if (item['gem']) {
 					var gem = item['gem'];
-					var packageType = Class.gemToPackageType(gem);
+					var packageType = this.gemToPackageType(gem);
 					if (packageType != 'ruby') {
 						return packageType;
 					}
@@ -779,7 +778,7 @@ define([
 
 						// check gems
 						//
-						var packageType = Class.gemToPackageType(gems[j].gem);
+						var packageType = this.gemToPackageType(gems[j].gem);
 						if (packageType != 'ruby') {
 							return packageType;
 						}
@@ -839,7 +838,7 @@ define([
 
 			// fetch package version
 			//
-			var packageVersion = new Class({
+			var packageVersion = new this.prototype.constructor({
 				package_version_uuid: packageVersionUuid
 			});
 
@@ -853,17 +852,13 @@ define([
 
 				error: function() {
 
-					// show error dialog
+					// show error message
 					//
-					Registry.application.modal.show(
-						new ErrorView({
-							message: 'Could not fetch package version.'
-						})
-					);
+					application.error({
+						message: 'Could not fetch package version.'
+					});
 				}
 			});
 		}
 	});
-
-	return Class;
 });

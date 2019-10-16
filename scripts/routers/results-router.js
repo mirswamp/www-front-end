@@ -18,9 +18,10 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'utilities/browser/query-strings'
-], function($, _, Backbone) {
+	'routers/base-router',
+	'views/dialogs/dialog-view',
+	'utilities/web/query-strings'
+], function($, _, BaseRouter, DialogView) {
 
 	//
 	// local variables
@@ -30,7 +31,7 @@ define([
 
 	// create router
 	//
-	return Backbone.Router.extend({
+	return BaseRouter.extend({
 
 		//
 		// route definitions
@@ -61,14 +62,13 @@ define([
 
 		showReviewResults: function(queryString) {
 			require([
-				'registry',
 				'routers/query-string-parser',
 				'views/results/assessment-runs/review/review-results-view'
-			], function (Registry, QueryStringParser, ReviewResultsView) {
+			], function (QueryStringParser, ReviewResultsView) {
 				
 				// show content view
 				//
-				Registry.application.showContent({
+				application.showContent({
 					'nav1': 'home',
 					'nav2': 'overview', 
 
@@ -79,11 +79,9 @@ define([
 
 							// show review results view
 							//
-							view.content.show(
-								new ReviewResultsView({
-									data: data
-								})
-							);
+							view.showChildView('content', new ReviewResultsView({
+								data: data
+							}));
 						});
 					}
 				});
@@ -91,15 +89,22 @@ define([
 		},
 
 		showProgress: function(options) {
+
+			// skip if dialogs are shown
+			//
+			if (DialogView.dialogs.length != 0 && !(options && options.force)) {
+				return;
+			}
+
 			var self = this;
 			require([
 				'jquery',
 				'underscore',
 				'text!templates/viewers/progress.tpl',
-				'registry',
-			], function ($, _, Template, Registry) {
-				Registry.application.showPage(new Backbone.Marionette.ItemView({
-					template: _.template(Template, options)
+				'views/base-view'
+			], function ($, _, Template, BaseView) {
+				application.showPage(new BaseView({
+					template: _.template(_.template(Template)(options))
 				}));
 			});
 		},
@@ -110,7 +115,7 @@ define([
 
 		showAssessmentResultsViewer: function(assessmentResultUuid, viewerUuid, projectUuid) {
 			var self = this;
-			var options = null;
+			var options = queryStringToData(getQueryString());
 
 			// strip query string
 			//
@@ -153,84 +158,74 @@ define([
 
 		showJsonResults: function(assessmentResultUuid, results, json, viewerUuid, projectUuid) {
 			require([
-				'registry',
 				'views/results/native-viewer/native-viewer-view'
-			], function (Registry, NativeViewerView) {
+			], function (NativeViewerView) {
 
 				// show native viewer
 				//
-				Registry.application.showMain(
-					new NativeViewerView({
-						assessmentResultUuid: assessmentResultUuid,
-						results: results,
-						json: json,
-						viewerUuid: viewerUuid,
-						projectUuid: projectUuid
-					}), {
-						nav2: 'results'
-					}
-				);
+				application.showMain(new NativeViewerView({
+					assessmentResultUuid: assessmentResultUuid,
+					results: results,
+					json: json,
+					viewerUuid: viewerUuid,
+					projectUuid: projectUuid
+				}), {
+					nav2: 'results'
+				});
 			});
 		},
 
 		showJsonErrors: function(json) {
 			require([
-				'registry',
 				'views/results/error-report/error-report-view'
-			], function (Registry, ErrorReportView) {
+			], function (ErrorReportView) {
 
 				// show error report
 				//
-				Registry.application.showMain(
-					new ErrorReportView({
-						model: new Backbone.Model(json)
-					}), {
-						nav2: 'results'
-					}
-				);
+				application.showMain(new ErrorReportView({
+					model: new Backbone.Model(json)
+				}), {
+					nav2: 'results'
+				});
 			});
 		},
 
 		showHtmlResults: function(html) {
-			require([
-				'registry'
-			], function (Registry) {
 
-				// display results in formatted page view
+			// display results in formatted page view
+			//
+			application.showContent({
+				nav1: 'home',
+				nav2: 'results', 
+
+				// callbacks
 				//
-				Registry.application.showContent({
-					nav1: 'home',
-					nav2: 'results', 
+				done: function(view) {
 
-					// callbacks
+					// insert results into DOM
 					//
-					done: function(view) {
+					view.$el.find('.content').append($(html));
 
-						// insert results into DOM
-						//
-						view.$el.find('.content').append($(html));
-
-						// add handler for anchor clicks
-						//
-						view.$el.find('.content').find('a').on('click', function(event) {
-							var target = $(event.target).attr('href');
-							if (target.startsWith('#')) {
-								var element = view.$el.find('.content').find(target);
-								event.preventDefault();
-								var offset = element.position().top - 60;
-								$(document.body).animate({
-									'scrollTop': offset
-								}, 500);
-							}
-						});
-
-						// call window onload, if there is one
-						//
-						if (window.onload) {
-							window.onload();
+					// add handler for anchor clicks
+					//
+					view.$el.find('.content').find('a').on('click', function(event) {
+						var target = $(event.target).attr('href');
+						if (target.startsWith('#')) {
+							var element = view.$el.find('.content').find(target);
+							event.preventDefault();
+							var offset = element.position().top - 60;
+							$(document.body).animate({
+								'scrollTop': offset
+							}, 500);
 						}
+					});
+
+					// call window onload, if there is one
+					//
+					if (window.onload) {
+						window.onload();
 					}
-				});
+				}
 			});
 		},
 
@@ -239,7 +234,7 @@ define([
 			var params = queryStringToData(queryString);
 			require([
 				'models/assessments/assessment-results',
-				'utilities/browser/query-strings'
+				'utilities/web/query-strings'
 			], function (AssessmentResults) {
 
 				// show results and source code
@@ -255,7 +250,7 @@ define([
 					// callbacks
 					//
 					success: function(results, data, options) {
-						var bugIndex = parseInt(params.bugindex);
+						var bugIndex = parseInt(params.bugindex) || 0;
 						var viewerUuid = options.viewer? options.viewer.get('viewer_uuid') : null;
 
 						// find source code file to display
@@ -275,9 +270,9 @@ define([
 							results: results, 
 							projectUuid: projectUuid,
 							viewerUuid: viewerUuid,
-							bugIndex: bugIndex,
-							bugInstance: bugInstance,
-							bugLocation: bugLocation,
+							bugIndex: params.bugindex != undefined? bugIndex : undefined,
+							bugInstance: params.bugindex != undefined? bugInstance : undefined,
+							bugLocation: params.bugindex != undefined? bugLocation : undefined,
 							bugInstances: bugInstances
 						});
 					}
@@ -288,16 +283,14 @@ define([
 		showAssessmentsResults: function(queryString) {
 			var self = this;
 			require([
-				'registry',
 				'routers/query-string-parser',
 				'collections/viewers/viewers',
-				'views/dialogs/error-view',
 				'views/results/assessments-results-view'
-			], function (Registry, QueryStringParser, Viewers, ErrorView, AssessmentsResultsView) {
+			], function (QueryStringParser, Viewers, AssessmentsResultsView) {
 
 				// show content view
 				//
-				Registry.application.showContent({
+				application.showContent({
 					nav1: 'home',
 					nav2: 'results', 
 
@@ -319,24 +312,20 @@ define([
 
 									// show assessments results view
 									//
-									view.content.show(
-										new AssessmentsResultsView({
-											data: data,
-											model: view.model,
-											viewers: collection
-										})
-									);
+									view.showChildView('content', new AssessmentsResultsView({
+										data: data,
+										model: view.model,
+										viewers: collection
+									}));
 								},
 
 								error: function() {
 
-									// show error dialog
+									// show error message
 									//
-									Registry.application.modal.show(
-										new ErrorView({
-											message: "Could not fetch project viewers."
-										})
-									);
+									application.error({
+										message: "Could not fetch project viewers."
+									});
 								}
 							});	
 						});
@@ -348,15 +337,13 @@ define([
 		showDeleteAssessmentsResults: function(queryString) {
 			var self = this;
 			require([
-				'registry',
 				'routers/query-string-parser',
-				'views/dialogs/error-view',
 				'views/results/delete/delete-assessments-results-view'
-			], function (Registry, QueryStringParser, ErrorView, DeleteAssessmentsResultsView) {
+			], function (QueryStringParser, DeleteAssessmentsResultsView) {
 
 				// show content view
 				//
-				Registry.application.showContent({
+				application.showContent({
 					nav1: 'home',
 					nav2: 'results', 
 
@@ -370,12 +357,10 @@ define([
 
 							// show assessments results view
 							//
-							view.content.show(
-								new DeleteAssessmentsResultsView({
-									data: data,
-									model: view.model,
-								})
-							);
+							view.showChildView('content', new DeleteAssessmentsResultsView({
+								data: data,
+								model: view.model,
+							}));
 						});
 					}
 				});
@@ -389,16 +374,14 @@ define([
 		showAssessmentRunStatus: function(executionRecordUuid, queryString) {
 			var self = this;
 			require([
-				'registry',
 				'models/projects/project',
 				'models/assessments/execution-record',
 				'views/results/assessment-runs/status/assessment-run-status-view',
-				'views/dialogs/error-view'
-			], function (Registry, Project, ExecutionRecord, AssessmentRunStatusView, ErrorView) {
+			], function (Project, ExecutionRecord, AssessmentRunStatusView) {
 
 				// show content view
 				//
-				Registry.application.showContent({
+				application.showContent({
 					nav1: 'home',
 					nav2: 'results', 
 
@@ -433,37 +416,31 @@ define([
 
 										// show assessment run view
 										//
-										view.content.show(
-											new AssessmentRunStatusView({
-												model: executionRecord,
-												project: project,
-												queryString: queryString
-											})
-										);
+										view.showChildView('content', new AssessmentRunStatusView({
+											model: executionRecord,
+											project: project,
+											queryString: queryString
+										}));
 									},
 
 									error: function() {
 
-										// show error dialog
+										// show error message
 										//
-										Registry.application.modal.show(
-											new ErrorView({
-												message: "Could not fetch execution record's project."
-											})
-										);
+										application.error({
+											message: "Could not fetch execution record's project."
+										});
 									}
 								});
 							},
 
 							error: function() {
 
-								// show error dialog
+								// show error message
 								//
-								Registry.application.modal.show(
-									new ErrorView({
-										message: "Could not fetch execution record."
-									})
-								);
+								application.error({
+									message: "Could not fetch execution record."
+								});
 							}
 						});
 					}
@@ -477,12 +454,10 @@ define([
 
 		showAssessmentResults: function(assessmentResultUuid) {
 			require([
-				'registry',
 				'models/projects/project',
 				'models/assessments/assessment-results',
 				'views/results/assessment-results-view',
-				'views/dialogs/error-view'
-			], function (Registry, Project, AssessmentResults, AssessmentResultsView, ErrorView) {
+			], function (Project, AssessmentResults, AssessmentResultsView) {
 
 				// fetch assessment results
 				//
@@ -506,36 +481,30 @@ define([
 
 								// show assessment results view
 								//
-								Registry.application.showPage(
-									new AssessmentResultsView({
-										model: model,
-										project: project
-									})
-								);
+								application.showPage(new AssessmentResultsView({
+									model: model,
+									project: project
+								}));
 							},
 
 							error: function() {
 
-								// show error dialog
+								// show error message
 								//
-								Registry.application.modal.showPage(
-									new ErrorView({
-										message: "Could not fetch project."
-									})
-								);
+								application.showPage(new ErrorDialogView({
+									message: "Could not fetch project."
+								}));
 							}
 						});
 					},
 
 					error: function() {
 
-						// show error dialog
+						// show error message
 						//
-						Registry.application.modal.show(
-							new ErrorView({
-								message: "Could not fetch assessment results."
-							})
-						);
+						application.error({
+							message: "Could not fetch assessment results."
+						});
 					}
 				});
 			});
@@ -543,12 +512,10 @@ define([
 
 		showEditAssessmentResults: function(assessmentResultUuid) {
 			require([
-				'registry',
 				'models/projects/project',
 				'models/assessments/assessment-results',
 				'views/results/edit/edit-assessments-results-view',
-				'views/dialogs/error-view'
-			], function (Registry, Project, AssessmentResults, EditAssessmentResultsView, ErrorView) {
+			], function (Project, AssessmentResults, EditAssessmentResultsView) {
 
 				// fetch assessment results
 				//
@@ -572,36 +539,30 @@ define([
 
 								// show assessment results view
 								//
-								Registry.application.show(
-									new EditAssessmentResultsView({
-										model: model,
-										project: project
-									})
-								);
+								application.show(new EditAssessmentResultsView({
+									model: model,
+									project: project
+								}));
 							},
 
 							error: function() {
 
-								// show error dialog
+								// show error message
 								//
-								Registry.application.modal.show(
-									new ErrorView({
-										message: "Could not fetch project."
-									})
-								);
+								application.error({
+									message: "Could not fetch project."
+								});
 							}
 						});
 					},
 
 					error: function() {
 
-						// show error dialog
+						// show error message
 						//
-						Registry.application.modal.show(
-							new ErrorView({
-								message: "Could not fetch assessment results."
-							})
-						);
+						application.error({
+							message: "Could not fetch assessment results."
+						});
 					}
 				});
 			});	
@@ -609,13 +570,11 @@ define([
 
 		showSourceCode: function(filename, data, options) {
 			require([
-				'registry',
 				'models/packages/package-version',
 				'models/assessments/assessment-results',
 				'views/results/native-viewer/source-code-view',
-				'views/dialogs/error-view',
 				'views/error-page-view'
-			], function (Registry, PackageVersion, AssessmentResults, SourceCodeView, ErrorView, ErrorPageView) {
+			], function (PackageVersion, AssessmentResults, SourceCodeView, ErrorPageView) {
 				var packageVersion = new PackageVersion({
 					package_version_uuid: data.results.AnalyzerReport.package.package_version_uuid
 				});
@@ -631,41 +590,36 @@ define([
 
 							// show source code and results
 							//
-							Registry.application.showMain(
-								new SourceCodeView({
-									filename: filename,
-									source: source,
-									data: data,
-									projectUuid: options.projectUuid,
-									viewerUuid: options.viewerUuid,
-									bugIndex: options.bugIndex,
-									bugInstance: options.bugInstance,
-									bugLocation: options.bugLocation,
-									bugInstances: AssessmentResults.getBugInstancesByFile(options.bugInstances, 'pkg1/' + filename)
-								}),{
-									nav2: 'results',
-									full: true
-								}
-							);
+							application.showMain(new SourceCodeView({
+								filename: filename,
+								source: source,
+								data: data,
+								projectUuid: options.projectUuid,
+								viewerUuid: options.viewerUuid,
+								bugIndex: options.bugIndex,
+								bugInstance: options.bugInstance,
+								bugLocation: options.bugLocation,
+								bugInstances: AssessmentResults.getBugInstancesByFile(options.bugInstances, 'pkg1/' + filename)
+							}),{
+								nav2: 'results',
+								full: true
+							});
 						} else {
-							Registry.application.showMain(
-								new ErrorPageView({
-									title: "404 - File not found",
-									message: "The file " + filename + " was not found in the original source code."
-								})
-							);
+							application.showMain(new ErrorPageView({
+								title: "404 - File not found",
+								message: "The file '" + filename + "'' was not found in the original source code."
+							}));
 						}
 					},
 
 					error: function() {
 
-						// show error dialog
+						// show notify message
 						//
-						Registry.application.modal.show(
-							new ErrorView({
-								message: "Could not fetch package source code."
-							})
-						);
+						application.showMain(new ErrorPageView({
+							title: "404 - File not found",
+							message: "The file '" + filename + "'' was not found in the original source code."
+						}));
 					}
 				});
 			});
@@ -678,10 +632,8 @@ define([
 		fetchNativeResultsData: function(assessmentResultUuid, projectUuid, options) {
 			var self = this;
 			require([
-				'registry',
 				'collections/viewers/viewers',
-				'views/dialogs/error-view'
-			], function (Registry, Viewers, ErrorView) {
+			], function (Viewers) {
 
 				// fetch viewers
 				//
@@ -703,27 +655,100 @@ define([
 							}));
 						} else {
 
-							// show error dialog
+							// show error message
 							//
-							Registry.application.modal.show(
-								new ErrorView({
-									message: "Could not find native viewer."
-								})
-							);
+							application.error({
+								message: "Could not find native viewer."
+							});
 						}
 					},
 
 					error: function() {
 
-						// show error dialog
+						// show error message
 						//
-						Registry.application.modal.show(
-							new ErrorView({
-								message: "Could not fetch project viewers."
-							})
-						);
+						application.error({
+							message: "Could not fetch project viewers."
+						});
 					}
 				});
+			});
+		},
+
+		getInstanceStatus: function(results, viewerInstanceUuid, options) {
+			var self = this;
+			results.fetchInstanceStatus(viewerInstanceUuid, {
+				timeout: 0,
+
+				// callbacks
+				//
+				success: function(data) {
+					switch (data.results_status) {
+						case 'SUCCESS':
+
+							// found results
+							//
+							options.success(results, data);
+							break;
+
+						case 'LOADING':
+
+							// redraw if status changes
+							//
+							if (data.results_viewer_status != self.lastStatus) {
+								self.showProgress({
+									title: 'Preparing Results',
+									status: data.results_viewer_status
+								});
+								self.lastStatus = data.results_viewer_status;
+							}
+
+							// re-fetch without launching the viewer
+							//
+							self.timeout = setTimeout(function() {
+								self.getInstanceStatus(results, data.viewer_instance, options);
+							}, refreshInterval);
+							break;
+
+						case 'CLOSED':
+
+							// report viewer closed
+							//
+							self.showProgress({
+								title: 'Viewer Closed',
+								status: data.results_viewer_status
+							});
+							break;
+
+						case 'TIMEOUT':
+
+							// report viewer launch timeout
+							//
+							self.showProgress({
+								title: 'Viewer Launch Timeout',
+								status: data.results_viewer_status
+							});
+							break;
+
+						default:
+
+							// display results status error message
+							//
+							self.showProgress({
+								title: 'Error Viewing Results',
+								status: data.results_viewer_status
+							});
+					}
+				},
+
+				error: function() {
+
+					// show error message
+					//
+					application.error({
+						message: "Could not fetch assessment results content."
+					});
+				}
 			});
 		},
 
@@ -732,18 +757,15 @@ define([
 			require([
 				'jquery',
 				'underscore',
-				'text!templates/viewers/progress.tpl',
-				'registry',
 				'models/assessments/assessment-results',
-				'views/dialogs/notify-view'
-			], function ($, _, Template, Registry, AssessmentResults, NotifyView) {
+			], function ($, _, AssessmentResults) {
 
 				// get assessment results
 				//
 				var results = new AssessmentResults({
 					assessment_result_uuid: assessmentResultUuid
 				});
-				var lastStatus = '';
+				self.lastStatus = '';
 
 				// call stored procedure
 				//
@@ -787,18 +809,18 @@ define([
 
 									// don't redraw if same status
 									//
-									if (data.results_viewer_status != lastStatus) {
+									if (data.results_viewer_status != self.lastStatus) {
 										self.showProgress({
 											title: 'Preparing Results',
 											status: data.results_viewer_status
 										});
-										lastStatus = data.results_viewer_status;
+										self.lastStatus = data.results_viewer_status;
 									}
 
 									// re-fetch without launching the viewer
 									//
-									setTimeout(function() {
-										getInstanceStatus(data.viewer_instance);
+									self.timeout = setTimeout(function() {
+										self.getInstanceStatus(results, data.viewer_instance, options);
 									}, refreshInterval);
 									break;
 
@@ -813,22 +835,18 @@ define([
 
 									// display try again message
 									//
-									Registry.application.modal.show(
-										new NotifyView({
-											message: "Can not launch viewer at this time.  Please wait and try again soon."
-										})
-									);
+									application.notify({
+										message: "Can not launch viewer at this time.  Please wait and try again soon."
+									});
 									break;
 
 								case 'NOLAUNCH':
 
 									// display viewer error message
 									//
-									Registry.application.modal.show(
-										new NotifyView({
-											message: "Can not launch viewer.  Viewer has stopped. "
-										})
-									);
+									application.notify({
+										message: "Can not launch viewer.  Viewer has stopped. "
+									});
 									break;
 
 								default:
@@ -867,89 +885,12 @@ define([
 										//
 										self.showProgress({
 											title: 'Preparing Results',
-											status: 'Results can not be shown until the tool policy is accepted.'
+											status: 'Results can not be shown until the tool policy is accepted.',
+											force: true
 										});
 									}
 								});
 							});
-						}
-					});
-				};
-
-				var getInstanceStatus = function(viewerInstanceUuid) {
-					results.fetchInstanceStatus(viewerInstanceUuid, {
-						timeout: 0,
-
-						// callbacks
-						//
-						success: function(data) {
-							switch (data.results_status) {
-								case 'SUCCESS':
-
-									// found results
-									//
-									options.success(results, data);
-									break;
-
-								case 'LOADING':
-
-									// redraw if status changes
-									//
-									if (data.results_viewer_status != lastStatus) {
-										self.showProgress({
-											title: 'Preparing Results',
-											status: data.results_viewer_status
-										});
-										lastStatus = data.results_viewer_status;
-									}
-
-									// re-fetch without launching the viewer
-									//
-									setTimeout(function() {
-										getInstanceStatus(data.viewer_instance);
-									}, refreshInterval);
-									break;
-
-								case 'CLOSED':
-
-									// report viewer closed
-									//
-									self.showProgress({
-										title: 'Viewer Closed',
-										status: data.results_viewer_status
-									});
-									break;
-
-								case 'TIMEOUT':
-
-									// report viewer launch timeout
-									//
-									self.showProgress({
-										title: 'Viewer Launch Timeout',
-										status: data.results_viewer_status
-									});
-									break;
-
-								default:
-
-									// display results status error message
-									//
-									self.showProgress({
-										title: 'Error Viewing Results',
-										status: data.results_viewer_status
-									});
-							}
-						},
-
-						error: function() {
-
-							// show error dialog
-							//
-							Registry.application.modal.show(
-								new ErrorView({
-									message: "Could not fetch assessment results content."
-								})
-							);
 						}
 					});
 				};

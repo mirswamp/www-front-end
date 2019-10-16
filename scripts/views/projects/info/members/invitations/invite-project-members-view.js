@@ -18,26 +18,24 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
 	'text!templates/projects/info/members/invitations/invite-project-members.tpl',
-	'registry',
 	'models/projects/project-invitation',
 	'collections/projects/project-invitations',
-	'views/dialogs/notify-view',
-	'views/dialogs/error-view',
+	'views/base-view',
 	'views/projects/info/members/invitations/project-invitations-list/project-invitations-list-view',
 	'views/projects/info/members/invitations/new-project-invitations-list/new-project-invitations-list-view',
-], function($, _, Backbone, Marionette, Template, Registry, ProjectInvitation, ProjectInvitations, NotifyView, ErrorView, ProjectInvitationsListView, NewProjectInvitationsListView) {
-	return Backbone.Marionette.LayoutView.extend({
+], function($, _, Template, ProjectInvitation, ProjectInvitations, BaseView, ProjectInvitationsListView, NewProjectInvitationsListView) {
+	return BaseView.extend({
 
 		//
 		// attributes
 		//
 
+		template: _.template(Template),
+
 		regions: {
-			projectInvitationsList: '#project-invitations-list',
-			newProjectInvitationsList: '#new-project-invitations-list'
+			list: '#project-invitations-list',
+			new_list: '#new-project-invitations-list'
 		},
 
 		events: {
@@ -48,7 +46,7 @@ define([
 		},
 
 		//
-		// methods
+		// constructor
 		//
 
 		initialize: function() {
@@ -69,12 +67,16 @@ define([
 			}, this);
 		},
 
+		//
+		// methods
+		//
+
 		send: function() {
 			var self = this;
 
 			// check form validation
 			//
-			if (this.newProjectInvitationsList.currentView.isValid()) {
+			if (this.getChildView('new_list').isValid()) {
 				if (this.collection.length > 0) {
 					this.collection.send({
 
@@ -86,14 +88,12 @@ define([
 							//
 							self.fetchAndShowProjectInvitations();
 
-							// show success notification dialog
+							// show success notification message
 							//
-							Registry.application.modal.show(
-								new NotifyView({
-									title: "Project Invitations Sent",
-									message: "Your invitations to project " + self.model.get('full_name') + " have been successfully sent to all recipients."
-								})
-							);
+							application.notify({
+								title: "Project Invitations Sent",
+								message: "Your invitations to project " + self.model.get('full_name') + " have been successfully sent to all recipients."
+							});
 						},
 
 						error: function(response) {
@@ -123,13 +123,11 @@ define([
 								message += " because " + errorMessage;
 							}
 
-							// show notification dialog
+							// show notification
 							//
-							Registry.application.modal.show(
-								new NotifyView({
-									message: message
-								})
-							);
+							application.notify({
+								message: message
+							});
 						}
 					});
 				}
@@ -156,13 +154,11 @@ define([
 
 				error: function() {
 
-					// show error dialog
+					// show error message
 					//
-					Registry.application.modal.show(
-						new ErrorView({
-							message: "Could not fetch project invitations."
-						})
-					);
+					application.error({
+						message: "Could not fetch project invitations."
+					});
 				}
 			});
 		},
@@ -171,10 +167,10 @@ define([
 		// rendering methods
 		//
 
-		template: function(data) {
-			return _.template(Template, _.extend(data, {
+		templateContext: function() {
+			return {
 				model: this.model
-			}));
+			};
 		},
 
 		onRender: function() {
@@ -198,23 +194,19 @@ define([
 		},
 
 		showProjectInvitations: function(collection) {
-			this.projectInvitationsList.show(
-				new ProjectInvitationsListView({
-					model: this.model,
-					collection: collection,
-					showDelete: true
-				})
-			);
+			this.showChildView('list', new ProjectInvitationsListView({
+				model: this.model,
+				collection: collection,
+				showDelete: true
+			}));
 		},
 
 		showNewProjectInvitations: function() {
-			this.newProjectInvitationsList.show(
-				new NewProjectInvitationsListView({
-					model: this.model,
-					collection: this.collection,
-					showDelete: true
-				})
-			);
+			this.showChildView('new_list', new NewProjectInvitationsListView({
+				model: this.model,
+				collection: this.collection,
+				showDelete: true
+			}));
 		},
 
 		fetchAndShowProjectInvitations: function() {
@@ -229,7 +221,7 @@ define([
 		//
 
 		onClickAdd: function() {
-			var user = Registry.application.session.user;
+			var user = application.session.user;
 
 			// add new project invitation
 			//
@@ -243,7 +235,7 @@ define([
 
 			// update view
 			//
-			this.newProjectInvitationsList.currentView.render();
+			this.getChildView('new_list').render();
 		},
 
 		onClickSend: function() {
@@ -252,13 +244,11 @@ define([
 
 		onClickSendDisabled: function() {
 
-			// show no invitatoins dialog
+			// show no invitations notification message
 			//
-			Registry.application.modal.show(
-				new NotifyView({
-					message: "There are no project invitations to send."
-				})
-			);
+			application.notify({
+				message: "There are no project invitations to send."
+			});
 		},
 
 		onClickCancel: function() {

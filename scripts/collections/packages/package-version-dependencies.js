@@ -18,12 +18,10 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
 	'config',
-	'registry',
 	'models/packages/package-version-dependency',
 	'collections/base-collection'
-], function($, _, Backbone, Config, Registry, PackageVersionDependency, BaseCollection) {
+], function($, _, Config, PackageVersionDependency, BaseCollection) {
 	return BaseCollection.extend({
 
 		//
@@ -53,9 +51,14 @@ define([
 		},
 
 		getByPlatformUuid: function(platformVersionUuid) {
-			var collection = this.clone();
+			
+			// create empty collection
+			//
+			var collection = new this.constructor([], {
+				model: this.model,
+				comparator: this.comparator
+			});
 
-			collection.reset();
 			this.each(function(item) {
 				if (item.get('platform_version_uuid') == platformVersionUuid) {
 					collection.add(item);

@@ -1,11 +1,11 @@
 /******************************************************************************\ 
 |                                                                              |
-|                    package-version-source-profile-form-view.js               |
+|                 package-version-source-profile-form-view.js                  |
 |                                                                              |
 |******************************************************************************|
 |                                                                              |
-|        This defines the view for showing a package version's source          |
-|        information.                                                          |
+|        This defines a form for entering a package version's source           |
+|        profile info.                                                         |
 |                                                                              |
 |        Author(s): Abe Megahed                                                |
 |                                                                              |
@@ -19,22 +19,18 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
-	'jquery.validate',
-	'bootstrap/tooltip',
-	'bootstrap/popover',
 	'text!templates/packages/info/versions/info/source/source-profile/package-version-source-profile-form.tpl',
-	'registry',
 	'utilities/scripting/file-utils',
 	'models/packages/package',
-	'views/dialogs/error-view',
-], function($, _, Backbone, Marionette, Validate, Tooltip, Popover, Template, Registry, FileUtils, Package, ErrorView, PackageVersionGemInfoView) {
-	return Backbone.Marionette.LayoutView.extend({
+	'views/forms/form-view',
+], function($, _, Template, FileUtils, Package, FormView, PackageVersionGemInfoView) {
+	return FormView.extend({
 
 		//
 		// attributes
 		//
+
+		template: _.template(Template),
 
 		events: {
 			'click #select-package-path': 'onClickSelectPackagePath',
@@ -59,16 +55,16 @@ define([
 		// rendering methods
 		//
 
-		template: function(data) {
-			return _.template(Template, _.extend(data, {
+		templateContext: function() {
+			return {
 				model: this.model,
 				package: this.options.package
-			}));
+			};
 		},
 
 		onRender: function() {
 			var self = this;
-			
+
 			// set default package path
 			//
 			if (!this.model.has('source_path')) {
@@ -91,15 +87,9 @@ define([
 				}
 			}
 
-			// display popovers on hover
+			// call superclass method
 			//
-			this.$el.find('[data-toggle="popover"]').popover({
-				trigger: 'hover'
-			});
-
-			// validate the form
-			//
-			this.validator = this.validate();
+			FormView.prototype.onRender.call(this);
 		},
 
 		//
@@ -128,13 +118,11 @@ define([
 
 				error: function() {
 
-					// show error dialog
+					// show error message
 					//
-					Registry.application.modal.show(
-						new ErrorView({
-							message: "Could not fetch directory tree for this package version."
-						})
-					);	
+					application.error({
+						message: "Could not fetch directory tree for this package version."
+					});
 				}
 			});
 		},
@@ -170,13 +158,11 @@ define([
 
 				error: function() {
 
-					// show error dialog
+					// show error message
 					//
-					Registry.application.modal.show(
-						new ErrorView({
-							message: "Could not fetch language for this package version."
-						})
-					);	
+					application.error({
+						message: "Could not fetch language for this package version."
+					});
 				}
 			});
 		},
@@ -205,31 +191,16 @@ define([
 		},
 
 		//
-		// form validation methods
-		//
-
-		isValid: function() {
-			return this.validator.form();
-		},
-
-		validate: function() {
-			return this.$el.find('form').validate();
-		},
-
-		//
 		// form methods
 		//
 
-		update: function(packageVersion) {
-
-			// update package version
-			//
-			packageVersion.set({
+		getValues: function() {
+			return {
 				'source_path': this.getPackagePath(),
 				'language_version': this.getLanguageVersion()
-			});
+			};
 		},
-
+		
 		//
 		// event handling methods
 		//
@@ -246,33 +217,31 @@ define([
 		onClickSelectPackagePath: function(event) {
 			var self = this;
 			require([
-				'views/packages/info/versions/info/build/build-profile/dialogs/select-package-version-directory-view'
-			], function (SelectPackageVersionDirectoryView) {
+				'views/packages/info/versions/info/build/build-profile/dialogs/select-package-version-directory-dialog-view'
+			], function (SelectPackageVersionDirectoryDialogView) {
 
 				// show select package version directory dialog
 				//
-				Registry.application.modal.show(
-					new SelectPackageVersionDirectoryView({
-						model: self.model,
-						title: "Select Package Path",
-						selectedDirectoryName: self.getPackagePath(),
-						
-						// callbacks
-						//
-						accept: function(selectedDirectoryName) {
+				application.show(new SelectPackageVersionDirectoryDialogView({
+					model: self.model,
+					title: "Select Package Path",
+					selectedDirectoryName: self.getPackagePath(),
+					
+					// callbacks
+					//
+					accept: function(selectedDirectoryName) {
 
-							// set package path input
-							//
-							self.$el.find('#package-path').val(selectedDirectoryName);
-						
-							// perform callback
-							//
-							self.onChange();
-						}
-					}), {
-						size: 'large'
+						// set package path input
+						//
+						self.$el.find('#package-path').val(selectedDirectoryName);
+					
+						// perform callback
+						//
+						self.onChange();
 					}
-				);
+				}), {
+					size: 'large'
+				});
 			});
 		},
 
@@ -283,19 +252,17 @@ define([
 		onClickShowGemInfo: function(event) {
 			var self = this;
 			require([
-				'views/packages/info/versions/info/source/dialogs/package-version-gem-info-view'
-			], function (PackageVersionGemInfoView) {
+				'views/packages/info/versions/info/source/dialogs/package-version-gem-info-dialog-view'
+			], function (PackageVersionGemInfoDialogView) {
 
 				// show package version gem info dialog
 				//
-				Registry.application.modal.show(
-					new PackageVersionGemInfoView({
-						model: self.model,
-						packagePath: self.getPackagePath()
-					}), {
-						size: 'large'
-					}
-				);
+				application.show(new PackageVersionGemInfoDialogView({
+					model: self.model,
+					packagePath: self.getPackagePath()
+				}), {
+					size: 'large'
+				});
 			});
 		}
 	});

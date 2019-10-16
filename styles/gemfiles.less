@@ -18,7 +18,7 @@
 .gem-info {
 
 	.comment {
-		color: @mediumGrey;
+		color: @medium-grey;
 		font-style: italic;
 		&::before {
 			content: "#"
@@ -36,25 +36,17 @@
 	}
 
 	.symbol {
-		color: @darkGold;
+		color: @dark-gold;
 		display: inline;
 		&::before {
 			content: ":"
 		}
 
-		/*
-		background: @paleLightGold;
-		border-radius: 5px;
-		margin-top: .5em;
-		margin-bottom: .5em;
-		padding: 3px;
-		*/
-
 		.value {
-			color: @darkGreen;
+			color: @dark-green;
 			display: inline;
 			&::before {
-				color: @veryDarkGrey;
+				color: @very-dark-grey;
 				content: "=>";
 				margin-left: .25em;
 				margin-right: .25em;
@@ -81,7 +73,7 @@
 
 	.source {
 		display: table;
-		background: @veryVeryLightGrey;
+		background: @very-very-light-grey;
 		border-radius: 5px;
 		margin-top: .5em;
 		margin-bottom: .5em;
@@ -96,7 +88,7 @@
 
 	.ruby {
 		display: table;
-		background: @veryLightRed;
+		background: lighten(@light-red, 10%);
 		border-radius: 5px;
 		margin-top: .5em;
 		margin-bottom: .5em;
@@ -111,7 +103,7 @@
 
 	.gem {
 		display: table;
-		background: @veryLightGrey;
+		background: @very-light-grey;
 		border-radius: 5px;
 		margin-top: .5em;
 		margin-bottom: .5em;
@@ -126,7 +118,7 @@
 
 	.require {
 		display: inline;
-		background: @lightGrey;
+		background: @light-grey;
 		border-radius: 5px;
 		padding-left: 5px;
 		padding-right: 5px;
@@ -140,7 +132,7 @@
 
 	.group {
 		display: table;
-		background: @veryVeryLightGrey;
+		background: @very-very-light-grey;
 		border-radius: 5px;
 		margin-top: .5em;
 		margin-bottom: .5em;

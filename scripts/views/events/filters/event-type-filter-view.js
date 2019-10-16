@@ -18,22 +18,23 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
 	'bootstrap/collapse',
-	'modernizr',
 	'text!templates/events/filters/event-type-filter.tpl',
-	'utilities/browser/url-strings',
+	'views/base-view',
 	'views/widgets/selectors/named-selector-view',
-], function($, _, Backbone, Marionette, Collapse, Modernizr, Template, UrlStrings, NamedSelectorView) {
-	return Backbone.Marionette.LayoutView.extend({
+	'views/base-view',
+	'utilities/web/url-strings'
+], function($, _, Collapse, Template, BaseView, NamedSelectorView, UrlStrings) {
+	return BaseView.extend({
 
 		//
 		// attributes
 		//
 
+		template: _.template(Template),
+
 		regions: {
-			eventTypeSelector: '.event-type-selector',
+			selector: '.event-type-selector',
 		},
 
 		events: {
@@ -41,7 +42,7 @@ define([
 		},
 
 		//
-		// methods
+		// constructor
 		//
 
 		initialize: function() {
@@ -63,7 +64,7 @@ define([
 
 		getDescription: function() {
 			if (this.hasSelected()) {
-				return this.eventTypeSelector.currentView.getSelectedName().toLowerCase();
+				return this.getChildView('selector').getSelectedName().toLowerCase();
 			} else {
 				return "any type";			
 			}
@@ -81,10 +82,10 @@ define([
 
 		getData: function() {
 			if (this.hasSelected()) {
-				var selected = this.eventTypeSelector.currentView.getSelected();
+				var selected = this.getChildView('selector').getSelected();
 				return {
 					type: selected.get('value')
-				}
+				};
 			} else {
 				return {
 					type: undefined
@@ -100,7 +101,7 @@ define([
 			var queryString = '';
 
 			if (this.hasSelected()) {
-				queryString += 'type=' + urlEncode(this.eventTypeSelector.currentView.getSelected().get('value'));
+				queryString += 'type=' + urlEncode(this.getChildView('selector').getSelected().get('value'));
 			}
 
 			return queryString;
@@ -112,16 +113,12 @@ define([
 
 		reset: function(options) {
 			this.selected = undefined;
-			this.eventTypeSelector.currentView.setSelectedName("Any", options);
+			this.getChildView('selector').setSelectedName("Any", options);
 		},
 
 		//
 		// rendering methods
 		//
-
-		template: function(data) {
-			return _.template(Template, data);
-		},
 
 		onRender: function() {
 			var self = this;
@@ -142,19 +139,17 @@ define([
 
 			// show subviews
 			//
-			this.eventTypeSelector.show(
-				new NamedSelectorView({
-					collection: eventTypes,
-					defaultValue: 'Any',
-					initialValue: this.options.initialValue,
+			this.showChildView('selector', new NamedSelectorView({
+				collection: eventTypes,
+				defaultValue: 'Any',
+				initialValue: this.options.initialValue,
 
-					// callbacks
-					//
-					onChange: function() {
-						self.onChange();
-					}
-				})
-			);
+				// callbacks
+				//
+				onChange: function() {
+					self.onChange();
+				}
+			}));
 
 			// update reset button
 			//
@@ -193,7 +188,7 @@ define([
 
 			// update selected
 			//
-			this.selected = this.eventTypeSelector.currentView.getSelectedName();
+			this.selected = this.getChildView('selector').getSelectedName();
 
 			// update reset button
 			//

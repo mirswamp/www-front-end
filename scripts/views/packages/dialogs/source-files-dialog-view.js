@@ -4,8 +4,8 @@
 |                                                                              |
 |******************************************************************************|
 |                                                                              |
-|        This defines an notification dialog that is used to show a            |
-|        list of source files.                                                 |
+|        This defines a dialog box that is used to show a list of source       |
+|        files.                                                                |
 |                                                                              |
 |        Author(s): Abe Megahed                                                |
 |                                                                              |
@@ -19,29 +19,30 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
-	'text!templates/packages/dialogs/source-files-dialog.tpl'
-], function($, _, Backbone, Marionette, Template) {
-	return Backbone.Marionette.LayoutView.extend({
+	'text!templates/packages/dialogs/source-files-dialog.tpl',
+	'views/dialogs/dialog-view'
+], function($, _, Template, DialogView) {
+	return DialogView.extend({
 
 		//
 		// attributes
 		//
 
+		template: _.template(Template),
+
 		regions: {
-			buildScript: '#build-script'
+			build_script: '#build-script'
 		},
 
 		//
 		// rendering methods
 		//
 
-		template: function() {
-			return _.template(Template, {
+		templateContext: function() {
+			return {
 				title: 'Source Files for ' + this.options.package.get('name') + ' '  + this.model.get('version_string'),
 				source_files: this.model.get('source_files')
-			});
+			};
 		}
 	});
 });

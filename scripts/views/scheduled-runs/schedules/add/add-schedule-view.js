@@ -18,28 +18,26 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
 	'text!templates/scheduled-runs/schedules/add/add-schedule.tpl',
-	'registry',
 	'models/run-requests/run-request',
 	'models/run-requests/run-request-schedule',
 	'collections/run-requests/run-requests',
 	'collections/run-requests/run-request-schedules',
-	'views/dialogs/notify-view',
-	'views/dialogs/error-view',
+	'views/base-view',
 	'views/scheduled-runs/schedules/profile/schedule-profile-form-view',
-	'views/scheduled-runs/schedules/edit/editable-run-request-schedules-list/editable-run-request-schedules-list-view'
-], function($, _, Backbone, Marionette, Template, Registry, RunRequest, RunRequestSchedule, RunRequests, RunRequestSchedules, NotifyView, ErrorView, ScheduleProfileFormView, EditableRunRequestSchedulesListView) {
-	return Backbone.Marionette.LayoutView.extend({
+	'views/scheduled-runs/schedules/schedule/editable-run-request-schedule-list/editable-run-request-schedule-list-view'
+], function($, _, Template, RunRequest, RunRequestSchedule, RunRequests, RunRequestSchedules, BaseView, ScheduleProfileFormView, EditableRunRequestScheduleListView) {
+	return BaseView.extend({
 
 		//
 		// attributes
 		//
 
+		template: _.template(Template),
+
 		regions: {
-			scheduleProfileForm: '#schedule-profile-form',
-			scheduleItemsList: '#schedule-items-list'
+			form: '#schedule-profile-form',
+			list: '#schedule-items-list'
 		},
 
 		events: {
@@ -52,7 +50,7 @@ define([
 		},
 
 		//
-		// methods
+		// constructor
 		//
 
 		initialize: function() {
@@ -99,10 +97,10 @@ define([
 		// rendering methods
 		//
 
-		template: function(data) {
-			return _.template(Template, _.extend(data, {
+		templateContext: function() {
+			return {
 				project: this.options.project
-			}));
+			};
 		},
 
 		onRender: function() {
@@ -119,34 +117,28 @@ define([
 
 					// show schedule form
 					//
-					self.scheduleProfileForm.show(
-						new ScheduleProfileFormView({
-							model: self.model,
-							collection: runRequests
-						})
-					);
+					self.showChildView('form', new ScheduleProfileFormView({
+						model: self.model,
+						collection: runRequests
+					}));
 				},
 
 				error: function() {
 
-					// show error dialog
+					// show error message
 					//
-					Registry.application.modal.show(
-						new ErrorView({
-							message: "Could not fetch project's run requests."
-						})
-					);		
+					application.error({
+						message: "Could not fetch project's run requests."
+					});
 				}
 			});	
 
 			// show schedule items list
 			//
-			self.scheduleItemsList.show(
-				new EditableRunRequestSchedulesListView({
-					collection: this.collection,
-					showDelete: true
-				})
-			);
+			this.showChildView('list', new EditableRunRequestScheduleListView({
+				collection: this.collection,
+				showDelete: true
+			}));
 
 			// if empty list
 			//
@@ -182,18 +174,16 @@ define([
 
 			// update view
 			//
-			this.scheduleItemsList.currentView.render();
+			this.getChildView('list').render();
 		},
 
 		onClickSaveDisabled: function() {
 
-			// show notification dialog
+			// show notification
 			//
-			Registry.application.modal.show(
-				new NotifyView({
-					message: "You must add one or more run requests before you can save a schedule."
-				})
-			);			
+			application.notify({
+				message: "You must add one or more run requests before you can save a schedule."
+			});
 		},
 		
 		onClickSave: function() {
@@ -201,12 +191,12 @@ define([
 
 			// check validation
 			//
-			if (this.scheduleProfileForm.currentView.isValid() && 
-				this.scheduleItemsList.currentView.isValid()) {
+			if (this.getChildView('form').isValid() && 
+				this.getChildView('list').isValid()) {
 
 				// update model from form
 				//
-				this.scheduleProfileForm.currentView.update(this.model);
+				this.getChildView('form').applyTo(this.model);
 
 				// disable save button
 				//
@@ -243,24 +233,20 @@ define([
 
 								// show error view
 								//
-								Registry.application.modal.show(
-									new ErrorView({
-										message: "Could not save schedule items."
-									})
-								);						
+								application.error({
+									message: "Could not save schedule items."
+								});
 							}
-						})
+						});
 					},
 
 					error: function() {
 
 						// show error view
 						//
-						Registry.application.modal.show(
-							new ErrorView({
-								message: "Could not save this run request schedule."
-							})
-						);
+						application.error({
+							message: "Could not save this run request schedule."
+						});
 					}
 				});
 			}

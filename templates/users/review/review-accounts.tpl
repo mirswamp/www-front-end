@@ -15,6 +15,11 @@
 </div>
 
 <label>
+	<input type="checkbox" id="show-signed-in-accounts" <%- showSignedInAccounts ? 'checked="checked"' : '' %>>
+	Show signed in accounts
+</label>
+
+<label>
 	<input type="checkbox" id="show-disabled-accounts" <%- showDisabledAccounts ? 'checked="checked"' : '' %>>
 	Show disabled accounts
 </label>

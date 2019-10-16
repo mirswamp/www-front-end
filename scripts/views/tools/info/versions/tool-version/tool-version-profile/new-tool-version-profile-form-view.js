@@ -1,11 +1,11 @@
 /******************************************************************************\
 |                                                                              |
-|                       new-tool-version-profile-form-view.js                  |
+|                    new-tool-version-profile-form-view.js                     |
 |                                                                              |
 |******************************************************************************|
 |                                                                              |
-|        This defines an editable form view of a new tool versions's           |
-|        profile information.                                                  |
+|        This defines a form for entering a new tool versions's                |
+|        profile info.                                                         |
 |                                                                              |
 |        Author(s): Abe Megahed                                                |
 |                                                                              |
@@ -19,71 +19,69 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
-	'jquery.validate',
 	'text!templates/tools/info/versions/tool-version/tool-version-profile/new-tool-version-profile-form.tpl',
+	'views/forms/form-view',
 	'views/tools/info/versions/tool-version/tool-version-profile/tool-version-profile-form-view'
-], function($, _, Backbone, Marionette, Validate, Template, ToolVersionProfileFormView) {
-	return Backbone.Marionette.LayoutView.extend({
+], function($, _, Template, FormView, ToolVersionProfileFormView) {
+	return FormView.extend({
 
 		//
 		// attributes
 		//
 
+		template: _.template(Template),
+
 		regions: {
-			toolVersionProfileForm: '#tool-version-profile-form'
+			form: '#tool-version-profile-form'
+		},
+
+		//
+		// form attributes
+		//
+
+		rules: {
+			'description': {
+				required: true
+			}
 		},
 
 		//
 		// rendering methods
 		//
 
-		template: function(data) {
-			return _.template(Template, _.extend(data, {
+		templateContext: function() {
+			return {
 				model: this.model
-			}));
+			};
 		},
 
 		onRender: function() {
 
-			// show subview
+			// show child views
 			//
-			this.toolVersionProfileForm.show(
-				new ToolVersionProfileFormView({
-					model: this.model
-				})
-			);
+			this.showChildView('form', new ToolVersionProfileFormView({
+				model: this.model
+			}));
 
-			// validate the form
+			// call superclass method
 			//
-			this.validator = this.validate();
+			FormView.prototype.onRender.call(this);
 		},
 
 		//
 		// form validation methods
 		//
 
-		validate: function() {
-			return this.$el.find('form').validate({
-				rules: {
-					'description': {
-						required: true
-					}
-				}
-			});
-		},
-
 		isValid: function() {
-			return this.validator.form() && this.toolVersionProfileForm.currentView.isValid();
+			return this.validator.form() && this.getChildView('form').isValid();
 		},
 
 		//
 		// form methods
 		//
 
-		update: function(model) {
-			this.toolVersionProfileForm.currentView.update(model);
+		getValues: function() {
+			return this.getChildView('form').getValues();
 		}
 	});
 });

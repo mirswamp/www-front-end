@@ -14,11 +14,10 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
-	'text!templates/404.tpl'
-], function($, _, Backbone, Marionette, Template) {
-	return Backbone.Marionette.View.extend({
+	'text!templates/404.tpl',
+	'views/base-view'
+], function($, _, Template, BaseView) {
+	return BaseView.extend({
 
 		//
 		// attributes

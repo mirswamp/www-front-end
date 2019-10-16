@@ -1,11 +1,10 @@
 /******************************************************************************\
 |                                                                              |
-|                             user-profile-form-view.js                        |
+|                          user-profile-form-view.js                           |
 |                                                                              |
 |******************************************************************************|
 |                                                                              |
-|        This defines an editable form view of the user's profile              |
-|        information.                                                          |
+|        This defines a form for entering user's profile info.                 |
 |                                                                              |
 |        Author(s): Abe Megahed                                                |
 |                                                                              |
@@ -19,30 +18,57 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
-	'jquery.validate',
 	'bootstrap/collapse',
-	'bootstrap/tooltip',
-	'bootstrap/popover',
 	'bootstrap.select',
 	'text!templates/users/user-profile/user-profile-form.tpl',
-	'config',
-	'registry',
+	'views/forms/form-view',
 	'views/widgets/selectors/name-selector-view'
-], function($, _, Backbone, Marionette, Validate, Collapse, Tooltip, Popover, Select, Template, Config, Registry, NameSelectorView) {
-	return Backbone.Marionette.LayoutView.extend({
+], function($, _, Collapse, Select, Template, FormView, NameSelectorView) {
+	return FormView.extend({
 
 		//
 		// attributes
 		//
+
+		template: _.template(Template),
 
 		events: {
 			'blur #email': 'onBlurEmail'
 		},
 
 		//
-		// methods
+		// form attributes
+		//
+
+		rules: {
+			'confirm-email': {
+				required: true,
+				equalTo: '#email'
+			}
+		},
+
+		messages: {
+			'first-name': {
+				required: "Enter your given / first name"
+			},
+			'last-name': {
+				required: "Enter your family / last name"
+			},
+			'preferred-name': {
+				required: "Enter your preferred / nickname"
+			},
+			'email': {
+				required: "Enter a valid email address",
+				email: "This email address is not valid"
+			},
+			'confirm-email': {
+				required: "Re-enter your email address",
+				equalTo: "Retype the email address above"
+			}
+		},
+
+		//
+		// constructor
 		//
 
 		initialize: function() {
@@ -105,70 +131,19 @@ define([
 		// rendering methods
 		//
 
-		template: function(data) {
-			return _.template(Template, _.extend(data, {
+		templateContext: function() {
+			return {
 				model: this.model,
-				config: Registry.application.config,
-				showUserType: Registry.application.session.user.isAdmin()
-			}));
-		},
-
-		onRender: function() {
-
-			// display popovers on hover
-			//
-			this.$el.find('[data-toggle="popover"]').popover({
-				trigger: 'hover'
-			});
-
-			// validate the form
-			//
-			this.validator = this.validate();
-		},
-
-		//
-		// form validation methods
-		//
-
-		validate: function() {
-			return this.$el.find('form').validate({
-				rules: {
-					'confirm-email': {
-						required: true,
-						equalTo: '#email'
-					}
-				},
-				messages: {
-					'first-name': {
-						required: "Enter your given / first name"
-					},
-					'last-name': {
-						required: "Enter your family / last name"
-					},
-					'preferred-name': {
-						required: "Enter your preferred / nickname"
-					},
-					'email': {
-						required: "Enter a valid email address",
-						email: "This email address is not valid"
-					},
-					'confirm-email': {
-						required: "Re-enter your email address",
-						equalTo: "Retype the email address above"
-					}
-				}
-			});
-		},
-
-		isValid: function() {
-			return this.validator.form();
+				config: application.config,
+				showUserType: application.session.user.isAdmin()
+			};
 		},
 
 		//
 		// form methods
 		//
 
-		update: function(model) {
+		getValues: function() {
 
 			// get values from form
 			//
@@ -180,9 +155,9 @@ define([
 			var email = this.$el.find('#email').val();
 			var userType = this.$el.find('#user-type-selector').val();
 
-			// update model
+			// return form values
 			//
-			model.set({
+			return {
 				'first_name': firstName,
 				'last_name': lastName,
 				'preferred_name': preferredName,
@@ -190,7 +165,7 @@ define([
 				'user_type': userType != 'none' ? userType : undefined,
 				'username': username,
 				'email': email
-			});
+			};
 		},
 
 		onBlurEmail: function(event) {

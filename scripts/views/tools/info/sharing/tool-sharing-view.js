@@ -18,24 +18,21 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
 	'text!templates/tools/info/sharing/tool-sharing.tpl',
-	'registry',
 	'collections/projects/projects',
-	'views/dialogs/confirm-view',
-	'views/dialogs/notify-view',
-	'views/dialogs/error-view',
+	'views/base-view',
 	'views/projects/select-list/select-projects-list-view'
-], function($, _, Backbone, Marionette, Template, Registry, Projects, ConfirmView, NotifyView, ErrorView, SelectProjectsListView) {
-	return Backbone.Marionette.LayoutView.extend({
+], function($, _, Template, Projects, BaseView, SelectProjectsListView) {
+	return BaseView.extend({
 
 		//
 		// attributes
 		//
 
+		template: _.template(Template),
+		
 		regions: {
-			selectProjectsList: '#select-projects-list'
+			list: '#select-projects-list'
 		},
 
 		events: {
@@ -46,12 +43,16 @@ define([
 		},
 
 		//
-		// methods
+		// constructor
 		//
 
 		initialize: function() {
-			this.collection = new Projects()
+			this.collection = new Projects();
 		},
+
+		//
+		// querying methods
+		//
 
 		getSharingStatus: function() {
 			return this.$el.find('input:radio[name=sharing]:checked').val();
@@ -61,17 +62,12 @@ define([
 		// rendering methods
 		//
 
-
-		template: function(data) {
-			return _.template(Template, data);
-		},
-
 		onRender: function() {
 			var self = this;
 
 			// show projects
 			//
-			this.collection.fetchByUser(Registry.application.session.user, {
+			this.collection.fetchByUser(application.session.user, {
 
 				// callbacks
 				//
@@ -79,12 +75,10 @@ define([
 
 					// display approved projects list
 					//
-					self.selectProjectsList.show(
-						new SelectProjectsListView({
-							collection: self.collection.getNonTrialProjects(),
-							enabled: self.getSharingStatus() === 'protected'
-						})
-					);
+					self.showChildView('list', new SelectProjectsListView({
+						collection: self.collection.getNonTrialProjects(),
+						enabled: self.getSharingStatus() === 'protected'
+					}));
 
 					// fetch and select selected projects
 					//
@@ -93,31 +87,27 @@ define([
 						// callbacks
 						//
 						success: function(data) {
-							self.selectProjectsList.currentView.selectProjectsByUuids(data);
+							self.getChildView('list').selectProjectsByUuids(data);
 						},
 
 						error: function() {
 
-							// show error dialog
+							// show error message
 							//
-							Registry.application.modal.show(
-								new ErrorView({
-									message: "Could not fetch tool sharing."
-								})
-							);				
+							application.error({
+								message: "Could not fetch tool sharing."
+							});
 						}
 					});
 				},
 
 				error: function() {
 
-					// show error dialog
+					// show error message
 					//
-					Registry.application.modal.show(
-						new ErrorView({
-							message: "Could not fetch user's projects."
-						})
-					);
+					application.error({
+						message: "Could not fetch user's projects."
+					});
 				}
 			});
 		},
@@ -127,11 +117,11 @@ define([
 		//
 
 		onClickRadioSharing: function() {
-			this.selectProjectsList.currentView.setEnabled(
+			this.getChildView('list').setEnabled(
 				this.getSharingStatus() === 'protected'
 			);
-			if (!this.selectProjectsList.currentView.isEnabled()) {
-				this.selectProjectsList.currentView.deselectAll();
+			if (!this.getChildView('list').isEnabled()) {
+				this.getChildView('list').deselectAll();
 			}
 
 			// enable save button
@@ -151,31 +141,29 @@ define([
 
 			if (this.getSharingStatus() === 'public') {
 
-				// show confirm changes dialog
+				// show confirmation
 				//
-				Registry.application.modal.show(
-					new ConfirmView({
-						title: "Make Tool Public?",
-						message: "By making this tool public every member of the SWAMP community will be able to access it. Do you wish to continue?",
-						
-						// callbacks
+				application.confirm({
+					title: "Make Tool Public?",
+					message: "By making this tool public every member of the SWAMP community will be able to access it. Do you wish to continue?",
+					
+					// callbacks
+					//
+					accept: function() {
+
+						// disable save button
 						//
-						accept: function() {
+						self.$el.find('#save').prop('disabled', true);
 
-							// disable save button
-							//
-							self.$el.find('#save').prop('disabled', true);
+						// save sharing info
+						//
+						self.updateSharingStatus.call(self); 
+					},
 
-							// save sharing info
-							//
-							self.updateSharingStatus.call(self); 
-						},
-
-						reject: function() { 
-							self.onClickCancel.call(self); 
-						}
-					})
-				);
+					reject: function() { 
+						self.onClickCancel.call(self); 
+					}
+				});
 			} else {
 
 				// disable save button
@@ -204,54 +192,48 @@ define([
 				// callbacks
 				//
 				success: function() {
-					self.model.saveSharedProjects(self.selectProjectsList.currentView.getSelected(), {
+					self.model.saveSharedProjects(self.getChildView('list').getSelected(), {
 						
 						// callbacks
 						//
 						success: function() {
 
-							// show success notification dialog
+							// show success notify message
 							//
-							Registry.application.modal.show(
-								new NotifyView({
-									message: "Your changes to tool sharing been saved.",
+							application.notify({
+								message: "Your changes to tool sharing been saved.",
 
-									// callbacks
+								// callbacks
+								//
+								accept: function() {
+
+									// go to tool view
 									//
-									accept: function() {
-
-										// go to tool view
-										//
-										Backbone.history.navigate('#tools/' + self.model.get('tool_uuid'), {
-											trigger: true
-										});
-									}
-								})
-							);
+									Backbone.history.navigate('#tools/' + self.model.get('tool_uuid'), {
+										trigger: true
+									});
+								}
+							});
 						},
 
 						error: function() {
 
-							// show error dialog
+							// show error message
 							//
-							Registry.application.modal.show(
-								new ErrorView({
-									message: "Could not save tool's project sharing."
-								})
-							);
+							application.error({
+								message: "Could not save tool's project sharing."
+							});
 						}
 					});
 				},
 
 				error: function() {
 
-					// show error dialog
+					// show error message
 					//
-					Registry.application.modal.show(
-						new ErrorView({
-							message: "Could not save tool."
-						})
-					);
+					application.error({
+						message: "Could not save tool."
+					});
 				}
 			});
 		},

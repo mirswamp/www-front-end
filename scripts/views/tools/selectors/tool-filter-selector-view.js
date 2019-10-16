@@ -18,23 +18,19 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
 	'select2',
-	'text!templates/widgets/selectors/grouped-name-selector.tpl',
-	'registry',
 	'collections/tools/tools',
 	'collections/tools/tool-versions',
-	'views/dialogs/error-view',
 	'views/widgets/selectors/grouped-name-selector-view',
 	'views/widgets/selectors/version-filter-selector-view'
-], function($, _, Backbone, Select2, Template, Registry, Tools, ToolVersions, ErrorView, GroupedNameSelectorView, VersionFilterSelectorView) {
+], function($, _, Select2, Tools, ToolVersions, GroupedNameSelectorView, VersionFilterSelectorView) {
 	return GroupedNameSelectorView.extend({
 
 		//
 		// contructor
 		//
 
-		initialize: function(attributes, options) {
+		initialize: function(options) {
 
 			// call superclass method
 			//
@@ -77,78 +73,13 @@ define([
 						//
 						self.setSelectedName('Any', options);
 					}
-				})
+				});
 			} else {
 
 				// reset selection
 				//
 				this.setSelectedName('Any', options);
 			}
-		},
-
-		update: function(options) {
-			var self = this;
-
-			// fetch tools
-			//
-			this.fetchTools(function(publicTools, protectedTools) {
-
-				/*
-				// combine tools
-				//
-				if (publicTools && protectedTools) {
-					var tools = new Tools(publicTools.toArray().concat(protectedTools.toArray()));
-				} else if (publicTools) {
-					var tools = publicTools;
-				} else {
-					var tools = protectedTools;
-				}
-
-				// remove duplicate names
-				//
-				tools.removeDuplicateNames();
-				publicTools = tools.getPublic();
-				protectedTools = tools.getProtected();
-				*/
-
-				// sort by name
-				//
-				if (publicTools) {
-					publicTools.sort();
-				}
-				if (protectedTools) {
-					protectedTools.sort();
-				}
-
-				// create package lists
-				//
-				self.collection = new Backbone.Collection([{
-					'name': 'Any',
-					'model': null
-				}, {
-					'name': 'Protected Tools',
-					'group': protectedTools || new Tools()
-				}, {
-					'name': 'Public Tools',
-					'group': publicTools || new Tools()
-				}]);
-				
-				// render
-				//
-				self.render();
-				
-				// perform callback
-				//
-				if (options && options.done) {
-					options.done();
-				}
-				
-				// show version filter selector
-				//
-				if (self.options.versionFilterSelector) {
-					self.showVersionFilter(self.options.versionFilterSelector);
-				}
-			});
 		},
 
 		//
@@ -181,13 +112,11 @@ define([
 
 							error: function() {
 
-								// show error dialog
+								// show error message
 								//
-								Registry.application.modal.show(
-									new ErrorView({
-										message: "Could not fetch protected tools."
-									})
-								);						
+								application.error({
+									message: "Could not fetch protected tools."
+								});
 							}
 						});
 					} else {
@@ -197,24 +126,52 @@ define([
 
 				error: function() {
 
-					// show error dialog
+					// show error message
 					//
-					Registry.application.modal.show(
-						new ErrorView({
-							message: "Could not fetch public tools."
-						})
-					);
+					application.error({
+						message: "Could not fetch public tools."
+					});
+				}
+			});
+		},
+
+		fetchToolVersions: function(tool, done) {
+			var self = this;
+			var collection = new ToolVersions([]);
+
+			// fetch tool versions
+			//
+			collection.fetchByTool(tool, {
+
+				// callbacks
+				//
+				success: function() {
+
+					// perform callback
+					//
+					if (done) {
+						done(collection);
+					}
+				},
+
+				error: function() {
+
+					// show error message
+					//
+					application.error({
+						message: "Could not fetch collection of tool versions."
+					});
 				}
 			});
 		},
 
 		//
-		// name querying methods
+		// querying methods
 		//
 
 		getSelectedName: function() {
 			if (this.hasSelected()) {
-				return this.getSelected().get('name')
+				return this.getSelected().get('name');
 			} else {
 				return "any tool";
 			}
@@ -224,15 +181,31 @@ define([
 			return (this.getSelected() !== null) && (this.getSelected() != undefined);
 		},
 
+		getEnabled: function(tools) {
+
+			// filter by package type
+			//
+			if (this.options.packageSelected) {
+				var packageType = this.options.packageSelected.get('package_type');
+				tools = tools.getByPackageType(packageType);
+			}
+
+			// filter by platform
+			//
+			if (this.options.platformSelected) {
+				tools = tools.getByPlatform(this.options.platformSelected);
+			}
+
+			return tools;
+		},
+
 		//
 		// version querying methods
 		//
 
 		hasSelectedVersion: function() {
-			if (this.options.versionFilterSelector && this.options.versionFilterSelector.currentView) {
-				return this.options.versionFilterSelector.currentView.hasSelected();
-			} else if (this.options.initialVersion) {
-				return true;
+			if (this.versionFilterSelector) {
+				return this.versionFilterSelector.hasSelected();
 			} else {
 				return false;
 			}
@@ -243,10 +216,14 @@ define([
 		},
 
 		getSelectedVersionString: function() {
-			if (this.options.versionFilterSelector && this.options.versionFilterSelector.currentView) {
-				return this.options.versionFilterSelector.currentView.getSelectedVersionString();
+			if (this.versionFilterSelector) {
+				return this.versionFilterSelector.getSelectedVersionString();
 			} else if (this.options.initialVersion) {
-				return VersionFilterSelectorView.getVersionString(this.options.initialVersion);
+				if (typeof this.options.initialVersion == 'string') {
+					return this.options.initialVersion;
+				} else {
+					return this.options.initialVersion.get('version_string');
+				}
 			}
 		},
 
@@ -259,12 +236,15 @@ define([
 
 				// return name and version
 				//
-				var description =  this.getSelectedName();
-				if (this.hasSelectedVersion()) {
-					if (description) {
-						description += " ";
+				var description = this.getSelectedName();
+				if (this.hasSelectedVersionString()) {
+					var versionString = this.getSelectedVersionString();
+					if (versionString && versionString != 'any version') {
+						if (description) {
+							description += " ";
+						}
+						description += versionString.replace('version', '').trim();
 					}
-					description += this.getSelectedVersionString();
 				}
 				return description;
 			} else {
@@ -276,174 +256,152 @@ define([
 		},
 
 		//
-		// tool enabling / disabling methods
-		//
-
-		getEnabled: function() {
-			var enabled = [];
-
-			if (this.options.packageSelected) {
-				var packageType = this.options.packageSelected.get('package_type');
-
-				// generate list of enabled tool names
-				//
-				var disabled = [];
-				if (packageType != null) {
-					this.collection.each( function(item, index, list) {
-						if (group = item.get('group')) {
-							group.each(function(tool) {
-								if (tool.supports(packageType)) {
-									enabled.push(tool);
-								}
-							});
-						}
-					});
-				}
-			} else {
-
-				// return list of all tools
-				//
-				this.collection.each(function(item, index, list) {
-					if (group = item.get('group')) {
-						group.each(function(tool) {
-							enabled.push(tool);
-						});
-					}
-				});
-			}
-
-			return enabled;
-		},
-
-		getDisabled: function() {
-			var disabled = [];
-
-			if (typeof(this.options.packageSelected) != 'undefined') {
-				var packageType = this.options.packageSelected.get('package_type');
-
-				// generate list of disabled tools
-				//
-				if (packageType != null) {
-					this.collection.each( function(item, index, list) {
-						if (group = item.get('group')) {
-							group.each(function(tool) {
-								if (!tool.supports(packageType)) {
-									disabled.push(tool);
-								}
-							});
-						}
-					});
-				}
-			}
-
-			return disabled;
-		},
-
-		getToolNames: function(tools) {
-			var names = [];
-			for (var i = 0; i < tools.length; i++) {
-				names.push(tools[i].get('name').toLowerCase());
-			}
-			return names;
-		},
-
-		//
 		// rendering methods
 		//
 
-		template: function(data) {
-			this.enabledItems = this.getEnabled();
-
-			// add enabled tools
-			//
-			if (this.enabledItems) {
-				var enabledToolNames = this.getToolNames(this.enabledItems);
-				for (var i = 0; i < data.items.length; i++) {
-					if (data.items[i].group) {
-						var collection = new Backbone.Collection();
-						var group = data.items[i].group;
-						for (var j = 0; j < group.length; j++) {
-							var item = data.items[i].group.at(j);
-							if (_.contains(enabledToolNames, item.get('name').toLowerCase())) {
-								collection.add(item);
-							}					
-						}
-						data.items[i].group = collection;
-					}
-
-				}
-			}
-
-			return _.template(Template, _.extend(data, {
+		templateContext: function() {
+			return {
 				selected: this.options.initialValue
-			}));
+			};
 		},
 
-		showVersionFilter: function(versionFilterSelector, done) {
+		update: function(options) {
 			var self = this;
-			var selectedTool = this.getSelected();
 
-			if (selectedTool) {
-				var collection = new ToolVersions([]);
+			// fetch tools
+			//
+			this.fetchTools(function(publicTools, protectedTools) {
+				
+				if (publicTools) {
 
-				// fetch tool versions
-				//
-				collection.fetchByTool(selectedTool, {
-
-					// callbacks
+					// sort by name
 					//
-					success: function() {
+					publicTools.sort();
 
-						// show version filter selector view
-						//
-						versionFilterSelector.show(
-							new VersionFilterSelectorView({
-								collection: collection,
-								initialValue: self.options.initialVersion,
-								defaultOptions: self.options.versionDefaultOptions,
-								selectedOptions: self.options.versionSelectedOptions,
+					// filter tools
+					//
+					publicTools = self.getEnabled(publicTools);
+				}
 
-								// callbacks
-								//
-								onChange: self.options.onChange
-							})
-						);
+				if (protectedTools) {
+
+					// sort by name
+					//
+					protectedTools.sort();
+
+					// filter tools
+					//
+					protectedTools = self.getEnabled(protectedTools);
+				}
+				
+				// set collection
+				//
+				self.collection = new Backbone.Collection([{
+					name: 'Any',
+					model: null
+				}, {
+					name: 'Protected Tools',
+					group: protectedTools || new Tools()
+				}, {
+					name: 'Public Tools',
+					group: publicTools || new Tools()
+				}]);
+				
+				// render
+				//
+				self.render();
+				
+				// perform callback
+				//
+				if (options && options.done) {
+					options.done();
+				}
+				
+				// show version filter selector
+				//
+				if (self.options.versionFilterSelector) {
+					self.updateVersionFilterSelector();
+				}
+			});
+		},
+
+		//
+		// version rendering methods
+		//
+
+		showVersionFilterSelector: function(collection) {
+			var self = this;
+
+			// create new version filter selector
+			//
+			this.versionFilterSelector = new VersionFilterSelectorView({
+				collection: collection,
+				initialValue: this.options.initialVersion,
+				defaultOptions: this.options.versionDefaultOptions,
+				selectedOptions: this.options.versionSelectedOptions,
+				searchable: true,
+
+				// callbacks
+				//
+				onChange: function(changes) {
+
+					// perform callback
+					//
+					if (self.options && self.options.onChange) {
+						self.options.onChange({
+							'tool-version': changes.version
+						});
+					}
+				}
+			});
+
+			// show version filter selector
+			//
+			this.options.versionFilterSelector.show(self.versionFilterSelector);
+
+			// show version filter label
+			//
+			if (this.options.versionFilterLabel) {
+				this.options.versionFilterLabel.show();
+			}
+		},
+
+		hideVersionFilterSelector: function() {
+
+			// hide version filter selector view
+			//
+			this.options.versionFilterSelector.reset();
+
+			// hide version filter label
+			//
+			if (this.options.versionFilterLabel) {
+				this.options.versionFilterLabel.hide();
+			}
+		},
+
+		updateVersionFilterSelector: function(done) {
+			var self = this;
+			if (this.options.versionFilterSelector) {
+				if (this.selected) {
+					this.fetchToolVersions(this.selected, function(collection) {
+						self.showVersionFilterSelector(collection);
 
 						// perform callback
 						//
 						if (done) {
 							done();
 						}
-					},
+					});
+				} else {
+					this.hideVersionFilterSelector();
 
-					error: function() {
-
-						// show error dialog
-						//
-						Registry.application.modal.show(
-							new ErrorView({
-								message: "Could not fetch collection of tool versions."
-							})
-						);
+					// perform callback
+					//
+					if (done) {
+						done();
 					}
-				});
-
-				// show version filter label
-				//
-				if (this.options.versionFilterLabel) {
-					this.options.versionFilterLabel.show();
 				}
 			} else {
-
-				// hide version filter selector view
-				//
-				versionFilterSelector.reset();
-
-				// hide version filter label
-				//
-				if (this.options.versionFilterLabel) {
-					this.options.versionFilterLabel.hide();
-				}
 
 				// perform callback
 				//
@@ -458,25 +416,25 @@ define([
 		//
 
 		onChange: function(options) {
+			var self = this;
 
 			// update selected
 			//
-			this.selected = this.enabledItems[this.getSelectedIndex() - 1];
+			this.selected = this.getItemByIndex(this.getSelectedIndex());
 			this.options.initialVersion = 'any';
 
-			// update version selector
+			// update version filter selector
 			//
-			if (this.options.versionFilterSelector) {
-				this.showVersionFilter(this.options.versionFilterSelector);
-			}
+			this.updateVersionFilterSelector(function() {
 
-			// perform callback
-			//
-			if (this.options && this.options.onChange && (!options || !options.silent)) {
-				this.options.onChange({
-					'tool': this.selected
-				});
-			}
+				// perform callback
+				//
+				if (self.options && self.options.onChange && (!options || !options.silent)) {
+					self.options.onChange({
+						'package': self.selected
+					});
+				}
+			});
 		}
 	});
 });

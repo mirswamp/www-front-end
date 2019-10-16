@@ -18,19 +18,15 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
 	'text!templates/events/user-personal-events/user-last-profile-update-event.tpl',
-	'views/events/list/events-list-item-view'
-], function($, _, Backbone, Marionette, Template, EventsListItemView) {
-	return EventsListItemView.extend({
+	'views/events/user-personal-events/user-personal-event-view'
+], function($, _, Template, UserPersonalEventView) {
+	return UserPersonalEventView.extend({
 
 		//
-		// methods
+		// attributes
 		//
 
-		getInfo: function(data) {
-			return _.template(Template, data);
-		}
+		template: _.template(Template)
 	});
 });

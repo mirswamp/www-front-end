@@ -31,13 +31,13 @@ String.prototype.startsWith = function(prefix) {
 	var from = 0;
 	var to = prefix.length;
 	return prefix == this.substring(from, to);
-}
+};
 
 String.prototype.endsWith = function(suffix) {
 	var from = this.length - suffix.length;
 	var to = this.length;
 	return suffix == this.substring(from, to);
-}
+};
 
 String.prototype.contains = function(content, caseSensitive) {
 
@@ -48,8 +48,10 @@ String.prototype.contains = function(content, caseSensitive) {
 	}
 
 	if (Array.isArray(content)) {
+		var string;
+
 		if (!caseSensitive) {
-			var string = this.toLowerCase();
+			string = this.toLowerCase();
 		}
 		for (var i = 0; i < content.length; i++) {
 			if (caseSensitive) {

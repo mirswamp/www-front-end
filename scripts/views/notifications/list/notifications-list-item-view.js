@@ -19,24 +19,22 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
 	'text!templates/notifications/list/notifications-list-item.tpl',
-	'registry',
 	'utilities/time/date-format',
 	'models/projects/project-invitation',
 	'models/admin/admin-invitation',
 	'models/permissions/user-permission',
+	'views/collections/tables/table-list-item-view',
 	'utilities/time/date-utils'
-], function($, _, Backbone, Marionette, Template, Registry, DateFormat, ProjectInvitation, AdminInvitation, UserPermission) {
-	return Backbone.Marionette.ItemView.extend({
+], function($, _, Template, DateFormat, ProjectInvitation, AdminInvitation, UserPermission, TableListItemView) {
+	return TableListItemView.extend({
 
 		//
 		// attributes
 		//
 
-		tagName: 'tr',
 		className: 'active',
+		template: _.template(Template),
 
 		events: {
 			'click': 'onClick'
@@ -60,13 +58,13 @@ define([
 		// rendering methods
 		//
 
-		template: function(data) {
-			return _.template(Template, _.extend(data, {
+		templateContext: function() {
+			return {
 				model: this.model,
 				type: this.getNotificationType(),
 				index: this.options.index + 1,
 				showNumbering: this.options.showNumbering
-			}));
+			};
 		},
 
 		//
@@ -75,15 +73,17 @@ define([
 
 		onClick: function() {
 
-			// dismiss dialog 
-			//
-			Registry.application.modal.hide();
-
 			// go to notification url
 			//
 			Backbone.history.navigate(this.model.getNotificationHash(), {
 				trigger: true
 			});
+
+			// perform callback
+			//
+			if (this.options.onClick) {
+				this.options.onClick();
+			}
 		}
 	});
 });

@@ -18,22 +18,21 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
 	'bootstrap/popover',
 	'text!templates/packages/info/details/new-package-details.tpl',
-	'registry',
-	'views/dialogs/notify-view',
+	'views/base-view',
 	'views/packages/info/details/package-profile/new-package-profile-form-view'
-], function($, _, Backbone, Marionette, Popover, Template, Registry, NotifyView, NewPackageProfileFormView) {
-	return Backbone.Marionette.LayoutView.extend({
+], function($, _, Popover, Template, BaseView, NewPackageProfileFormView) {
+	return BaseView.extend({
 
 		//
 		// attributes
 		//
 
+		template: _.template(Template),
+
 		regions: {
-			newPackageProfileForm: '#new-package-profile-form'
+			form: '#new-package-profile-form'
 		},
 
 		events: {
@@ -46,22 +45,20 @@ define([
 		// rendering methods
 		//
 
-		template: function(data) {
-			return _.template(Template, _.extend(data, {
+		templateContext: function() {
+			return {
 				model: this.model
-			}));
+			};
 		},
 
 		onRender: function() {
 
 			// display package profile form view
 			//
-			this.newPackageProfileForm.show(
-				new NewPackageProfileFormView({
-					model: this.model,
-					packageVersion: this.options.packageVersion
-				})
-			);
+			this.showChildView('form', new NewPackageProfileFormView({
+				model: this.model,
+				packageVersion: this.options.packageVersion
+			}));
 
 			// add popover
 			//
@@ -84,25 +81,26 @@ define([
 		//
 
 		upload: function(options) {
+			var data = this.getChildView('form').getChildView('form').$el[0];
 
 			// get data to upload
 			//
-			var data = new FormData(this.newPackageProfileForm.currentView.$el.find('form')[1]);
+			var formData = new FormData(data);
 
 			// append pertinent model data
 			//
-			data.append('user_uid', Registry.application.session.user.get('user_uid'));
+			formData.append('user_uid', application.session.user.get('user_uid'));
 			
 			// append external url data
 			//
-			if (this.newPackageProfileForm.currentView.useExternalUrl()) {
-				data.append('external_url', this.model.get('external_url'));
-				data.append('checkout_argument', this.options.packageVersion.get('checkout_argument'));
+			if (this.getChildView('form').useExternalUrl()) {
+				formData.append('external_url', this.model.get('external_url'));
+				formData.append('checkout_argument', this.options.packageVersion.get('checkout_argument'));
 			}
 
 			// upload
 			//
-			this.options.packageVersion.upload(data, options);
+			this.options.packageVersion.upload(formData, options);
 		},
 
 		//
@@ -110,6 +108,7 @@ define([
 		//
 
 		showProgressBar: function() {
+			var message;
 
 			// fadeTo instead of fadeOut to prevent display: none;
 			//
@@ -118,9 +117,9 @@ define([
 			this.$el.find('.progress').fadeTo(1000, 1.0);
 
 			if (this.model.has('external_url')) {
-				var message = "Cloning repository";
+				message = "Cloning repository";
 			} else {
-				var message = "Uploading";
+				message = "Uploading";
 			}
 			
 			this.$el.find('.bar-message').text(message);
@@ -153,11 +152,11 @@ define([
 
 			// check validation
 			//
-			if (this.newPackageProfileForm.currentView.isValid()) {
+			if (this.getChildView('form').isValid()) {
 
 				// update model
 				//
-				this.newPackageProfileForm.currentView.update(this.model, this.options.packageVersion);
+				this.getChildView('form').applyTo(this.model, this.options.packageVersion);
 
 				// upload model
 				//
@@ -198,12 +197,12 @@ define([
 
 					error: function(response) {
 
-						// show notify dialog view
+						// show notification
 						//
-						Registry.application.modal.show(new NotifyView({
+						application.notify({
 							title: 'Package Upload Error',
-							message: "Package upload failed.  Please make sure that the file size of your package is smaller than the maximum upload size (" + Registry.application.config['max_upload_size'] + ")."
-						}));
+							message: "Package upload failed.  Please make sure that the file size of your package is smaller than the maximum upload size (" + application.config['max_upload_size'] + ")."
+						});
 
 						self.resetProgressBar();
 					}

@@ -18,17 +18,17 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
 	'text!templates/admin/settings/system-admins/invitations/admin-invitations-list/admin-invitations-list.tpl',
-	'views/widgets/lists/sortable-table-list-view',
+	'views/collections/tables/sortable-table-list-view',
 	'views/admin/settings/system-admins/invitations/admin-invitations-list/admin-invitations-list-item-view'
-], function($, _, Backbone, Marionette, Template, SortableTableListView, AdminInvitationsListItemView) {
+], function($, _, Template, SortableTableListView, AdminInvitationsListItemView) {
 	return SortableTableListView.extend({
 
 		//
 		// attributes
 		//
+
+		template: _.template(Template),
 
 		childView: AdminInvitationsListItemView,
 
@@ -51,17 +51,17 @@ define([
 		// rendering methods
 		//
 
-		template: function(data) {
-			return _.template(Template, _.extend(data, {
+		templateContext: function() {
+			return {
 				collection: this.collection,
 				showDelete: this.options.showDelete
-			}));
+			};
 		},
 
 		childViewOptions: function() {
 			return {
 				showDelete: this.options.showDelete
-			}
+			};
 		}
 	});
 });

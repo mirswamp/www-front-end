@@ -1,11 +1,11 @@
 /******************************************************************************\
 |                                                                              |
-|                         android-source-package-form-view.js                  |
+|                      android-source-package-form-view.js                     |
 |                                                                              |
 |******************************************************************************|
 |                                                                              |
-|        This defines an editable form view of a package versions's            |
-|        language / type specific profile information.                         |
+|        This defines a form for entering a package versions's                 |
+|        language / type specific profile info.                                |
 |                                                                              |
 |        Author(s): Abe Megahed                                                |
 |                                                                              |
@@ -19,27 +19,21 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
-	'jquery.validate',
-	'bootstrap/tooltip',
-	'bootstrap/popover',
-	'config',
 	'text!templates/packages/info/versions/info/build/build-profile/package-type/android-source/android-source-package-form.tpl',
-	'registry',
 	'widgets/accordions',
 	'models/files/directory',
-	'views/dialogs/error-view',
 	'views/packages/info/versions/info/build/build-profile/package-type/package-type-form-view',
-	'views/packages/info/versions/info/build/build-profile/dialogs/select-package-version-file-view',
-	'views/packages/info/versions/info/build/build-profile/dialogs/select-package-version-directory-view'
-], function($, _, Backbone, Marionette, Validate, Tooltip, Popover, Config, Template, Registry, Accordions, Directory, ErrorView, PackageTypeFormView, SelectPackageVersionFileView, SelectPackageVersionDirectoryView) {
+	'views/packages/info/versions/info/build/build-profile/dialogs/select-package-version-file-dialog-view',
+	'views/packages/info/versions/info/build/build-profile/dialogs/select-package-version-directory-dialog-view'
+], function($, _, Template, Accordions, Directory, PackageTypeFormView, SelectPackageVersionFileDialogView, SelectPackageVersionDirectoryDialogView) {
 	return PackageTypeFormView.extend({
 
 		//
 		// attributes
 		//
 		
+		template: _.template(Template),
+
 		events: {
 			'blur input': 'onBlurInput',
 			'focus #build-system': 'onFocusBuildSystem',
@@ -78,13 +72,11 @@ define([
 
 				error: function() {
 
-					// show error dialog
+					// show error message
 					//
-					Registry.application.modal.show(
-						new ErrorView({
-							message: "Could not search package version for gradlew."
-						})
-					);
+					application.error({
+						message: "Could not search package version for gradlew."
+					});
 				}
 			});
 		},
@@ -201,10 +193,10 @@ define([
 		// rendering methods
 		//
 
-		template: function(data) {
-			return _.template(Template, _.extend(data, {
+		templateContext: function() {
+			return {
 				model: this.model
-			}));
+			};
 		},
 
 		onRender: function() {
@@ -224,12 +216,6 @@ define([
 				});
 			}
 
-			// display popovers on hover
-			//
-			this.$el.find('[data-toggle="popover"]').popover({
-				trigger: 'hover'
-			});
-
 			// change accordion icon
 			//
 			new Accordions(this.$el.find('.panel'));
@@ -238,9 +224,9 @@ define([
 			//
 			this.options.parent.checkBuildSystem();
 
-			// validate the form
+			// call superclass method
 			//
-			this.validator = this.validate();
+			PackageTypeFormView.prototype.onRender.call(this);
 		},
 
 		showAdvancedSettings: function() {
@@ -481,31 +467,29 @@ define([
 
 			// show select package version directory dialog
 			//
-			Registry.application.modal.show(
-				new SelectPackageVersionDirectoryView({
-					model: this.model,
-					title: "Select Configure Path",
-					selectedDirectoryName: sourcePath + configurePath,
-					
-					// callbacks
+			application.show(new SelectPackageVersionDirectoryDialogView({
+				model: this.model,
+				title: "Select Configure Path",
+				selectedDirectoryName: sourcePath + configurePath,
+				
+				// callbacks
+				//
+				accept: function(selectedDirectoryName) {
+
+					// make path relative to package path
 					//
-					accept: function(selectedDirectoryName) {
+					selectedDirectoryName = sourceDirectory.getRelativePathTo(selectedDirectoryName);
 
-						// make path relative to package path
-						//
-						selectedDirectoryName = sourceDirectory.getRelativePathTo(selectedDirectoryName);
-
-						// set configure path input
-						//
-						self.$el.find('#configure-path').val(selectedDirectoryName);
-						self.onChange();
-					}
-				}), {
-					size: 'large'
+					// set configure path input
+					//
+					self.$el.find('#configure-path').val(selectedDirectoryName);
+					self.onChange();
 				}
-			);
+			}), {
+				size: 'large'
+			});
 
-			// prevent event defaults
+			// prevent further handling of event
 			//
 			event.stopPropagation();
 			event.preventDefault();
@@ -527,31 +511,29 @@ define([
 
 			// show select package version directory dialog
 			//
-			Registry.application.modal.show(
-				new SelectPackageVersionDirectoryView({
-					model: this.model,
-					title: "Select Build Path",
-					selectedDirectoryName: sourceDirectory.getPathTo(buildPath),
-					
-					// callbacks
+			application.show(new SelectPackageVersionDirectoryView({
+				model: this.model,
+				title: "Select Build Path",
+				selectedDirectoryName: sourceDirectory.getPathTo(buildPath),
+				
+				// callbacks
+				//
+				accept: function(selectedDirectoryName) {
+
+					// make path relative to source directory
 					//
-					accept: function(selectedDirectoryName) {
+					selectedDirectoryName = sourceDirectory.getRelativePathTo(selectedDirectoryName);
 
-						// make path relative to source directory
-						//
-						selectedDirectoryName = sourceDirectory.getRelativePathTo(selectedDirectoryName);
-
-						// set build path input
-						//
-						self.$el.find('#build-path').val(selectedDirectoryName);
-						self.onChange();
-					}
-				}), {
-					size: 'large'
+					// set build path input
+					//
+					self.$el.find('#build-path').val(selectedDirectoryName);
+					self.onChange();
 				}
-			);
+			}), {
+				size: 'large'
+			});
 
-			// prevent event defaults
+			// prevent further handling of event
 			//
 			event.stopPropagation();
 			event.preventDefault();
@@ -577,31 +559,29 @@ define([
 
 			// show select package version file dialog
 			//
-			Registry.application.modal.show(
-				new SelectPackageVersionFileView({
-					model: this.model,
-					title: "Select Build File",
-					selectedFileName: buildDirectory.getPathTo(buildFile),
-					
-					// callbacks
+			application.show(new SelectPackageVersionFileDialogView({
+				model: this.model,
+				title: "Select Build File",
+				selectedFileName: buildDirectory.getPathTo(buildFile),
+				
+				// callbacks
+				//
+				accept: function(selectedFileName) {
+
+					// make path relative to build directory
 					//
-					accept: function(selectedFileName) {
-
-						// make path relative to build directory
-						//
-						selectedFileName = buildDirectory.getRelativePathTo(selectedFileName);
-						
-						// set build file input
-						//
-						self.$el.find('#build-file').val(selectedFileName);
-						self.onChange();
-					}
-				}), {
-					size: 'large'
+					selectedFileName = buildDirectory.getRelativePathTo(selectedFileName);
+					
+					// set build file input
+					//
+					self.$el.find('#build-file').val(selectedFileName);
+					self.onChange();
 				}
-			);
+			}), {
+				size: 'large'
+			});
 
-			// prevent event defaults
+			// prevent further handling of event
 			//
 			event.stopPropagation();
 			event.preventDefault();

@@ -1,6 +1,6 @@
 /******************************************************************************\
 |                                                                              |
-|                            assessment-runs-list-view.js                      |
+|                        select-assessment-runs-list-view.js                   |
 |                                                                              |
 |******************************************************************************|
 |                                                                              |
@@ -18,22 +18,20 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
-	'registry',
 	'bootstrap/popover',
 	'text!templates/results/assessment-runs/select-list/select-assessment-runs-list.tpl',
 	'collections/assessments/execution-records',
-	'views/widgets/lists/sortable-table-list-view',
+	'views/results/assessment-runs/list/assessment-runs-list-view',
 	'views/results/assessment-runs/select-list/select-assessment-runs-list-item-view'
-], function($, _, Backbone, Marionette, Registry, PopOvers, Template, ExecutionRecords, SortableTableListView, SelectAssessmentRunsListItemView) {
-	return SortableTableListView.extend({
+], function($, _, PopOvers, Template, ExecutionRecords, AssessmentRunsListView, SelectAssessmentRunsListItemView) {
+	return AssessmentRunsListView.extend({
 
 		//
 		// attributes
 		//
 
 		childView: SelectAssessmentRunsListItemView,
+		template: _.template(Template),
 
 		events: {
 			'click .select-all': 'onClickSelectAll'
@@ -63,8 +61,10 @@ define([
 			sortList: [[6, 1]]
 		},
 
+		groupExcept: ['select', 'delete', 'results', 'ssh'],
+
 		//
-		// methods
+		// constructor
 		//
 
 		initialize: function(options) {
@@ -95,9 +95,8 @@ define([
 
 			// call superclass method
 			//
-			SortableTableListView.prototype.initialize.call(this, _.extend(options, {
-				showSortingColumn: true,
-				groupExcept: ['select', 'delete', 'results', 'ssh']
+			AssessmentRunsListView.prototype.initialize.call(this, _.extend(options, {
+				showSortingColumn: true
 			}));
 		},
 
@@ -246,8 +245,8 @@ define([
 		// rendering methods
 		//
 
-		template: function(data) {
-			return _.template(Template, _.extend(data, {
+		templateContext: function() {
+			return {
 				collection: this.collection,
 				showProjects: this.options.showProjects,
 				showNumbering: this.options.showNumbering,
@@ -256,13 +255,22 @@ define([
 				showErrors: this.options.showErrors,
 				showDelete: this.options.showDelete,
 				showSsh: this.options.showSsh
-			}));
+			};
 		},
 
-		childViewOptions: function(model, index) {
+		childViewOptions: function(model) {
+
+			// check if empty view
+			//
+			if (!model) {
+				return {};
+			}
+
+			// return view options
+			//
 			return {
 				model: model,
-				index: index,
+				index: this.collection.indexOf(model),
 				project: this.model,
 				viewer: this.options.viewer,
 				errorViewer: this.options.errorViewer,
@@ -284,7 +292,7 @@ define([
 
 			// call superclass method
 			//
-			SortableTableListView.prototype.onRender.call(this);
+			AssessmentRunsListView.prototype.onRender.call(this);
 
 			// mark selected assessments
 			//

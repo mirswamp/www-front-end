@@ -1,6 +1,6 @@
 /******************************************************************************\
 |                                                                              |
-|                             packages-list-item-view.js                       |
+|                          packages-list-item-view.js                          |
 |                                                                              |
 |******************************************************************************|
 |                                                                              |
@@ -19,21 +19,18 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
 	'text!templates/packages/list/packages-list-item.tpl',
-	'registry',
 	'collections/projects/projects',
-	'utilities/time/date-format',
-	'views/dialogs/confirm-view',
-], function($, _, Backbone, Marionette, Template, Registry, Projects, DateFormat, ConfirmView) {
-	return Backbone.Marionette.ItemView.extend({
+	'views/collections/tables/table-list-item-view',
+	'utilities/time/date-format'
+], function($, _, Template, Projects, TableListItemView, DateFormat) {
+	return TableListItemView.extend({
 
 		//
 		// attributes
 		//
 
-		tagName: 'tr',
+		template: _.template(Template),
 
 		events: {
 			'click .delete button': 'onClickDelete'
@@ -43,16 +40,16 @@ define([
 		// rendering methods
 		//
 
-		template: function(data) {
-			return _.template(Template, _.extend(data, {
+		templateContext: function() {
+			return {
 				model: this.model,
 				index: this.options.index + 1,
-				url: Registry.application.session.user? '#packages/' + this.model.get('package_uuid'): undefined,
+				url: application.session.user? '#packages/' + this.model.get('package_uuid'): undefined,
 				showDeactivatedPackages: this.options.showDeactivatedPackages,
 				showNumbering: this.options.showNumbering,
 				showProjects: this.options.showProjects,
 				showDelete: this.options.showDelete
-			}));
+			};
 		},
 
 		projectsToHtml: function(collection) {
@@ -98,47 +95,43 @@ define([
 		onClickDelete: function() {
 			var self = this;
 
-			// show confirm dialog
+			// show confirmation
 			//
-			Registry.application.modal.show(
-				new ConfirmView({
-					title: "Delete Package",
-					message: "Are you sure that you would like to delete package " + self.model.get('name') + "? " +
-						"All versions of this package and any scheduled assessments using this package will be deleted. Existing assessment results will not be deleted.",
+			application.confirm({
+				title: "Delete Package",
+				message: "Are you sure that you would like to delete package " + self.model.get('name') + "? " +
+					"All versions of this package and any scheduled assessments using this package will be deleted. Existing assessment results will not be deleted.",
 
-					// callbacks
+				// callbacks
+				//
+				accept: function() {
+
+					// delete user
 					//
-					accept: function() {
+					self.model.destroy({
 
-						// delete user
+						// callbacks
 						//
-						self.model.destroy({
+						success: function() {
 
-							// callbacks
+							// return to packages view
 							//
-							success: function() {
+							Backbone.history.navigate('#packages', {
+								trigger: true
+							});
+						},
 
-								// return to packages view
-								//
-								Backbone.history.navigate('#packages', {
-									trigger: true
-								});
-							},
+						error: function() {
 
-							error: function() {
-
-								// show error dialog
-								//
-								Registry.application.modal.show(
-									new ErrorView({
-										message: 'Could not delete this package.'
-									})
-								);
-							}
-						});
-					}
-				})
-			);
+							// show error message
+							//
+							application.error({
+								message: 'Could not delete this package.'
+							});
+						}
+					});
+				}
+			});
 		}
 	});
 });

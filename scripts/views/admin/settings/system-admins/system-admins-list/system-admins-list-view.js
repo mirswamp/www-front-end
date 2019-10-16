@@ -18,20 +18,23 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
 	'text!templates/admin/settings/system-admins/system-admins-list/system-admins-list.tpl',
-	'registry',
-	'views/widgets/lists/sortable-table-list-view',
+	'views/base-view',
+	'views/collections/tables/sortable-table-list-view',
 	'views/admin/settings/system-admins/system-admins-list/system-admins-list-item-view',
-], function($, _, Backbone, Marionette, Template, Registry, SortableTableListView, SystemAdminsListItemView) {
+], function($, _, Template, BaseView, SortableTableListView, SystemAdminsListItemView) {
 	return SortableTableListView.extend({
 
 		//
 		// attributes
 		//
 
+		template: _.template(Template),
 		childView: SystemAdminsListItemView,
+
+		emptyView: BaseView.extend({
+			template: _.template("No system administrators.")
+		}),
 
 		sorting: {
 
@@ -52,18 +55,18 @@ define([
 		// rendering methods
 		//
 
-		template: function(data) {
-			return _.template(Template, _.extend(data, {
+		templateContext: function() {
+			return {
 				collection: this.collection,
-				config: Registry.application.config,
+				config: application.config,
 				showDelete: this.options.showDelete
-			}));
+			};
 		},
 
 		childViewOptions: function() {
 			return {
 				showDelete: this.options.showDelete
-			}
+			};
 		}
 	});
 });

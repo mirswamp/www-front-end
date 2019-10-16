@@ -1,10 +1,10 @@
 /******************************************************************************\
 |                                                                              |
-|                               sign-up-form-view.js                           |
+|                             sign-up-form-view.js                             |
 |                                                                              |
 |******************************************************************************|
 |                                                                              |
-|        This defines a form for authenticating (signing up) users.            |
+|        This defines a form for entering registration info.                   |
 |                                                                              |
 |        Author(s): Abe Megahed                                                |
 |                                                                              |
@@ -18,15 +18,11 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
-	'bootstrap/popover',
 	'text!templates/users/registration/forms/sign-up-form.tpl',
-	'config',
-	'registry',
+	'views/forms/form-view',
 	'views/users/registration/forms/linked-account-sign-up-form-view'
-], function($, _, Backbone, Marionette, Popover, Template, Config, Registry, LinkedAccountSignUpFormView) {
-	return Backbone.Marionette.LayoutView.extend({
+], function($, _, Template, FormView, LinkedAccountSignUpFormView) {
+	return FormView.extend({
 
 		//
 		// attributes
@@ -34,8 +30,10 @@ define([
 
 		className: 'form-horizontal',
 
+		template: _.template(Template),
+
 		regions: {
-			linkedAccountSignUpForm: '#linked-account-sign-up-form'
+			form: '#linked-account-sign-up-form'
 		},
 
 		events: {
@@ -46,10 +44,10 @@ define([
 		// rendering methods
 		//
 
-		template: function(){
-			return _.template(Template, {
-				config: Registry.application.config
-			});
+		templateContext: function() {
+			return {
+				config: application.config
+			};
 		},
 
 		onRender: function() {
@@ -70,9 +68,7 @@ define([
 
 			// show subviews
 			//
-			this.linkedAccountSignUpForm.show(
-				new LinkedAccountSignUpFormView()
-			);
+			this.showChildView('form', new LinkedAccountSignUpFormView());
 		},
 
 		//
@@ -80,16 +76,18 @@ define([
 		//
 
 		onClickRegister: function() {
-
-			// dismiss dialog 
-			//
-			Registry.application.modal.hide();
 			
 			// go to regitration view
 			//
 			Backbone.history.navigate('#register', {
 				trigger: true
 			});
+
+			// perform callback
+			//
+			if (this.options.onClick) {
+				this.options.onClick();
+			}
 		}
 	});
 });

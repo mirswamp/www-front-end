@@ -18,13 +18,11 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
 	'config',
-	'registry',
 	'models/projects/project',
 	'collections/base-collection'
-], function($, _, Backbone, Config, Registry, Project, BaseCollection) {
-	var Class = BaseCollection.extend({
+], function($, _, Config, Project, BaseCollection) {
+	return BaseCollection.extend({
 
 		//
 		// Backbone attributes
@@ -58,7 +56,14 @@ define([
 		},
 
 		getOwnedBy: function(user) {
-			var collection = new Class();
+
+			// create empty collection
+			//
+			var collection = new this.constructor([], {
+				model: this.model,
+				comparator: this.comparator
+			});
+
 			for (var i = 0; i < this.length; i++) {
 				var model = this.at(i);
 				if (model.isOwnedBy(user) && !model.isDeactivated()) {
@@ -69,7 +74,14 @@ define([
 		},
 
 		getNotOwnedBy: function(user) {
-			var collection = new Class();
+
+			// create empty collection
+			//
+			var collection = new this.constructor([], {
+				model: this.model,
+				comparator: this.comparator
+			});
+
 			for (var i = 0; i < this.length; i++) {
 				var model = this.at(i);
 				if (!model.isOwnedBy(user) && !model.isDeactivated()) {
@@ -80,7 +92,14 @@ define([
 		},
 
 		getTrialProjects: function() {
-			var collection = new Class();
+
+			// create empty collection
+			//
+			var collection = new this.constructor([], {
+				model: this.model,
+				comparator: this.comparator
+			});
+
 			for (var i = 0; i < this.length; i++) {
 				var model = this.at(i);
 				if (model.isTrialProject()) {
@@ -91,7 +110,14 @@ define([
 		},
 
 		getNonTrialProjects: function() {
-			var collection = new Class();
+
+			// create empty collection
+			//
+			var collection = new this.constructor([], {
+				model: this.model,
+				comparator: this.comparator
+			});
+			
 			for (var i = 0; i < this.length; i++) {
 				var model = this.at(i);
 				if (!model.isTrialProject()) {
@@ -137,7 +163,7 @@ define([
 		//
 
 		fetch: function(options) {
-			return this.fetchByUser(Registry.application.session.user, options || {});
+			return this.fetchByUser(application.session.user, options || {});
 		},
 
 		fetchByUser: function(user, options) {
@@ -160,7 +186,7 @@ define([
 
 		fetchAll: function(options) {
 			return Backbone.Collection.prototype.fetch.call(this, _.extend(options, {
-				url: Config.servers.web + '/admins/' + Registry.application.session.user.get('user_uid') + '/projects'
+				url: Config.servers.web + '/admin/projects/all'
 			}));
 		}
 	}, {
@@ -170,13 +196,11 @@ define([
 		//
 
 		fetchNum: function(options) {
-			Class.fetchNumByUser(Registry.application.session.user, options);
+			this.fetchNumByUser(application.session.user, options);
 		},
 
 		fetchNumByUser: function(user, options) {
 			return $.ajax(Config.servers.web + '/users/' + user.get('user_uid') + '/projects/num', options);
 		}
 	});
-
-	return Class;
 });

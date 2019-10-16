@@ -18,23 +18,20 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'registry',
 	'models/projects/project',
 	'collections/projects/projects',
 	'collections/packages/packages',
 	'collections/packages/package-versions',
-	'views/dialogs/error-view',
 	'views/widgets/selectors/grouped-name-selector-view',
 	'views/widgets/selectors/version-filter-selector-view'
-], function($, _, Backbone, Registry, Project, Projects, Packages, PackageVersions, ErrorView, GroupedNameSelectorView, VersionFilterSelectorView) {
+], function($, _, Project, Projects, Packages, PackageVersions, GroupedNameSelectorView, VersionFilterSelectorView) {
 	return GroupedNameSelectorView.extend({
 
 		//
 		// constructor
 		//
 
-		initialize: function(attributes, options) {
+		initialize: function(options) {
 
 			// call superclass method
 			//
@@ -115,14 +112,14 @@ define([
 				// create package lists
 				//
 				self.collection = new Backbone.Collection([{
-					'name': "Any",
-					'model': null
+					name: 'Any',
+					model: null
 				}, {
-					'name': "Protected Packages",
-					'group': protectedPackages || new Packages()
+					name: 'Protected Packages',
+					group: protectedPackages || new Packages()
 				}, {
-					'name': "Public Packages",
-					'group': publicPackages || new Packages()
+					name: 'Public Packages',
+					group: publicPackages || new Packages()
 				}]);
 				
 				// render
@@ -138,7 +135,7 @@ define([
 				// show version filter selector
 				//
 				if (self.options.versionFilterSelector) {
-					self.showVersionFilter(self.options.versionFilterSelector);
+					self.updateVersionFilterSelector();
 				}
 			});
 		},
@@ -162,13 +159,11 @@ define([
 
 				error: function() {
 
-					// show error dialog
+					// show error message
 					//
-					Registry.application.modal.show(
-						new ErrorView({
-							message: "Could not fetch protected packages for this project."
-						})
-					);						
+					application.error({
+						message: "Could not fetch protected packages for this project."
+					});
 				}
 			});
 		},
@@ -188,13 +183,11 @@ define([
 
 				error: function() {
 
-					// show error dialog
+					// show error message
 					//
-					Registry.application.modal.show(
-						new ErrorView({
-							message: "Could not fetch protected packages for all projects."
-						})
-					);						
+					application.error({
+						message: "Could not fetch protected packages for all projects."
+					});
 				}
 			});
 		},
@@ -205,44 +198,65 @@ define([
 
 			// fetch public packages
 			//
-			publicPackages.fetchPublic({
+			if (this.options.showPublicPackages) {
+				publicPackages.fetchPublic({
 
-				// callbacks
-				//
-				success: function() {
-					if (self.options.project) {
-
-						// fetch protected packages for a single project
-						//
-						self.fetchProjectProtectedPackages(self.options.project, function(protectedPackages) {
-							success(publicPackages, protectedPackages);
-						});
-					} else if (self.options.projects && self.options.projects.length > 0) {
-						
-						// fetch protected packages for multiple projects
-						//
-						self.fetchProjectsProtectedPackages(self.options.projects, function(protectedPackages) {
-							success(publicPackages, protectedPackages);
-						});
-					} else {
-
-						// only public packages
-						//
-						success(publicPackages);
-					}
-				},
-
-				error: function() {
-
-					// show error dialog
+					// callbacks
 					//
-					Registry.application.modal.show(
-						new ErrorView({
+					success: function() {
+						if (self.options.project) {
+
+							// fetch protected packages for a single project
+							//
+							self.fetchProjectProtectedPackages(self.options.project, function(protectedPackages) {
+								success(publicPackages, protectedPackages);
+							});
+						} else if (self.options.projects && self.options.projects.length > 0) {
+							
+							// fetch protected packages for multiple projects
+							//
+							self.fetchProjectsProtectedPackages(self.options.projects, function(protectedPackages) {
+								success(publicPackages, protectedPackages);
+							});
+						} else {
+
+							// only public packages
+							//
+							success(publicPackages);
+						}
+					},
+
+					error: function() {
+
+						// show error message
+						//
+						application.error({
 							message: "Could not fetch public packages."
-						})
-					);
-				}
-			});
+						});
+					}
+				});
+			} else {
+				if (self.options.project) {
+
+					// fetch protected packages for a single project
+					//
+					self.fetchProjectProtectedPackages(self.options.project, function(protectedPackages) {
+						success(publicPackages, protectedPackages);
+					});
+				} else if (self.options.projects && self.options.projects.length > 0) {
+					
+					// fetch protected packages for multiple projects
+					//
+					self.fetchProjectsProtectedPackages(self.options.projects, function(protectedPackages) {
+						success(publicPackages, protectedPackages);
+					});
+				} else {
+
+					// only public packages
+					//
+					success(publicPackages);
+				}		
+			}
 		},
 
 		fetchPackageVersions: function(package, done) {
@@ -265,13 +279,11 @@ define([
 
 					error: function() {
 
-						// show error dialog
+						// show error message
 						//
-						Registry.application.modal.show(
-							new ErrorView({
-								message: "Could not fetch package versions."
-							})
-						);
+						application.error({
+							message: "Could not fetch package versions."
+						});
 					}
 				});
 			} else if (this.options.projects && this.options.projects.length > 0) {
@@ -291,13 +303,11 @@ define([
 
 					error: function() {
 
-						// show error dialog
+						// show error message
 						//
-						Registry.application.modal.show(
-							new ErrorView({
-								message: "Could not fetch package versions."
-							})
-						);
+						application.error({
+							message: "Could not fetch package versions."
+						});
 					}
 				});
 			} else {
@@ -329,10 +339,8 @@ define([
 		//
 
 		hasSelectedVersion: function() {
-			if (this.options.versionFilterSelector && this.options.versionFilterSelector.currentView) {
-				return this.options.versionFilterSelector.currentView.hasSelected();
-			} else if (this.options.initialVersion) {
-				return true;
+			if (this.versionFilterSelector) {
+				return this.versionFilterSelector.hasSelected();
 			} else {
 				return false;
 			}
@@ -343,10 +351,14 @@ define([
 		},
 
 		getSelectedVersionString: function() {
-			if (this.options.versionFilterSelector && this.options.versionFilterSelector.currentView) {
-				return this.options.versionFilterSelector.currentView.getSelectedVersionString();
+			if (this.versionFilterSelector) {
+				return this.versionFilterSelector.getSelectedVersionString();
 			} else if (this.options.initialVersion) {
-				return VersionFilterSelectorView.getVersionString(this.options.initialVersion);
+				if (typeof this.options.initialVersion == 'string') {
+					return this.options.initialVersion;
+				} else {
+					return this.options.initialVersion.get('version_string');
+				}
 			}
 		},
 
@@ -360,11 +372,14 @@ define([
 				// return name and version
 				//
 				var description = this.getSelectedName();
-				if (this.hasSelectedVersion()) {
-					if (description) {
-						description += " ";
+				if (this.hasSelectedVersionString()) {
+					var versionString = this.getSelectedVersionString();
+					if (versionString && versionString != 'any version') {
+						if (description) {
+							description += " ";
+						}
+						description += versionString.replace('version', '').trim();
 					}
-					description += this.getSelectedVersionString();
 				}
 				return description;
 			} else {
@@ -376,64 +391,83 @@ define([
 		},
 
 		//
-		// rendering methods
+		// version rendering methods
 		//
 
-		showVersionFilter: function(versionFilterSelector, done) {
+		showVersionFilterSelector: function(collection) {
 			var self = this;
-			var selectedPackage = this.getSelected();
-			
-			if (selectedPackage) {
-				this.fetchPackageVersions(selectedPackage, function(collection) {
 
-					// show version filter selector view
+			// create new version filter selector
+			//
+			this.versionFilterSelector = new VersionFilterSelectorView({
+				collection: collection,
+				initialValue: this.options.initialVersion,
+				defaultOptions: this.options.versionDefaultOptions,
+				selectedOptions: this.options.versionSelectedOptions,
+				searchable: true,
+
+				// callbacks
+				//
+				onChange: function(changes) {
+
+					// perform callback
 					//
-					versionFilterSelector.show(
-						new VersionFilterSelectorView({
-							collection: collection,
-							initialValue: self.options.initialVersion,
-							defaultOptions: self.options.versionDefaultOptions,
-							selectedOptions: self.options.versionSelectedOptions,
-							searchable: true,
+					if (self.options && self.options.onChange) {
+						self.options.onChange({
+							'package-version': changes.version
+						});
+					}
+				}
+			});
 
-							// callbacks
-							//
-							onChange: function(changes) {
+			// show version filter selector
+			//
+			this.options.versionFilterSelector.show(self.versionFilterSelector);
 
-								// perform callback
-								//
-								if (self.options && self.options.onChange) {
-									self.options.onChange({
-										'package-version': changes.version
-									});
-								}
-							}
-						})
-					);
+			// show version filter label
+			//
+			if (this.options.versionFilterLabel) {
+				this.options.versionFilterLabel.show();
+			}
+		},
+
+		hideVersionFilterSelector: function() {
+
+			// hide version filter selector view
+			//
+			this.options.versionFilterSelector.reset();
+
+			// hide version filter label
+			//
+			if (this.options.versionFilterLabel) {
+				this.options.versionFilterLabel.hide();
+			}
+		},
+
+
+		updateVersionFilterSelector: function(done) {
+			var self = this;
+			if (this.options.versionFilterSelector) {
+				if (this.selected) {
+					this.fetchPackageVersions(this.selected, function(collection) {
+						self.showVersionFilterSelector(collection);
+
+						// perform callback
+						//
+						if (done) {
+							done();
+						}
+					});
+				} else {
+					this.hideVersionFilterSelector();
 
 					// perform callback
 					//
 					if (done) {
 						done();
 					}
-				});
-
-				// show version filter label
-				//
-				if (this.options.versionFilterLabel) {
-					this.options.versionFilterLabel.show();
 				}
 			} else {
-
-				// hide version filter selector view
-				//
-				versionFilterSelector.reset();
-
-				// hide version filter label
-				//
-				if (this.options.versionFilterLabel) {
-					this.options.versionFilterLabel.hide();
-				}
 
 				// perform callback
 				//
@@ -448,25 +482,25 @@ define([
 		//
 
 		onChange: function(options) {
+			var self = this;
 
 			// update selected
 			//
 			this.selected = this.getItemByIndex(this.getSelectedIndex());
 			this.options.initialVersion = 'any';
 
-			// update version selector
+			// update version filter selector
 			//
-			if (this.options.versionFilterSelector) {
-				this.showVersionFilter(this.options.versionFilterSelector);
-			}
+			this.updateVersionFilterSelector(function() {
 
-			// perform callback
-			//
-			if (this.options && this.options.onChange && (!options || !options.silent)) {
-				this.options.onChange({
-					'package': this.selected
-				});
-			}
+				// perform callback
+				//
+				if (self.options && self.options.onChange && (!options || !options.silent)) {
+					self.options.onChange({
+						'package': self.selected
+					});
+				}
+			});
 		}
 	});
 });

@@ -18,12 +18,11 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
 	'config',
-	'registry',
-	'models/contacts/contact'
-], function($, _, Backbone, Config, Registry, Contact) {
-	return Backbone.Collection.extend({
+	'models/contacts/contact',
+	'collections/base-collection'
+], function($, _, Config, Contact, BaseCollection) {
+	return BaseCollection.extend({
 
 		//
 		// Backbone attributes
@@ -37,7 +36,7 @@ define([
 
 		fetchAll: function(options) {
 			return this.fetch(_.extend(options, {
-				url: Config.servers.web + '/admins/' + Registry.application.session.user.get('user_uid') + '/contacts'
+				url: Config.servers.web + '/admins/' + application.session.user.get('user_uid') + '/contacts'
 			}));
 		}
 	});

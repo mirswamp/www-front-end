@@ -18,30 +18,30 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
-	'registry',
 	'bootstrap/popover',
 	'text!templates/results/assessment-runs/list/assessment-runs-list.tpl',
-	'views/widgets/lists/sortable-table-list-view',
+	'views/base-view',
+	'views/collections/tables/sortable-table-list-view',
 	'views/results/assessment-runs/list/assessment-runs-list-item-view'
-], function($, _, Backbone, Marionette, Registry, PopOvers, Template, SortableTableListView, AssessmentRunsListItemView) {
+], function($, _, PopOvers, Template, BaseView, SortableTableListView, AssessmentRunsListItemView) {
 	return SortableTableListView.extend({
 
 		//
 		// attributes
 		//
 
+		template: _.template(Template),
 		childView: AssessmentRunsListItemView,
+
+		emptyView: BaseView.extend({
+			template: _.template("No assessment results.")
+		}),
 
 		sorting: {
 
 			// disable sorting on checkboxes and delete columns
 			//
 			headers: {
-				0: { 
-					sorter: false 
-				},
 				6: {
 					sorter: false
 				}
@@ -52,8 +52,10 @@ define([
 			sortList: [[3, 1]]
 		},
 
+		groupExcept: ['select', 'delete', 'results', 'ssh'],
+
 		//
-		// methods
+		// constructor
 		//
 
 		initialize: function(options) {
@@ -68,8 +70,7 @@ define([
 			//
 			SortableTableListView.prototype.initialize.call(this, _.extend(options, {
 				showGrouping: this.options.showGrouping,
-				showSortingColumn: true,
-				groupExcept: ['select', 'delete', 'results', 'ssh']
+				showSortingColumn: true
 			}));
 		},
 
@@ -77,21 +78,30 @@ define([
 		// rendering methods
 		//
 
-		template: function(data) {
-			return _.template(Template, _.extend(data, {
+		templateContext: function() {
+			return {
 				collection: this.collection,
 				showNumbering: this.options.showNumbering,
 				showStatus: this.options.showStatus,
 				showErrors: this.options.showErrors,
 				showDelete: this.options.showDelete,
 				showSsh: this.options.showSsh
-			}));
+			};
 		},
 
-		childViewOptions: function(model, index) {
+		childViewOptions: function(model) {
+
+			// check if empty view
+			//
+			if (!model) {
+				return {};
+			}
+
+			// return view options
+			//
 			return {
 				model: model,
-				index: index,
+				index: this.collection.indexOf(model),
 				project: this.model,
 				viewer: this.options.viewer,
 				errorViewer: this.options.errorViewer,

@@ -12,10 +12,11 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2019 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2016-2019, Megahed Labs LLC, www.sharedigm.com          |
 \******************************************************************************/
 
 define([
+	/*
 	'bootstrap/affix',
 	'bootstrap/alert',
 	'bootstrap/button',
@@ -28,5 +29,6 @@ define([
 	'bootstrap/tab',
 	'bootstrap/tooltip',
 	'bootstrap/transition'
+	*/
 ], function() {
 });

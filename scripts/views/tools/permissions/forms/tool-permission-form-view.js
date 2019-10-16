@@ -1,11 +1,10 @@
 /******************************************************************************\
 |                                                                              |
-|                          tool-permission-form-view.js                        |
+|                         tool-permission-form-view.js                         |
 |                                                                              |
 |******************************************************************************|
 |                                                                              |
-|        This defines a modal dialog box that is used to                       |
-|        prompt the user for a comment to proceed with some action.            |
+|        This defines a form for entering tool permissions info.               |
 |                                                                              |
 |        Author(s): Abe Megahed                                                |
 |                                                                              |
@@ -19,20 +18,17 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
-	'bootstrap/tooltip',
-	'bootstrap/popover',
-	'jquery.validate',
-	'registry',
-	'text!templates/tools/permissions/forms/tool-permission-form.tpl'
-], function($, _, Backbone, Marionette, Tooltip, Popover, Validate, Registry, Template) {
-	return Backbone.Marionette.ItemView.extend({
+	'text!templates/tools/permissions/forms/tool-permission-form.tpl',
+	'views/forms/form-view'
+], function($, _, Template, FormView) {
+	return FormView.extend({
 
 		//
 		// attributes
 		//
 
+		template: _.template(Template),
+		
 		events: {
 			'input input': 'onChange',
 			'input textarea': 'onChange',
@@ -40,7 +36,34 @@ define([
 		},
 
 		//
-		// methods
+		// form attributes
+		//
+
+		rules: {
+			'name': {
+				required: true,
+			},
+			'email': {
+				required: true,
+				email: true
+			},
+			'organization': {
+				required: true,
+			},
+			'url': {
+				required: true,
+				url: true
+			},
+			'user-type': {
+				required: true,
+			},
+			'confirm': {
+				required: true
+			}
+		},
+
+		//
+		// constructor
 		//
 
 		initialize: function(){
@@ -81,60 +104,14 @@ define([
 		// rendering methods
 		//
 
-		template: function(data) {
-			return _.template(Template, data);
-		},
-
 		onRender: function() {
-
-			// display popovers on hover
-			//
-			this.$el.find('[data-toggle="popover"]').popover({
-				trigger: 'hover'
-			});
-
 			this.$el.find('input, textarea').on('hidden', function (event) {
 				event.stopPropagation();
 			});
 
-			// validate the form
+			// call superclass method
 			//
-			this.validator = this.validate();
-		},
-
-		//
-		// form validation methods
-		//
-
-		isValid: function() {
-			return this.validator.form();
-		},
-
-		validate: function() {
-			return this.$el.find('form').validate({
-				rules: {
-					'name': {
-						required: true,
-					},
-					'email': {
-						required: true,
-						email: true
-					},
-					'organization': {
-						required: true,
-					},
-					'url': {
-						required: true,
-						url: true
-					},
-					'user-type': {
-						required: true,
-					},
-					'confirm': {
-						required: true
-					}
-				}
-			});
+			FormView.prototype.onRender.call(this);
 		},
 
 		//

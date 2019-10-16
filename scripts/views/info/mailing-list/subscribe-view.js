@@ -1,6 +1,6 @@
 /******************************************************************************\
 |                                                                              |
-|                                  subscribe-view.js                           |
+|                               subscribe-view.js                              |
 |                                                                              |
 |******************************************************************************|
 |                                                                              |
@@ -18,21 +18,21 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'bootstrap/tooltip',
 	'bootstrap/popover',
-	'marionette',
-	'text!templates/info/mailing-list/subscribe.tpl'
-], function($, _, Backbone, Tooltip, Popover, Marionette, Template) {
-	return Backbone.Marionette.ItemView.extend({
+	'text!templates/info/mailing-list/subscribe.tpl',
+	'views/base-view'
+], function($, _, Popover, Template, BaseView) {
+	return BaseView.extend({
+
+		//
+		// attributes
+		//
+
+		template: _.template(Template),
 
 		//
 		// rendering methods
 		//
-
-		template: function(data) {
-			return _.template(Template, data);
-		},
 
 		onRender: function() {
 

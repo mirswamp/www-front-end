@@ -1,36 +1,35 @@
-
 <td class="title">
-	<span class="title"><%- permission.title %></span>
+	<span class="title"><%- title %></span>
 </td>
 
 <td class="description">
-	<span class="name"><%- permission.description %></span>
+	<span class="name"><%- description %></span>
 </td>
 
 <td class="expiration">
-	<span class="expiration"><%= dateToSortableHTML(permission.expiration_date) %></span>
+	<span class="expiration"><%= dateToSortableHTML(expiration_date) %></span>
 </td>
 
 <td class="status">
 	<% if (admin) { %>
 		<select class="status" style="width: 100px">
-			<option<%- permission.status == null ? ' selected="selected"' : ''%>></option>
-			<option<%- permission.status == 'granted' ? ' selected="selected"' : ''%>>granted</option>
-			<option<%- permission.status == 'revoked' ? ' selected="selected"' : ''%>>revoked</option>
-			<option<%- permission.status == 'pending' ? ' selected="selected"' : ''%>>pending</option>
-			<option<%- permission.status == 'expired' ? ' selected="selected"' : ''%>>expired</option>
-			<option<%- permission.status == 'denied' ? ' selected="selected"' : ''%>>denied</option>
+			<option<%- status == null ? ' selected="selected"' : ''%>></option>
+			<option<%- status == 'granted' ? ' selected="selected"' : ''%>>granted</option>
+			<option<%- status == 'revoked' ? ' selected="selected"' : ''%>>revoked</option>
+			<option<%- status == 'pending' ? ' selected="selected"' : ''%>>pending</option>
+			<option<%- status == 'expired' ? ' selected="selected"' : ''%>>expired</option>
+			<option<%- status == 'denied' ? ' selected="selected"' : ''%>>denied</option>
 		</select>
 	<% } else { %>
-		<span class="status"><%- permission.status %></span>
+		<span class="status"><%- status %></span>
 	<% } %>
 </td>
 
 <td style="background: white" class="request">
 	<% if (!admin) { %>
-	<% if (permission.status == 'expired') { %>
+	<% if (status == 'expired') { %>
 	<button class="btn renew">Renew</button>
-	<% } else if (permission.status != 'granted' && permission.status != 'pending') { %>
+	<% } else if (status != 'granted' && status != 'pending') { %>
 	<button class="btn request">Request</button>
 	<% } %>
 	<% } %>

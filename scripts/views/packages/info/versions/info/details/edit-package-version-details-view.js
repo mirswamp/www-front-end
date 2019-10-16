@@ -18,21 +18,20 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
 	'text!templates/packages/info/versions/info/details/edit-package-version-details.tpl',
-	'registry',
-	'views/dialogs/error-view',
+	'views/base-view',
 	'views/packages/info/versions/info/details/package-version-profile/package-version-profile-form-view'
-], function($, _, Backbone, Marionette, Template, Registry, ErrorView, PackageVersionProfileFormView) {
-	return Backbone.Marionette.LayoutView.extend({
+], function($, _, Template, BaseView, PackageVersionProfileFormView) {
+	return BaseView.extend({
 
 		//
 		// attributes
 		//
 
+		template: _.template(Template),
+
 		regions: {
-			packageVersionProfileForm: '#package-version-profile-form'
+			form: '#package-version-profile-form'
 		},
 
 		events: {
@@ -46,23 +45,21 @@ define([
 		// rendering methods
 		//
 
-		template: function(data) {
-			return _.template(Template, _.extend(data, {
+		templateContext: function() {
+			return {
 				model: this.options.model,
 				package: this.options.package
-			}));
+			};
 		},
 
 		onRender: function() {
 
 			// display package version profile form view
 			//
-			this.packageVersionProfileForm.show(
-				new PackageVersionProfileFormView({
-					model: this.model,
-					package: this.options.package
-				})
-			);
+			this.showChildView('form', new PackageVersionProfileFormView({
+				model: this.model,
+				package: this.options.package
+			}));
 		},
 
 		//
@@ -81,11 +78,11 @@ define([
 
 			// check validation
 			//
-			if (this.packageVersionProfileForm.currentView.isValid()) {
+			if (this.getChildView('form').isValid()) {
 
 				// update model
 				//
-				this.packageVersionProfileForm.currentView.update(this.model);
+				this.getChildView('form').applyTo(this.model);
 
 				// disable save button
 				//
@@ -108,13 +105,11 @@ define([
 
 					error: function() {
 
-						// show error dialog
+						// show error message
 						//
-						Registry.application.modal.show(
-							new ErrorView({
-								message: "Could not save package version changes."
-							})
-						);
+						application.error({
+							message: "Could not save package version changes."
+						});
 					}
 				});
 			}

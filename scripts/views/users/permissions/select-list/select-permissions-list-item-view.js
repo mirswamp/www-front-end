@@ -1,6 +1,6 @@
 /******************************************************************************\
 |                                                                              |
-|                            permissions-list-item-view.js                     |
+|                       select-permissions-list-item-view.js                   |
 |                                                                              |
 |******************************************************************************|
 |                                                                              |
@@ -18,20 +18,17 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
 	'text!templates/users/permissions/select-list/select-permissions-list-item.tpl',
-	'registry',
-	'config',
-	'models/permissions/user-permission'
-], function($, _, Backbone, Marionette, Template, Registry, Config, UserPermission) {
-	return Backbone.Marionette.ItemView.extend({
+	'models/permissions/user-permission',
+	'views/collections/tables/table-list-item-view'
+], function($, _, Template, UserPermission, TableListItemView) {
+	return TableListItemView.extend({
 
 		//
 		// attributes
 		//
 
-		tagName: 'tr',
+		template: _.template(Template),
 
 		events: {
 			'click button.request': 'onClickRequest',
@@ -43,11 +40,12 @@ define([
 		// rendering methods
 		//
 
-		template: function(data) {
-			return _.template(Template, { 
-				admin: Registry.application.session.user.isAdmin(),
-				permission: data 
-			});
+		templateContext: function() {
+			return { 
+				admin: application.session.user.isAdmin(),
+				status: this.model.get('status'),
+				expiration_date: this.model.get('expiration_date')
+			};
 		},
 
 		//

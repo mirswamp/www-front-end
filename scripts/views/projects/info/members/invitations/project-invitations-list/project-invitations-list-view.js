@@ -18,20 +18,23 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
 	'text!templates/projects/info/members/invitations/project-invitations-list/project-invitations-list.tpl',
-	'registry',
-	'views/widgets/lists/sortable-table-list-view',
+	'views/base-view',
+	'views/collections/tables/sortable-table-list-view',
 	'views/projects/info/members/invitations/project-invitations-list/project-invitations-list-item-view'
-], function($, _, Backbone, Marionette, Template, Registry, SortableTableListView, ProjectInvitationsListItemView) {
+], function($, _, Template, BaseView, SortableTableListView, ProjectInvitationsListItemView) {
 	return SortableTableListView.extend({
 
 		//
 		// attributes
 		//
 
+		template: _.template(Template),
 		childView: ProjectInvitationsListItemView,
+
+		emptyView: BaseView.extend({
+			template: _.template("No project invitations.")
+		}),
 
 		sorting: {
 			
@@ -52,19 +55,19 @@ define([
 		// rendering methods
 		//
 
-		template: function(data) {
-			return _.template(Template, _.extend(data, {
+		templateContext: function() {
+			return {
 				collection: this.collection,
-				config: Registry.application.config,
+				config: application.config,
 				showDelete: this.options.showDelete
-			}));
+			};
 		},
 
 		childViewOptions: function() {
 			return {
 				project: this.options.model,
 				showDelete: this.options.showDelete
-			}   
+			};
 		}
 	});
 });

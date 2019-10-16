@@ -18,21 +18,20 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
 	'text!templates/tools/info/details/edit-tool-details.tpl',
-	'registry',
-	'views/dialogs/error-view',
+	'views/base-view',
 	'views/tools/info/details/tool-profile/tool-profile-form-view'
-], function($, _, Backbone, Marionette, Template, Registry, ErrorView, ToolProfileFormView) {
-	return Backbone.Marionette.LayoutView.extend({
+], function($, _, Template, BaseView, ToolProfileFormView) {
+	return BaseView.extend({
 
 		//
 		// attributes
 		//
 
+		template: _.template(Template),
+
 		regions: {
-			toolProfileForm: '#tool-profile-form'
+			form: '#tool-profile-form'
 		},
 
 		events: {
@@ -46,19 +45,13 @@ define([
 		// rendering methods
 		//
 
-		template: function(data) {
-			return _.template(Template, data);
-		},
-
 		onRender: function() {
 
 			// display tool profile form view
 			//
-			this.toolProfileForm.show(
-				new ToolProfileFormView({
-					model: this.model
-				})
-			);
+			this.showChildView('form', new ToolProfileFormView({
+				model: this.model
+			}));
 		},
 
 		//
@@ -77,11 +70,11 @@ define([
 
 			// check validation
 			//
-			if (this.toolProfileForm.currentView.isValid()) {
+			if (this.getChildView('form').isValid()) {
 
 				// update model
 				//
-				this.toolProfileForm.currentView.update(this.model);
+				this.getChildView('form').applyTo(this.model);
 
 				// disable save button
 				//
@@ -104,13 +97,11 @@ define([
 
 					error: function() {
 
-						// show error dialog
+						// show error message
 						//
-						Registry.application.modal.show(
-							new ErrorView({
-								message: "Could not save tool changes."
-							})
-						);
+						application.error({
+							message: "Could not save tool changes."
+						});
 					}
 				});
 			}

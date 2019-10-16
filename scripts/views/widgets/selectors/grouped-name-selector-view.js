@@ -19,17 +19,20 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
 	'bootstrap/dropdown',
 	'select2',
-	'text!templates/widgets/selectors/grouped-name-selector.tpl'
-], function($, _, Backbone, Marionette, Dropdown, Select2, Template) {
-	return Backbone.Marionette.ItemView.extend({
+	'text!templates/widgets/selectors/grouped-name-selector.tpl',
+	'views/base-view'
+], function($, _, Dropdown, Select2, Template, BaseView) {
+	return BaseView.extend({
 
 		//
 		// attributes
 		//
+
+		tagName: 'select',
+		className: 'selectpicker',
+		template: _.template(Template),
 
 		events: {
 			'change': 'onChange',
@@ -37,15 +40,15 @@ define([
 		},
 
 		//
-		// methods
+		// constructor
 		//
 
 		initialize: function(options) {
-
-			// set initial value
-			//
 			if (options) {
-				this.selected = options.initialValue;
+
+				// set initial value
+				//
+				this.selected = this.options.initialValue;
 			}
 		},
 
@@ -53,17 +56,17 @@ define([
 		// rendering methods
 		//
 
-		template: function(data) {
-			return _.template(Template, _.extend(data, {
+		templateContext: function() {
+			return {
 				selected: this.selected
-			}));
+			};
 		},
 
 		onRender: function() {
 
 			// apply select2 selector
 			//
-			this.selector = this.$el.find('select').select2({
+			this.selector = this.$el.select2({
 				dropdownAutoWidth: 'true'
 			});
 		},
@@ -73,7 +76,7 @@ define([
 		//
 
 		setSelectedName: function(selectedName, options) {
-			this.$el.find('select').select2('val', selectedName);
+			this.$el.select2('val', selectedName);
 
 			// update
 			//
@@ -82,7 +85,7 @@ define([
 
 		deselect: function(options) {
 			this.selected = null;
-			this.$el.find('select').select2('val', null);
+			this.$el.select2('val', null);
 
 			// update
 			//
@@ -117,11 +120,11 @@ define([
 		},
 
 		getSelectedName: function() {
-			return this.$el.find('select')[0].value;
+			return this.el.value;
 		},
 
 		getSelectedIndex: function() {
-			return this.$el.find('select')[0].selectedIndex;
+			return this.el.selectedIndex;
 		},
 
 		getItemByIndex: function(index) {
@@ -183,7 +186,7 @@ define([
 		//
 
 		onBeforeDestroy: function() {
-			this.$el.find('select').select2('destroy');
+			// this.$el.find('select').select2('destroy');
 		}
 	});
 });

@@ -19,28 +19,27 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
 	'text!templates/scheduled-runs/scheduled-runs.tpl',
-	'registry',
 	'models/projects/project',
 	'collections/assessments/assessment-runs',
 	'collections/assessments/execution-records',
 	'collections/assessments/scheduled-runs',
-	'views/dialogs/error-view',
+	'views/base-view',
 	'views/scheduled-runs/filters/scheduled-runs-filters-view',
 	'views/scheduled-runs/list/scheduled-runs-list-view',
 	'views/scheduled-runs/lists/scheduled-runs-lists-view'
-], function($, _, Backbone, Marionette, Template, Registry, Project, AssessmentRuns, ExecutionRecords, ScheduledRuns, ErrorView, ScheduledRunsFiltersView, ScheduledRunsListView, ScheduledRunsListsView) {
-	return Backbone.Marionette.LayoutView.extend({
+], function($, _, Template, Project, AssessmentRuns, ExecutionRecords, ScheduledRuns, BaseView, ScheduledRunsFiltersView, ScheduledRunsListView, ScheduledRunsListsView) {
+	return BaseView.extend({
 
 		//
 		// attributes
 		//
 
+		template: _.template(Template),	
+
 		regions: {
-			scheduledRunsFilters: '#scheduled-runs-filters',
-			scheduledRunsLists: '#scheduled-runs-lists'
+			filters: '#scheduled-runs-filters',
+			lists: '#scheduled-runs-lists'
 		},
 
 		events: {
@@ -52,7 +51,7 @@ define([
 		},
 
 		//
-		// methods
+		// constructor
 		//
 
 		initialize: function() {
@@ -116,15 +115,15 @@ define([
 		},
 
 		getQueryString: function() {
-			return this.scheduledRunsFilters.currentView.getQueryString();
+			return this.getChildView('filters').getQueryString();
 		},
 
 		getFilterData: function() {
-			return this.scheduledRunsFilters.currentView.getData();
+			return this.getChildView('filters').getData();
 		},
 
 		getFilterAttrs: function() {
-			return this.scheduledRunsFilters.currentView.getAttrs();
+			return this.getChildView('filters').getAttrs();
 		},
 
 		//
@@ -150,13 +149,11 @@ define([
 
 				error: function() {
 
-					// show error dialog
+					// show error message
 					//
-					Registry.application.modal.show(
-						new ErrorView({
-							message: "Could not get scheduled runs for this project."
-						})
-					);
+					application.error({
+						message: "Could not get scheduled runs for this project."
+					});
 				}
 			});
 		},
@@ -180,13 +177,11 @@ define([
 
 				error: function() {
 
-					// show error dialog
+					// show error message
 					//
-					Registry.application.modal.show(
-						new ErrorView({
-							message: "Could not get scheduled runs for all projects."
-						})
-					);
+					application.error({
+						message: "Could not get scheduled runs for all projects."
+					});
 				}
 			});
 		},
@@ -218,13 +213,13 @@ define([
 		// rendering methods
 		//
 
-		template: function(data) {
-			return _.template(Template, _.extend(data, {
+		templateContext: function() {
+			return {
 				title: this.getTitle(),
 				shortTitle: this.getShortTitle(),
 				showNavigation: Object.keys(this.options.data).length > 0,
-				showNumbering: Registry.application.options.showNumbering
-			}));
+				showNumbering: application.options.showNumbering
+			};
 		},
 
 		onRender: function() {
@@ -244,29 +239,27 @@ define([
 
 		showFilters: function() {
 			var self = this;
-			this.scheduledRunsFilters.show(
-				new ScheduledRunsFiltersView({
-					model: this.model,
-					data: this.options.data,
+			this.showChildView('filters', new ScheduledRunsFiltersView({
+				model: this.model,
+				data: this.options.data,
 
-					// callbacks
+				// callbacks
+				//
+				onChange: function() {
+					// setQueryString(self.getQueryString());
+
+					// update url
 					//
-					onChange: function() {
-						// setQueryString(self.getQueryString());
+					var queryString = self.getQueryString();
+					var state = window.history.state;
+					var url = getWindowBaseLocation() + (queryString? ('?' + queryString) : '');
+					window.history.pushState(state, '', url);
 
-						// update url
-						//
-						var queryString = self.getQueryString();
-						var state = window.history.state;
-						var url = getWindowBaseLocation() + (queryString? ('?' + queryString) : '');
-						window.history.pushState(state, '', url);
-
-						// update view
-						//
-						self.onChange();
-					}
-				})
-			);
+					// update view
+					//
+					self.onChange();
+				}
+			}));
 		},
 
 		fetchAndShowLists: function() {
@@ -277,27 +270,28 @@ define([
 		},
 
 		showList: function() {
-			this.scheduledRunsList.show(
-				new ScheduledRunsListView({
-					collection: this.collection,
-					showProjects: Registry.application.session.user.get('has_projects'),
-					showNumbering: Registry.application.options.showNumbering,
-					showDelete: true,
-					parent: this
-				})
-			);
+			this.showChildView('list', new ScheduledRunsListView({
+				collection: this.collection,
+				showProjects: application.session.user.get('has_projects'),
+				showNumbering: application.options.showNumbering,
+				showDelete: true,
+				parent: this
+			}));
 		},
 
 		showLists: function() {
-			this.scheduledRunsLists.show(
-				new ScheduledRunsListsView({
-					collection: this.collection.getByRunRequests(this.collection.getRunRequests()),
-					showProjects: Registry.application.session.user.get('has_projects'),
-					showNumbering: Registry.application.options.showNumbering,
-					showDelete: true,
-					parent: this
-				})
-			);
+			var self = this;
+			this.showChildView('lists', new ScheduledRunsListsView({
+				collection: this.collection.getRunRequests(),
+				scheduledRuns: this.collection,
+				showProjects: application.session.user.get('has_projects'),
+				showNumbering: application.options.showNumbering,
+				showDelete: true,
+				onDelete: function() {
+					self.fetchAndShowLists();
+				},
+				parent: this
+			}));
 		},
 
 		addBadge: function(selector, num) {
@@ -431,7 +425,7 @@ define([
 		},
 
 		onClickShowNumbering: function(event) {
-			Registry.application.setShowNumbering($(event.target).is(':checked'));
+			application.setShowNumbering($(event.target).is(':checked'));
 			this.showLists();
 		},
 

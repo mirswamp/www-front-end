@@ -18,11 +18,11 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
 	'config',
-	'models/projects/project-invitation'
-], function($, _, Backbone, Config, ProjectInvitation) {
-	return Backbone.Collection.extend({
+	'models/projects/project-invitation',
+	'collections/base-collection'
+], function($, _, Config, ProjectInvitation, BaseCollection) {
+	return BaseCollection.extend({
 
 		//
 		// Backbone attributes

@@ -18,21 +18,24 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
 	'text!templates/platforms/info/versions/platform-versions-list/platform-versions-list.tpl',
-	'registry',
 	'models/utilities/version',
-	'views/widgets/lists/sortable-table-list-view',
+	'views/base-view',
+	'views/collections/tables/sortable-table-list-view',
 	'views/platforms/info/versions/platform-versions-list/platform-versions-list-item-view'
-], function($, _, Backbone, Marionette, Template, Registry, Version, SortableTableListView, PlatformVersionsListItemView) {
+], function($, _, Template, Version, BaseView, SortableTableListView, PlatformVersionsListItemView) {
 	return SortableTableListView.extend({
 
 		//
 		// attributes
 		//
 
+		template: _.template(Template),
 		childView: PlatformVersionsListItemView,
+
+		emptyView: BaseView.extend({
+			template: _.template("No platform versions.")
+		}),
 
 		sorting: {
 			
@@ -79,19 +82,28 @@ define([
 		// rendering methods
 		//
 
-		template: function(data) {
-			return _.template(Template, _.extend(data, {
-				user: Registry.application.session.user,
+		templateContext: function() {
+			return {
+				user: application.session.user,
 				model: this.model,
 				collection: this.collection
-			}));
+			};
 		},
 
 		childViewOptions: function(model) {
+
+			// check if empty view
+			//
+			if (!model) {
+				return {};
+			}
+
+			// return view options
+			//
 			return {
 				model: model,
 				platform: this.model
-			}   
+			};
 		}
 	});
 });

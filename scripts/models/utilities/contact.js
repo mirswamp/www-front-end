@@ -18,12 +18,11 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
 	'config',
-	'models/utilities/timestamped',
+	'models/base-model',
 	'models/utilities/phone-number'
-], function($, _, Backbone, Config, Timestamped, PhoneNumber) {
-	return Backbone.Model.extend({
+], function($, _, Config, BaseModel, PhoneNumber) {
+	return BaseModel.extend({
 
 		//
 		// attributes
@@ -45,7 +44,7 @@ define([
 		urlRoot: Config.servers.web + '/contacts',
 
 		//
-		// overridden Backbone methods
+		// constructor
 		//
 
 		initialize: function() {
@@ -55,6 +54,10 @@ define([
 				});
 			}
 		},
+
+		//
+		// overridden Backbone methods
+		//
 
 		parse: function(response) {
 

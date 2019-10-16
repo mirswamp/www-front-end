@@ -18,18 +18,19 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
 	'text!templates/files/directory-tree/directory-tree.tpl',
 	'models/files/file',
 	'models/files/directory',
+	'views/base-view',
 	'views/files/directory-tree/file-view'
-], function($, _, Backbone, Marionette, Template, File, Directory, FileView) {
-	var Class = Backbone.Marionette.ItemView.extend({
+], function($, _, Template, File, Directory, BaseView, FileView) {
+	return BaseView.extend({
 
 		//
 		// attributes
 		//
+
+		template: _.template(Template),
 
 		events: {
 			'click .expander': 'onClickExpander',
@@ -66,15 +67,15 @@ define([
 		// rendering methods
 		//
 
-		template: function(data) {
-			return _.template(Template, _.extend(data, {
+		templateContext: function() {
+			return {
 				expanderClosedIcon: this.expanderClosedIcon,
 				expanderOpenIcon: this.expanderOpenIcon,
 				checked: this.model.has('contents'),
 				selectable: this.isSelectable(),
 				selected: this.isSelected(),
 				root: (this.options.parent == undefined)
-			}));
+			};
 		},
 
 		getChildView: function(item) {
@@ -85,7 +86,7 @@ define([
 					selected: this.isFileSelected(item)
 				});
 			} else if (item instanceof Directory) {
-				return new Class({
+				return new this.constructor({
 					model: item,
 					parent: this,
 					selectable: this.options.selectable,
@@ -197,7 +198,10 @@ define([
 				this.collapse();
 			}
 
+			// prevent further handling of event
+			//
 			event.stopPropagation();
+			event.preventDefault();
 		},
 
 		onClickInfo: function() {
@@ -214,6 +218,4 @@ define([
 			}
 		}
 	});
-
-	return Class;
 });

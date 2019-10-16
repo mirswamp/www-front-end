@@ -18,28 +18,29 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
 	'text!templates/packages/info/versions/add/add-new-package-version.tpl',
 	'models/utilities/version',
 	'models/packages/package',
 	'models/packages/package-version',
 	'collections/packages/package-versions',
 	'collections/packages/package-version-dependencies',
+	'views/base-view',
 	'views/packages/info/versions/new-package-version-view'
-], function($, _, Backbone, Marionette, Template, Version, Package, PackageVersion, PackageVersions, PackageVersionDependencies, NewPackageVersionView) {
-	return Backbone.Marionette.LayoutView.extend({
+], function($, _, Template, Version, Package, PackageVersion, PackageVersions, PackageVersionDependencies, BaseView, NewPackageVersionView) {
+	return BaseView.extend({
 
 		//
 		// attributes
 		//
 
+		template: _.template(Template),
+
 		regions: {
-			newPackageVersion: '#new-package-version'
+			version: '#new-package-version'
 		},
 
 		//
-		// methods
+		// constructor
 		//
 
 		initialize: function() {
@@ -53,11 +54,11 @@ define([
 		// rendering methods
 		//
 
-		template: function(data) {
-			return _.template(Template, _.extend(data, {
+		templateContext: function() {
+			return {
 				name: this.options.package.get('name'),
 				package: this.options.package
-			}));
+			};
 		},
 
 		onRender: function() {
@@ -95,13 +96,11 @@ define([
 
 						// display new package version view
 						//
-						self.newPackageVersion.show(
-							new NewPackageVersionView({
-								model: self.model,
-								package: self.options.package,
-								packageVersionDependencies: collection
-							})
-						);
+						self.showChildView('version', new NewPackageVersionView({
+							model: self.model,
+							package: self.options.package,
+							packageVersionDependencies: collection
+						}));
 					});
 				}
 			});

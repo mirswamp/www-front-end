@@ -18,23 +18,27 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
 	'bootstrap/dropdown',
 	'select2',
 	'text!templates/widgets/selectors/version-selector.tpl',
 	'views/widgets/selectors/name-selector-view'
-], function($, _, Backbone, Marionette, Dropdown, Select2, Template, NameSelectorView) {
+], function($, _, Dropdown, Select2, Template, NameSelectorView) {
 	return NameSelectorView.extend({
 		
+		//
+		// attributes
+		//
+
+		template: _.template(Template),
+
 		//
 		// rendering methods
 		//
 
-		template: function(data) {
-			return _.template(Template, _.extend(data, {
+		templateContext: function() {
+			return {
 				selected: this.options.initialValue? this.options.initialValue.get('version_string') : undefined
-			}));
+			};
 		},
 
 		onRender: function() {
@@ -52,7 +56,7 @@ define([
 		// methods
 		//
 
-		onChange: function(){
+		onChange: function() {
 
 			// perform callback
 			//
@@ -69,7 +73,7 @@ define([
 		},
 
 		hasSelected: function() {
-			return this.getSelected() !== null;
+			return this.getSelected() !== undefined;
 		},
 
 		getSelectedVersionString: function() {

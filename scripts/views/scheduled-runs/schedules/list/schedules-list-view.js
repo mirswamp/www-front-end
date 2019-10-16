@@ -19,36 +19,60 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
 	'text!templates/scheduled-runs/schedules/list/schedules-list.tpl',
-	'views/widgets/lists/table-list-view',
+	'views/base-view',
+	'views/collections/tables/sortable-table-list-view',
 	'views/scheduled-runs/schedules/list/schedules-list-item-view'
-], function($, _, Backbone, Marionette, Template, TableListView, SchedulesListItemView) {
-	return TableListView.extend({
+], function($, _, Template, BaseView, SortableTableListView, SchedulesListItemView) {
+	return SortableTableListView.extend({
 
 		//
 		// attributes
 		//
 
+		template: _.template(Template),
 		childView: SchedulesListItemView,
+
+		emptyView: BaseView.extend({
+			template: _.template("No schedules.")
+		}),
+
+		sorting: {
+
+			// disable sorting on remove column
+			//
+			headers: {
+				3: { 
+					sorter: false 
+				}
+			}
+		},
 
 		//
 		// rendering methods
 		//
 
-		template: function(data) {
-			return _.template(Template, _.extend(data, {
+		templateContext: function(data) {
+			return {
 				collection: this.collection,
 				showNumbering: this.options.showNumbering,
 				showProjects: this.options.showProjects,
 				showDelete: this.options.showDelete
-			}));
+			};
 		},
 
-		childViewOptions: function(model, index) {
+		childViewOptions: function(model) {
+			
+			// check if empty view
+			//
+			if (!model) {
+				return {};
+			}
+
+			// return view options
+			//
 			return {
-				index: index,
+				index: this.collection.indexOf(model),
 				project: this.options.project,
 				selectedAssessmentRunUuids: this.options.selectedAssessmentRunUuids,
 				showNumbering: this.options.showNumbering,

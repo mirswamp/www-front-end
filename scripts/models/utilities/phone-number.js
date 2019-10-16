@@ -18,9 +18,9 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone'
-], function($, _, Backbone) {
-	return Backbone.Model.extend({
+	'models/base-model'
+], function($, _, BaseModel) {
+	return BaseModel.extend({
 
 		//
 		// attributes
@@ -32,6 +32,20 @@ define([
 			'phone-number': undefined
 		},
 
+		//
+		// constructor
+		//
+
+		initialize: function(attributes) {
+			if (attributes) {
+				this.set({
+					'country-code': attributes['country-code'],
+					'area-code': attributes['area-code'],
+					'phone-number': attributes['phone-number']
+				});
+			}
+		},
+		
 		//
 		// query methods
 		//
@@ -48,16 +62,6 @@ define([
 		//
 		// overridden Backbone methods
 		//
-
-		initialize: function(attributes) {
-			if (attributes) {
-				this.set({
-					'country-code': attributes['country-code'],
-					'area-code': attributes['area-code'],
-					'phone-number': attributes['phone-number']
-				});
-			}
-		},
 
 		toString: function() {
 			if (this.has('country-code') || this.has('area-code')) {

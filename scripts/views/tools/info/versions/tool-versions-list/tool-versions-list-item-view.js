@@ -1,6 +1,6 @@
 /******************************************************************************\
 |                                                                              |
-|                           tool-versions-list-item-view.js                    |
+|                        tool-versions-list-item-view.js                       |
 |                                                                              |
 |******************************************************************************|
 |                                                                              |
@@ -18,22 +18,17 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
 	'text!templates/tools/info/versions/tool-versions-list/tool-versions-list-item.tpl',
-	'registry',
-	'views/dialogs/confirm-view',
-	'views/dialogs/notify-view',
-	'views/dialogs/error-view',
+	'views/collections/tables/table-list-item-view',
 	'utilities/time/date-utils'
-], function($, _, Backbone, Marionette, Template, Registry, ConfirmView, NotifyView, ErrorView) {
-	return Backbone.Marionette.ItemView.extend({
+], function($, _, Template, TableListItemView) {
+	return TableListItemView.extend({
 
 		//
 		// attributes
 		//
 
-		tagName: 'tr',
+		template: _.template(Template),
 
 		events: {
 			'click .delete button': 'onClickDelete'
@@ -43,12 +38,12 @@ define([
 		// rendering methods
 		//
 
-		template: function(data) {
-			return _.template(Template, _.extend(data, {
+		templateContext: function() {
+			return {
 				model: this.model,
-				url: Registry.application.session.user? Registry.application.getURL() + '#tools/versions/' + this.model.get('tool_version_uuid') : undefined,
+				url: application.session.user? application.getURL() + '#tools/versions/' + this.model.get('tool_version_uuid') : undefined,
 				showDelete: this.options.showDelete
-			}));
+			};
 		},
 
 		//
@@ -58,34 +53,30 @@ define([
 		onClickDelete: function() {
 			var self = this;
 
-			// show confirm dialog
+			// show confirmation
 			//
-			Registry.application.modal.show(
-				new ConfirmView({
-					title: "Delete Tool Version",
-					message: "Are you sure that you want to delete version " + self.model.get('version_string') + " of " + self.options.tool.get('name') + "?",
+			application.confirm({
+				title: "Delete Tool Version",
+				message: "Are you sure that you want to delete version " + self.model.get('version_string') + " of " + self.options.tool.get('name') + "?",
 
-					// callbacks
-					//
-					accept: function() {
-						self.model.destroy({
-							
-							// callbacks
+				// callbacks
+				//
+				accept: function() {
+					self.model.destroy({
+						
+						// callbacks
+						//
+						error: function() {
+
+							// show error message
 							//
-							error: function() {
-
-								// show error dialog
-								//
-								Registry.application.modal.show(
-									new ErrorView({
-										message: "Could not delete this tool version."
-									})
-								);
-							}
-						});
-					}
-				})
-			);
+							application.error({
+								message: "Could not delete this tool version."
+							});
+						}
+					});
+				}
+			});
 		}
 	});
 });

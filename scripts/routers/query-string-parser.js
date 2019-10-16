@@ -18,10 +18,8 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'registry',
-	'utilities/browser/query-strings',
-	'utilities/browser/url-strings',
+	'utilities/web/query-strings',
+	'utilities/web/url-strings',
 	'models/projects/project',
 	'models/packages/package',
 	'models/packages/package-version',
@@ -31,8 +29,7 @@ define([
 	'models/platforms/platform-version',
 	'models/run-requests/run-request',
 	'collections/projects/projects',
-	'views/dialogs/error-view'
-], function($, _, Backbone, Registry, QueryStrings, UrlStrings, Project, Package, PackageVersion, Tool, ToolVersion, Platform, PlatformVersion, RunRequest, Projects, ErrorView) {
+], function($, _, QueryStrings, UrlStrings, Project, Package, PackageVersion, Tool, ToolVersion, Platform, PlatformVersion, RunRequest, Projects) {
 	return {
 
 		// whether or not to report errors
@@ -190,13 +187,11 @@ define([
 			}).fail(function() {
 				if (self.verbose) {
 
-					// show error dialog
+					// show error message
 					//
-					Registry.application.modal.show(
-						new ErrorView({
-							message: "The URL address contains an invalid query string."
-						})
-					);
+					application.error({
+						message: "The URL address contains an invalid query string."
+					});
 
 				} else {
 
@@ -221,5 +216,3 @@ define([
 		}
 	};
 });
-
-

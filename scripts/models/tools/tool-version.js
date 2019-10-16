@@ -19,11 +19,9 @@ define([
 	'jquery',
 	'underscore',
 	'config',
-	'registry',
 	'models/utilities/shared-version',
-	'views/dialogs/error-view',
-], function($, _, Config, Registry, SharedVersion, ErrorView) {
-	var Class = SharedVersion.extend({
+], function($, _, Config, SharedVersion) {
+	return SharedVersion.extend({
 
 		//
 		// Backbone attributes
@@ -112,7 +110,7 @@ define([
 
 			// fetch tool version
 			//
-			var toolVersion = new Class({
+			var toolVersion = new this.prototype.constructor({
 				tool_version_uuid: toolVersionUuid
 			});
 
@@ -126,17 +124,13 @@ define([
 
 				error: function() {
 
-					// show error dialog
+					// show error message
 					//
-					Registry.application.modal.show(
-						new ErrorView({
-							message: "Could not fetch tool version."
-						})
-					);
+					application.error({
+						message: "Could not fetch tool version."
+					});
 				}
 			});
 		}
 	});
-
-	return Class;
 });

@@ -18,23 +18,21 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
 	'text!templates/packages/info/versions/info/sharing/package-version-sharing.tpl',
-	'registry',
 	'collections/projects/projects',
-	'views/dialogs/confirm-view',
-	'views/dialogs/error-view',
+	'views/base-view',
 	'views/projects/select-list/select-projects-list-view'
-], function($, _, Backbone, Marionette, Template, Registry, Projects, ConfirmView, ErrorView, SelectProjectsListView) {
-	return Backbone.Marionette.LayoutView.extend({
+], function($, _, Template, Projects, BaseView, SelectProjectsListView) {
+	return BaseView.extend({
 
 		//
 		// attributes
 		//
 
+		template: _.template(Template),
+
 		regions: {
-			selectProjectsList: '#select-projects-list'
+			list: '#select-projects-list'
 		},
 
 		events: {
@@ -47,7 +45,7 @@ define([
 		},
 
 		//
-		// methods
+		// constructor
 		//
 
 		initialize: function( data ) {
@@ -63,7 +61,7 @@ define([
 		},
 
 		isProtected: function() {
-			if (Registry.application.session.isAdmin()) {
+			if (application.session.isAdmin()) {
 				return this.getSharingStatus() == 'protected';
 			} else {
 				return true;
@@ -75,31 +73,29 @@ define([
 
 			if (this.getSharingStatus() === 'public') {
 
-				// show confirm dialog
+				// show confirmation
 				//
-				Registry.application.modal.show(
-					new ConfirmView({
-						title: "Make Package Public?",
-						message: "By making this package version public every member of the SWAMP community will be able to access it. Do you wish to continue?",
-						
-						// callbacks
+				application.confirm({
+					title: "Make Package Public?",
+					message: "By making this package version public every member of the SWAMP community will be able to access it. Do you wish to continue?",
+					
+					// callbacks
+					//
+					accept: function() {
+
+						// disable save button
 						//
-						accept: function() {
+						self.$el.find('#save').prop('disabled', true);
 
-							// disable save button
-							//
-							self.$el.find('#save').prop('disabled', true);
-
-							// save sharing info
-							//
-							self.updateSharingStatus.call(self);
-						},
-						
-						reject: function() {
-							self.onClickCancel.call(self);
-						}
-					})
-				);
+						// save sharing info
+						//
+						self.updateSharingStatus.call(self);
+					},
+					
+					reject: function() {
+						self.onClickCancel.call(self);
+					}
+				});
 			} else {
 
 				// disable save button
@@ -116,12 +112,12 @@ define([
 		// rendering methods
 		//
 
-		template: function(data) {
-			return _.template(Template, _.extend(data, {
+		templateContext: function() {
+			return {
 				package: this.options.package,
-				isAdmin: Registry.application.session.isAdmin(),
+				isAdmin: application.session.isAdmin(),
 				showNavigation: this.options.showNavigation
-			}));
+			};
 		},
 
 		onRender: function() {
@@ -139,13 +135,11 @@ define([
 
 				error: function() {
 
-					// show error dialog
+					// show error message
 					//
-					Registry.application.modal.show(
-						new ErrorView({
-							message: "Could not fetch user's projects."
-						})
-					);
+					application.error({
+						message: "Could not fetch user's projects."
+					});
 				}
 			});
 		},
@@ -154,18 +148,11 @@ define([
 
 			// show select projects list
 			//
-			this.selectProjectsList.show(
-				new SelectProjectsListView({
-					/*
-					collection: new Projects(this.collection.filter(function() {
-						return true;
-					})),
-					*/
-					collection: this.collection,
-					enabled: this.isProtected(),
-					showTrialProjects: true
-				})
-			);
+			this.showChildView('list', new SelectProjectsListView({
+				collection: this.collection,
+				enabled: this.isProtected(),
+				showTrialProjects: true
+			}));
 
 			// select projects list items that are shared
 			//
@@ -182,18 +169,16 @@ define([
 				// callbacks
 				//
 				success: function(data) {
-					self.selectProjectsList.currentView.selectProjectsByUuids(data);
+					self.getChildView('list').selectProjectsByUuids(data);
 				},
 
 				error: function() {
 
-					// show error dialog
+					// show error message
 					//
-					Registry.application.modal.show(
-						new ErrorView({
-							message: "Could not fetch package version sharing."
-						})
-					);				
+					application.error({
+						message: "Could not fetch package version sharing."
+					});
 				}
 			});
 		},
@@ -203,11 +188,11 @@ define([
 		//
 
 		onClickRadioSharing: function() {
-			this.selectProjectsList.currentView.setEnabled(
+			this.getChildView('list').setEnabled(
 				this.isProtected()
 			);
-			if (!this.selectProjectsList.currentView.isEnabled()) {
-				this.selectProjectsList.currentView.deselectAll();
+			if (!this.getChildView('list').isEnabled()) {
+				this.getChildView('list').deselectAll();
 			}
 
 			// enable save button
@@ -231,7 +216,7 @@ define([
 
 			// update version sharing status
 			//
-			if (Registry.application.session.isAdmin()) {
+			if (application.session.isAdmin()) {
 				this.model.set({
 					'version_sharing_status': this.getSharingStatus()
 				});
@@ -244,7 +229,7 @@ define([
 				// callbacks
 				//
 				success: function() {
-					var selectedProjects = self.selectProjectsList.currentView.getSelected();
+					var selectedProjects = self.getChildView('list').getSelected();
 
 					// save shared projects
 					//
@@ -263,26 +248,22 @@ define([
 
 						error: function() {
 
-							// show error dialog
+							// show error message
 							//
-							Registry.application.modal.show(
-								new ErrorView({
-									message: "Could not save package versions's project sharing."
-								})
-							);
+							application.error({
+								message: "Could not save package versions's project sharing."
+							});
 						}
 					});
 				},
 
 				error: function() {
 
-					// show error dialog
+					// show error message
 					//
-					Registry.application.modal.show(
-						new ErrorView({
-							message: "Could not save package version."
-						})
-					);
+					application.error({
+						message: "Could not save package version."
+					});
 				}
 			});
 		},

@@ -19,19 +19,19 @@
 // link colors
 //
 
-@linkColor: @secondaryColor;
-@linkColorHover: @primaryColor;
-@navLinkColor: @secondaryColor;
+@linkColor: @brand-secondary;
+@linkColorHover: @brand-primary;
+@navLinkColor: @brand-secondary;
 @navLinkColorHover: white;
 
 //
 // dropdown colors
 //
 
-@dropdownColor: @darkGrey;
+@dropdownColor: @dark-grey;
 @dropdownBackground: white;
 @dropdownLinkColorHover: white;
-@dropdownLinkBackgroundHover: @primaryHoverColor;
+@dropdownLinkBackgroundHover: @brand-primary-hover;
 
 //
 // links
@@ -69,7 +69,7 @@ a:hover, a:focus {
 			box-shadow: -2px -2px 2px -2px rgba(0, 0, 0, 0.5);
 
 			i {
-				color: @darkGrey;
+				color: @dark-grey;
 				margin-right: 5px;
 			}
 		}
@@ -87,7 +87,7 @@ a:hover, a:focus {
 		text-align: center;
 
 		i {
-			color: @primaryColor;
+			color: @brand-primary;
 		}
 	}
 	
@@ -130,7 +130,7 @@ a:hover, a:focus {
 	}
 
 	.navbar-brand:hover {
-		color: @primaryHighlightColor;
+		color: @brand-primary-highlight;
 	}
 
 	.navbar-form {
@@ -175,7 +175,7 @@ a:hover, a:focus {
 .navbar-inverse .navbar-nav > a:hover,
 .navbar-inverse .navbar-nav > .active > a {
 	background-color: white;
-	.vertical-gradient(@primaryHighlightColor, @primaryColor);
+	.vertical-gradient(@brand-primary-highlight, @brand-primary);
 }
 
 //
@@ -234,7 +234,7 @@ a:hover, a:focus {
 .nav > li > a:hover,
 .nav > li > a:focus {
 	color: @navLinkColorHover;
-	.vertical-gradient(@primaryHoverColor, @primaryColor);
+	.vertical-gradient(@brand-primary-hover, @brand-primary);
 
 	label {
 		color: @navLinkColorHover;
@@ -243,7 +243,7 @@ a:hover, a:focus {
 
 /*
 .nav > li > a:focus {
-	border: 1px solid @primaryBorderColor;
+	border: 1px solid @brand-primary-border;
 }
 */
 
@@ -253,7 +253,7 @@ a:hover, a:focus {
 
 #header {
 	.nav > li > a {
-		color: @primaryColor;
+		color: @brand-primary;
 		text-shadow: none;
 	}
 
@@ -276,16 +276,16 @@ a:hover, a:focus {
 
 	li {
 		i {
-			color: @darkGrey;
+			color: @dark-grey;
 		}
 
 		a:hover {
-			.vertical-gradient(@primaryHighlightColor, @primaryColor);
+			.vertical-gradient(@brand-primary-highlight, @brand-primary);
 			color: white !important;
 		}
 
 		a {
-			background: @veryVeryLightGrey;
+			background: @very-very-light-grey;
 		}
 	}
 
@@ -297,7 +297,7 @@ a:hover, a:focus {
 }
 
 .well.tile:hover {
-	color: @primaryColor;
+	color: @brand-primary;
 }
 
 .well.tile.selected:hover {

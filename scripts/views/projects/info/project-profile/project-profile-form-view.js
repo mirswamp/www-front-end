@@ -4,8 +4,7 @@
 |                                                                              |
 |******************************************************************************|
 |                                                                              |
-|        This defines an editable form view of a project's profile             |
-|        information.                                                          |
+|        This defines a form for entering a project's profile info.            |
 |                                                                              |
 |        Author(s): Abe Megahed                                                |
 |                                                                              |
@@ -19,29 +18,42 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
-	'jquery.validate',
-	'bootstrap/tooltip',
-	'bootstrap/popover',
 	'text!templates/projects/info/project-profile/project-profile-form.tpl',
-	'registry',
 	'models/users/user',
 	'models/projects/project',
-	'collections/tools/tools'
-], function($, _, Backbone, Marionette, Validate, Tooltip, Popover, Template, Registry, User, Project, Tools) {
-	return Backbone.Marionette.ItemView.extend({
+	'collections/tools/tools',
+	'views/forms/form-view'
+], function($, _, Template, User, Project, Tools, FormView) {
+	return FormView.extend({
 
 		//
 		// attributes
 		//
+
+		template: _.template(Template),
 
 		events: {
 			'click .project-type': 'onClickProjectType'
 		},
 
 		//
-		// methods
+		// form attributes
+		//
+
+		rules: {
+			'description': {
+				required: false
+			}
+		},
+
+		messages: {
+			'description': {
+				required: "Please provide a short description of your project."
+			}
+		},
+
+		//
+		// constructor
 		//
 
 		initialize: function() {
@@ -55,24 +67,18 @@ define([
 		// rendering methods
 		//
 
-		template: function(data) {
-			return _.template(Template, _.extend(data, {
+		templateContext: function() {
+			return {
 				Project: Project
-			}));
+			};
 		},
 
 		onRender: function() {
 			var self = this;
 
-			// display popovers on hover
-			//
-			this.$el.find('[data-toggle="popover"]').popover({
-				trigger: 'hover'
-			});
-
 			// show tool owner options, if necessary
 			//
-			Tools.fetchNumByUser(Registry.application.session.user, {
+			Tools.fetchNumByUser(application.session.user, {
 				success: function(number) {
 					if (number > 0) {
 						self.$el.find(".tool-owner-options").show();
@@ -88,39 +94,16 @@ define([
 				}
 			});
 
-			// validate the form
+			// call superclass method
 			//
-			this.validator = this.validate();
-		},
-
-		//
-		// form validation methods
-		//
-
-		validate: function() {
-			return this.$el.find('form').validate({
-				rules: {
-					'description': {
-						required: false
-					}
-				},
-				messages: {
-					'description': {
-						required: "Please provide a short description of your project."
-					}
-				}
-			});
-		},
-
-		isValid: function() {
-			return this.validator.form();
+			FormView.prototype.onRender.call(this);
 		},
 
 		//
 		// form methods
 		//
 
-		update: function(model) {
+		getValues: function() {
 
 			// get values from form
 			//
@@ -129,14 +112,14 @@ define([
 			var viewer = this.$el.find('#viewer').val();
 			var usePublicTools = this.$el.find('#use-public-tools').is(':checked');
 
-			// update model
+			// return form values
 			//
-			model.set({
+			return {
 				'full_name': name,
 				'description': description,
 				'viewer_uuid': viewer,
 				'exclude_public_tools_flag': usePublicTools? 0 : 1
-			});
+			};
 		},
 
 		//

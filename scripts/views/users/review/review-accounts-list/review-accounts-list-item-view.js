@@ -1,6 +1,6 @@
 /******************************************************************************\
 |                                                                              |
-|                           review-accounts-list-view.js                       |
+|                      review-accounts-list-item-view.js                       |
 |                                                                              |
 |******************************************************************************|
 |                                                                              |
@@ -19,25 +19,19 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
 	'bootstrap/dropdown',
 	'text!templates/users/review/review-accounts-list/review-accounts-list-item.tpl',
-	'config',
-	'registry',
+	'views/collections/tables/table-list-item-view',
 	'utilities/time/date-format',
-	'views/dialogs/error-view',
-	'views/dialogs/notify-view',
-	'views/dialogs/confirm-view',
 	'utilities/time/date-utils'
-], function($, _, Backbone, Marionette, Dropdown, Template, Config, Registry, DateFormat, ErrorView, NotifyView, ConfirmView) {
-	return Backbone.Marionette.ItemView.extend({
+], function($, _, Dropdown, Template, TableListItemView, DateFormat) {
+	return TableListItemView.extend({
 
 		//
 		// attributes
 		//
 
-		tagName: 'tr',
+		template: _.template(Template),
 
 		events: {
 			'click .force-password-reset': 'onClickForcePasswordReset',
@@ -51,17 +45,17 @@ define([
 		// rendering methods
 		//
 
-		template: function(data) {
-			return _.template(Template, _.extend(data, {
+		templateContext: function() {
+			return {
 				model: this.model,
-				config: Registry.application.config,
+				config: application.config,
 				index: this.options.index + 1,
-				url: Registry.application.getURL() + '#accounts/' + this.model.get('user_uid'),
+				url: application.getURL() + '#accounts/' + this.model.get('user_uid'),
 				showForcePasswordReset: this.options.showForcePasswordReset,
 				showHibernate: this.options.showHibernate,
 				showLinkedAccount: this.options.showLinkedAccount,
 				showNumbering: this.options.showNumbering
-			}));
+			};
 		},
 
 		//
@@ -106,56 +100,50 @@ define([
 		onClickDelete: function() {
 			var self = this;
 
-			// show confirm delete dialog
+			// show confirmation
 			//
-			Registry.application.modal.show(
-				new ConfirmView({
-					title: "Delete User Account",
-					message: "Are you sure that you would like to delete " +
-						this.model.getFullName() + "'s user account? " +
-						"When you delete an account, all of the user data will continue to be retained.",
+			application.confirm({
+				title: "Delete User Account",
+				message: "Are you sure that you would like to delete " +
+					this.model.getFullName() + "'s user account? " +
+					"When you delete an account, all of the user data will continue to be retained.",
 
-					// callbacks
+				// callbacks
+				//
+				accept: function() {
+					self.model.setStatus('disabled');
+
+					// update view
 					//
-					accept: function() {
-						self.model.setStatus('disabled');
+					self.render();
 
-						// update view
+					// save user
+					//
+					self.model.save(undefined, {
+
+						// callbacks
 						//
-						self.render();
+						success: function() {
+							self.onChange();
 
-						// save user
-						//
-						self.model.save(undefined, {
-
-							// callbacks
+							// show success notification dialog
 							//
-							success: function() {
-								self.onChange();
+							application.notify({
+								message: "This user account has been successfuly disabled."
+							});
+						},
 
-								// show success notification dialog
-								//
-								Registry.application.modal.show(
-									new NotifyView({
-										message: "This user account has been successfuly disabled."
-									})
-								);
-							},
+						error: function() {
 
-							error: function() {
-
-								// show error dialog
-								//
-								Registry.application.modal.show(
-									new ErrorView({
-										message: "Could not delete this user account."
-									})
-								);
-							}
-						});
-					}
-				})
-			);
+							// show error message
+							//
+							application.error({
+								message: "Could not delete this user account."
+							});
+						}
+					});
+				}
+			});
 		}
 	});
 });

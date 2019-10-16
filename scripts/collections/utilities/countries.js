@@ -18,11 +18,11 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
 	'config',
-	'models/utilities/country'
-], function($, _, Backbone, Config, Country) {
-	return Backbone.Collection.extend({
+	'models/utilities/country',
+	'collections/base-collection'
+], function($, _, Config, Country, BaseCollection) {
+	return BaseCollection.extend({
 
 		//
 		// Backbone attributes

@@ -16,72 +16,92 @@
 \******************************************************************************/
 
 //
-// golds
+// colors
 //
 
-/*
-@darkGold: DarkGoldenRod;
-@mediumGold: GoldenRod;
-@lightGold: GoldenRod;
-@paleLightGold: #fff4d9;
-*/
+@medium-red:			#d00030;
+@medium-magenta:		#c04060;
+@medium-raspberry:		#ff1985;
+@medium-red-orange:		#ff6030;
+@medium-orange:			#ff8030;
+@medium-gold:			#bfa452;
+@medium-yellow:			#f0c030;
+@medium-green: 			#209040;
+@medium-cyan:			#129cb2;
+@medium-blue:			#4070e0;
+@medium-purple:			#604080;
+@medium-violet:			#8060a0;
 
-@darkGold: #998342;
-@mediumGold: #bfa452;
-@lightGold: #e5c563;
-@paleLightGold: #f2e3b6;
+@light-red:				lighten(@medium-red, 10%);
+@light-magenta:			lighten(@medium-magenta, 10%);
+@light-raspberry:		lighten(@medium-raspberry, 10%);
+@light-red-orange:		lighten(@medium-red-orange, 10%);
+@light-orange:			lighten(@medium-orange, 10%);
+@light-gold:			#e5c563;
+@light-yellow:			lighten(@medium-yellow, 10%);
+@light-green: 			lighten(@medium-green, 10%);
+@light-cyan:			lighten(@medium-cyan, 10%);
+@light-blue:			lighten(@medium-blue, 10%);
+@light-purple:			lighten(@medium-purple, 10%);
+@light-violet:			lighten(@medium-violet, 10%);
 
-//
-// reds
-//
-
-@darkRed: #b94a48;
-@mediumRed: #c2002f;
-@lightRed: #eed3d7;
-@veryLightRed: #f2dede;
-
-//
-// greens
-//
-
- @darkGreen: #337f33;
- @mediumGreen: #339933;
+@dark-red:				darken(@medium-red, 10%);
+@dark-magenta:			darken(@medium-magenta, 10%);
+@dark-raspberry:		darken(@medium-raspberry, 10%);
+@dark-red-orange:		darken(@medium-red-orange, 10%);
+@dark-orange:			darken(@medium-orange, 10%);
+@dark-gold:				darken(@medium-gold, 10%);
+@dark-yellow:			darken(@medium-yellow, 10%);
+@dark-green: 			darken(@medium-green, 10%);
+@dark-cyan:				darken(@medium-cyan, 10%);
+@dark-blue:				darken(@medium-blue, 10%);
+@dark-purple:			darken(@medium-purple, 10%);
+@dark-violet:			darken(@medium-violet, 10%);
 
 //
 // greys
 //
 
-@veryDarkGrey: #333333;
-@darkGrey: #58585b;
-@mediumGrey: #939597;
-@lightGrey: #cccccc;
-@veryLightGrey: #e7e7e7;
-@veryVeryLightGrey: #f7f7f7;
-@ultraLightGrey: #fcfcfc;
+@ultra-dark-grey: darken(@medium-grey, 48%);
+@very-very-very-dark-grey: darken(@medium-grey, 40%);
+@very-very-dark-grey: darken(@medium-grey, 30%);
+@very-dark-grey: darken(@medium-grey, 20%);
+@dark-grey: darken(@medium-grey, 10%);
+@medium-grey: #7f7f7f;
+@light-grey: lighten(@medium-grey, 10%);
+@very-light-grey: lighten(@medium-grey, 20%);
+@very-very-light-grey: lighten(@medium-grey, 30%);
+@very-very-very-light-grey: lighten(@medium-grey, 40%);
+@ultra-light-grey: lighten(@medium-grey, 48%);
 
 //
 // gradients
 //
 
-.vertical-gradient (@startColor: #eee, @endColor: white) {
-	background-color: @startColor;
-	background: -webkit-gradient(linear, left top, left bottom, from(@startColor), to(@endColor));
-	background: -webkit-linear-gradient(top, @startColor, @endColor);
-	background: -moz-linear-gradient(top, @startColor, @endColor);
-	background: -ms-linear-gradient(top, @startColor, @endColor);
-	background: -o-linear-gradient(top, @startColor, @endColor);
+.vertical-gradient (@start-color: #eee, @end-color: white) {
+	background-color: @start-color;
+	background: -webkit-gradient(linear, left top, left bottom, from(@start-color), to(@end-color));
+	background: -webkit-linear-gradient(top, @start-color, @end-color);
+	background: -moz-linear-gradient(top, @start-color, @end-color);
+	background: -ms-linear-gradient(top, @start-color, @end-color);
+	background: -o-linear-gradient(top, @start-color, @end-color);
 }
 
 //
-// main colors
+// special colors
 //
 
-@primaryColor: @mediumGold;
-@primaryHighlightColor: @lightGold;
-@primaryHoverColor: @darkGold;
+@success-color:			@light-green;
+@caution-color:			orange;
+@warning-color: 		red;
+@error-color: 			red;
 
-@secondaryColor: @darkGold;
-@secondaryHighlightColor: @mediumGold;
+@highlight-color: 		@very-light-grey;
+@disabled-color: 		@very-light-grey;
 
-@primaryBackgroundColor: @paleLightGold;
-@primaryBorderColor: @mediumGold;
+//
+// text colors
+//
+
+@dark-text-color: @very-very-dark-grey;
+@light-text-color: @very-very-light-grey;

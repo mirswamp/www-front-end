@@ -18,23 +18,19 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
 	'text!templates/users/accounts/my-account.tpl',
-	'config',
-	'registry',
-	'views/dialogs/confirm-view',
-	'views/dialogs/notify-view',
-	'views/dialogs/error-view'
-], function($, _, Backbone, Marionette, Template, Config, Registry, ConfirmView, NotifyView, ErrorView) {
-	return Backbone.Marionette.LayoutView.extend({
+	'views/base-view',
+], function($, _, Template, BaseView) {
+	return BaseView.extend({
 
 		//
 		// attributes
 		//
 
+		template: _.template(Template),
+
 		regions: {
-			userProfile: '#user-profile'
+			profile: '#user-profile'
 		},
 
 		events: {
@@ -50,24 +46,24 @@ define([
 		},
 
 		//
-		// methods
+		// constructor
 		//
 
 		initialize: function() {
 
 			// set model to current user
 			//
-			this.model = Registry.application.session.user;
+			this.model = application.session.user;
 		},
 
 		//
 		// rendering methods
 		//
 
-		template: function(data) {
-			return _.template(Template, _.extend(data, {
-				config: Registry.application.config
-			}));
+		templateContext: function() {
+			return {
+				config: application.config
+			};
 		},
 
 		onRender: function() {
@@ -134,12 +130,10 @@ define([
 			require([
 				'views/users/user-profile/user-profile-view'
 			], function (UserProfileView) {
-				self.userProfile.show(
-					new UserProfileView({
-						model: self.model,
-						parent: self
-					})
-				);
+				self.showChildView('profile', new UserProfileView({
+					model: self.model,
+					parent: self
+				}));
 			});
 		},
 
@@ -148,12 +142,10 @@ define([
 			require([
 				'views/users/accounts/edit/edit-my-account-view'
 			], function (EditMyAccountView) {
-				self.userProfile.show(
-					new EditMyAccountView({
-						model: self.model,
-						parent: self
-					})
-				);
+				self.showChildView('profile', new EditMyAccountView({
+					model: self.model,
+					parent: self
+				}));
 			});
 		},
 
@@ -162,12 +154,10 @@ define([
 			require([
 				'views/users/permissions/my-permissions-view'
 			], function (MyPermissionsView) {
-				self.userProfile.show(
-					new MyPermissionsView({
-						model: self.model,
-						parent: self
-					})
-				);
+				self.showChildView('profile', new MyPermissionsView({
+					model: self.model,
+					parent: self
+				}));
 			});
 		},
 
@@ -176,12 +166,10 @@ define([
 			require([
 				'views/users/linked-accounts/my-linked-accounts-view',
 			], function (MyLinkedAccountsView) {
-				self.userProfile.show(
-					new MyLinkedAccountsView({
-						model: self.model,
-						parent: self
-					})
-				);
+				self.showChildView('profile', new MyLinkedAccountsView({
+					model: self.model,
+					parent: self
+				}));
 			});
 		},
 
@@ -190,12 +178,10 @@ define([
 			require([
 				'views/users/passwords/my-passwords-view',
 			], function (MyPasswordsView) {
-				self.userProfile.show(
-					new MyPasswordsView({
-						model: self.model,
-						parent: self
-					})
-				);
+				self.showChildView('profile', new MyPasswordsView({
+					model: self.model,
+					parent: self
+				}));
 			});
 		},
 
@@ -204,12 +190,10 @@ define([
 			require([
 				'views/users/classes/my-classes-view',
 			], function (MyClassesView) {
-				self.userProfile.show(
-					new MyClassesView({
-						model: self.model,
-						parent: self
-					})
-				);
+				self.showChildView('profile', new MyClassesView({
+					model: self.model,
+					parent: self
+				}));
 			});
 		},
 
@@ -220,68 +204,62 @@ define([
 		deleteAccount: function() {
 			var self = this;
 
-			// confirm delete
+			// show confirmation
 			//
-			Registry.application.modal.show(
-				new ConfirmView({
-					title: "Delete My Account",
-					message: "Are you sure that you would like to delete your user account? " +
-						"When you delete an account, all of the user data will continue to be retained.",
+			application.confirm({
+				title: "Delete My Account",
+				message: "Are you sure that you would like to delete your user account? " +
+					"When you delete an account, all of the user data will continue to be retained.",
 
-					// callbacks
+				// callbacks
+				//
+				accept: function() {
+
+					// delete user
 					//
-					accept: function() {
+					self.model.destroy({
 
-						// delete user
+						// callbacks
 						//
-						self.model.destroy({
-
-							// callbacks
+						success: function() {
+							
+							// end session
 							//
-							success: function() {
-								
-								// end session
-								//
-								Registry.application.session.logout({
+							application.session.logout({
 
-									// callbacks
+								// callbacks
+								//
+								success: function(){
+
+									// go to welcome view
 									//
-									success: function(){
+									Backbone.history.navigate('#', {
+										trigger: true
+									});
+								},
+								
+								error: function(jqxhr, textstatus, errorThrown) {
 
-										// go to welcome view
-										//
-										Backbone.history.navigate('#', {
-											trigger: true
-										});
-									},
-									
-									error: function(jqxhr, textstatus, errorThrown) {
+									// show error message
+									//
+									application.error({
+										message: "Could not log out: " + errorThrown + "."
+									});
+								}
+							});
+						},
 
-										// show error dialog
-										//
-										Registry.application.modal.show(
-											new ErrorView({
-												message: "Could not log out: " + errorThrown + "."
-											})
-										);
-									}
-								});
-							},
+						error: function() {
 
-							error: function() {
-
-								// show error dialog
-								//
-								Registry.application.modal.show(
-									new ErrorView({
-										message: "Could not delete your user account."
-									})
-								);
-							}
-						});
-					}
-				})
-			);
+							// show error message
+							//
+							application.error({
+								message: "Could not delete your user account."
+							});
+						}
+					});
+				}
+			});
 		},
 
 		//
@@ -326,32 +304,28 @@ define([
 
 		onClickChangePassword: function() {
 			require([
-				'views/users/accounts/dialogs/change-password/change-my-password-view'
-			], function (ChangeMyPasswordView) {
+				'views/users/accounts/dialogs/change-password/change-my-password-dialog-view'
+			], function (ChangeMyPasswordDialogView) {
 
-				// show change my password view
+				// show change my password dialog
 				//
-				Registry.application.modal.show(
-					new ChangeMyPasswordView({
-						parent: this
-					})
-				);
+				application.show(new ChangeMyPasswordDialogView({
+					parent: this
+				}));
 			});
 		},
 
 		onClickResetPassword: function() {
 			require([
-				'views/users/authentication/dialogs/reset-password-view'
-			], function (ResetPasswordView) {
+				'views/users/authentication/dialogs/reset-password-dialog-view'
+			], function (ResetPasswordDialogView) {
 
-				// show reset password view
+				// show reset password dialog
 				//
-				Registry.application.modal.show(
-					new ResetPasswordView({
-						user: Registry.application.session.user,
-						parent: this
-					})
-				);
+				application.show(new ResetPasswordDialogView({
+					user: application.session.user,
+					parent: this
+				}));
 			});
 		},
 

@@ -1,6 +1,6 @@
 /******************************************************************************\
 |                                                                              |
-|                          scheduled-runs-lists-item-view.js                   |
+|                         scheduled-runs-lists-item-view.js                    |
 |                                                                              |
 |******************************************************************************|
 |                                                                              |
@@ -18,21 +18,21 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
-	'bootstrap/tooltip',
 	'text!templates/scheduled-runs/lists/scheduled-runs-lists-item.tpl',
 	'collections/assessments/scheduled-runs',
+	'views/base-view',
 	'views/scheduled-runs/list/scheduled-runs-list-view'
-], function($, _, Backbone, Marionette, Tooltip, Template, ScheduledRuns, ScheduledRunsListView) {
-	return Backbone.Marionette.LayoutView.extend({
+], function($, _, Template, ScheduledRuns, BaseView, ScheduledRunsListView) {
+	return BaseView.extend({
 
 		//
 		// attributes
 		//
 
+		template: _.template(Template),
+
 		regions: {
-			scheduledRuns: '.scheduled-runs',
+			list: '.scheduled-runs',
 		},
 
 		//
@@ -49,10 +49,10 @@ define([
 		// rendering methods
 		//
 
-		template: function(data) {
-			return _.template(Template, _.extend(data, {
+		templateContext: function() {
+			return {
 				runRequestUrl: this.getRunRequestUrl()
-			}));
+			};
 		},
 
 		onRender: function() {
@@ -69,19 +69,11 @@ define([
 		},
 
 		showScheduledRuns: function() {
-			var scheduledRuns = new ScheduledRuns(this.model.get('scheduled_runs'), {
-				parse: true
-			});
-			for (var i = 0; i < scheduledRuns.length; i++) {
-				scheduledRuns.at(i).set('run_request', this.model);
-			}
-
-			this.scheduledRuns.show(
-				new ScheduledRunsListView({
-					collection: scheduledRuns,
-					showDelete: true
-				})
-			);
+			this.showChildView('list', new ScheduledRunsListView({
+				collection: this.collection,
+				showDelete: true,
+				onDelete: this.options.onDelete
+			}));
 		}
 	});
 });

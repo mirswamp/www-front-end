@@ -18,18 +18,18 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
 	'text!templates/packages/info/details/package-profile/package-profile.tpl',
-	'registry',
 	'models/users/user',
+	'views/base-view',
 	'utilities/time/date-utils'
-], function($, _, Backbone, Marionette, Template, Registry, User) {
-	return Backbone.Marionette.ItemView.extend({
+], function($, _, Template, User, BaseView) {
+	return BaseView.extend({
 
 		//
 		// attributes
 		//
+
+		template: _.template(Template),
 
 		events: {
 			'click #edit-package': 'onClickEditPackage',
@@ -39,11 +39,11 @@ define([
 		// rendering methods
 		//
 
-		template: function(data) {
-			return _.template(Template, _.extend(data, {
+		templateContext: function() {
+			return {
 				model: this.model,
 				isOwned: this.model.isOwned()
-			}));
+			};
 		},
 
 		onRender: function() {

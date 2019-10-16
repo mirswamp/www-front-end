@@ -18,24 +18,28 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
-	'bootstrap/tooltip',
 	'bootstrap/popover',
 	'text!templates/policies/policy-view.tpl',
+	'views/base-view',
 	'utilities/security/password-policy',
-], function($, _, Backbone, Marionette, Tooltip, Popover, Template, PasswordPolicy) {
-	return Backbone.Marionette.LayoutView.extend({
+], function($, _, Popover, Template, BaseView, PasswordPolicy) {
+	return BaseView.extend({
+
+		//
+		// attributes
+		//
+
+		template: _.template(Template),
 
 		//
 		// rendering methods
 		//
 
-		template: function(data) {
-			return _.template(Template, _.extend(data, {
+		templateContext: function() {
+			return {
 				policyTitle: this.options.policyTitle,
 				policyText: this.options.policyText
-			}));
+			};
 		},
 
 		onRender: function() {

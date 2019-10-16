@@ -1,11 +1,11 @@
 /******************************************************************************\
 |                                                                              |
-|                           dot-net-package-form-view.js                       |
+|                         dot-net-package-form-view.js                         |
 |                                                                              |
 |******************************************************************************|
 |                                                                              |
-|        This defines an editable form view of a package versions's            |
-|        language / type specific profile information.                         |
+|        This defines a form for entering a package versions's                 |
+|        language / type specific profile info.                                |
 |                                                                              |
 |        Author(s): Abe Megahed                                                |
 |                                                                              |
@@ -19,19 +19,19 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
 	'text!templates/packages/info/versions/info/build/build-profile/package-type/dot-net/dot-net-package-form.tpl',
 	'widgets/accordions',
 	'views/packages/info/versions/info/build/build-profile/package-type/package-type-form-view',
 	'utilities/scripting/file-utils',
-	'utilities/browser/html-utils'
-], function($, _, Backbone, Marionette, Template, Accordions, PackageTypeFormView) {
+	'utilities/web/html-utils'
+], function($, _, Template, Accordions, PackageTypeFormView) {
 	return PackageTypeFormView.extend({
 
 		//
 		// attributes
 		//
+
+		template: _.template(Template),
 
 		events: {
 			'change .solution select': 'onChangeSolution',
@@ -144,27 +144,21 @@ define([
 		// rendering methods
 		//
 
-		template: function(data) {
-			return _.template(Template, _.extend(data, {
+		templateContext: function() {
+			return {
 				model: this.model
-			}));
+			};
 		},
 
 		onRender: function() {
-
-			// display popovers on hover
-			//
-			this.$el.find('[data-toggle="popover"]').popover({
-				trigger: 'hover'
-			});
 
 			// change accordion icon
 			//
 			new Accordions(this.$el.find('.panel'));
 
-			// validate the form
+			// call superclass method
 			//
-			// this.validator = this.validate();
+			PackageTypeFormView.prototype.onRender.call(this);
 		},
 
 		//

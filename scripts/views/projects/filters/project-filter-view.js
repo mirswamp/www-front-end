@@ -18,21 +18,21 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
 	'bootstrap/collapse',
-	'modernizr',
 	'text!templates/projects/filters/project-filter.tpl',
+	'views/base-view',
 	'views/projects/selectors/project-selector-view'
-], function($, _, Backbone, Marionette, Collapse, Modernizr, Template, ProjectSelectorView) {
-	return Backbone.Marionette.LayoutView.extend({
+], function($, _, Collapse, Template, BaseView, ProjectSelectorView) {
+	return BaseView.extend({
 
 		//
 		// attributes
 		//
 
+		template: _.template(Template),
+		
 		regions: {
-			projectSelector: '.name-selector'
+			selector: '.name-selector'
 		},
 
 		events: {
@@ -42,7 +42,7 @@ define([
 		maxTagLength: 40,
 
 		//
-		// methods
+		// constructor
 		//
 
 		initialize: function() {
@@ -69,7 +69,7 @@ define([
 		},
 
 		getSelected: function() {
-			var selectedName = this.projectSelector.currentView.getSelectedName();
+			var selectedName = this.getChildView('selector').getSelectedName();
 			if (selectedName == 'Any') {
 				return undefined;
 			} else if (selectedName == 'Default') {
@@ -132,7 +132,7 @@ define([
 
 		getQueryString: function() {
 			var queryString = '';
-			var selectedName = this.projectSelector.currentView.getSelectedName();
+			var selectedName = this.getChildView('selector').getSelectedName();
 
 			if (selectedName == 'Any') {
 				return;
@@ -159,7 +159,7 @@ define([
 		//
 
 		reset: function(options) {
-			this.projectSelector.currentView.setSelected(this.options.defaultValue, {
+			this.getChildView('selector').setSelected(this.options.defaultValue, {
 				silent: true
 			});
 			this.onChange(options);
@@ -169,28 +169,22 @@ define([
 		// rendering methods
 		//
 
-		template: function(data) {
-			return _.template(Template, data);
-		},
-
 		onRender: function() {
 			var self = this;
 
 			// show subviews
 			//
-			this.projectSelector.show(
-				new ProjectSelectorView({
-					model: this.model,
-					initialValue: this.options.initialValue,
-					allowAny: true,
+			this.showChildView('selector', new ProjectSelectorView({
+				model: this.model,
+				initialValue: this.options.initialValue,
+				allowAny: true,
 
-					// callbacks
-					//
-					onChange: function() {
-						self.onChange();
-					}
-				})
-			);
+				// callbacks
+				//
+				onChange: function() {
+					self.onChange();
+				}
+			}));
 
 			// update reset button
 			//
@@ -222,7 +216,7 @@ define([
 		//
 
 		onChange: function(options) {
-			this.selected = this.projectSelector.currentView.getSelected();
+			this.selected = this.getChildView('selector').getSelected();
 
 			// update reset button
 			//

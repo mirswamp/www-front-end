@@ -19,12 +19,10 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
 	'config',
-	'registry',
 	'models/packages/package-platform',
 	'collections/base-collection'
-], function($, _, Backbone, Config, Registry, PackagePlatform, BaseCollection) {
+], function($, _, Config, PackagePlatform, BaseCollection) {
 	return BaseCollection.extend({
 
 		//

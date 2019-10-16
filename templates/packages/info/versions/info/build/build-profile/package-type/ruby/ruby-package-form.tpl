@@ -55,15 +55,11 @@
 
 					<div class="panel-heading">
 						<label>Advanced settings</label>
-						<span class="tags">
-							<span class="<% if (!expandConfigure) { %>collapsed <% } %>toggle tag accordion-toggle" data-toggle="collapse" data-parent="#filters" href="#configure-settings"<% if (!showConfigure) { %> style="display:none"<% } %>><i class="fa fa-tasks"></i>Configure</span>
-							<span class="<% if (!expandBuild) { %>collapsed <% } %>toggle tag accordion-toggle" data-toggle="collapse" data-parent="#filters" href="#build-settings"<% if (!showBuild) { %> style="display:none"<% } %>><i class="fa fa-puzzle-piece"></i>Build</span>
-						</span>
 					</div>
 					
 					<div class="nested">
-						<div id="configure-settings" class="well collapse<% if (expandConfigure) { %> in<% } %>">
-							<h3><i class="fa fa-tasks"></i>Configure settings<i class="fa fa-minus-circle close accordion-toggle" data-toggle="collapse" href="#configure-settings" /></h3>
+						<div id="configure-settings" class="well">
+							<h3><i class="fa fa-tasks"></i>Configure settings</h3>
 
 							<div id="configure-path" class="form-group">
 								<label class="control-label">Configure path</label>
@@ -105,8 +101,8 @@
 							</div>
 						</div>
 
-						<div id="build-settings" class="well collapse<% if (expandBuild) { %> in<% } %>">
-							<h3><i class="fa fa-puzzle-piece"></i>Build settings<i class="fa fa-minus-circle close accordion-toggle" data-toggle="collapse" href="#build-settings" /></h3>
+						<div id="build-settings" class="well">
+							<h3><i class="fa fa-puzzle-piece"></i>Build settings</h3>
 
 							<div id="build-path" class="form-group">
 								<label class="control-label">Build path</label>

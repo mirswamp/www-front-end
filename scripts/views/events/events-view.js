@@ -18,38 +18,35 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
 	'text!templates/events/events.tpl',
-	'registry',
 	'models/projects/project',
 	'collections/events/events',
 	'collections/events/project-events',
 	'collections/events/user-project-events',
 	'collections/events/user-personal-events',
-	'views/dialogs/error-view',
+	'views/base-view',
 	'views/events/filters/event-filters-view',
 	'views/events/list/events-list-view'
-], function($, _, Backbone, Marionette, Template, Registry, Project, Events, ProjectEvents, UserProjectEvents, UserPersonalEvents, ErrorView, EventFiltersView, EventsListView) {
-	return Backbone.Marionette.LayoutView.extend({
+], function($, _, Template, Project, Events, ProjectEvents, UserProjectEvents, UserPersonalEvents, BaseView, EventFiltersView, EventsListView) {
+	return BaseView.extend({
 
 		//
 		// attributes
 		//
 
+		template: _.template(Template),
+
 		regions: {
-			eventFilters: '#event-filters',
-			eventsList: '#events-list'
+			filters: '#event-filters',
+			list: '#events-list'
 		},
 
 		events: {
 			'click #show-numbering': 'onClickShowNumbering'
 		},
 
-		template: _.template(Template),
-
 		//
-		// methods
+		// constructor
 		//
 
 		initialize: function() {
@@ -77,15 +74,15 @@ define([
 		},
 
 		getQueryString: function() {
-			return this.eventFilters.currentView.getQueryString();
+			return this.getChildView('filters').getQueryString();
 		},
 
 		getFilterData: function() {
-			return this.eventFilters.currentView.getData();
+			return this.getChildView('filters').getData();
 		},
 
 		getFilterAttrs: function() {
-			return this.eventFilters.currentView.getAttrs();
+			return this.getChildView('filters').getAttrs();
 		},
 
 		//
@@ -146,47 +143,44 @@ define([
 		// rendering methods
 		//
 
-		template: function(data) {
-			return _.template(Template, _.extend(data, {
+		templateContext: function() {
+			return {
 				model: this.getProject(),
-				showNumbering: Registry.application.options.showNumbering
-			}));
+				showNumbering: application.options.showNumbering
+			};
 		},
 
 		onRender: function() {
 			var self = this;
-			
+
 			// show event filters view
 			//
-			this.eventFilters.show(
-				new EventFiltersView({
-					model: this.model,
-					data: this.options.data? this.options.data : {},
+			this.showChildView('filters', new EventFiltersView({
+				model: this.model,
+				data: this.options.data? this.options.data : {},
 
-					// callbacks
+				// callbacks
+				//
+				onChange: function() {
+				
+					// update filter data
 					//
-					onChange: function() {
-						// setQueryString(self.eventFilters.currentView.getQueryString());			
-					
-						// update filter data
-						//
-						var projects = self.options.data.projects;
-						self.options.data = self.getFilterData();
-						self.options.data.projects = projects;
+					var projects = self.options.data.projects;
+					self.options.data = self.getFilterData();
+					self.options.data.projects = projects;
 
-						// update url
-						//
-						var queryString = self.getQueryString();
-						var state = window.history.state;
-						var url = getWindowBaseLocation() + (queryString? ('?' + queryString) : '');
-						window.history.pushState(state, '', url);
+					// update url
+					//
+					var queryString = self.getQueryString();
+					var state = window.history.state;
+					var url = getWindowBaseLocation() + (queryString? ('?' + queryString) : '');
+					window.history.pushState(state, '', url);
 
-						// update view
-						//
-						self.onChange();
-					}
-				})
-			);
+					// update view
+					//
+					self.onChange();
+				}
+			}));
 
 			// show events
 			//
@@ -206,7 +200,7 @@ define([
 
 				// apply limit
 				//
-				var limit = self.eventFilters.currentView.limitFilter.currentView.getLimit();
+				var limit = self.getChildView('filters').getChildView('limit').getLimit();
 				if (limit) {
 					var collection = new Events();
 					for (var i = 0; i < limit; i++) {
@@ -217,12 +211,10 @@ define([
 
 				// render events list
 				//
-				self.eventsList.show(
-					new EventsListView({
-						collection: self.collection,
-						showNumbering: Registry.application.options.showNumbering
-					})
-				);
+				self.showChildView('list', new EventsListView({
+					collection: self.collection,
+					showNumbering: application.options.showNumbering
+				}));
 			});
 		},
 
@@ -235,7 +227,7 @@ define([
 		},
 
 		onClickShowNumbering: function(event) {
-			Registry.application.setShowNumbering($(event.target).is(':checked'));
+			application.setShowNumbering($(event.target).is(':checked'));
 			this.showList();
 		}
 	});

@@ -18,11 +18,11 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
 	'config',
-	'models/authentication/auth-provider'
-], function($, _, Backbone, Config, AuthProvider) {
-	return Backbone.Collection.extend({
+	'models/authentication/auth-provider',
+	'collections/base-collection'
+], function($, _, Config, AuthProvider, BaseCollection) {
+	return BaseCollection.extend({
 
 		//
 		// Backbone attributes

@@ -4,8 +4,7 @@
 |                                                                              |
 |******************************************************************************|
 |                                                                              |
-|        This defines an notification dialog that is used to show a            |
-|        build script.                                                         |
+|        This defines a dialog box that is used to show a build script.        |
 |                                                                              |
 |        Author(s): Abe Megahed                                                |
 |                                                                              |
@@ -19,41 +18,40 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
 	'text!templates/packages/dialogs/build-script-dialog.tpl',
+	'views/dialogs/dialog-view',
 	'views/packages/info/versions/info/build/build-script/build-script-view'
-], function($, _, Backbone, Marionette, Template, BuildScriptView) {
-	return Backbone.Marionette.LayoutView.extend({
+], function($, _, Template, DialogView, BuildScriptView) {
+	return DialogView.extend({
 
 		//
 		// attributes
 		//
 
+		template: _.template(Template),
+
 		regions: {
-			buildScript: '#build-script'
+			build_script: '#build-script'
 		},
 
 		//
 		// rendering methods
 		//
 
-		template: function() {
-			return _.template(Template, {
+		templateContext: function() {
+			return {
 				title: 'Build Script for ' + this.options.package.get('name') + ' '  + this.model.get('version_string')
-			});
+			};
 		},
 
 		onRender: function() {
 
 			// show build script
 			//
-			this.buildScript.show(
-				new BuildScriptView({
-					model: this.model,
-					package: this.options.package
-				})
-			);
+			this.showChildView('build_script', new BuildScriptView({
+				model: this.model,
+				package: this.options.package
+			}));
 		}
 	});
 });

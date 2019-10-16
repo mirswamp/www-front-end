@@ -18,27 +18,26 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
 	'jquery.validate',
 	'bootstrap/collapse',
-	'modernizr',
 	'text!templates/tools/filters/tool-filters.tpl',
-	'registry',
-	'utilities/browser/query-strings',
-	'utilities/browser/url-strings',
+	'views/base-view',
 	'views/widgets/filters/date-filter-view',
-	'views/widgets/filters/limit-filter-view'
-], function($, _, Backbone, Marionette, Validate, Collapse, Modernizr, Template, Registry, QueryStrings, UrlStrings, DateFilterView, LimitFilterView) {
-	return Backbone.Marionette.LayoutView.extend({
+	'views/widgets/filters/limit-filter-view',
+	'utilities/web/query-strings',
+	'utilities/web/url-strings'
+], function($, _, Validate, Collapse, Template, BaseView, DateFilterView, LimitFilterView, QueryStrings, UrlStrings) {
+	return BaseView.extend({
 
 		//
 		// attributes
 		//
 
+		template: _.template(Template),
+
 		regions: {
-			dateFilter: '#date-filter',
-			limitFilter: '#limit-filter'
+			date: '#date-filter',
+			limit: '#limit-filter'
 		},
 
 		events: {
@@ -54,8 +53,8 @@ define([
 
 			// add tags
 			//
-			tags += this.dateFilter.currentView.getTags();
-			tags += this.limitFilter.currentView.getTag();
+			tags += this.getChildView('date').getTags();
+			tags += this.getChildView('limit').getTag();
 
 			return tags;
 		},
@@ -66,10 +65,10 @@ define([
 			// add info for filters
 			//
 			if (!attributes || _.contains(attributes, 'date')) {
-				_.extend(data, this.dateFilter.currentView.getData());
+				_.extend(data, this.getChildView('date').getData());
 			}
 			if (!attributes || _.contains(attributes, 'limit')) {
-				_.extend(data, this.limitFilter.currentView.getData());
+				_.extend(data, this.getChildView('limit').getData());
 			}
 
 			return data;
@@ -81,10 +80,10 @@ define([
 			// add info for filters
 			//
 			if (!attributes || _.contains(attributes, 'date')) {
-				_.extend(attrs, this.dateFilter.currentView.getAttrs());
+				_.extend(attrs, this.getChildView('date').getAttrs());
 			}
 			if (!attributes || _.contains(attributes, 'limit')) {
-				_.extend(attrs, this.limitFilter.currentView.getAttrs());
+				_.extend(attrs, this.getChildView('limit').getAttrs());
 			}
 
 			return attrs;
@@ -95,8 +94,8 @@ define([
 
 			// add info for filters
 			//
-			queryString = addQueryString(queryString, this.dateFilter.currentView.getQueryString());
-			queryString = addQueryString(queryString, this.limitFilter.currentView.getQueryString());
+			queryString = addQueryString(queryString, this.getChildView('date').getQueryString());
+			queryString = addQueryString(queryString, this.getChildView('limit').getQueryString());
 
 			return queryString;
 		},
@@ -109,10 +108,10 @@ define([
 
 			// reset sub filters
 			//
-			this.dateFilter.currentView.reset({
+			this.getChildView('date').reset({
 				silent: true
 			});
-			this.limitFilter.currentView.reset({
+			this.getChildView('limit').reset({
 				silent: true
 			});
 			
@@ -125,13 +124,13 @@ define([
 		// rendering methods
 		//
 
-		template: function(data) {
-			return _.template(Template, _.extend(data, {
+		templateContext: function() {
+			return {
 				highlighted: {
 					'date-filter': this.options.data['after'] != undefined || this.options.data['before'] != undefined,
 					'limit-filter': this.options.data['limit'] != undefined
 				}
-			}));
+			};
 		},
 
 		onRender: function() {
@@ -139,7 +138,7 @@ define([
 			
 			// show subviews
 			//
-			this.dateFilter.show(new DateFilterView({
+			this.showChildView('date', new DateFilterView({
 				initialAfterDate: this.options.data['after'],
 				initialBeforeDate: this.options.data['before'],
 
@@ -149,7 +148,7 @@ define([
 					self.onChange();
 				}				
 			}));
-			this.limitFilter.show(new LimitFilterView({
+			this.showChildView('limit', new LimitFilterView({
 				defaultValue: 50,
 				initialValue: this.options.data['limit'],
 

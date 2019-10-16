@@ -18,10 +18,10 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'config'
-], function($, _, Backbone, Config) {
-	return Backbone.Model.extend({
+	'config',
+	'models/base-model'
+], function($, _, Config, BaseModel) {
+	return BaseModel.extend({
 
 		//
 		// attributes

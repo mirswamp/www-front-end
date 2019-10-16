@@ -18,18 +18,15 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
 	'text!templates/tools/tools.tpl',
-	'registry',
-	'utilities/browser/query-strings',
-	'utilities/browser/url-strings',
 	'collections/tools/tools',
-	'views/dialogs/error-view',
+	'views/base-view',
 	'views/tools/filters/tool-filters-view',
-	'views/tools/list/tools-list-view'
-], function($, _, Backbone, Marionette, Template, Registry, QueryStrings, UrlStrings, Tools, ErrorView, ToolFiltersView, ToolsListView) {
-	return Backbone.Marionette.LayoutView.extend({
+	'views/tools/list/tools-list-view',
+	'utilities/web/query-strings',
+	'utilities/web/url-strings'
+], function($, _, Template, Tools, BaseView, ToolFiltersView, ToolsListView, QueryStrings, UrlStrings) {
+	return BaseView.extend({
 
 		//
 		// attributes
@@ -38,8 +35,8 @@ define([
 		template: _.template(Template),
 
 		regions: {
-			toolFilters: '#tool-filters',
-			toolsList: '#tools-list'
+			filters: '#tool-filters',
+			list: '#tools-list'
 		},
 
 		events: {
@@ -48,7 +45,7 @@ define([
 		},
 
 		//
-		// methods
+		// constructor
 		//
 
 		initialize: function() {
@@ -60,8 +57,8 @@ define([
 		//
 
 		getFilterData: function() {
-			if (this.toolFilters.currentView) {
-				var data = this.toolFilters.currentView.getData();
+			if (this.getChildView('filters')) {
+				var data = this.getChildView('filters').getData();
 
 				// nuke unneeded project data
 				//
@@ -72,8 +69,8 @@ define([
 		},
 
 		getFilterAttrs: function() {
-			if (this.toolFilters.currentView) {
-				var attrs = this.toolFilters.currentView.getAttrs();
+			if (this.getChildView('filters')) {
+				var attrs = this.getChildView('filters').getAttrs();
 
 				// nuke unneeded project attributes
 				//
@@ -106,13 +103,11 @@ define([
 
 				error: function() {
 
-					// show error dialog
+					// show error message
 					//
-					Registry.application.modal.show(
-						new ErrorView({
-							message: "Could not get tools for this project."
-						})
-					);
+					application.error({
+						message: "Could not get tools for this project."
+					});
 				}
 			});
 		},
@@ -121,11 +116,11 @@ define([
 		// rendering methods
 		//
 
-		template: function(data) {
-			return _.template(Template, _.extend(data, {
-				loggedIn: Registry.application.session.user != null,
-				showNumbering: Registry.application.options.showNumbering
-			}));
+		templateContext: function() {
+			return {
+				loggedIn: application.session.user != null,
+				showNumbering: application.options.showNumbering
+			};
 		},
 
 		onRender: function() {
@@ -133,18 +128,16 @@ define([
 
 			// show tool filters view
 			//
-			this.toolFilters.show(
-				new ToolFiltersView({
-					model: this.model,
-					data: this.options.data? this.options.data : {},
+			this.showChildView('filters', new ToolFiltersView({
+				model: this.model,
+				data: this.options.data? this.options.data : {},
 
-					// callbacks
-					//
-					onChange: function() {
-						setQueryString(self.toolFilters.currentView.getQueryString());			
-					}
-				})
-			);
+				// callbacks
+				//
+				onChange: function() {
+					setQueryString(self.getChildView('filters').getQueryString());			
+				}
+			}));
 
 			// fetch and show tools
 			//
@@ -154,12 +147,10 @@ define([
 		},
 
 		showList: function() {
-			this.toolsList.show(
-				new ToolsListView({
-					collection: this.collection,
-					showNumbering: Registry.application.options.showNumbering
-				})
-			);
+			this.showChildView('list', new ToolsListView({
+				collection: this.collection,
+				showNumbering: application.options.showNumbering
+			}));
 		},
 
 		//
@@ -167,11 +158,11 @@ define([
 		//
 
 		onClickResetFilters: function() {
-			this.toolFilters.currentView.reset();
+			this.getChildView('filters').reset();
 		},
 
 		onClickShowNumbering: function(event) {
-			Registry.application.setShowNumbering($(event.target).is(':checked'));
+			application.setShowNumbering($(event.target).is(':checked'));
 			this.showList();
 		}
 	});

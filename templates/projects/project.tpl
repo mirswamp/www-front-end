@@ -6,6 +6,7 @@
 	<li><i class="fa fa-folder-open"></i>Project <%- model.get('full_name') %></li>
 </ol>
 
+<% if (!isDeactivated) { %>
 <ul class="well nav nav-pills">
 	<li><a id="assessments"><i class="fa fa-check"></i>Assessments</a></li>
 	<li><a id="results"><i class="fa fa-bug"></i>Results</a></li>
@@ -13,6 +14,7 @@
 	<li><a id="schedules"><i class="fa fa-calendar"></i>Schedules</a></li>
 	<li><a id="events"><i class="fa fa-bullhorn"></i>Events</a></li>
 </ul>
+<% } %>
 
 <div class="well">
 	<div id="project-profile"></div>

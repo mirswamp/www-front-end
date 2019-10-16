@@ -18,35 +18,29 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
 	'text!templates/packages/new-package.tpl',
-	'registry',
 	'collections/projects/projects',
-	'views/dialogs/error-view',
-	'views/dialogs/notify-view',
+	'views/base-view',
 	'views/packages/info/details/new-package-details-view',
 	'views/packages/info/source/new-package-source-view',
 	'views/packages/info/build/new-package-build-view',
 	'views/packages/info/sharing/new-package-sharing-view',
-], function($, _, Backbone, Marionette, Template, Registry, Projects, ErrorView, NotifyView, NewPackageDetailsView, NewPackageSourceView, NewPackageBuildView, NewPackageSharingView) {
-	return Backbone.Marionette.LayoutView.extend({
+], function($, _, Template, Projects, BaseView, NewPackageDetailsView, NewPackageSourceView, NewPackageBuildView, NewPackageSharingView) {
+	return BaseView.extend({
 
 		//
 		// attributes
 		//
 
+		template: _.template(Template),
+
 		regions: {
-			newPackageInfo: '#new-package-info'
+			info: '#new-package-info'
 		},
 
 		//
 		// rendering methods
 		//
-
-		template: function(data) {
-			return _.template(Template);
-		},
 
 		onRender: function() {
 			var self = this;
@@ -80,11 +74,9 @@ define([
 
 					// show error view
 					//
-					Registry.application.modal.show(
-						new ErrorView({
-							message: "Could not fetch number of projects."
-						})
-					);	
+					application.error({
+						message: "Could not fetch number of projects."
+					});
 				}
 			});
 		},
@@ -98,14 +90,12 @@ define([
 
 			// show new package details view
 			//
-			this.newPackageInfo.show(
-				new NewPackageDetailsView({
-					model: this.model,
-					packageVersion: this.options.packageVersion,
-					packageVersionDependencies: this.options.packageVersionDependencies,
-					parent: this
-				})
-			);
+			this.showChildView('info', new NewPackageDetailsView({
+				model: this.model,
+				packageVersion: this.options.packageVersion,
+				packageVersionDependencies: this.options.packageVersionDependencies,
+				parent: this
+			}));
 		},
 
 		showSource: function() {
@@ -117,14 +107,12 @@ define([
 
 			// show new package source view
 			//
-			this.newPackageInfo.show(
-				new NewPackageSourceView({
-					model: this.model,
-					packageVersion: this.options.packageVersion,
-					packageVersionDependencies: this.options.packageVersionDependencies,
-					parent: this
-				})
-			);
+			this.showChildView('info', new NewPackageSourceView({
+				model: this.model,
+				packageVersion: this.options.packageVersion,
+				packageVersionDependencies: this.options.packageVersionDependencies,
+				parent: this
+			}));
 		},
 
 		showBuild: function() {
@@ -136,15 +124,13 @@ define([
 
 			// show new package build view
 			//
-			this.newPackageInfo.show(
-				new NewPackageBuildView({
-					model: this.model,
-					packageVersion: this.options.packageVersion,
-					packageVersionDependencies: this.options.packageVersionDependencies,
-					showSave: !this.options.showSharing,
-					parent: this
-				})
-			);
+			this.showChildView('info', new NewPackageBuildView({
+				model: this.model,
+				packageVersion: this.options.packageVersion,
+				packageVersionDependencies: this.options.packageVersionDependencies,
+				showSave: !this.options.showSharing,
+				parent: this
+			}));
 		},
 
 		showSharing: function() {
@@ -156,14 +142,12 @@ define([
 
 			// show new package sharing view
 			//
-			this.newPackageInfo.show(
-				new NewPackageSharingView({
-					model: this.model,
-					packageVersion: this.options.packageVersion,
-					packageVersionDependencies: this.options.packageVersionDependencies,
-					parent: this
-				})
-			);
+			this.showChildView('info', new NewPackageSharingView({
+				model: this.model,
+				packageVersion: this.options.packageVersion,
+				packageVersionDependencies: this.options.packageVersionDependencies,
+				parent: this
+			}));
 		},
 
 		//
@@ -188,13 +172,11 @@ define([
 
 				error: function(jqxhr, textstatus, errorThrown) {
 
-					// show error dialog
+					// show error message
 					//
-					Registry.application.modal.show(
-						new ErrorView({
-							message: "Could not save package: " + errorThrown.xhr.responseText
-						})
-					);
+					application.error({
+						message: "Could not save package: " + errorThrown.xhr.responseText
+					});
 				}
 			});
 		},
@@ -223,13 +205,11 @@ define([
 
 				error: function(jqxhr, textstatus, errorThrown) {
 
-					// show error dialog
+					// show error message
 					//
-					Registry.application.modal.show(
-						new ErrorView({
-							message: "Could not save package version: " + errorThrown.xhr.responseText
-						})
-					);
+					application.error({
+						message: "Could not save package version: " + errorThrown.xhr.responseText
+					});
 				}
 			});
 		},

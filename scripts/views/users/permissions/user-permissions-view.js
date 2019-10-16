@@ -18,37 +18,38 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
 	'text!templates/users/permissions/user-permissions.tpl',
 	'models/permissions/policy',
 	'models/permissions/user-permission',
 	'collections/permissions/user-permissions',
-	'registry',
-	'config',
+	'views/base-view',
 	'views/users/permissions/select-list/select-permissions-list-view',
-	'views/dialogs/notify-view',
-	'views/dialogs/error-view',
-	'views/tools/permissions/dialogs/tool-permission-view',
-	'views/users/permissions/dialogs/permission-comment-view'
-], function($, _, Backbone, Marionette, Template, Policy, UserPermission, UserPermissions, Registry, Config, SelectPermissionsListView, NotifyView, ErrorView, ToolPermissionView, PermissionCommentView) {
-	return Backbone.Marionette.LayoutView.extend({
+	'views/tools/permissions/dialogs/tool-permission-dialog-view',
+	'views/users/permissions/dialogs/permission-comment-dialog-view'
+], function($, _, Template, Policy, UserPermission, UserPermissions, BaseView, SelectPermissionsListView, ToolPermissionDialogView, PermissionCommentDialogView) {
+	return BaseView.extend({
 
 		//
 		// attributes
 		//
 
+		template: _.template(Template),
+
 		regions: {
-			selectPermissionsList: '#select-permissions-list'
+			list: '#select-permissions-list'
 		},
 
 		//
-		// methods
+		// constructor
 		//
 
 		initialize: function() {
 			this.collection = new UserPermissions();
 		},
+
+		//
+		// methods
+		//
 
 		showPermissionDialog: function(permission) {
 			var permissionCode = permission.get('permission_code');
@@ -70,21 +71,19 @@ define([
 
 			// show permission form dialog
 			//
-			Registry.application.modal.show(
-				new ToolPermissionView({
-					model: permission,
-					
-					// callbacks
-					//
-					accept: function(data) {
-						self.showPermissionCommentDialog(permission, {
-							data: data
-						});
-					}
-				}), {
-					size: permission.has('policy')? 'large' : undefined
+			application.show(new ToolPermissionDialogView({
+				model: permission,
+				
+				// callbacks
+				//
+				accept: function(data) {
+					self.showPermissionCommentDialog(permission, {
+						data: data
+					});
 				}
-			);
+			}), {
+				size: permission.has('policy')? 'large' : undefined
+			});
 		},
 
 		showPermissionCommentDialog: function(permission, options) {
@@ -92,49 +91,45 @@ define([
 
 			// show permission comment dialog
 			//
-			Registry.application.modal.show(
-				new PermissionCommentView({
-					permission: permission,
+			application.show(new PermissionCommentDialogView({
+				permission: permission,
 
-					// callbacks
+				// callbacks
+				//
+				accept: function(data) {
+
+					// perform permission request
 					//
-					accept: function(data) {
+					self.model.requestPermission({
+						data: _.extend(options && options.data? options.data : {}, {
+							'title': permission.get('title'),
+							'permission_code': permission.get('permission_code'),
+							'comment': data.comment,
+							'status': permission.get('status')
+						}),
 
-						// perform permission request
+						// callbacks
 						//
-						self.model.requestPermission({
-							data: _.extend(options && options.data? options.data : {}, {
-								'title': permission.get('title'),
-								'permission_code': permission.get('permission_code'),
-								'comment': data.comment,
-								'status': permission.get('status')
-							}),
+						success: function() {
 
-							// callbacks
+							// update list
 							//
-							success: function() {
+							self.showPermissionsList();
+						},
 
-								// update list
-								//
-								self.showPermissionsList();
-							},
+						error: function(response) {
 
-							error: function(response) {
-
-								// show error dialog
-								//
-								Registry.application.modal.show(
-									new ErrorView({
-										message: "Error: " + response.responseText
-									})
-								);
-							}
-						});
-					}
-				}), {
-					size: permission.has('policy')? 'large' : undefined
+							// show error message
+							//
+							application.error({
+								message: "Error: " + response.responseText
+							});
+						}
+					});
 				}
-			);
+			}), {
+				size: permission.has('policy')? 'large' : undefined
+			});
 		},
 
 		requestPermission: function(permission) {
@@ -153,21 +148,19 @@ define([
 					success: function() {
 						permission.set({
 							'policy': policy.get('policy')
-						})
+						});
 						self.showPermissionDialog(permission);
 					},
 
 					error: function() {
 
-						// show error dialog
+						// show error message
 						//
-						Registry.application.modal.show(
-							new ErrorView({
-								message: "Could not fetch policy: " + policy.get('policy_code')
-							})
-						);
+						application.error({
+							message: "Could not fetch policy: " + policy.get('policy_code')
+						});
 					}
-				})
+				});
 			} else {
 				self.showPermissionDialog(permission);
 			}
@@ -192,13 +185,11 @@ define([
 
 				error: function(response) {
 
-					// show error dialog
+					// show error message
 					//
-					Registry.application.modal.show(
-						new ErrorView({
-							message: "Could not save permissions changes: " + response.responseText
-						})
-					);
+					application.error({
+						message: "Could not save permissions changes: " + response.responseText
+					});
 				}
 			});
 		},
@@ -208,59 +199,55 @@ define([
 
 			// show permission comment dialog
 			//
-			Registry.application.modal.show(
-				new PermissionCommentView({
-					model: this.model,
-					permission: permission,
-					changeUserPermissions: true,
-					parent: this.options.parent,
+			application.show(new PermissionCommentDialogView({
+				model: this.model,
+				permission: permission,
+				changeUserPermissions: true,
+				parent: this.options.parent,
 
-					// callbacks
-					//
-					accept: function(data) {
-						self.model.setPermission({
-							data: _.extend(data, {
-								'permission_code': permission.get('permission_code'),
-								'title': permission.get('title'),
-								'status': permission.get('status')
-							}),
+				// callbacks
+				//
+				accept: function(data) {
+					self.model.setPermission({
+						data: _.extend(data, {
+							'permission_code': permission.get('permission_code'),
+							'title': permission.get('title'),
+							'status': permission.get('status')
+						}),
 
-							// callbacks
+						// callbacks
+						//
+						success: function() {
+
+							// update parent view
 							//
-							success: function() {
+							self.options.parent.render();
+						},
 
-								// update parent view
-								//
-								self.options.parent.render();
-							},
+						error: function(response) {
 
-							error: function(response) {
-
-								// show error dialog
-								//
-								Registry.application.modal.show(
-									new ErrorView({
-										message: "Could not save permissions changes: " + response.responseText
-									})
-								);
-							}
-						});
-					}
-				}), {
-					size: permission.has('policy') || permission.has('meta_information')? 'large' : undefined
+							// show error message
+							//
+							application.error({
+								message: "Could not save permissions changes: " + response.responseText
+							});
+						}
+					});
 				}
-			);
+			}), {
+				size: permission.has('policy') || permission.has('meta_information')? 'large' : undefined
+			});
 		},
 
 		//
 		// rendering methods
 		//
 
-		template: function(){
-			return _.template(Template, {
+		templateContext: function() {
+			return {
 				user: this.model,
 				parent: this
-			});
+			};
 		},
 		
 		onRender: function() {
@@ -284,24 +271,20 @@ define([
 
 					// show select permissions list view
 					//
-					self.selectPermissionsList.show(
-						new SelectPermissionsListView({
-							model: self.model,
-							collection: self.collection,
-							parent: self
-						})
-					);
+					self.showChildView('list', new SelectPermissionsListView({
+						model: self.model,
+						collection: self.collection,
+						parent: self
+					}));
 				},
 
 				error: function() {
 
-					// show error dialog
+					// show error message
 					//
-					Registry.application.modal.show(
-						new ErrorView({
-							message: "Could not get permissions for this user."
-						})
-					);
+					application.error({
+						message: "Could not get permissions for this user."
+					});
 				}
 			});
 		}

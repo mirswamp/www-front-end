@@ -35,17 +35,9 @@
 		<label class="required control-label">Language version</label>
 		<div class="controls">
 			<select name="language-version" class="required">
-				<option>default</option>
-				<option>2.2.2</option>
-				<option>2.2.1</option>
-				<option>2.1.5</option>
-				<option>2.1.4</option>
-				<option>2.0.0</option>
-				<option>1.9.3</option>
-				<option>1.9.2</option>
-				<option>1.9.1</option>
-				<option>1.8.7</option>
-				<option>1.8.6</option>
+				<% for (var i = 0; i < rubyVersions.length; i++) { %>
+				<option><%= rubyVersions[i] %></option>
+				<% } %>
 			</select>
 			<div class="options">
 				<button id="show-gem-info" class="btn"><i class="fa fa-diamond"></i>Show Gem Info</button>

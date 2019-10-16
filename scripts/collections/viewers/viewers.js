@@ -18,11 +18,11 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
 	'config',
-	'models/viewers/viewer'
-], function($, _, Backbone, Config, Viewer) {
-	return Backbone.Collection.extend({
+	'models/viewers/viewer',
+	'collections/base-collection'
+], function($, _, Config, Viewer, BaseCollection) {
+	return BaseCollection.extend({
 
 		//
 		// Backbone attributes

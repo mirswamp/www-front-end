@@ -18,12 +18,12 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone'
-], function($, _, Backbone) {
+	'routers/base-router'
+], function($, _, BaseRouter) {
 
 	// create router
 	//
-	return Backbone.Router.extend({
+	return BaseRouter.extend({
 
 		//
 		// route definitions
@@ -124,11 +124,10 @@ define([
 		showWelcome: function() {
 			var self = this;
 			require([
-				'registry',
 				'config',
 				'views/welcome-view'
-			], function (Registry, Config, WelcomeView) {
-				var user = Registry.application.session.user;
+			], function (Config, WelcomeView) {
+				var user = application.session.user;
 
 				// check if user is logged in
 				//
@@ -145,14 +144,12 @@ define([
 
 				// show welcome view
 				//
-				Registry.application.showPage(
-					new WelcomeView()
-				);
+				application.showPage(new WelcomeView());
 
 				// show welcome message
 				//
 				if (Config.notifications && Config.notifications.welcome) {
-					Registry.application.notify({
+					application.notify({
 						title: Config.notifications.welcome.title,
 						message: Config.notifications.welcome.message
 					});
@@ -163,10 +160,9 @@ define([
 		showSignIn: function() {
 			var self = this;
 			require([
-				'registry',
 				'views/welcome-view'
-			], function (Registry, WelcomeView) {
-				var user = Registry.application.session.user;
+			], function (WelcomeView) {
+				var user = application.session.user;
 
 				// check if user is logged in
 				//
@@ -183,121 +179,98 @@ define([
 
 				// show welcome view
 				//
-				Registry.application.showPage(
-					new WelcomeView({
-						showSignIn: true
-					})
-				);
+				application.showPage(new WelcomeView({
+					showSignIn: true
+				}));
 			});
 		},
 
 		showAbout: function(anchor) {
 			require([
-				'registry',
 				'views/info/about-view'
-			], function (Registry, AboutView) {
+			], function (AboutView) {
 
 				// show about view
 				//
-				Registry.application.showMain( 
-					new AboutView({
-						'anchor': anchor
-					}), {
-						nav: 'about'
-					}
-				);
+				application.showMain(new AboutView({
+					'anchor': anchor
+				}), {
+					nav: 'about'
+				});
 			});
 		},
 
 		showHelp: function() {
 			require([
-				'registry',
 				'views/info/help-view'
-			], function (Registry, HelpView) {
+			], function (HelpView) {
 
 				// show help view
 				//
-				Registry.application.showMain( 
-					new HelpView(), {
-						nav: 'help'
-					}
-				);
+				application.showMain(new HelpView(), {
+					nav: 'help'
+				});
 			});
 		},
 
 		showResources: function() {
 			require([
-				'registry',
 				'views/info/resources-view'
-			], function (Registry, ResourcesView) {
+			], function (ResourcesView) {
 
 				// show resources view
 				//
-				Registry.application.showMain( 
-					new ResourcesView(), {
-						nav: 'resources'
-					}
-				);
+				application.showMain(new ResourcesView(), {
+					nav: 'resources'
+				});
 			});
 		},
 
 		showHeartbit: function() {
 			require([
-				'registry',
 				'views/info/resources/heartbit-view'
-			], function (Registry, HeartbitView) {
+			], function (HeartbitView) {
 
 				// show heartbit view
 				//
-				Registry.application.showMain(
-					new HeartbitView(), {
-						nav: 'resources'
-					}
-				);
+				application.showMain(new HeartbitView(), {
+					nav: 'resources'
+				});
 			});
 		},
 
 		showPolicies: function() {
 			require([
-				'registry',
 				'views/info/policies-view'
-			], function (Registry, PoliciesView) {
-				Registry.application.showMain(
-					new PoliciesView(), {
-						nav: 'policies'
-					}
-				);
+			], function (PoliciesView) {
+				application.showMain(new PoliciesView(), {
+					nav: 'policies'
+				});
 			});
 		},
 
 		showPolicy: function(policyName) {
 			require([
-				'registry',
 				'views/policies/policy-view',
-			], function (Registry, PolicyView) {
-				Registry.application.showMain(
-					new PolicyView({
-						template_file: 'text!templates/policies/' + policyName + '.tpl'
-					}), {
-						nav: 'policies'
-					}
-				);
+			], function (PolicyView) {
+				application.showMain(new PolicyView({
+					template_file: 'text!templates/policies/' + policyName + '.tpl'
+				}), {
+					nav: 'policies'
+				});
 			});
 		},
 
 		showMailingListSubscribe: function() {
 			require([
-				'registry',
 				'views/info/mailing-list/subscribe-view'
-			], function (Registry, SubscribeView) {
+			], function (SubscribeView) {
 
 				// show subscribe view
 				//
-				Registry.application.showMain(
-					new SubscribeView(), {
-						nav: 'about'
-					}
-				);
+				application.showMain(new SubscribeView(), {
+					nav: 'about'
+				});
 			});
 		},
 
@@ -307,33 +280,27 @@ define([
 
 		showContactUs: function() {
 			require([
-				'registry',
 				'views/contacts/contact-us-view'
-			], function (Registry, ContactUsView) {
+			], function (ContactUsView) {
 
 				// show contact us view
 				//
-				Registry.application.showMain(
-					new ContactUsView(), {
-						nav: 'contact'
-					}
-				);
+				application.showMain(new ContactUsView(), {
+					nav: 'contact'
+				});
 			});
 		},
 
 		showReportIncident: function() {
 			require([
-				'registry',
 				'views/contacts/report-incident-view'
-			], function (Registry, ReportIncidentView) {
+			], function (ReportIncidentView) {
 
 				// show report incident view
 				//
-				Registry.application.showMain(
-					new ReportIncidentView(), {
-						nav: 'contact'
-					}
-				);
+				application.showMain(new ReportIncidentView(), {
+					nav: 'contact'
+				});
 			});
 		},
 
@@ -343,26 +310,21 @@ define([
 
 		showRegister: function() {
 			require([
-				'registry',
 				'views/users/registration/sign-aup-view'
-			], function (Registry, SignAupView) {
+			], function (SignAupView) {
 
 				// show aup view
 				//
-				Registry.application.showMain( 
-					new SignAupView()
-				);
+				application.showMain(new SignAupView());
 			});
 		},
 
 		showVerifyEmail: function(verificationKey) {
 			require([
-				'registry',
 				'models/users/user',
 				'models/users/email-verification',
-				'views/dialogs/error-view',
 				'views/users/registration/verify-email-view'
-			], function (Registry, User, EmailVerification, ErrorView, VerifyEmailView) {
+			], function (User, EmailVerification, VerifyEmailView) {
 
 				// fetch email verification
 				//
@@ -378,22 +340,18 @@ define([
 
 						// show verify email view
 						//
-						Registry.application.showMain( 
-							new VerifyEmailView({
-								model: model
-							})
-						);
+						application.showMain(new VerifyEmailView({
+							model: model
+						}));
 					},
 
 					error: function() {
 
-						// show error dialog
+						// show error message
 						//
-						Registry.application.modal.show(
-							new ErrorView({
-								message: "We could not verify this user."
-							})
-						);
+						application.error({
+							message: "We could not verify this user."
+						});
 					}
 				});
 			});
@@ -401,12 +359,10 @@ define([
 
 		showVerifyEmailChange: function(verificationKey) {
 			require([
-				'registry',
 				'models/users/user',
 				'models/users/email-verification',
-				'views/dialogs/notify-view',
 				'views/users/registration/verify-email-changed-view'
-			], function (Registry, User, EmailVerification, NotifyView, VerifyEmailChangedView) {
+			], function (User, EmailVerification, VerifyEmailChangedView) {
 
 				// fetch email verification
 				//
@@ -422,22 +378,18 @@ define([
 
 						// show verify email changed view
 						//
-						Registry.application.showMain( 
-							new VerifyEmailChangedView({
-								model: model
-							})
-						);
+						application.showMain(new VerifyEmailChangedView({
+							model: model
+						}));
 					},
 
 					error: function() {
 
-						// show notify dialog
+						// show notification
 						//
-						Registry.application.modal.show(
-							new NotifyView({
-								message: "We could not verify this user."
-							})
-						);
+						application.notify({
+							message: "We could not verify this user."
+						});
 					}
 				});
 			});
@@ -449,13 +401,11 @@ define([
 
 		showResetPassword: function(passwordResetUuid, passwordResetNonce) {
 			require([
-				'registry',
 				'models/users/user',
 				'models/users/password-reset',
-				'views/dialogs/error-view',
 				'views/users/reset-password/reset-password-view',
 				'views/users/reset-password/invalid-reset-password-view'
-			], function (Registry, User, PasswordReset, ErrorView, ResetPasswordView, InvalidResetPasswordView) {
+			], function (User, PasswordReset, ResetPasswordView, InvalidResetPasswordView) {
 
 				// fetch password reset
 				//
@@ -470,22 +420,18 @@ define([
 
 						// show reset password view
 						//
-						Registry.application.showMain( 
-							new ResetPasswordView({
-								model: model
-							})
-						);
+						application.showMain(new ResetPasswordView({
+							model: model
+						}));
 					},
 
 					error: function(model) {
 
 						// show invalid reset password view
 						//
-						Registry.application.showMain( 
-							new InvalidResetPasswordView({
-								model: model
-							})
-						);
+						application.showMain(new InvalidResetPasswordView({
+							model: model
+						}));
 					}
 				});
 			});
@@ -498,13 +444,12 @@ define([
 		showSystemOverview: function(options) {
 			var self = this;
 			require([
-				'registry',
 				'views/admin/overview/system-overview-view'
-			], function (Registry, SystemOverviewView) {
+			], function (SystemOverviewView) {
 
 				// show content view
 				//
-				Registry.application.showContent({
+				application.showContent({
 					nav1: 'home',
 					nav2: 'overview', 
 
@@ -514,10 +459,10 @@ define([
 
 						// show admin dashboard view
 						//
-						view.content.show(
-							new SystemOverviewView()
-						);
+						view.showChildView('content', new SystemOverviewView());
 
+						// perform callback
+						//
 						if (options && options.done) {
 							options.done();
 						}
@@ -529,13 +474,12 @@ define([
 		showOverview: function(options) {
 			var self = this;
 			require([
-				'registry',
 				'views/admin/overview/overview-view'
-			], function (Registry, OverviewView) {
+			], function (OverviewView) {
 
 				// show content view
 				//
-				Registry.application.showContent({
+				application.showContent({
 					nav1: 'home',
 					nav2: 'overview', 
 
@@ -545,13 +489,13 @@ define([
 
 						// show overview view
 						//
-						view.content.show(
-							new OverviewView({
-								nav: options.nav,
-								data: options.data
-							})
-						);
+						view.showChildView('content', new OverviewView({
+							nav: options.nav,
+							data: options.data
+						}));
 
+						// perform callback
+						//
 						if (options && options.done) {
 							options.done();
 						}
@@ -562,14 +506,13 @@ define([
 		
 		showReviewAccounts: function(queryString) {
 			require([
-				'registry',
 				'routers/query-string-parser',
 				'views/users/review/review-accounts-view',
-			], function (Registry, QueryStringParser, ReviewAccountsView) {
+			], function (QueryStringParser, ReviewAccountsView) {
 
 				// show content view
 				//
-				Registry.application.showContent({
+				application.showContent({
 					nav1: 'home',
 					nav2: 'overview', 
 
@@ -579,11 +522,9 @@ define([
 
 						// show overview view
 						//
-						view.content.show(
-							new ReviewAccountsView({
-								data: QueryStringParser.parse(queryString, view.model)
-							})
-						);
+						view.showChildView('content', new ReviewAccountsView({
+							data: QueryStringParser.parse(queryString, view.model)
+						}));
 					}
 				});
 			});
@@ -596,10 +537,9 @@ define([
 		showHome: function(options) {
 			var self = this;
 			require([
-				'registry',
 				'views/home-view'
-			], function (Registry, HomeView) {
-				var user = Registry.application.session.user;
+			], function (HomeView) {
+				var user = application.session.user;
 
 				// redirect to main view
 				//
@@ -612,25 +552,21 @@ define([
 
 				// show home view
 				//
-				Registry.application.showPage(
-					new HomeView({
-						nav: options? options.nav : 'home'
-					}),
-					options
-				);
+				application.showPage(new HomeView({
+					nav: options? options.nav : 'home'
+				}), options);
 			});
 		},
 
 		showMyAccount: function(options) {
 			var self = this;
 			require([
-				'registry',
 				'views/users/accounts/my-account-view'
-			], function (Registry, MyAccountView) {
+			], function (MyAccountView) {
 
 				// show content view
 				//
-				Registry.application.showContent({
+				application.showContent({
 					nav1: 'my-account',
 					nav2: undefined,
 
@@ -640,12 +576,12 @@ define([
 
 						// show user account view
 						//
-						view.content.show(
-							new MyAccountView({
-								nav: options && options.nav? options.nav : 'profile'
-							})
-						);
+						view.showChildView('content', new MyAccountView({
+							nav: options && options.nav? options.nav : 'profile'
+						}));
 
+						// perform callback
+						//
 						if (options && options.done) {
 							options.done();
 						}
@@ -657,13 +593,12 @@ define([
 		showEditMyAccount: function(options) {
 			var self = this;
 			require([
-				'registry',
 				'views/users/accounts/edit/edit-my-account-view'
-			], function (Registry, EditMyAccountView) {
+			], function (EditMyAccountView) {
 
 				// show content view
 				//
-				Registry.application.showContent({
+				application.showContent({
 					nav1: 'my-account',
 					nav2: undefined,
 
@@ -673,12 +608,12 @@ define([
 
 						// show edit user account view
 						//
-						view.content.show(
-							new EditMyAccountView({
-								parent: view
-							})
-						);
+						view.showChildView('content', new EditMyAccountView({
+							parent: view
+						}));
 
+						// perform callback
+						//
 						if (options && options.done) {
 							options.done();
 						}
@@ -718,11 +653,9 @@ define([
 		showUserAccount: function(userUid, options) {
 			var self = this;
 			require([
-				'registry',
 				'models/users/user',
 				'views/users/accounts/user-account-view',
-				'views/dialogs/error-view'
-			], function (Registry, User, UserAccountView, ErrorView) {
+			], function (User, UserAccountView) {
 
 				// fetch user associated with account
 				//
@@ -738,7 +671,7 @@ define([
 
 						// show content view
 						//
-						Registry.application.showContent({
+						application.showContent({
 							nav1: 'home',
 							nav2: 'overview', 
 
@@ -748,13 +681,13 @@ define([
 
 								// show user account view
 								//
-								view.content.show(
-									new UserAccountView({
-										model: user,
-										nav: options? options.nav : 'profile'
-									})
-								);
+								view.showChildView('content', new UserAccountView({
+									model: user,
+									nav: options? options.nav : 'profile'
+								}));
 
+								// perform callback
+								//
 								if (options && options.done) {
 									options.done();
 								}
@@ -764,13 +697,11 @@ define([
 
 					error: function() {
 
-						// show error dialog
+						// show error message
 						//
-						Registry.application.modal.show(
-							new ErrorView({
-								message: "Could not find this user."
-							})
-						);
+						application.error({
+							message: "Could not find this user."
+						});
 					}
 				});
 			});
@@ -779,11 +710,9 @@ define([
 		showEditUserAccount: function(userUid, options) {
 			var self = this;
 			require([
-				'registry',
 				'models/users/user',
 				'views/users/accounts/edit/edit-user-account-view',
-				'views/dialogs/error-view'
-			], function (Registry, User, EditUserAccountView, ErrorView) {
+			], function (User, EditUserAccountView) {
 
 				// fetch user associated with account
 				//
@@ -799,7 +728,7 @@ define([
 
 						// show content view
 						//
-						Registry.application.showContent({
+						application.showContent({
 							nav1: 'home',
 							nav2: 'overview', 
 
@@ -809,12 +738,12 @@ define([
 
 								// show edit user account view
 								//
-								view.content.show(
-									new EditUserAccountView({
-										model: user
-									})
-								);
+								view.showChildView('content', new EditUserAccountView({
+									model: user
+								}));
 
+								// perform callback
+								//
 								if (options && options.done) {
 									options.done();
 								}
@@ -824,13 +753,11 @@ define([
 
 					error: function() {
 
-						// show error dialog
+						// show error message
 						//
-						Registry.application.modal.show(
-							new ErrorView({
-								message: "Could not find this user."
-							})
-						);
+						application.error({
+							message: "Could not find this user."
+						});
 					}
 				});
 			});
@@ -867,14 +794,13 @@ define([
 		showEvents: function(queryString) {
 			var self = this;
 			require([
-				'registry',
 				'routers/query-string-parser',
 				'views/events/events-view'
-			], function (Registry, QueryStringParser, EventsView) {
+			], function (QueryStringParser, EventsView) {
 
 				// show content view
 				//
-				Registry.application.showContent({
+				application.showContent({
 					nav1: 'home',
 					nav2: 'events', 
 
@@ -888,12 +814,10 @@ define([
 		
 							// show project events view
 							//
-							view.content.show(
-								new EventsView({
-									model: view.model,
-									data: data
-								})
-							);
+							view.showChildView('content', new EventsView({
+								model: view.model,
+								data: data
+							}));
 						});
 					}
 				});
@@ -906,45 +830,36 @@ define([
 
 		showLinkedAccountPrompt: function() {
 			require([
-				'registry',
 				'views/users/prompts/linked-account-prompt-view'
-			], function (Registry, LinkedAccountPromptView) {
+			], function (LinkedAccountPromptView) {
 
 				// show linked account prompt view
 				//
-				Registry.application.showMain( 
-					new LinkedAccountPromptView({})
-				);
+				application.showMain(new LinkedAccountPromptView({}));
 			});
 		},
 
 		showLinkedAccountLogin: function() {
 			require([
-				'registry',
 				'views/users/prompts/linked-account-login-prompt-view'
-			], function (Registry, LinkedAccountLoginPromptView) {
+			], function (LinkedAccountLoginPromptView) {
 
 				// show linked account login prompt view
 				//
-				Registry.application.showMain( 
-					new LinkedAccountLoginPromptView({})
-				);
+				application.showMain(new LinkedAccountLoginPromptView({}));
 			});
 		},
 
 		showLinkedAccountError: function(type) {
 			require([
-				'registry',
 				'views/users/prompts/linked-account-error-prompt-view'
-			], function (Registry, LinkedAccountErrorPromptView) {
+			], function (LinkedAccountErrorPromptView) {
 
 				// show linked account error prompt view
 				//
-				Registry.application.showMain( 
-					new LinkedAccountErrorPromptView({
-						'type': type
-					})
-				);
+				application.showMain(new LinkedAccountErrorPromptView({
+					'type': type
+				}));
 			});
 		},
 
@@ -955,13 +870,12 @@ define([
 		showSettings: function(options) {
 			var self = this;
 			require([
-				'registry',
 				'views/admin/settings/settings-view'
-			], function (Registry, SettingsView) {
+			], function (SettingsView) {
 
 				// show content view
 				//
-				Registry.application.showContent({
+				application.showContent({
 					nav1: 'home',
 					nav2: 'settings', 
 
@@ -971,12 +885,12 @@ define([
 
 						// show settings view
 						//
-						view.content.show(
-							new SettingsView({
-								nav: Registry.application.config['email_enabled']? (options && options.nav? options.nav : 'restricted-domains') : 'admins'
-							})
-						);
+						view.showChildView('content', new SettingsView({
+							nav: application.config['email_enabled']? (options && options.nav? options.nav : 'restricted-domains') : 'admins'
+						}));
 
+						// perform callback
+						//
 						if (options && options.done) {
 							options.done(view);
 						}
@@ -1000,13 +914,12 @@ define([
 		showInviteAdmins: function() {
 			var self = this;
 			require([
-				'registry',
 				'views/admin/settings/system-admins/invitations/invite-admins-view'
-			], function (Registry, InviteAdminsView) {
+			], function (InviteAdminsView) {
 
 				// show content view
 				//
-				Registry.application.showContent({
+				application.showContent({
 					nav1: 'home',
 					nav2: 'settings', 
 
@@ -1016,11 +929,9 @@ define([
 
 						// show invite admins view
 						//
-						view.content.show(
-							new InviteAdminsView({
-								model: view.model
-							})
-						);
+						view.showChildView('content', new InviteAdminsView({
+							model: view.model
+						}));
 					}	
 				});
 			});
@@ -1028,11 +939,10 @@ define([
 
 		showConfirmAdminInvitation: function(invitationKey) {
 			require([
-				'registry',
 				'models/admin/admin-invitation',
 				'views/admin/settings/system-admins/invitations/confirm-admin-invitation-view',
 				'views/admin/settings/system-admins/invitations/invalid-admin-invitation-view'
-			], function (Registry, AdminInvitation, ConfirmAdminInvitationView, InvalidAdminInvitationView) {
+			], function (AdminInvitation, ConfirmAdminInvitationView, InvalidAdminInvitationView) {
 
 				// fetch admin invitation
 				//
@@ -1048,21 +958,17 @@ define([
 
 						// show confirm admin invitation view
 						//
-						Registry.application.showMain( 
-							new ConfirmAdminInvitationView({
-								model: adminInvitation,
-								inviter: inviter,
-								invitee: invitee
-							})
-						);
+						application.showMain(new ConfirmAdminInvitationView({
+							model: adminInvitation,
+							inviter: inviter,
+							invitee: invitee
+						}));
 					},
 
 					error: function(message) {
-						Registry.application.showMain(
-							new InvalidAdminInvitationView({
-								message: message
-							})
-						);
+						application.showMain(new InvalidAdminInvitationView({
+							message: message
+						}));
 					}
 				});
 			});
@@ -1075,14 +981,12 @@ define([
 		showReviewStatus: function(options) {
 			var self = this;
 			require([
-				'registry',
 				'views/admin/status/review-status-view',
-				'views/dialogs/error-view',
-			], function (Registry, ReviewStatusView, ErrorView) {
+			], function (ReviewStatusView) {
 
 				// show content view
 				//
-				Registry.application.showContent({
+				application.showContent({
 					nav1: 'home',
 					nav2: 'status', 
 
@@ -1092,7 +996,7 @@ define([
 
 						// show review status view
 						//
-						view.content.show(new ReviewStatusView());
+						view.showChildView('content', new ReviewStatusView());
 					}
 				});
 			});
@@ -1100,15 +1004,12 @@ define([
 
 		showNotFound: function() {
 			require([
-				'registry',
 				'views/not-found-view'
-			], function (Registry, NotFoundView) {
+			], function (NotFoundView) {
 
 				// show about view
 				//
-				Registry.application.showMain( 
-					new NotFoundView()
-				);
+				application.showMain(new NotFoundView());
 			});
 		}
 	});

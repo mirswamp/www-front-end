@@ -18,23 +18,18 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
 	'text!templates/packages/info/versions/list/package-versions-list-item.tpl',
-	'registry',
 	'collections/projects/projects',
-	'views/dialogs/confirm-view',
-	'views/dialogs/notify-view',
-	'views/dialogs/error-view',
+	'views/collections/tables/table-list-item-view',
 	'utilities/time/date-utils'
-], function($, _, Backbone, Marionette, Template, Registry, Projects, ConfirmView, NotifyView, ErrorView) {
-	return Backbone.Marionette.ItemView.extend({
+], function($, _, Template, Projects, TableListItemView) {
+	return TableListItemView.extend({
 
 		//
 		// attributes
 		//
 
-		tagName: 'tr',
+		template: _.template(Template),
 
 		events: {
 			'click .delete button': 'onClickDelete'
@@ -47,92 +42,84 @@ define([
 		deleteVersion: function() {
 			var self = this;
 
-			// show confirm dialog
+			// show confirmation
 			//
-			Registry.application.modal.show(
-				new ConfirmView({
-					title: "Delete Package Version",
-					message: "Are you sure that you want to delete version " + this.model.get('version_string') + " of " + this.options.package.get('name') + "? " + 
-						"Any scheduled assessments using this package version will be deleted. Existing assessment results will not be deleted.",
+			application.confirm({
+				title: "Delete Package Version",
+				message: "Are you sure that you want to delete version " + this.model.get('version_string') + " of " + this.options.package.get('name') + "? " + 
+					"Any scheduled assessments using this package version will be deleted. Existing assessment results will not be deleted.",
 
-					// callbacks
-					//
-					accept: function() {
-						self.model.destroy({
-							
-							// callbacks
+				// callbacks
+				//
+				accept: function() {
+					self.model.destroy({
+						
+						// callbacks
+						//
+						error: function() {
+
+							// show error message
 							//
-							error: function() {
-
-								// show error dialog
-								//
-								Registry.application.modal.show(
-									new ErrorView({
-										message: "Could not delete this package version."
-									})
-								);
-							}
-						});
-					}
-				})
-			);
+							application.error({
+								message: "Could not delete this package version."
+							});
+						}
+					});
+				}
+			});
 		},
 
 		deletePackage: function() {
 			var self = this;
 			
-			// show confirm dialog
+			// show confirmation
 			//
-			Registry.application.modal.show(
-				new ConfirmView({
-					title: "Delete Package",
-					message: "Deleting the last version will result in deleting the package. Any scheduled assessments using this package version will be deleted. Existing assessment results will not be deleted. Are you sure that you want to delete package " + this.options.package.get('name') + "?",
+			application.confirm({
+				title: "Delete Package",
+				message: "Deleting the last version will result in deleting the package. Any scheduled assessments using this package version will be deleted. Existing assessment results will not be deleted. Are you sure that you want to delete package " + this.options.package.get('name') + "?",
 
-					// callbacks
-					//
-					accept: function() {
-						self.options.package.destroy({
-							
-							// callbacks
+				// callbacks
+				//
+				accept: function() {
+					self.options.package.destroy({
+						
+						// callbacks
+						//
+						success: function() {
+
+							// go to packages view
 							//
-							success: function() {
+							Backbone.history.navigate('#packages', {
+								trigger: true
+							});
+						},
 
-								// go to packages view
-								//
-								Backbone.history.navigate('#packages', {
-									trigger: true
-								});
-							},
+						error: function() {
 
-							error: function() {
-
-								// show error dialog
-								//
-								Registry.application.modal.show(
-									new ErrorView({
-										message: "Could not delete this package version."
-									})
-								);
-							}
-						});
-					}
-				})
-			);
+							// show error message
+							//
+							application.error({
+								message: "Could not delete this package version."
+							});
+						}
+					});
+				}
+			});
 		},
 
 		//
 		// rendering methods
 		//
 
-		template: function(data) {
-			return _.template(Template, _.extend(data, {
+		templateContext: function() {
+			return {
 				model: this.model,
 				index: this.options.index,
-				url: Registry.application.session.user? Registry.application.getURL() + '#packages/versions/' + this.model.get('package_version_uuid') : undefined,
+				url: application.session.user? application.getURL() + '#packages/versions/' + this.model.get('package_version_uuid') : undefined,
 				showProjects: this.options.showProjects,
 				showNumbering: this.options.showNumbering,
 				showDelete: this.options.package.isOwned()
-			}));
+			};
 		},
 
 		projectsToHtml: function(collection) {

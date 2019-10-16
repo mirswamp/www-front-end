@@ -15,101 +15,308 @@
 |        Copyright (C) 2012-2019 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
-.modal-backdrop,
-.modal-backdrop.fade.in {
-	opacity: 0.5;
-}
-
 .modal {
 
-	// add a little space for popups
+	// make modal frame transparent to events
 	//
-	padding-top: 10px;
+	pointer-events: none;
+
+	.modal-content {
+		.modal-header {
+			.vertical-gradient(@ultra-light-grey, @very-very-very-light-grey);
+			border-top-left-radius: 5px;
+			border-top-right-radius: 5px;
+			margin-top: 0;
+
+			button {
+				line-height: 1em;
+			}
+
+			h1 {
+				font-variant: normal;
+				font-size: 125%;
+				line-height: 1.25em;
+				color: @very-dark-grey;
+				margin: 0;
+				padding: 0;
+				border: none;
+
+				i {
+					margin-top: 2px;
+				}
+			}
+
+			//
+			// close buttons
+			//
+
+			button.close {
+				color: white;
+				font-weight: bold;
+				background-color: @primaryButtonColor;
+				.vertical-gradient(@brand-primary-highlight, @brand-primary);
+				border: 1px solid @brand-primary-border;
+				border-radius: 5px;
+				margin-top: 0;
+				padding-top: 3px;
+				padding-bottom: 4px;
+				padding-left: 8px;
+				padding-right: 8px;
+				opacity: 1;
+			}
+
+			button.close:hover {
+				.vertical-gradient(@brand-primary-hover, @brand-primary);
+				color: white;
+				opacity: 1;
+			}
+
+			i.close, i.close:hover {
+				color: @brand-primary;
+				float: right;
+				margin: 0;
+				opacity: 1;
+			}
+		}
+
+		.modal-header.error {
+			background: @medium-red;
+			border-top-left-radius: 5px;
+			border-top-right-radius: 5px;
+
+			#modal-header-text {
+				color: white;
+			}
+		}
+
+		.modal-body {
+			max-height: 500px;
+			
+			h2:first-child {
+				margin-top: 0;
+			}
+			
+			.well {
+				margin-bottom: 0;
+			}
+
+			.top.buttons {
+				margin: 0;
+				margin-top: 5px;
+				float: right;
+			}
+		}
+
+		.modal-footer {
+			border-top: 5px solid @brand-primary;
+		}
+	}
 }
 
-.modal-header {
-	background: @veryLightGrey;
-	border-top-left-radius: 5px;
-	border-top-right-radius: 5px;
-	margin-top: 0;
+//
+// dialog placement for short windows
+//
 
-	button {
-		line-height: 1em;
+@media (min-width: @screen-sm-min) {
+	@media (max-height: 550px) {
+
+		.modal {
+			text-align: center;
+		}
+
+		.modal:before {
+			content: "";
+			display: inline-block;
+			// height: 100%;
+			vertical-align: middle;
+		}
+
+		.modal-dialog {
+			display: inline-block;
+			text-align: left;
+			vertical-align: middle;
+		}
+	}
+}
+
+//
+// modal backdrops
+//
+
+.modal.backdrop {
+	pointer-events: all;
+	background-color: fade(black, 25%);
+}
+
+.modal-open {
+
+	// don't scroll for offscreen dialogs
+	//
+	.modal {
+		overflow-x: hidden;
+		overflow-y: hidden;
+	}
+}
+
+//
+// modal extents - used for centering variable height modals
+//
+
+.modal-extents {
+	width: 100%;
+	margin: auto;
+}
+
+//
+// non-mobile modals
+//
+
+@media (min-width:@screen-xs-min) {
+	.modal {
+	
+		// slightly offset modals upwards
+		//
+		padding-bottom: 50px;
+
+		.modal-dialog {
+
+			// center modal windows vertically
+			//
+			margin: auto auto;
+
+			.modal-header {
+				border-top-left-radius: 3px;
+				border-top-right-radius: 3px;
+			}
+
+			.modal-body.flexible {
+				border-bottom-left-radius: 5px;
+				border-bottom-right-radius: 5px;
+			}
+
+			.modal-footer {
+				border-bottom-left-radius: 3px;
+				border-bottom-right-radius: 3px;
+
+				.buttons {
+					float: right;
+					text-align: left;
+					flex-shrink: 0;
+					margin-left: 10px;
+
+					// counter bootstrap
+					//
+					.btn, .btn + .btn {
+						margin-bottom: 5px;
+					}
+				}
+			}
+		}
+
+		//
+		// non resizable modals
+		//
+
+		.modal-dialog:not(.ui-resizable) {
+			.modal-body {
+			
+				// scrollable regions
+				//
+				.vertically.scrollable {
+					max-height: 220px;
+				}
+			}
+
+			.modal-body {
+				overflow: auto;
+			}
+		}
+	}
+}
+
+//
+// desktop styles
+//
+
+body[device="desktop"] {
+	.modal.in {
+		.modal-dialog {
+
+			// use hardware acceleration to speed up rendering
+			//
+			transform: translateZ(0);
+		}
+	}
+}
+
+//
+// mobile modals
+//
+
+@media (max-width:@screen-xs-min) {
+
+	.modal-extents {
+		height: auto !important;
+		margin: 0;
 	}
 
-	h1 {
-		font-variant: normal;
-		font-size: 125%;
-		line-height: 1.25em;
-		color: @veryDarkGrey;
-		margin: 0;
-		padding: 0;
-		border: none;
+	.modal {
 
-		i {
-			margin-top: 2px;
+		// don't slightly offset modals upwards
+		//
+		padding-bottom: 0;
+
+		.modal-dialog {
+			.modal-header {
+				.modal-title {
+					// max-width: calc(~"100% - 60px");
+					margin-right: 0;
+				}
+
+				.buttons {
+					margin-left: 0;
+				}
+			}
+
+			.modal-body {
+
+				// scrollable regions
+				//
+				.vertically.scrollable {
+					max-height: none;
+				}
+			}
+
+			.modal-footer {
+				.notes {
+					float: none;
+					text-align: left;
+				}
+
+				.buttons {
+					margin-bottom: 10px;
+				}
+			}
+		}
+
+		.modal-dialog:not(.maximized) {
+			margin-top: 10px;
+			margin-left: 10px;
+			margin-right: 10px;
 		}
 	}
 
-	//
-	// close buttons
-	//
+	.modal-open {
 
-	button.close {
-		color: white;
-		font-weight: bold;
-		background-color: @primaryButtonColor;
-		.vertical-gradient(@primaryHighlightColor, @primaryColor);
-		border: 1px solid @primaryBorderColor;
-		border-radius: 5px;
-		margin-top: 0;
-		padding-top: 3px;
-		padding-bottom: 4px;
-		padding-left: 8px;
-		padding-right: 8px;
-		opacity: 1;
+		// scroll vertically
+		//
+		.modal {
+			overflow-x: hidden;
+			overflow-y: auto;
+
+			// always use bounce scrolling
+			//
+			-webkit-overflow-scrolling: touch;
+		}
 	}
-
-	button.close:hover {
-		.vertical-gradient(@primaryHoverColor, @primaryColor);
-		color: white;
-		opacity: 1;
-	}
-
-	i.close, i.close:hover {
-		color: @primaryColor;
-		float: right;
-		margin: 0;
-		opacity: 1;
-	}
-}
-
-.modal-header.error {
-	background: @mediumRed;
-	border-top-left-radius: 5px;
-	border-top-right-radius: 5px;
-
-	#modal-header-text {
-		color: white;
-	}
-}
-
-.modal-body {
-	h2:first-child {
-		margin-top: 0;
-	}
-	
-	.well {
-		margin-bottom: 0;
-	}
-
-	.top.buttons {
-		margin: 0;
-		margin-top: 5px;
-		float: right;
-	}
-}
-
-.modal-footer {
-	border-top: 5px solid @primaryColor;
 }

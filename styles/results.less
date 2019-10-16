@@ -20,12 +20,22 @@ table.results {
 
 	tbody {
 		td.file {
-			width: 40%;
-			word-break: break-all;
+			width: 25%;
 		}
 
-		td.line-number, td.column-number {
-			width: 5%;
+		td.location {
+			width: 25%;
+
+			.filename {
+				display: inline-block;
+				word-break: break-all;
+				margin-right: 15px;
+			}
+
+			.line-number, .column-number {
+				display: inline-block;
+				white-space: nowrap;
+			}
 		}
 
 		td.code {
@@ -64,5 +74,7 @@ table.summary {
 }
 
 .ace_tooltip {
+	max-height: 400px;
+	overflow: auto;
 	white-space: pre-wrap !important;
 }

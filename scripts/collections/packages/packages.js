@@ -18,12 +18,10 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
 	'config',
-	'registry',
 	'models/packages/package',
 	'collections/utilities/named-items'
-], function($, _, Backbone, Config, Registry, Package, NamedItems) {
+], function($, _, Config, Package, NamedItems) {
 	return NamedItems.extend({
 
 		//
@@ -54,9 +52,14 @@ define([
 		},
 
 		getPlatformUserSelectable: function() {
-			var collection = this.clone();
 
-			collection.reset();
+			// create empty collection
+			//
+			var collection = new this.constructor([], {
+				model: this.model,
+				comparator: this.comparator
+			});
+
 			this.each(function(item) {
 				if (item.isPlatformUserSelectable()) {
 					collection.add(item);
@@ -67,9 +70,14 @@ define([
 		},
 
 		getPlatformNotUserSelectable: function() {
-			var collection = this.clone();
 
-			collection.reset();
+			// create empty collection
+			//
+			var collection = new this.constructor([], {
+				model: this.model,
+				comparator: this.comparator
+			});
+
 			this.each(function(item) {
 				if (!item.isPlatformUserSelectable()) {
 					collection.add(item);
@@ -84,7 +92,7 @@ define([
 		//
 
 		fetch: function(options) {
-			return this.fetchByUser(Registry.application.session.user, options);
+			return this.fetchByUser(application.session.user, options);
 		},
 
 		fetchByUser: function(user, options) {

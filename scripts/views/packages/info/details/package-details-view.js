@@ -18,25 +18,23 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
 	'text!templates/packages/info/details/package-details.tpl',
-	'registry',
 	'collections/packages/package-versions',
-	'views/dialogs/confirm-view',
-	'views/dialogs/error-view',
+	'views/base-view',
 	'views/packages/info/details/package-profile/package-profile-view',
 	'views/packages/info/versions/list/package-versions-list-view'
-], function($, _, Backbone, Marionette, Template, Registry, PackageVersions, ConfirmView, ErrorView, PackageProfileView, PackageVersionsListView) {
-	return Backbone.Marionette.LayoutView.extend({
+], function($, _, Template, PackageVersions, BaseView, PackageProfileView, PackageVersionsListView) {
+	return BaseView.extend({
 
 		//
 		// attributes
 		//
 
+		template: _.template(Template),
+
 		regions: {
-			packageProfile: '#package-profile',
-			packageVersionsList: '#package-versions-list'
+			profile: '#package-profile',
+			list: '#package-versions-list'
 		},
 
 		events: {
@@ -47,57 +45,57 @@ define([
 		},
 
 		//
-		// methods
+		// constructor
 		//
 
 		initialize: function() {
 			this.collection = new PackageVersions();
 		},
 
+		//
+		// methods
+		//
+
 		deletePackage: function() {
 			var self = this;
 
-			// show confirm dialog
+			// show confirmation
 			//
-			Registry.application.modal.show(
-				new ConfirmView({
-					title: "Delete Package",
-					message: "Are you sure that you would like to delete package " + self.model.get('name') + "? " +
-						"All versions of this package and any scheduled assessments using this package will be deleted. Existing assessment results will not be deleted.",
+			application.confirm({
+				title: "Delete Package",
+				message: "Are you sure that you would like to delete package " + self.model.get('name') + "? " +
+					"All versions of this package and any scheduled assessments using this package will be deleted. Existing assessment results will not be deleted.",
 
-					// callbacks
+				// callbacks
+				//
+				accept: function() {
+
+					// delete user
 					//
-					accept: function() {
+					self.model.destroy({
 
-						// delete user
+						// callbacks
 						//
-						self.model.destroy({
+						success: function() {
 
-							// callbacks
+							// return to packages view
 							//
-							success: function() {
+							Backbone.history.navigate('#packages', {
+								trigger: true
+							});
+						},
 
-								// return to packages view
-								//
-								Backbone.history.navigate('#packages', {
-									trigger: true
-								});
-							},
+						error: function() {
 
-							error: function() {
-
-								// show error dialog
-								//
-								Registry.application.modal.show(
-									new ErrorView({
-										message: "Could not delete this package."
-									})
-								);
-							}
-						});
-					}
-				})
-			);
+							// show error message
+							//
+							application.error({
+								message: "Could not delete this package."
+							});
+						}
+					});
+				}
+			});
 		},
 
 		//
@@ -119,13 +117,11 @@ define([
 
 				error: function() {
 
-					// show error dialog
+					// show error message
 					//
-					Registry.application.modal.show(
-						new ErrorView({
-							message: "Could not fetch package versions."
-						})
-					);
+					application.error({
+						message: "Could not fetch package versions."
+					});
 				}
 			});
 		},
@@ -134,13 +130,12 @@ define([
 		// rendering methods
 		//
 
-		template: function(data) {
-			return _.template(Template, _.extend(data, {
+		templateContext: function() {
+			return {
 				isOwned: this.model.isOwned(),
 				isPublic: this.model.isPublic(),
-				showNumbering: Registry.application.options.showNumbering
-
-			}));
+				showNumbering: application.options.showNumbering
+			};
 		},
 
 		onRender: function() {
@@ -148,11 +143,9 @@ define([
 
 			// display project profile view
 			//
-			this.packageProfile.show(
-				new PackageProfileView({
-					model: this.model
-				})
-			);
+			this.showChildView('profile', new PackageProfileView({
+				model: this.model
+			}));
 
 			// fetch and show package versions 
 			//
@@ -165,14 +158,12 @@ define([
 
 			// show package versions list view
 			//
-			this.packageVersionsList.show(
-				new PackageVersionsListView({
-					model: this.model,
-					collection: this.collection,
-					showProjects: Registry.application.session.user.get('has_projects'),
-					showNumbering: Registry.application.options.showNumbering
-				})
-			);
+			this.showChildView('list', new PackageVersionsListView({
+				model: this.model,
+				collection: this.collection,
+				showProjects: application.session.user.get('has_projects'),
+				showNumbering: application.options.showNumbering
+			}));
 		},
 
 		//
@@ -189,7 +180,7 @@ define([
 		},
 
 		onClickShowNumbering: function(event) {
-			Registry.application.setShowNumbering($(event.target).is(':checked'));
+			application.setShowNumbering($(event.target).is(':checked'));
 			this.showPackageVersions();
 		},
 

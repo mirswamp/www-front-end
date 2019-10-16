@@ -19,16 +19,17 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
 	'bootstrap/dropdown',
-	'text!templates/widgets/selectors/named-selector.tpl'
-], function($, _, Backbone, Marionette, Dropdown, Template) {
-	return Backbone.Marionette.ItemView.extend({
+	'text!templates/widgets/selectors/named-selector.tpl',
+	'views/base-view'
+], function($, _, Dropdown, Template, BaseView) {
+	return BaseView.extend({
 
 		//
 		// attributes
 		//
+
+		template: _.template(Template),
 
 		events: {
 			'change': 'onChange',
@@ -36,7 +37,7 @@ define([
 		},
 
 		//
-		// methods
+		// constructor
 		//
 
 		initialize: function() {
@@ -60,10 +61,10 @@ define([
 		// rendering methods
 		//
 
-		template: function(data) {
-			return _.template(Template, _.extend(data, {
+		templateContext: function() {
+			return {
 				selected: this.selected
-			}));
+			};
 		},
 
 		//

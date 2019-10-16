@@ -18,28 +18,27 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
 	'text!templates/packages/add/add-new-package.tpl',
-	'registry',
 	'models/packages/package',
 	'models/packages/package-version',
 	'collections/packages/package-version-dependencies',
-	'views/dialogs/error-view',
+	'views/base-view',
 	'views/packages/new-package-view'
-], function($, _, Backbone, Marionette, Template, Registry, Package, PackageVersion, PackageVersionDependencies, ErrorView, NewPackageView) {
-	return Backbone.Marionette.LayoutView.extend({
+], function($, _, Template, Package, PackageVersion, PackageVersionDependencies, BaseView, NewPackageView) {
+	return BaseView.extend({
 
 		//
 		// attributes
 		//
 
+		template: _.template(Template),
+
 		regions: {
-			newPackage: '#new-package'
+			new_package: '#new-package'
 		},
 
 		//
-		// methods
+		// constructor
 		//
 
 		initialize: function() {
@@ -58,23 +57,21 @@ define([
 		// rendering methods
 		//
 
-		template: function(data) {
-			return _.template(Template, _.extend(data, {
+		templateContext: function() {
+			return {
 				model: this.model
-			}));
+			};
 		},
 
 		onRender: function() {
 
 			// display new package view
 			//
-			this.newPackage.show(
-				new NewPackageView({
-					model: this.model,
-					packageVersion: this.packageVersion,
-					packageVersionDependencies: this.packageVersionDependencies
-				})
-			);
+			this.showChildView('new_package', new NewPackageView({
+				model: this.model,
+				packageVersion: this.packageVersion,
+				packageVersionDependencies: this.packageVersionDependencies
+			}));
 		}
 	});
 });

@@ -18,23 +18,27 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
 	'text!templates/info/help.tpl',
 	'config',
-	'registry',
-], function($, _, Backbone, Marionette, Template, Config, Registry) {
-	return Backbone.Marionette.LayoutView.extend({
+	'views/base-view'
+], function($, _, Template, Config, BaseView) {
+	return BaseView.extend({
 
 		//
 		// attributes
 		//
 
-		template: function(data) {
-			return _.template(Template, _.extend(data, {
+		template: _.template(Template),
+
+		//
+		// rendering methods
+		//
+
+		templateContext: function() {
+			return {
 				contact: Config.contact,
-				config: Registry.application.config
-			}));
-		},
+				config: application.config
+			};
+		}
 	});
 });

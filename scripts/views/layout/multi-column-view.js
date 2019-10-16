@@ -18,14 +18,12 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
 	'text!templates/layout/multi-column.tpl',
-	'registry',
 	'models/projects/project',
+	'views/base-view',
 	'views/layout/sidebar-view'
-], function($, _, Backbone, Marionette, Template, Registry, Project, SidebarView) {
-	return Backbone.Marionette.LayoutView.extend({
+], function($, _, Template, Project, BaseView, SidebarView) {
+	return BaseView.extend({
 
 		//
 		// attributes
@@ -35,8 +33,8 @@ define([
 		className: 'home container',
 
 		regions: {
-			sideColumn: '.side.column',
-			mainColumn: '.main.column',
+			side_column: '.side.column',
+			main_column: '.main.column',
 			sidebar: '.side.column #sidebar',
 			content: '.main.column .content'	
 		},
@@ -71,10 +69,16 @@ define([
 				success: function(data) {
 					self.model = new Project(data);
 					self.showSidebar(self.model);
+
+					// perform callback
+					//
+					if (self.options.done) {
+						self.options.done(self);
+					}
 				},
 
 				error: function() {
-					Registry.application.error({
+					application.error({
 						message: 'Could not fetch trial project for this user.'
 					});
 				}
@@ -93,17 +97,13 @@ define([
 		},
 
 		showSidebar: function(trialProject) {
-			if (this.sidebar) {
-				this.sidebar.show(
-					new SidebarView({
-						model: trialProject,
-						nav: this.options.nav,
-						size: this.options.navbarSize
-					})
-				);
+			this.showChildView('sidebar', new SidebarView({
+				model: trialProject,
+				nav: this.options.nav,
+				size: this.options.navbarSize
+			}));
 
-				this.onShowSidebar();
-			}
+			this.onShowSidebar();
 		},
 
 		onShowSidebar: function() {
@@ -111,8 +111,8 @@ define([
 
 			// save sidebar height
 			//
-			this.sidebarTop = this.sidebar.$el.position().top;
-			this.sidebarHeight = this.sidebar.$el.height();
+			this.sidebarTop = this.getChildView('sidebar').$el.position().top;
+			this.sidebarHeight = this.getChildView('sidebar').$el.height();
 
 			// set updating
 			//
@@ -123,12 +123,6 @@ define([
 			// make side column fixed
 			//
 			this.affixSideColumn();
-
-			// perform callback
-			//
-			if (this.options.done) {
-				this.options.done(this);
-			}
 		},
 
 		affixSideColumn: function() {
@@ -138,8 +132,8 @@ define([
 			// reset sidebar position after scroll
 			//
 			this.eventListener = window.addEventListener('scroll', function() {
-				var layout = Registry.application.getLayout();
-				var orientation = Registry.application.getLayoutOrientation(layout);
+				var layout = application.getLayout();
+				var orientation = application.getLayoutOrientation(layout);
 
 				if (orientation == 'left' || orientation == 'right') {
 					$(sideColumn).css('margin-top', window.pageYOffset);
@@ -185,25 +179,33 @@ define([
 		//
 
 		onKeyDown: function(event) {
-			if (this.content.currentView.onKeyDown) {
+			if (this.getChildView('content').onKeyDown) {
 
 				// let view handle event
 				//
-				this.content.currentView.onKeyDown(event);
+				this.getChildView('content').onKeyDown(event);
 
 			// if return key is pressed, then trigger primary button
 			//
-			} else if (event.keyCode == 13) {
-				if (this.content.currentView && this.content.currentView.$el.find('.btn-primary').length > 0) {
+			} else if (event.keyCode == 13 && $('button:focus').length == 0) {
+				var button;
 
-					// let content handle event
+				// find primary button
+				//
+				if (this.getChildView('content')) {
+					button = this.getChildView('content').$el.find('.btn-primary')[0];
+				}
+
+				if (button) {
+
+					// activate primary button
 					//
-					this.content.currentView.$el.find('.btn-primary').trigger('click');
+					$(button).trigger('click');
 
-					// finish handling event
+					// prevent further handling of event
 					//
 					event.stopPropagation();
-					event.preventDefault();
+					event.preventDefault();		
 				}
 			}
 		},

@@ -1,11 +1,10 @@
 /******************************************************************************\
 |                                                                              |
-|                           new-package-profile-form-view.js                   |
+|                       new-package-profile-form-view.js                       |
 |                                                                              |
 |******************************************************************************|
 |                                                                              |
-|        This defines an editable form view of a package's profile             |
-|        information.                                                          |
+|        This defines a form for entering a new package's profile info.        |
 |                                                                              |
 |        Author(s): Abe Megahed                                                |
 |                                                                              |
@@ -19,24 +18,21 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
-	'jquery.validate',
-	'bootstrap/tooltip',
-	'bootstrap/popover',
 	'text!templates/packages/info/details/package-profile/new-package-profile-form.tpl',
-	'config',
 	'models/packages/package',
+	'views/forms/form-view',
 	'views/packages/info/versions/info/details/package-version-profile/new-package-version-profile-form-view',
-], function($, _, Backbone, Marionette, Validate, Tooltip, Popover, Template, Config, Package, NewPackageVersionProfileFormView) {
-	return Backbone.Marionette.LayoutView.extend({
+], function($, _, Template, Package, FormView, NewPackageVersionProfileFormView) {
+	return FormView.extend({
 
 		//
 		// attributes
 		//
 
+		template: _.template(Template),
+
 		regions: {
-			newPackageVersionProfileForm: '#new-package-version-profile-form'
+			form: '#new-package-version-profile-form'
 		},
 
 		events: {
@@ -44,6 +40,27 @@ define([
 			'blur #external-url': 'onBlurExternalUrl'
 		},
 
+		//
+		// form attributes
+		//
+		
+		rules: {
+			'name': {
+				required: true
+			},
+			'file': {
+				file: true
+			},
+			'external-url': {
+				url: true,
+				external_url: true
+			},
+			'external-git-url': {
+				url: true,
+				external_git_url: true
+			}
+		},
+		
 		//
 		// querying methods
 		//
@@ -69,13 +86,40 @@ define([
 		// rendering methods
 		//
 
-		template: function(data) {
-			return _.template(Template, _.extend(data, {
+		templateContext: function() {
+			return {
 				model: this.model
-			}));
+			};
 		},
 
-		initialize: function() {
+		onRender: function() {
+
+			// show child views
+			//
+			this.showChildView('form', new NewPackageVersionProfileFormView({
+				model: this.options.packageVersion,
+				package: this.model,
+				parent:	this
+			}));
+
+			// display select tooltips on mouse over
+			//
+			this.$el.find('select').popover({
+				trigger: 'focus'
+			});
+
+			this.addValidators();
+
+			// call superclass method
+			//
+			FormView.prototype.onRender.call(this);
+		},
+
+		//
+		// form methods
+		//
+
+		addValidators: function() {
 			var self = this;
 
 			// add external url validation rule
@@ -95,87 +139,12 @@ define([
 			}, "Please select an archive file.");
 		},
 
-		onRender: function() {
-
-			// display popovers on hover
-			//
-			this.$el.find('[data-toggle="popover"]').popover({
-				trigger: 'hover'
-			});
-
-			// display select tooltips on mouse over
-			//
-			this.$el.find('select').popover({
-				trigger: 'focus'
-			});
-
-			// show package version profile form
-			//
-			this.newPackageVersionProfileForm.show(
-				new NewPackageVersionProfileFormView({
-					model: this.options.packageVersion,
-					package: this.model,
-					parent:	this
-				})
-			);
-
-			// validate the form
-			//
-			this.validator = this.validate();
-		},
-
-		//
-		// form validation methods
-		//
-
-		isValid: function() {
-			return this.validator.form();
-		},
-
-		validate: function() {
-			return this.$el.find('form').validate({
-				rules: {
-					'name': {
-						required: true
-					},
-					'file': {
-						file: true
-					},
-					'external-url': {
-						url: true,
-						external_url: true
-					},
-					'external-git-url': {
-						url: true,
-						external_git_url: true
-					}
-				}
-			});
-		},
-
-		//
-		// form methods
-		//
-
-		update: function(package, packageVersion) {
-
-			// get values from form
-			//
-			var name = this.$el.find('#name input').val();
-			var description = this.$el.find('#description textarea').val();
-			var externalURL = this.useExternalUrl()? this.getExternalUrl(): null;
-
-			// update model
-			//
-			package.set({
-				'name': name,
-				'description': description,
-				'external_url': externalURL
-			});
-
-			// update version
-			//
-			this.newPackageVersionProfileForm.currentView.update(packageVersion);
+		getValues: function() {
+			return {
+				'name': this.$el.find('#name input').val(),
+				'description': this.$el.find('#description textarea').val(),
+				'external_url': this.useExternalUrl()? this.getExternalUrl(): null
+			};
 		},
 
 		//

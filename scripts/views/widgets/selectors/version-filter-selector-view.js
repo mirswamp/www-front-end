@@ -18,16 +18,20 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
 	'text!templates/widgets/selectors/version-filter-selector.tpl',
 	'utilities/scripting/string-utils',
 	'views/widgets/selectors/version-selector-view'
-], function($, _, Backbone, Marionette, Template, StringUtils, VersionSelectorView) {
-	var Class = VersionSelectorView.extend({
+], function($, _, Template, StringUtils, VersionSelectorView) {
+	return VersionSelectorView.extend({
 
 		//
-		// methods
+		// attributes
+		//
+
+		template: _.template(Template),
+
+		//
+		// constructor
 		//
 
 		initialize: function(options) {
@@ -36,6 +40,10 @@ define([
 				reverse: true
 			});
 		},
+
+		//
+		// methods
+		//
 
 		reset: function(options) {
 
@@ -60,7 +68,7 @@ define([
 		// rendering methods
 		//
 
-		template: function(data) {
+		templateContext: function() {
 			var initialValue;
 
 			// get initial value from options
@@ -73,10 +81,10 @@ define([
 				}
 			}
 
-			return _.template(Template, _.extend(data, {
+			return {
 				selected: initialValue,
 				defaultOptions: this.options.defaultOptions
-			}));
+			};
 		},
 
 		//
@@ -105,7 +113,7 @@ define([
 		},
 
 		getSelectedVersionString: function() {
-			return Class.getVersionString(this.getSelected());
+			return this.constructor.getVersionString(this.getSelected());
 		},
 
 		onChange: function(options) {
@@ -134,6 +142,4 @@ define([
 			}
 		}
 	});
-
-	return Class;
 });

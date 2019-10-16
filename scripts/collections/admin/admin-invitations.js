@@ -19,11 +19,11 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
 	'config',
-	'models/admin/admin-invitation'
-], function($, _, Backbone, Config, AdminInvitation) {
-	return Backbone.Collection.extend({
+	'models/admin/admin-invitation',
+	'collections/base-collection'
+], function($, _, Config, AdminInvitation, BaseCollection) {
+	return BaseCollection.extend({
 
 		//
 		// Backbone attributes

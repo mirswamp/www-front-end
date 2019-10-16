@@ -19,14 +19,19 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
 	'bootstrap/collapse',
 	'text!templates/packages/info/versions/info/build/build-profile/package-type/dot-net/dot-net-package.tpl',
+	'views/base-view',
 	'widgets/accordions',
-	'utilities/browser/html-utils'
-], function($, _, Backbone, Marionette, Collapse, Template, Accordions) {
-	return Backbone.Marionette.ItemView.extend({
+	'utilities/web/html-utils'
+], function($, _, Collapse, Template, BaseView, Accordions) {
+	return BaseView.extend({
+
+		//
+		// attributes
+		//
+
+		template: _.template(Template),
 
 		//
 		// querying methods
@@ -46,13 +51,13 @@ define([
 		// rendering methods
 		//
 
-		template: function(data) {
+		templateContext: function() {
 			var settings = this.model.get('package_build_settings');
 
-			return _.template(Template, _.extend(data, {
+			return {
 				solution: this.getSolution(settings),
 				projects: settings.proj_files
-			}));
+			};
 		},
 
 		onRender: function() {

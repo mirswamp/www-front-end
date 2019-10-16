@@ -20,12 +20,17 @@ define([
 	'jquery',
 	'underscore',
 	'text!templates/results/native-viewer/directory-tree/file.tpl',
-	'registry',
 	'models/assessments/assessment-results',
 	'views/packages/info/versions/directory-tree/package-version-file-view',
-	'utilities/browser/query-strings'
-], function($, _, Template, Registry, AssessmentResults, PackageVersionFileView) {
+	'utilities/web/query-strings'
+], function($, _, Template, AssessmentResults, PackageVersionFileView) {
 	return PackageVersionFileView.extend({
+
+		//
+		// attributes
+		//
+
+		template: _.template(Template),
 
 		//
 		// querying methods
@@ -44,7 +49,7 @@ define([
 		},
 
 		getUrl: function() {
-			return Registry.application.getURL() + 
+			return application.getURL() + 
 				'#results/' + this.options.results.get('assessment_result_uuid') + 
 				'/projects/' + this.options.projectUuid +
 				'/source' + '?file=' + this.model.get('name') +
@@ -56,15 +61,14 @@ define([
 		// rendering methods
 		//
 
-		template: function(data) {
-			return _.template(Template, _.extend(data, {
+		templateContext: function() {
+			return {
 				selectable: this.isSelectable(),
 				selected: this.options.selected,
 				buildFile: this.isBuildFile(),
-				//bugCount: this.getBugCount(),
-				bugCount: data['bug_count'],
+				bugCount: this.model.get('bug_count'),
 				url: this.getUrl()
-			}));
+			};
 		}
 	});
 });

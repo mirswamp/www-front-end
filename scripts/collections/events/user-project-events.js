@@ -18,14 +18,12 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
 	'config',
-	'registry',
 	'utilities/time/iso8601',
 	'models/users/user',
 	'models/events/user-project-event',
 	'collections/events/events'
-], function($, _, Backbone, Config, Registry, Iso8601, User, UserProjectEvent, Events) {
+], function($, _, Config, Iso8601, User, UserProjectEvent, Events) {
 	return Events.extend({
 
 		//
@@ -40,7 +38,7 @@ define([
 		//
 
 		fetch: function(options) {
-			return this.fetchByUser(Registry.application.session.user, options);
+			return this.fetchByUser(application.session.user, options);
 		},	
 
 		fetchByUser: function(user, options) {

@@ -19,27 +19,25 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
 	'text!templates/packages/review/review-packages.tpl',
-	'registry',
-	'utilities/browser/query-strings',
-	'utilities/browser/url-strings',
 	'collections/packages/packages',
-	'views/dialogs/notify-view',
-	'views/dialogs/error-view',
+	'views/base-view',
 	'views/packages/filters/review-packages-filters-view',
-	'views/packages/review/review-packages-list/review-packages-list-view'
-], function($, _, Backbone, Marionette, Template, Registry, QueryStrings, UrlStrings, Projects, NotifyView, ErrorView, ReviewPackagesFiltersView, ReviewPackagesListView) {
-	return Backbone.Marionette.LayoutView.extend({
+	'views/packages/review/review-packages-list/review-packages-list-view',
+	'utilities/web/query-strings',
+	'utilities/web/url-strings'
+], function($, _, Template, Packages, BaseView, ReviewPackagesFiltersView, ReviewPackagesListView, QueryStrings, UrlStrings) {
+	return BaseView.extend({
 
 		//
 		// attributes
 		//
 
+		template: _.template(Template),
+
 		regions: {
-			packageFilters: '#package-filters',
-			reviewPackagesList: '#review-packages-list'
+			filters: '#package-filters',
+			list: '#review-packages-list'
 		},
 
 		events: {
@@ -54,7 +52,7 @@ define([
 		//
 
 		initialize: function() {
-			this.collection = new Projects();
+			this.collection = new Packages();
 		},
 
 		//
@@ -62,11 +60,11 @@ define([
 		//
 
 		getQueryString: function() {
-			return this.packageFilters.currentView.getQueryString();
+			return this.getChildView('filters').getQueryString();
 		},
 
 		getFilterData: function() {
-			return this.packageFilters.currentView.getData();
+			return this.getChildView('filters').getData();
 		},
 
 		//
@@ -79,7 +77,7 @@ define([
 			// fetch packages
 			//
 			this.collection.fetchAll({
-				data: this.packageFilters.currentView? this.packageFilters.currentView.getAttrs() : null,
+				data: this.getChildView('filters')? this.getChildView('filters').getAttrs() : null,
 
 				// callbacks
 				//
@@ -89,13 +87,11 @@ define([
 
 				error: function() {
 
-					// show error dialog
+					// show error message
 					//
-					Registry.application.modal.show(
-						new ErrorView({
-							message: "Could not load packages."
-						})
-					);
+					application.error({
+						message: "Could not load packages."
+					});
 				}
 			});
 		},
@@ -109,23 +105,19 @@ define([
 
 					// show success notify view
 					//
-					Registry.application.modal.show(
-						new NotifyView({
-							title: "Package Changes Saved",
-							message: "Your package changes have been successfully saved."
-						})
-					);
+					application.notify({
+						title: "Package Changes Saved",
+						message: "Your package changes have been successfully saved."
+					});
 				},
 
 				error: function() {
 
-					// show error dialog
+					// show error message
 					//
-					Registry.application.modal.show(
-						new ErrorView({
-							message: "Your package changes could not be saved."
-						})
-					);
+					application.error({
+						message: "Your package changes could not be saved."
+					});
 				}
 			});
 		},
@@ -134,11 +126,11 @@ define([
 		// rendering methods
 		//
 
-		template: function(data) {
-			return _.template(Template, _.extend(data, {
+		templateContext: function() {
+			return {
 				data: this.options.data,
-				showNumbering: Registry.application.options.showNumbering
-			}));
+				showNumbering: application.options.showNumbering
+			};
 		},
 
 		onRender: function() {
@@ -157,49 +149,45 @@ define([
 
 			// show package filters view
 			//
-			this.packageFilters.show(
-				new ReviewPackagesFiltersView({
-					model: this.model,
-					data: this.options.data? this.options.data : {},
+			this.showChildView('filters', new ReviewPackagesFiltersView({
+				model: this.model,
+				data: this.options.data? this.options.data : {},
 
-					// callbacks
+				// callbacks
+				//
+				onChange: function() {
+					// setQueryString(self.getChildView('filters').getQueryString());			
+				
+					// update filter data
 					//
-					onChange: function() {
-						// setQueryString(self.packageFilters.currentView.getQueryString());			
-					
-						// update filter data
-						//
-						var projects = self.options.data.projects;
-						self.options.data = self.getFilterData();
-						self.options.data.projects = projects;
+					var projects = self.options.data.projects;
+					self.options.data = self.getFilterData();
+					self.options.data.projects = projects;
 
-						// update url
-						//
-						var queryString = self.getQueryString();
-						var state = window.history.state;
-						var url = getWindowBaseLocation() + (queryString? ('?' + queryString) : '');
-						window.history.pushState(state, '', url);
+					// update url
+					//
+					var queryString = self.getQueryString();
+					var state = window.history.state;
+					var url = getWindowBaseLocation() + (queryString? ('?' + queryString) : '');
+					window.history.pushState(state, '', url);
 
-						// update view
-						//
-						self.onChange();
-					}
-				})
-			);
+					// update view
+					//
+					self.onChange();
+				}
+			}));
 		},
 
 		showList: function() {
 
 			// show review packages list view
 			//
-			this.reviewPackagesList.show(
-				new ReviewPackagesListView({
-					collection: this.collection,
-					showDeactivatedPackages: this.$el.find('#show-deactivated-packages').is(':checked'),
-					showNumbering: Registry.application.options.showNumbering,
-					showDelete: true
-				})
-			);
+			this.showChildView('list', new ReviewPackagesListView({
+				collection: this.collection,
+				showDeactivatedPackages: this.$el.find('#show-deactivated-packages').is(':checked'),
+				showNumbering: application.options.showNumbering,
+				showDelete: true
+			}));
 		},
 
 		fetchAndShowList: function() {
@@ -241,12 +229,12 @@ define([
 		},
 
 		onClickShowDeactivatedPackages: function() {
-			this.reviewPackagesList.currentView.options.showDeactivatedPackages = this.$el.find('#show-deactivated-packages').is(':checked');
-			this.reviewPackagesList.currentView.render();
+			this.getChildView('list').options.showDeactivatedPackages = this.$el.find('#show-deactivated-packages').is(':checked');
+			this.getChildView('list').render();
 		},
 
 		onClickShowNumbering: function(event) {
-			Registry.application.setShowNumbering($(event.target).is(':checked'));
+			application.setShowNumbering($(event.target).is(':checked'));
 			this.showList();
 		}
 	});

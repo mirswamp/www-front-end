@@ -18,7 +18,7 @@
 .nav-tabs {
 	margin-top: 10px;
 	margin-bottom: 15px;
-	border-bottom: 2px solid @primaryColor;
+	border-bottom: 2px solid @brand-primary;
 
 	//
 	// shape
@@ -51,31 +51,31 @@
 	//
 
 	> li:not(.active) > a, li:not(.active) > a:focus {
-		color: @secondaryColor;
-		.vertical-gradient(white, @veryLightGrey);
-		border: 1px solid @lightGrey;
+		color: @brand-secondary;
+		.vertical-gradient(white, @very-very-very-light-grey);
+		border: 1px solid @very-very-light-grey;
 		border-bottom: 0;
 		cursor: pointer;
 	}
 
 	> li.active > a, li.active > a:focus {
 		color: white;
-		.vertical-gradient(@primaryHighlightColor, @primaryColor);
-		border: 1px solid @primaryBorderColor;
+		.vertical-gradient(@brand-primary-highlight, @brand-primary);
+		border: 1px solid @brand-primary-border;
 		border-bottom: 0;
 	}
 
 	> li:hover > a, li:hover > a:focus {
 		color: white;
-		.vertical-gradient(@primaryHoverColor, @primaryColor);
-		border: 1px solid @primaryBorderColor;
+		.vertical-gradient(@brand-primary-hover, @brand-primary);
+		border: 1px solid @brand-primary-border;
 		border-bottom: 0;
 	}
 
 	> li.active:hover > a, li.active:hover > a:focus {
 		color: white;
-		.vertical-gradient(@lightGold, @mediumGold);
-		border: 1px solid @primaryBorderColor;
+		.vertical-gradient(lighten(@brand-primary, 10%), @brand-primary);
+		border: 1px solid @brand-primary-border;
 		border-bottom: 0;
 	}
 

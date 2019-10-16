@@ -4,7 +4,7 @@
 |                                                                              |
 |******************************************************************************|
 |                                                                              |
-|        This defines a form for editing application passwords.                |
+|        This defines a form for entering password info.                       |
 |                                                                              |
 |        Author(s): Abe Megahed                                                |
 |                                                                              |
@@ -18,66 +18,29 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
-	'jquery.validate',
-	'bootstrap/popover',
-	'text!templates/users/passwords/forms/password-form.tpl'
-], function($, _, Backbone, Marionette, Validate, Popover, Template) {
-	return Backbone.Marionette.LayoutView.extend({
+	'text!templates/users/passwords/forms/password-form.tpl',
+	'views/forms/form-view'
+], function($, _, Template, FormView) {
+	return FormView.extend({
 
 		//
 		// attributes
 		//
+
+		template: _.template(Template),
 
 		events: {
 			'input input': 'onChange'
 		},
 
 		//
-		// rendering methods
-		//
-
-		template: function(data) {
-			return _.template(Template, data);
-		},
-
-		onRender: function() {
-
-			// display popovers on hover
-			//
-			this.$el.find('[data-toggle="popover"]').popover({
-				trigger: 'hover'
-			});
-
-			// validate the form
-			//
-			this.validator = this.validate();
-		},
-
-		//
 		// form methods
 		//
 
-		update: function(model) {
-
-			// set model attributes
-			//
-			this.model.set({
+		getValues: function() {
+			return {
 				'label': this.$el.find('#password-label input').val()
-			});
-		},
-
-		//
-		// form validation methods
-		//
-
-		validate: function() {
-			return this.$el.find('form').validate();
-		},
-
-		isValid: function() {
-			return this.validator.form();
+			};
 		},
 
 		//

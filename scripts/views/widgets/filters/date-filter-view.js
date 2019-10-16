@@ -18,18 +18,17 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
 	'jquery.validate',
 	'bootstrap/collapse',
 	'jquery.datepicker',
+	'modernizr',
 	'text!templates/widgets/filters/date-filter.tpl',
-	'registry',
+	'views/base-view',
 	'utilities/time/date-format',
 	'utilities/time/date-utils',
-	'utilities/browser/query-strings',
-	'utilities/browser/url-strings'
-], function($, _, Backbone, Marionette, Validate, Collapse, DatePicker, Template, Registry, DateFormat, DateUtils, QueryStrings, UrlStrings) {
+	'utilities/web/query-strings',
+	'utilities/web/url-strings'
+], function($, _, Validate, Collapse, DatePicker, Modernizr, Template, BaseView, DateFormat, DateUtils, QueryStrings, UrlStrings) {
 	
 	//
 	// date conversion methods
@@ -91,11 +90,13 @@ define([
 		return date;
 	}
 
-	return Backbone.Marionette.ItemView.extend({
+	return BaseView.extend({
 
 		//
 		// attributes
 		//
+
+		template: _.template(Template),
 
 		events: {
 			'change #after-date': 'onChange',
@@ -109,7 +110,7 @@ define([
 		},
 
 		//
-		// methods
+		// constructor
 		//
 
 		initialize: function() {
@@ -296,14 +297,14 @@ define([
 		// rendering methods
 		//
 
-		template: function(data) {
-			return _.template(Template, _.extend(data, {
+		templateContext: function() {
+			return {
 				id: this.options.id,
 				title: this.options.title,
 				icon: this.options.icon,
 				afterDate: this.options.initialAfterDate? dateFormat(stringToDate(this.options.initialAfterDate), 'yyyy-mm-dd') : undefined,
 				beforeDate: this.options.initialBeforeDate? dateFormat(stringToDate(this.options.initialBeforeDate), 'yyyy-mm-dd') : undefined
-			}));
+			};
 		},
 
 		onRender: function() {

@@ -1,6 +1,6 @@
 /******************************************************************************\
 |                                                                              |
-|                         system-email-list-item-view.js                       |
+|                        system-email-list-item-view.js                        |
 |                                                                              |
 |******************************************************************************|
 |                                                                              |
@@ -18,36 +18,31 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',	
 	'text!templates/admin/settings/system-email/system-email-list/system-email-list-item.tpl',
-	'config',
-	'registry',
 	'models/users/user',
-	'views/dialogs/error-view',
-	'views/dialogs/confirm-view',
-], function($, _, Backbone, Marionette, Template, Config, Registry, User, ErrorView, ConfirmView) {
-	return Backbone.Marionette.ItemView.extend({
+	'views/collections/tables/table-list-item-view',
+], function($, _, Template, User, TableListItemView) {
+	return TableListItemView.extend({
 
 		//
 		// attributes
 		//
 
-		tagName: 'tr',
+		template: _.template(Template),
 
 		//
 		// rendering methods
 		//
 
-		template: function(data) {
-			return _.template(Template, _.extend(data, {
+		templateContext: function() {
+			return {
 				User: User,
 				model: this.model,
-				url: Registry.application.getURL() + '#accounts',
+				url: application.getURL() + '#accounts',
 				index: this.options.index,
 				showNumbering: this.options.showNumbering,
 				showHibernate: this.options.showHibernate
-			}));
+			};
 		}
 	});
 });

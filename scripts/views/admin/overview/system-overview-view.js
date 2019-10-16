@@ -18,65 +18,16 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
-	'text!templates/admin/overview/system-overview.tpl'
-], function($, _, Backbone, Marionette, Template) {
-	return Backbone.Marionette.LayoutView.extend({
+	'text!templates/admin/overview/system-overview.tpl',
+	'views/base-view'
+], function($, _, Template, BaseView) {
+	return BaseView.extend({
 
 		//
 		// attributes
 		//
 
-		template: _.template(Template),
-
-		events: {
-			'click #accounts': 'onClickAccounts',
-			'click #projects': 'onClickProjects',
-			'click #packages' : 'onClickPackages',
-			'click #tools' : 'onClickTools',
-			'click #results' : 'onClickResults',
-			'click #status' : 'onClickStatus'
-		},
-
-		//
-		// event handling methods
-		//
-
-		onClickAccounts: function() {
-			Backbone.history.navigate('#accounts/review', {
-				trigger: true
-			});
-		},
-
-		onClickProjects: function() {
-			Backbone.history.navigate('#projects/review', {
-				trigger: true
-			});
-		},
-
-		onClickPackages: function() {
-			Backbone.history.navigate('#packages/review', {
-				trigger: true
-			});
-		},
-
-		onClickTools: function() {
-			Backbone.history.navigate('#tools/review', {
-				trigger: true
-			});
-		},
-
-		onClickResults: function() {
-			Backbone.history.navigate('#results/review', {
-				trigger: true
-			});
-		},
-
-		onClickStatus: function() {
-			Backbone.history.navigate('#status/review', {
-				trigger: true
-			});
-		}
+		className: 'dashboard',
+		template: _.template(Template)
 	});
 });

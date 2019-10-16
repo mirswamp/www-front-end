@@ -18,11 +18,10 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
 	'text!templates/widgets/viewers/file-tree/file.tpl',
-], function($, _, Backbone, Marionette, FileTemplate, DirectoryTemplate) {
-	return Backbone.Marionette.CompositeView.extend({
+	'views/collections/collection-view'
+], function($, _, Template, DirectoryTemplate, CollectionView) {
+	return CollectionView.extend({
 
 		//
 		// attributes
@@ -30,8 +29,10 @@ define([
 
 		tagName: 'li',
 
+		template: _.template(Template),
+
 		//
-		// methods
+		// constructor
 		//
 
 		initialize: function() {
@@ -43,10 +44,6 @@ define([
 		//
 		// rendering methods
 		//
-
-		template: function(data) {
-			return _.template(FileTemplate, data);
-		},
 
 		attachHtml: function(collectionView, childView){
 			collectionView.$('li:first').append(childView.el);

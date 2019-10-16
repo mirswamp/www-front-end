@@ -18,8 +18,8 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone'
-], function($, _, Backbone) {
+	'routers/base-router'
+], function($, _, BaseRouter) {
 
 	function parseQueryString(queryString) {
 
@@ -42,7 +42,7 @@ define([
 
 	// create router
 	//
-	return Backbone.Router.extend({
+	return BaseRouter.extend({
 
 		//
 		// route definitions
@@ -76,13 +76,12 @@ define([
 
 		showMyProjects: function() {
 			require([
-				'registry',
 				'views/projects/projects-view'
-			], function (Registry, ProjectsView) {
+			], function (ProjectsView) {
 
 				// show content view
 				//
-				Registry.application.showContent({
+				application.showContent({
 					nav1: 'home',
 					nav2: 'projects', 
 
@@ -92,9 +91,7 @@ define([
 
 						// show projects view
 						//
-						view.content.show(
-							new ProjectsView()
-						);
+						view.showChildView('content', new ProjectsView());
 					}
 				});
 			});
@@ -102,13 +99,12 @@ define([
 
 		showAddNewProject: function() {
 			require([
-				'registry',
 				'views/projects/add/add-new-project-view'
-			], function (Registry, AddNewProjectView) {
+			], function (AddNewProjectView) {
 
 				// show content view
 				//
-				Registry.application.showContent({
+				application.showContent({
 					'nav1': 'home',
 					'nav2': 'projects', 
 
@@ -118,11 +114,9 @@ define([
 
 						// show add new project view
 						//
-						view.content.show(
-							new AddNewProjectView({
-								user: Registry.application.session.user
-							})
-						);
+						view.showChildView('content', new AddNewProjectView({
+							user: application.session.user
+						}));
 					}
 				});
 			});
@@ -134,15 +128,14 @@ define([
 
 		showReviewProjects: function(queryString) {
 			require([
-				'registry',
-				'utilities/browser/query-strings',
-				'utilities/browser/url-strings',
+				'utilities/web/query-strings',
+				'utilities/web/url-strings',
 				'views/projects/review/review-projects-view',
-			], function (Registry, QueryStrings, UrlStrings, ReviewProjectsView) {
+			], function (QueryStrings, UrlStrings, ReviewProjectsView) {
 
 				// show content view
 				//
-				Registry.application.showContent({
+				application.showContent({
 					'nav1': 'home',
 					'nav2': 'overview', 
 
@@ -152,11 +145,9 @@ define([
 
 						// show review projects view
 						//
-						view.content.show(
-							new ReviewProjectsView({
-								data: parseQueryString(queryString)
-							})
-						);
+						view.showChildView('content', new ReviewProjectsView({
+							data: parseQueryString(queryString)
+						}));
 					}
 				});
 			});
@@ -168,10 +159,8 @@ define([
 
 		showProjectView: function(projectUid, options) {
 			require([
-				'registry',
 				'models/projects/project',
-				'views/dialogs/error-view'
-			], function (Registry, Project, ErrorView) {
+			], function (Project) {
 
 				// fetch project
 				//
@@ -183,20 +172,27 @@ define([
 
 					// callbacks
 					//
-					success: function() {
+					success: function(model) {
 
 						// show content view
 						//
-						Registry.application.showContent({
+						application.showContent({
 							nav1: 'home',
 							nav2: options.nav,
 
 							// callbacks
 							//
 							done: function(view) {
-								view.content.model = project;
+
+								// set current project
+								//
+								view.model = model;
+								// view.getChildView('content').model = project;
+
+								// perform callback
+								//
 								if (options.done) {
-									options.done(view.content);
+									options.done(view);
 								}
 							}
 						});
@@ -204,13 +200,11 @@ define([
 
 					error: function() {
 
-						// show error dialog
+						// show error message
 						//
-						Registry.application.modal.show(
-							new ErrorView({
-								message: "Could not fetch project."
-							})
-						);
+						application.error({
+							message: "Could not fetch project."
+						});
 					}
 				});
 			});
@@ -220,12 +214,10 @@ define([
 			var self = this;
 			require([
 				'config',
-				'registry',
 				'models/projects/project',
 				'models/projects/project-membership',
-				'views/dialogs/error-view',
 				'views/projects/project-view'
-			], function (Config, Registry, Project, ProjectMembership, ErrorView, ProjectView) {
+			], function (Config, Project, ProjectMembership, ProjectView) {
 
 				// show project view
 				//
@@ -239,7 +231,7 @@ define([
 						// fetch project membership
 						//
 						var projectMembership = new ProjectMembership();
-						var user = Registry.application.session.user;
+						var user = application.session.user;
 
 						// fetch user's project membership
 						//
@@ -252,23 +244,19 @@ define([
 
 								// show project view for members
 								//
-								view.show(
-									new ProjectView({
-										model: view.model,
-										projectMembership: projectMembership
-									})
-								);
+								view.showChildView('content', new ProjectView({
+									model: view.model,
+									projectMembership: projectMembership
+								}));
 							},
 
 							error: function() {
 
 								// show project view for non-members
 								//
-								view.show(
-									new ProjectView({
-										model: view.model
-									})
-								);
+								view.showChildView('content', new ProjectView({
+									model: view.model
+								}));
 							}
 						});
 					}
@@ -293,11 +281,9 @@ define([
 
 						// show edit project view
 						//
-						view.show(
-							new EditProjectView({
-								model: view.model
-							})
-						);
+						view.showChildView('content', new EditProjectView({
+							model: view.model
+						}));
 					}
 				});
 			});
@@ -324,11 +310,9 @@ define([
 
 						// show invite project members view
 						//
-						view.show(
-							new InviteProjectMembersView({
-								model: view.model
-							})
-						);
+						view.showChildView('content', new InviteProjectMembersView({
+							model: view.model
+						}));
 					}
 				});
 			});
@@ -336,12 +320,11 @@ define([
 
 		showConfirmProjectInvitation: function(projectUid, invitationKey) {
 			require([
-				'registry',
 				'models/projects/project-invitation',
 				'views/projects/info/members/invitations/confirm-project-invitation-view',
 				'views/projects/info/members/invitations/please-register-view',
 				'views/projects/info/members/invitations/invalid-project-invitation-view'
-			], function (Registry, ProjectInvitation, ConfirmProjectInvitationView, PleaseRegisterView, InvalidProjectInvitationView) {
+			], function (ProjectInvitation, ConfirmProjectInvitationView, PleaseRegisterView, InvalidProjectInvitationView) {
 
 				// fetch project invitation
 				//
@@ -363,27 +346,23 @@ define([
 
 								// show confirm project invitation view
 								//
-								Registry.application.showMain(
-									new ConfirmProjectInvitationView({
-										model: projectInvitation,
-										sender: sender,
-										project: project,
-										user: invitee
-									})
-								);
+								application.showMain(new ConfirmProjectInvitationView({
+									model: projectInvitation,
+									sender: sender,
+									project: project,
+									user: invitee
+								}));
 							},
 
 							error: function() {
 
 								// show please register view
 								//
-								Registry.application.showMain(
-									new PleaseRegisterView({
-										model: projectInvitation,
-										sender: sender,
-										project: project
-									})
-								);
+								application.showMain(new PleaseRegisterView({
+									model: projectInvitation,
+									sender: sender,
+									project: project
+								}));
 							}
 						});
 					},
@@ -392,16 +371,12 @@ define([
 
 						// show invalid project invitation view
 						//
-						Registry.application.showMain(
-							new InvalidProjectInvitationView({
-								message: message
-							})
-						);	
+						application.showMain(new InvalidProjectInvitationView({
+							message: message
+						}));	
 					}
 				});
 			});
 		}
 	});
 });
-
-

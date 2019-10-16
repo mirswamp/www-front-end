@@ -18,17 +18,14 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
 	'bootstrap/popover',
 	'text!templates/layout/sidebar.tpl',
 	'text!templates/layout/sidebar-large.tpl',
 	'text!templates/layout/navbar.tpl',
-	'registry',
 	'collections/tools/tools',
-	'views/dialogs/notify-view'
-], function($, _, Backbone, Marionette, PopOver, Sidebar, SidebarLarge, Navbar, Registry, Tools, NotifyView) {
-	return Backbone.Marionette.LayoutView.extend({
+	'views/base-view',
+], function($, _, PopOver, Sidebar, SidebarLarge, Navbar, Tools, BaseView) {
+	return BaseView.extend({
 
 		//
 		// attributes
@@ -49,9 +46,9 @@ define([
 		//
 
 		setLayout: function(layout) {
-			var currentLayout = Registry.application.getLayout();
-			var currentOrientation = Registry.application.getLayoutOrientation(currentLayout);
-			var orientation = Registry.application.getLayoutOrientation(layout);
+			var currentLayout = application.getLayout();
+			var currentOrientation = application.getLayoutOrientation(currentLayout);
+			var orientation = application.getLayoutOrientation(layout);
 
 			// set orientation
 			//
@@ -82,7 +79,7 @@ define([
 
 			// save new layout
 			//
-			Registry.application.setLayout(layout);
+			application.setLayout(layout);
 
 			// update sidebar
 			//
@@ -93,31 +90,32 @@ define([
 		// rendering methods
 		//
 
-		template: function(data) {
-			var layout = Registry.application.getLayout();
-			var orientation = Registry.application.getLayoutOrientation(layout);
+		getTemplate: function() {
+			var layout = application.getLayout();
+			var orientation = application.getLayoutOrientation(layout);
 			var template;
 
 			// get appropriate template
 			//
-			switch (orientation || 'left') {
-				case 'top':
-				case 'bottom':
-					template = Navbar;
-					break;
-
-				case 'right':
-				case 'left':
-					template = this.options.size == 'large'? SidebarLarge : Sidebar;
-					break;
+			if (orientation == 'top' || orientation == 'bottom') {
+				template = Navbar;
+			} else {
+				template = this.options.size == 'large'? SidebarLarge : Sidebar;
 			}
 
-			return _.template(template, _.extend(data, {
+			return _.template(template);
+		},
+
+		templateContext: function() {
+			var layout = application.getLayout();
+			var orientation = application.getLayoutOrientation(layout);
+
+			return {
 				nav: this.options.nav,
 				showHome: this.options.showHome,
 				orientation: orientation,
-				isAdmin: Registry.application.session.user.isAdmin()
-			}));
+				isAdmin: application.session.user.isAdmin()
+			};
 		},
 
 		onRender: function() {
@@ -136,7 +134,7 @@ define([
 
 			// show tools, if necessary
 			//
-			Tools.fetchNumByUser(Registry.application.session.user, {
+			Tools.fetchNumByUser(application.session.user, {
 				success: function(number) {
 					if (number > 0) {
 						self.$el.find("#tools").show();
@@ -159,7 +157,7 @@ define([
 
 			// set layout
 			//
-			if (Registry.application.options.layout == 'two-columns-right-sidebar') {
+			if (application.options.layout == 'two-columns-right-sidebar') {
 				this.setLayout('two-columns-right-sidebar-large');
 			} else {
 				this.setLayout('two-columns-left-sidebar-large');
@@ -174,7 +172,7 @@ define([
 
 			// set layout
 			//
-			if (Registry.application.options.layout == 'two-columns-right-sidebar-large') {
+			if (application.options.layout == 'two-columns-right-sidebar-large') {
 				this.setLayout('two-columns-right-sidebar');
 			} else {
 				this.setLayout('two-columns-left-sidebar');

@@ -18,33 +18,32 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
 	'jquery.validate',
 	'bootstrap/collapse',
-	'modernizr',
 	'text!templates/events/filters/event-filters.tpl',
-	'registry',
-	'utilities/browser/query-strings',
-	'utilities/browser/url-strings',
+	'utilities/web/query-strings',
+	'utilities/web/url-strings',
 	'models/projects/project',
 	'collections/projects/projects',
+	'views/base-view',
 	'views/events/filters/event-type-filter-view',
 	'views/projects/filters/project-filter-view',
 	'views/widgets/filters/date-filter-view',
 	'views/widgets/filters/limit-filter-view'
-], function($, _, Backbone, Marionette, Validate, Collapse, Modernizr, Template, Registry, QueryStrings, UrlStrings, Project, Projects, EventTypeFilterView, ProjectFilterView, DateFilterView, LimitFilterView) {
-	return Backbone.Marionette.LayoutView.extend({
+], function($, _, Validate, Collapse, Template, QueryStrings, UrlStrings, Project, Projects, BaseView, EventTypeFilterView, ProjectFilterView, DateFilterView, LimitFilterView) {
+	return BaseView.extend({
 
 		//
 		// attributes
 		//
 
+		template: _.template(Template),
+
 		regions: {
-			eventTypeFilter: '#event-type-filter',
-			projectFilter: '#project-filter',
-			dateFilter: '#date-filter',
-			limitFilter: '#limit-filter'
+			event_type: '#event-type-filter',
+			project: '#project-filter',
+			date: '#date-filter',
+			limit: '#limit-filter'
 		},
 
 		events: {
@@ -60,10 +59,10 @@ define([
 
 			// add tags
 			//
-			tags += this.eventTypeFilter.currentView.getTag();
-			tags += this.projectFilter.currentView.getTag();
-			tags += this.dateFilter.currentView.getTags();
-			tags += this.limitFilter.currentView.getTag();
+			tags += this.getChildView('event_type').getTag();
+			tags += this.getChildView('project').getTag();
+			tags += this.getChildView('date').getTags();
+			tags += this.getChildView('limit').getTag();
 
 			return tags;
 		},
@@ -74,16 +73,16 @@ define([
 			// add info for filters
 			//
 			if (!attributes || _.contains(attributes, 'type')) {
-				_.extend(data, this.eventTypeFilter.currentView.getData());
+				_.extend(data, this.getChildView('event_type').getData());
 			}
 			if (!attributes || _.contains(attributes, 'project')) {
-				_.extend(data, this.projectFilter.currentView.getData());
+				_.extend(data, this.getChildView('project').getData());
 			}
 			if (!attributes || _.contains(attributes, 'date')) {
-				_.extend(data, this.dateFilter.currentView.getData());
+				_.extend(data, this.getChildView('date').getData());
 			}
 			if (!attributes || _.contains(attributes, 'limit')) {
-				_.extend(data, this.limitFilter.currentView.getData());
+				_.extend(data, this.getChildView('limit').getData());
 			}
 
 			return data;
@@ -95,16 +94,16 @@ define([
 			// add info for filters
 			//
 			if (!attributes || _.contains(attributes, 'type')) {
-				_.extend(attrs, this.eventTypeFilter.currentView.getAttrs());
+				_.extend(attrs, this.getChildView('event_type').getAttrs());
 			}
 			if (!attributes || _.contains(attributes, 'project')) {
-				_.extend(attrs, this.projectFilter.currentView.getAttrs());
+				_.extend(attrs, this.getChildView('project').getAttrs());
 			}
 			if (!attributes || _.contains(attributes, 'date')) {
-				_.extend(attrs, this.dateFilter.currentView.getAttrs());
+				_.extend(attrs, this.getChildView('date').getAttrs());
 			}
 			if (!attributes || _.contains(attributes, 'limit')) {
-				_.extend(attrs, this.limitFilter.currentView.getAttrs());
+				_.extend(attrs, this.getChildView('limit').getAttrs());
 			}
 
 			return attrs;
@@ -115,10 +114,10 @@ define([
 
 			// add info for filters
 			//
-			queryString = addQueryString(queryString, this.eventTypeFilter.currentView.getQueryString());
-			queryString = addQueryString(queryString, this.projectFilter.currentView.getQueryString());	
-			queryString = addQueryString(queryString, this.dateFilter.currentView.getQueryString());
-			queryString = addQueryString(queryString, this.limitFilter.currentView.getQueryString());
+			queryString = addQueryString(queryString, this.getChildView('event_type').getQueryString());
+			queryString = addQueryString(queryString, this.getChildView('project').getQueryString());	
+			queryString = addQueryString(queryString, this.getChildView('date').getQueryString());
+			queryString = addQueryString(queryString, this.getChildView('limit').getQueryString());
 
 			return queryString;
 		},
@@ -131,16 +130,16 @@ define([
 
 			// reset sub filters
 			//
-			this.eventTypeFilter.currentView.reset({
+			this.getChildView('event_type').reset({
 				silent: true
 			});
-			this.projectFilter.currentView.reset({
+			this.getChildView('project').reset({
 				silent: true
 			});
-			this.dateFilter.currentView.reset({
+			this.getChildView('date').reset({
 				silent: true
 			});
-			this.limitFilter.currentView.reset({
+			this.getChildView('limit').reset({
 				silent: true
 			});
 			
@@ -153,15 +152,15 @@ define([
 		// rendering methods
 		//
 
-		template: function(data) {
-			return _.template(Template, _.extend(data, {
+		templateContext: function() {
+			return {
 				highlighted: {
 					'type-filter': this.options.data['type'] != undefined,
 					'project-filter': this.options.data['project'] != undefined,
 					'date-filter': this.options.data['after'] != undefined || this.options.data['before'] != undefined,
 					'limit-filter': this.options.data['limit'] !== null
 				}
-			}));
+			};
 		},
 
 		onRender: function() {
@@ -171,7 +170,7 @@ define([
 			
 			// show subviews
 			//
-			this.eventTypeFilter.show(new EventTypeFilterView({
+			this.showChildView('event_type', new EventTypeFilterView({
 				model: this.model,
 				initialValue: this.options.data['type']? 
 					new Backbone.Model({
@@ -184,7 +183,7 @@ define([
 					self.onChange(changes);
 				}			
 			}));
-			this.projectFilter.show(new ProjectFilterView({
+			this.showChildView('project', new ProjectFilterView({
 				collection: hasProjects? this.options.data['project'] : undefined,
 				defaultValue: undefined,
 				initialValue: !hasProjects? this.options.data['project'] : undefined,
@@ -195,7 +194,7 @@ define([
 					self.onChange(changes);
 				}
 			}));
-			this.dateFilter.show(new DateFilterView({
+			this.showChildView('date', new DateFilterView({
 				initialAfterDate: this.options.data['after'],
 				initialBeforeDate: this.options.data['before'],
 
@@ -205,7 +204,7 @@ define([
 					self.onChange(changes);
 				}				
 			}));
-			this.limitFilter.show(new LimitFilterView({
+			this.showChildView('limit', new LimitFilterView({
 				defaultValue: 50,
 				initialValue: this.options.data['limit'],
 

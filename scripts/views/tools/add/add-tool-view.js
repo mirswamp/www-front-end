@@ -18,24 +18,22 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'marionette',
 	'text!templates/tools/add/add-tool.tpl',
-	'registry',
 	'models/tools/tool',
 	'models/tools/tool-version',
-	'views/dialogs/notify-view',
-	'views/dialogs/error-view',
+	'views/base-view',
 	'views/tools/info/details/tool-profile/new-tool-profile-form-view'
-], function($, _, Backbone, Marionette, Template, Registry, Tool, ToolVersion, NotifyView, ErrorView, NewToolProfileFormView) {
-	return Backbone.Marionette.LayoutView.extend({
+], function($, _, Template, Tool, ToolVersion, BaseView, NewToolProfileFormView) {
+	return BaseView.extend({
 
 		//
 		// attributes
 		//
 
+		template: _.template(Template),
+
 		regions: {
-			newToolProfileForm: '#new-tool-profile-form'
+			form: '#new-tool-profile-form'
 		},
 
 		events: {
@@ -45,7 +43,7 @@ define([
 		},
 
 		//
-		// methods
+		// constructor
 		//
 
 		initialize: function() {
@@ -55,6 +53,10 @@ define([
 			});
 			this.toolVersion = new ToolVersion({});
 		},
+
+		//
+		// methods
+		//
 
 		save: function() {
 			var self = this;
@@ -74,13 +76,11 @@ define([
 
 				error: function() {
 
-					// show error dialog
+					// show error message
 					//
-					Registry.application.modal.show(
-						new ErrorView({
-							message: "Could not save tool."
-						})
-					);
+					application.error({
+						message: "Could not save tool."
+					});
 				}
 			});
 		},
@@ -115,26 +115,22 @@ define([
 
 						error: function(response) {
 
-							// show error dialog
+							// show error message
 							//
-							Registry.application.modal.show(
-								new ErrorView({
-									message: response.responseText
-								})
-							);
+							application.error({
+								message: response.responseText
+							});
 						}
 					});
 				},
 
 				error: function() {
 
-					// show error dialog
+					// show error message
 					//
-					Registry.application.modal.show(
-						new ErrorView({
-							message: "Could not save tool version."
-						})
-					);
+					application.error({
+						message: "Could not save tool version."
+					});
 				}
 			});
 		},
@@ -143,22 +139,20 @@ define([
 		// rendering methods
 		//
 
-		template: function(data) {
-			return _.template(Template, _.extend(data, {
+		templateContext: function() {
+			return {
 				model: this.model
-			}));
+			};
 		},
 
 		onRender: function() {
 
 			// display tool profile form
 			//
-			this.newToolProfileForm.show(
-				new NewToolProfileFormView({
-					model: this.model,
-					toolVersion: this.toolVersion
-				})
-			);
+			this.showChildView('form', new NewToolProfileFormView({
+				model: this.model,
+				toolVersion: this.toolVersion
+			}));
 		},
 
 		showWarning: function() {
@@ -182,11 +176,11 @@ define([
 
 			// check validation
 			//
-			if (this.newToolProfileForm.currentView.isValid()) {
+			if (this.getChildView('form').isValid()) {
 
 				// update models
 				//
-				this.newToolProfileForm.currentView.update(this.model, this.toolVersion);
+				this.getChildView('form').applyTo(this.model, this.toolVersion);
 
 				// get data to upload from form
 				//
@@ -218,13 +212,11 @@ define([
 
 					error: function(response) {
 
-						// show error dialog
+						// show error message
 						//
-						Registry.application.modal.show(
-							new ErrorView({
-								message: "Tool " + response.statusText
-							})
-						);
+						application.error({
+							message: "Tool " + response.statusText
+						});
 					}
 				});
 			} else {
