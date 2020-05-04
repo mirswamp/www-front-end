@@ -14,9 +14,9 @@
 		<a><i class="fa fa-check"></i>Permissions</a>
 	</li>
 
-	<% if (config['linked_accounts_enabled']) { %>
+	<% if (application.config.linked_accounts_enabled) { %>
 	<li id="accounts">
-		<a><i class="fa fa-link"></i>Linked Accounts</a>
+		<a><i class="fa fa-link"></i>Sign In Providers</a>
 	</li>
 	<% } %>
 
@@ -24,11 +24,15 @@
 		<a><i class="fa fa-key"></i>Application Passwords</a>
 	</li>
 
-	<% if (config['classes_enabled']) { %>
+	<% if (application.config.classes_enabled) { %>
 	<li id="classes">
 		<a><i class="fa fa-mortar-board"></i>Classes</a>
 	</li>
 	<% } %>
+
+	<li id="events">
+		<a><i class="fa fa-bullhorn"></i>Events</a>
+	</li>
 </ul>
 
 <div id="user-profile">

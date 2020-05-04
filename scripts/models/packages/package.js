@@ -12,7 +12,7 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2019 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2020 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 define([
@@ -33,6 +33,13 @@ define([
 		//
 		// attributes
 		//
+
+		defaults: {
+			name: undefined,
+			description: undefined,
+			external_url: undefined,
+			external_url_type: undefined
+		},
 
 		allowedExtensions: [
 			'.zip',
@@ -72,7 +79,7 @@ define([
 		},
 
 		isDeactivated: function() {
-			return (this.hasDeleteDate());
+			return typeof delete_date !== 'undefined';
 		},
 
 		hasValidArchiveUrl: function() {
@@ -111,6 +118,10 @@ define([
 
 		hasBuildScript: function() {
 			return !['.net', 'java-bytecode', 'java7-bytecode', 'java8-bytecode'].contains(this.getPackageType());
+		},
+
+		getAppUrl: function() {
+			return application.getURL() + '#packages/' + this.get('package_uuid');
 		},
 
 		//
@@ -398,7 +409,7 @@ define([
 
 		aliasToPackageType: function(string) {
 			if (string == 'python') {
-				return 'python2';
+				return 'python3';
 			} else if (string == 'java-source') {
 				return 'java8-source';
 			} else if (string == 'java-bytecode') {

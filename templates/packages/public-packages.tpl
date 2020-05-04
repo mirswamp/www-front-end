@@ -14,10 +14,13 @@
 <p>The following curated packages <span id="filter-description"></span> are available to all SWAMP users.  <% if (!loggedIn) { %>To see more detailed information about each of the packages listed in this view, log in to the SWAMP. <% } %></p>
 
 <div id="packages-list">
-	<div align="center"><i class="fa fa-spinner fa-spin fa-2x"></i><br/>Loading packages...</div>
+	<div class="loading">
+		<i class="fa fa-spinner fa-spin"></i>
+		<div class="message">Loading packages...</div>
+	</div>
 </div>
 
 <label>
-	<input type="checkbox" id="show-numbering" <% if (showNumbering) { %>checked<% } %>>
+	<input type="checkbox" id="show-numbering" <% if (application.options.showNumbering) { %>checked<% } %>>
 	Show numbering
 </label>

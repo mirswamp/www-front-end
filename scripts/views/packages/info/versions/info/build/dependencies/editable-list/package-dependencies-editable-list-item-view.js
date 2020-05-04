@@ -12,7 +12,7 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2019 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2020 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 define([
@@ -31,7 +31,7 @@ define([
 		template: _.template(Template),
 
 		events: {
-			'blur .dependency-list input': 'onBlurDependencyListInput',
+			'change .dependency-list input': 'onChangeDependencyListInput',
 			'click .delete button': 'onClickDelete'
 		},
 
@@ -41,8 +41,6 @@ define([
 
 		templateContext: function() {
 			return {
-				index: this.options.index,
-				showNumbering: this.options.showNumbering,
 				platformVersionName: this.options.platformVersion? this.options.platformVersion.get('full_name') : '?',
 				platformVersionString: this.options.platformVersion? this.options.platformVersion.get('version_string') : '?',
 				platformUrl: undefined,
@@ -65,7 +63,7 @@ define([
 		// event handling methods
 		//
 
-		onBlurDependencyListInput: function() {
+		onChangeDependencyListInput: function() {
 			var dependencyList = this.$el.find('.dependency-list input').val();
 			
 			// remove commas

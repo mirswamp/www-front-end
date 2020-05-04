@@ -12,7 +12,7 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2019 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2020 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 define([
@@ -50,8 +50,8 @@ define([
 	for (var i = 'a'.charCodeAt(); i <= 'z'.charCodeAt(); i++) {
 		codes[String.fromCharCode(i)] = i;
 	}
-	for (var i = 'A'.charCodeAt(); i <= 'Z'.charCodeAt(); i++) {
-		codes[String.fromCharCode(i)] = i;
+	for (var j = 'A'.charCodeAt(); j <= 'Z'.charCodeAt(); j++) {
+		codes[String.fromCharCode(j)] = j;
 	}
 
 	return codes;

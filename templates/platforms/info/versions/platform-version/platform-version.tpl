@@ -1,10 +1,10 @@
-<h1><div class="icon"><i class="fa fa-bars"></i></div><span class="name"><%- name %></span> Platform version <span class="name"><%- version_string %></span></h1>
+<h1><div class="icon"><i class="fa fa-bars"></i></div><span class="name"><%= platform_name %></span> Platform version <span class="name"><%- version_string %></span></h1>
 
 <ol class="breadcrumb">
 	<li><a href="#home"><i class="fa fa-home"></i>Home</a></li>
 	<li><a href="#resources"><i class="fa fa-book"></i>Resources</a></li>
 	<li><a href="#platforms/public"><i class="fa fa-bars"></i>Platforms</a></li>
-	<li><a href="#platforms/<%- platform.get('platform_uuid') %>"><i class="fa fa-bars"></i><%- name %></a></li>
+	<li><a href="<%= platform_url %>"><i class="fa fa-bars"></i><%- platform_name %></a></li>
 	<li><i class="fa fa-bars"></i>Platform version <%- version_string %></li>
 </ol>
 

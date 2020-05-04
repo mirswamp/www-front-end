@@ -12,7 +12,7 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2019 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2020 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 define([
@@ -21,10 +21,10 @@ define([
 	'bootstrap/popover',
 	'text!templates/results/assessment-runs/list/assessment-runs-list.tpl',
 	'views/base-view',
-	'views/collections/tables/sortable-table-list-view',
+	'views/collections/tables/groupable-table-list-view',
 	'views/results/assessment-runs/list/assessment-runs-list-item-view'
-], function($, _, PopOvers, Template, BaseView, SortableTableListView, AssessmentRunsListItemView) {
-	return SortableTableListView.extend({
+], function($, _, PopOvers, Template, BaseView, GroupableTableListView, AssessmentRunsListItemView) {
+	return GroupableTableListView.extend({
 
 		//
 		// attributes
@@ -37,21 +37,12 @@ define([
 			template: _.template("No assessment results.")
 		}),
 
-		sorting: {
+		// sort by date column in descending order 
+		//
+		sortBy: ['date', 'descending'],
 
-			// disable sorting on checkboxes and delete columns
-			//
-			headers: {
-				6: {
-					sorter: false
-				}
-			},
-
-			// sort on date column in descending order
-			//
-			sortList: [[3, 1]]
-		},
-
+		// disable grouping on selected columns
+		//
 		groupExcept: ['select', 'delete', 'results', 'ssh'],
 
 		//
@@ -60,15 +51,9 @@ define([
 
 		initialize: function(options) {
 
-			// use specified sort order 
-			//
-			if (options.sortList) {
-				this.sorting.sortList = options.sortList;
-			}
-
 			// call superclass method
 			//
-			SortableTableListView.prototype.initialize.call(this, _.extend(options, {
+			GroupableTableListView.prototype.initialize.call(this, _.extend(options, {
 				showGrouping: this.options.showGrouping,
 				showSortingColumn: true
 			}));
@@ -81,7 +66,9 @@ define([
 		templateContext: function() {
 			return {
 				collection: this.collection,
-				showNumbering: this.options.showNumbering,
+
+				// options
+				//
 				showStatus: this.options.showStatus,
 				showErrors: this.options.showErrors,
 				showDelete: this.options.showDelete,
@@ -106,7 +93,9 @@ define([
 				viewer: this.options.viewer,
 				errorViewer: this.options.errorViewer,
 				queryString: this.options.queryString,
-				showNumbering: this.options.showNumbering,
+
+				// options
+				//
 				showStatus: this.options.showStatus,
 				showErrors: this.options.showErrors,
 				showDelete: this.options.showDelete,
@@ -125,7 +114,7 @@ define([
 
 			// call superclass method
 			//
-			SortableTableListView.prototype.onRender.call(this);
+			GroupableTableListView.prototype.onRender.call(this);
 		}
 	});
 });

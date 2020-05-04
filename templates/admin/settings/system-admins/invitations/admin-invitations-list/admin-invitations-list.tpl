@@ -1,6 +1,6 @@
 <thead>
 	<tr>
-		<th class="name first">
+		<th class="name">
 			Name
 		</th>
 
@@ -12,12 +12,12 @@
 			Invitation Date
 		</th>
 
-		<th class="status last">
+		<th class="status">
 			Status
 		</th>
 
 		<% if (showDelete) { %>
-		<th class="append"></th>
+		<th class="delete"></th>
 		<% } %>
 	</tr>
 </thead>

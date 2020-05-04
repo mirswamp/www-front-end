@@ -10,17 +10,15 @@
 		<div class="controls"><%- package_type_names %></div>
 	</div>
 		
-	<% if (model.hasCreateDate()) { %>
 	<div class="form-group">
 		<label class="form-label">Creation date</label>
-		<div class="controls"><%= datetimeToHTML(model.getCreateDate()) %></div>
+		<div class="controls"><%= datetimeToHTML(create_date) %></div>
 	</div>
-	<% } %>
 
-	<% if (model.hasUpdateDate()) { %>
+	<% if (typeof update_date !== 'undefined') { %>
 	<div class="form-group" style="display:none">
 		<label class="form-label">Last modified</label>
-		<div class="controls"><%= datetimeToHTML(model.getUpdateDate()) %></div>
+		<div class="controls"><%= datetimeToHTML(update_date) %></div>
 	</div>
 	<% } %>
 

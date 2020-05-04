@@ -13,7 +13,7 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2019 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2020 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 define([
@@ -71,13 +71,13 @@ define([
 		// querying methods
 		//
 
-		getShortTitle: function() {
-			var project = this.options.data['project'];
+		getProjectTitle: function() {
+			var project = this.options.data.project;
 			if (project) {
 				if (project.isTrialProject()) {
 					return 'My Assessment Results';
 				} else {
-					return project.get('full_name') + ' Assessment Results';
+					return '<span class="name">' + project.get('full_name') + '</span>' + ' Assessment Results';
 				}
 			} else {
 				return 'Assessment Results';
@@ -85,12 +85,12 @@ define([
 		},
 
 		getTitle: function() {
-			var title = this.getShortTitle();
-			var package = this.options.data['package'];
+			var title = this.getProjectTitle();
+			var package = this.options.data.package;
 			var packageVersion = this.options.data['package-version'];
-			var tool = this.options.data['tool'];
+			var tool = this.options.data.tool;
 			var toolVersion = this.options.data['tool-version'];
-			var platform = this.options.data['platform'];
+			var platform = this.options.data.platform;
 			var platformVersion = this.options.data['platform-version'];
 
 			// add package info
@@ -329,8 +329,8 @@ define([
 
 			// check if a project filter is selected
 			//
-			} else if (this.options.data['project']) {
-				return this.options.data['project'].get('project_uid');
+			} else if (this.options.data.project) {
+				return this.options.data.project.get('project_uid');
 
 			// use default project
 			//
@@ -414,7 +414,7 @@ define([
 
 			// fetch execution records for a single project
 			//
-			new ExecutionRecords().fetchByProject(project, {
+			this.request = new ExecutionRecords().fetchByProject(project, {
 
 				// attributes
 				//
@@ -442,7 +442,7 @@ define([
 
 			// fetch execution records for multiple projects
 			//
-			new ExecutionRecords().fetchByProjects(projects, {
+			this.request = new ExecutionRecords().fetchByProjects(projects, {
 
 				// attributes
 				//
@@ -466,16 +466,16 @@ define([
 		},
 
 		fetchExecutionRecords: function(done) {
-			if (this.options.data['project']) {
+			if (this.options.data.project) {
 
 				// fetch execution records for a single project
 				//
-				this.fetchProjectExecutionRecords(this.options.data['project'], done);
-			} else if (this.options.data['projects'] && this.options.data['projects'].length > 0) {
+				this.fetchProjectExecutionRecords(this.options.data.project, done);
+			} else if (this.options.data.projects && this.options.data.projects.length > 0) {
 
 				// fetch execution records for multiple projects
 				//
-				this.fetchProjectsExecutionRecords(this.options.data['projects'], done);
+				this.fetchProjectsExecutionRecords(this.options.data.projects, done);
 			} else {
 
 				// fetch execution records for trial project
@@ -495,35 +495,32 @@ define([
 		templateContext: function() {
 			return {
 				title: this.getTitle(),
-				shortTitle: this.getShortTitle(),
 				showNavigation: Object.keys(this.options.data).length > 0,
 				viewers: this.options.viewers,
-				showNumbering: application.options.showNumbering,
 				showGrouping: application.options.showGrouping,
 				autoRefresh: application.options.autoRefresh
 			};
 		},
 
 		onRender: function() {
-
+			var self = this;
+			
 			// show assessments results filters
 			//
 			this.showFilters();
 
 			// show assessments runs list and schedule refresh
 			//
-			this.showRefreshingList();
+			this.showRefreshingList(function() {
+
+				// set initial state of view results notice and button
+				//
+				self.setViewResultsLink();
+			});
 
 			// add count bubbles / badges
 			//
 			this.addBadges();
-		},
-
-		onAttach: function() {
-
-			// set initial state of view results notice and button
-			//
-			this.setViewResultsLink();
 		},
 
 		showFilters: function() {
@@ -568,7 +565,7 @@ define([
 			}, this.refreshInterval);
 		},
 
-		showRefreshingList: function() {
+		showRefreshingList: function(done) {
 			var self = this;
 
 			// show assessment runs list
@@ -580,6 +577,12 @@ define([
 				if (self.getAutoRefresh()) {
 					self.scheduleNextRefresh();
 				}
+
+				// perform callback
+				//
+				if (done) {
+					done();
+				}
 			});
 		},
 
@@ -588,7 +591,7 @@ define([
 			
 			// fetch execution records
 			//
-			this.fetchExecutionRecords(function(collection) {
+			this.request = this.fetchExecutionRecords(function(collection) {
 
 				// show list if changed
 				//
@@ -610,10 +613,10 @@ define([
 			var self = this;
 			var selected = this.getSelected();
 
-			// preserve existing sorting order
+			// preserve existing sorting column and order
 			//
 			if (this.getChildView('list') && this.collection.length > 0) {
-				this.options.sortList = this.getChildView('list').getSortList();
+				this.options.sortBy = this.getChildView('list').getSorting();
 			}
 
 			// show assessment runs list view
@@ -621,15 +624,17 @@ define([
 			this.showChildView('list', new SelectAssessmentRunsListView({
 				model: this.model,
 				collection: this.collection,
+
+				// options
+				//
+				sortBy: this.options.sortBy,
 				viewer: this.getSelectedViewer(),
 				viewers: this.options.viewers,
 				selectedExecutionRecords: this.options.selectedExecutionRecords,
 				errorViewer: this.options.viewers.getNative(),
 				selected: selected,
-				sortList: this.options.sortList,
 				queryString: this.getQueryString(),
-				showProjects: application.session.user.get('has_projects'),
-				showNumbering: application.options.showNumbering,
+				showProjects: application.session.user.hasProjects(),
 				showGrouping: application.options.showGrouping,
 				showStatus: true,
 				showErrors: true,
@@ -637,7 +642,7 @@ define([
 				showSsh: true,
 				parent: this,
 
-				// callback
+				// callbacks
 				//
 				onSelect: function() {
 					self.setViewResultsLink();
@@ -645,6 +650,10 @@ define([
 				}
 			}));
 		},
+
+		//
+		// badge rendering methods
+		//
 
 		addBadge: function(selector, num) {
 			var element = this.$el.find(selector)[0];
@@ -671,21 +680,18 @@ define([
 			}
 		},
 
-		addBadges: function() {
+		addNumAssessmentsBadge: function() {
 			var self = this;
-
-			// add num assessments badge
-			//
-			if (this.options.data['project']) {
-				AssessmentRuns.fetchNumByProject(this.options.data['project'], {
+			if (this.options.data.project) {
+				AssessmentRuns.fetchNumByProject(this.options.data.project, {
 					data: this.getFilterAttrs(['package', 'tool', 'platform']),
 
 					success: function(number) {
 						self.addBadge("#assessments", number);
 					}
 				});
-			} else if (this.options.data['projects'] && this.options.data['projects'].length > 0) {
-				AssessmentRuns.fetchNumByProjects(this.options.data['projects'], {
+			} else if (this.options.data.projects && this.options.data.projects.length > 0) {
+				AssessmentRuns.fetchNumByProjects(this.options.data.projects, {
 					data: this.getFilterAttrs(['package', 'tool', 'platform']),
 
 					success: function(number) {
@@ -695,19 +701,20 @@ define([
 			} else {
 				this.addBadge("#assessments", 0);
 			}
+		},
 
-			// add num scheduled runs badge
-			//
-			if (this.options.data['project']) {
-				ScheduledRuns.fetchNumByProject(this.options.data['project'], {
+		addNumRunsBadge: function() {
+			var self = this;
+			if (this.options.data.project) {
+				ScheduledRuns.fetchNumByProject(this.options.data.project, {
 					data: this.getFilterAttrs(['package', 'tool', 'platform']),
 
 					success: function(number) {
 						self.addBadge("#runs", number);
 					}
 				});
-			} else if (this.options.data['projects'] && this.options.data['projects'].length > 0) {
-				ScheduledRuns.fetchNumByProjects(this.options.data['projects'], {
+			} else if (this.options.data.projects && this.options.data.projects.length > 0) {
+				ScheduledRuns.fetchNumByProjects(this.options.data.projects, {
 					data: this.getFilterAttrs(['package', 'tool', 'platform']),
 
 					success: function(number) {
@@ -716,7 +723,12 @@ define([
 				});
 			} else {
 				this.addBadge("#runs", 0);
-			}
+			}		
+		},
+
+		addBadges: function() {
+			this.addNumAssessmentsBadge();
+			this.addNumRunsBadge();
 		},
 
 		//
@@ -853,10 +865,9 @@ define([
 			//
 			this.setViewResultsLink();
 
-			// update titles
+			// update title
 			//
 			this.$el.find('#title').html(this.getTitle());
-			this.$el.find('#breadcrumb').html(this.getShortTitle());
 
 			// update list
 			//
@@ -868,23 +879,17 @@ define([
 		},
 
 		onClickAssessments: function() {
-			var queryString = this.getQueryString();
 
 			// go to assessments view
 			//
-			Backbone.history.navigate('#assessments' + (queryString != ''? '?' + queryString : ''), {
-				trigger: true
-			});
+			application.navigate('#assessments');
 		},
 
 		onClickRuns: function() {
-			var queryString = this.getQueryString();
 
 			// go to run requests view
 			//
-			Backbone.history.navigate('#run-requests' + (queryString != ''? '?' + queryString : ''), {
-				trigger: true
-			});
+			application.navigate('#run-requests');
 		},
 
 		onClickResetFilters: function() {
@@ -924,7 +929,6 @@ define([
 
 		onClickShowNumbering: function() {
 			application.setShowNumbering($(event.target).is(':checked'));
-			this.showList();
 		},
 
 		onClickShowGrouping: function() {
@@ -933,8 +937,14 @@ define([
 		},
 
 		onClickDeleteResults: function() {
-			var selectedExecutionRecords = this.getSelected();
 			var self = this;
+			var selectedExecutionRecords = this.getSelected();
+			
+			// preserve existing sorting column and order
+			//
+			if (this.getChildView('list') && this.collection.length > 0) {
+				this.options.sortBy = this.getChildView('list').getSorting();
+			}
 
 			require([
 				'utilities/web/query-strings',
@@ -955,8 +965,12 @@ define([
 						// show assessments results view
 						//
 						view.showChildView('content', new DeleteAssessmentsResultsView({
-							data: self.options.data,
 							model: view.model,
+
+							// options
+							//
+							sortBy: self.options.sortBy,
+							data: self.options.data,
 							viewers: self.options.viewers,
 							selectedExecutionRecords: selectedExecutionRecords
 						}));
@@ -972,7 +986,13 @@ define([
 		onBeforeDestroy: function() {
 			if (this.timeout) {
 				window.clearTimeout(this.timeout);
-			}		
+			}
+
+			// clear pending requests
+			//
+			if (this.request && this.request.state() == 'pending') {
+				this.request.abort();
+			}
 		}
 	});
 });

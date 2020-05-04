@@ -56,17 +56,6 @@
 			<p class="description">View the status and results of completed assessments.</p>
 		</div>
 	</a>
-	
-	<a href="#run-requests" class="column" id="runs">
-		<div class="icon-group">
-			<div class="icon"><i class="fa fa-bus"></i></div>
-			
-		</div>
-		<div class="info">
-			<h2>Runs</h2>
-			<p class="description">View assessments scheduled to run at regular intervals.</p>
-		</div>
-	</a>
 
 	<a href="#projects" class="column" id="projects">
 		<div class="icon-group">
@@ -78,7 +67,28 @@
 		</div>
 	</a>
 
-	<a href="#events?project=any" class="column" id="events">
+	<a href="#run-requests/schedules" class="column" id="schedules">
+		<div class="icon-group">
+			<div class="icon"><i class="fa fa-calendar"></i></div>
+		</div>
+		<div class="info">
+			<h2>Schedules</h2>
+			<p class="description">Create schedules to run assessments on a recurring basis.</p>
+		</div>
+	</a>
+
+	<a href="#run-requests" class="column" id="runs">
+		<div class="icon-group">
+			<div class="icon"><i class="fa fa-bus"></i></div>
+			
+		</div>
+		<div class="info">
+			<h2>Scheduled Runs</h2>
+			<p class="description">View assessments scheduled to run at regular intervals.</p>
+		</div>
+	</a>
+
+	<a href="#events?project=any" class="column" id="events" style="display:none">
 		<div class="icon-group">
 			<div class="icon"><i class="fa fa-bullhorn"></i></div>
 		</div>

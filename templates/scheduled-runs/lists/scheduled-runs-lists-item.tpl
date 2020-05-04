@@ -1,7 +1,7 @@
 <% if (typeof name !== 'undefined') { %>
 
 <% if (runRequestUrl) { %>
-<a href="<%- runRequestUrl %>">
+<a href="<%- runRequestUrl %>" target="_blank">
 	<h2><i class="fa fa-calendar"></i><%- name %></h2>
 </a>
 <% } else { %>

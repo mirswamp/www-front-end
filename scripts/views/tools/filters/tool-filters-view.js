@@ -12,7 +12,7 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2019 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2020 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 define([
@@ -127,8 +127,8 @@ define([
 		templateContext: function() {
 			return {
 				highlighted: {
-					'date-filter': this.options.data['after'] != undefined || this.options.data['before'] != undefined,
-					'limit-filter': this.options.data['limit'] != undefined
+					'date-filter': this.options.data.after != undefined || this.options.data.before != undefined,
+					'limit-filter': this.options.data.limit != undefined
 				}
 			};
 		},
@@ -139,8 +139,8 @@ define([
 			// show subviews
 			//
 			this.showChildView('date', new DateFilterView({
-				initialAfterDate: this.options.data['after'],
-				initialBeforeDate: this.options.data['before'],
+				initialAfterDate: this.options.data.after,
+				initialBeforeDate: this.options.data.before,
 
 				// callbacks
 				//
@@ -150,7 +150,7 @@ define([
 			}));
 			this.showChildView('limit', new LimitFilterView({
 				defaultValue: 50,
-				initialValue: this.options.data['limit'],
+				initialValue: this.options.data.limit,
 
 				// callbacks
 				//

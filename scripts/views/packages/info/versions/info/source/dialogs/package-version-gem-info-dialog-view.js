@@ -12,7 +12,7 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2019 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2020 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 define([
@@ -31,36 +31,36 @@ define([
 
 		// comments
 		//
-		if (item['comment']) {
-			return $('<div class="comment">').append(item['comment']);
+		if (item.comment) {
+			return $('<div class="comment">').append(item.comment);
 
 		// symbols
 		//
-		} else if (item['symbol']) {
-			var el = $('<div class="symbol">').append(gemItemToHTML(item['symbol']));
+		} else if (item.symbol) {
+			var el = $('<div class="symbol">').append(gemItemToHTML(item.symbol));
 
 			// add symbol value
 			//
-			if (item['value']) {
-				el.append($('<div class="value">').append(gemItemToHTML(item['value'])));
+			if (item.value) {
+				el.append($('<div class="value">').append(gemItemToHTML(item.value)));
 			}
 
 			return el;
 
 		// string literals
 		//	
-		} else if (item['strlit']) {
-			return $('<div class="strlit">').append(item['strlit']);
+		} else if (item.strlit) {
+			return $('<div class="strlit">').append(item.strlit);
 
 		// string literals
 		//	
-		} else if (item['strlit2']) {
-			return $('<div class="strlit2">').append(item['strlit2']);
+		} else if (item.strlit2) {
+			return $('<div class="strlit2">').append(item.strlit2);
 
 		// requires
 		//
-		} else if (item['require']) {
-			return $('<div class="require">').append(gemItemToHTML(item['require']));
+		} else if (item.require) {
+			return $('<div class="require">').append(gemItemToHTML(item.require));
 
 		// variables and constants
 		//			
@@ -90,38 +90,38 @@ define([
 
 			// comments
 			//
-			if (item['comment']) {
-				el.append($('<div class="comment">').append(item['comment']));
+			if (item.comment) {
+				el.append($('<div class="comment">').append(item.comment));
 
 			// ruby
 			//
-			} else if (item['source']) {
-				el.append($('<div class="source">').append(gemItemToHTML(item['source'])));
+			} else if (item.source) {
+				el.append($('<div class="source">').append(gemItemToHTML(item.source)));
 
 			// ruby
 			//
-			} else if (item['ruby']) {
-				el.append($('<div class="ruby">').append(gemItemToHTML(item['ruby'])));
+			} else if (item.ruby) {
+				el.append($('<div class="ruby">').append(gemItemToHTML(item.ruby)));
 
 			// gems
 			//
-			} else if (item['gem']) {
-				el.append($('<div class="gem">').append(gemItemsToHTML(item['gem'])));
+			} else if (item.gem) {
+				el.append($('<div class="gem">').append(gemItemsToHTML(item.gem)));
 
 			// groups
 			//
-			} else if (item['group']) {
+			} else if (item.group) {
 				var group = $('<div class="group">');
 
 				// add id
 				//
-				el.append(group.append($('<div class="id">').append(gemItemsToHTML(item['group']))));
+				el.append(group.append($('<div class="id">').append(gemItemsToHTML(item.group))));
 				
 				// add gems
 				//
-				var gems = item['gems'];
+				var gems = item.gems;
 				for (var j = 0; j < gems.length; j++) {
-					var gem = gems[j]['gem'];
+					var gem = gems[j].gem;
 					group.append($('<div class="gem">').append(gemItemsToHTML(gem)));
 				}
 				

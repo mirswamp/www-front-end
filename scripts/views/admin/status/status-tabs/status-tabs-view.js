@@ -12,7 +12,7 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2019 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2020 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 define([
@@ -82,16 +82,14 @@ define([
 							region.show(new UuidItemSelectListView({
 								fieldnames: item.fieldnames,
 								collection: new Backbone.Collection(item.data),
-								showNumbering: application.options.showNumbering,
-								sortList: this.options.tabState[tab] ? this.options.tabState[tab].sortList : undefined,
+								sortBy: this.options.tabState[tab] ? this.options.tabState[tab].sortBy : undefined,
 								selected: this.options.tabState[tab] ? this.options.tabState[tab].selected : undefined
 							}));
 						} else {
 							region.show(new UuidItemListView({
 								fieldnames: item.fieldnames,
 								collection: new Backbone.Collection(item.data),
-								showNumbering: application.options.showNumbering,
-								sortList: this.options.tabState[tab] ? this.options.tabState[tab].sortList : undefined
+								sortBy: this.options.tabState[tab] ? this.options.tabState[tab].sortBy : undefined
 							}));
 						}
 					}

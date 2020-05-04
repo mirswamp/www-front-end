@@ -8,8 +8,8 @@
 	<% if (0) { %>
 	<div class="form-group">
 		<label class="form-label">Is build needed</label>
-		<% if (model.has('is_build_needed')) { %>
-		<% if (model.get('is_build_needed') == "1") { %>
+		<% if (typeof is_build_needed !== 'undefined') { %>
+		<% if (is_build_needed) { %>
 		yes
 		<% } else { %>
 		no
@@ -60,17 +60,15 @@
 	</div>
 	<% } %>
 
-	<% if (model.hasCreateDate()) { %>
 	<div class="form-group">
 		<label class="form-label">Creation date</label>
-		<div class="controls"><%= datetimeToHTML(model.getCreateDate()) %></div>
+		<div class="controls"><%= datetimeToHTML(create_date) %></div>
 	</div>
-	<% } %>
 
-	<% if (model.hasUpdateDate()) { %>
+	<% if (typeof update_date !== 'undefined') { %>
 	<div class="form-group">
 		<label class="form-label">Last modified date</label>
-		<div class="controls"><%= datetimeToHTML(model.getUpdateDate()) %></div>
+		<div class="controls"><%= datetimeToHTML(update_date) %></div>
 	</div>
 	<% } %>
 

@@ -12,7 +12,7 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2019 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2020 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 //
@@ -37,18 +37,23 @@ table {
 
 	thead {
 		tr, tr.tablesorter {
-			.vertical-gradient(@table-header-highlight, @table-header-color);
-
+			
 			th {
+				.vertical-gradient(@table-header-highlight, @table-header-color);
 				color: white;
 				white-space: nowrap;
 			}
 
 			th.headerSortDown, th.headerSortUp {
 				background-color: @table-header-color;
+				background-image: none;
 			}
 		}
 	}
+
+	//
+	// table cells
+	//
 
 	th {
 		color: white;
@@ -56,25 +61,21 @@ table {
 		text-align: center;
 	}
 
-	//
-	// table rows
-	//
-
-	//
-	// table cells
-	//
-
 	th, td {
 		border: none;
 		padding: 5px 10px;
 	}
 
-	th.append, td.append {
-		padding-right: 0;
-	}
-
 	td {
 		vertical-align: top;
+
+		// use available horizontal space
+		//
+		/*
+		&:not(.append):not(.prepend) {
+			width: 50%;
+		}
+		*/
 	}
 
 	td.unpadded {
@@ -83,7 +84,6 @@ table {
 
 	tr:not(.first) {
 		td.duplicate:not(.prepend):not(.append) {
-			opacity: 0 !important;
 
 			a, div, span {
 				display: none;
@@ -95,37 +95,51 @@ table {
 	// select group checkboxes
 	//
 
+	/*
 	tr.first.last {
 		td.select-group input {
 			display: none;
 		}
 	}
+	*/
 	
 	//
 	// zebra striping
 	//
 
 	tr:nth-child(odd) {
-		background-color: @odd-table-row-color;
+		td:not(.append):not(.prepend) {
+			background-color: @odd-table-row-color;
+		}
 	}
 
 	tr:nth-child(even) {
-		background-color: @even-table-row-color;
+		td:not(.append):not(.prepend) {
+			background-color: @even-table-row-color;
+		}
 	}
 
 	tr.odd {
-		background-color: @odd-table-row-color;
+		td:not(.append):not(.prepend) {
+			background-color: @odd-table-row-color;
+		}
 
-		td {
-			border-bottom: 1px solid @even-table-row-color;
+		&:not(.last) {
+			td:not(.append):not(.prepend) {
+				border-bottom: 1px solid @even-table-row-color;
+			}
 		}
 	}
 
 	tr.even {
-		background-color: @even-table-row-color;
+		td:not(.append):not(.prepend) {
+			background-color: @even-table-row-color;
+		}
 
-		td {
-			border-bottom: 1px solid @odd-table-row-color;
+		&:not(.last) {
+			td:not(.append):not(.prepend) {
+				border-bottom: 1px solid @odd-table-row-color;
+			}
 		}
 	}
 
@@ -169,16 +183,33 @@ table {
 	td.prepend, td.append {
 		width: 1px;
 		border: none;
-		background: white;
+		padding: 0;
+		background: none;
+
+		input {
+			margin: 7px 0;
+		}
+
+		button {
+			margin: 7px 0;
+		}
+	}
+
+	th.prepend, td.prepend {
+		input, button {
+			margin-right: 10px;
+		}
+	}
+
+	th.append, td.append {
+		input, button {
+			margin-left: 10px;
+		}
 	}
 
 	//
 	// special columns
 	//
-
-	td.datetime {
-		width: 1px;
-	}
 
 	th.half-width {
 		width: 50%;
@@ -222,20 +253,46 @@ table {
 		.form-group {
 			margin-bottom: 0;
 		}
+
+		input[type="time"] {
+			padding: 2px 10px !important;
+			margin: 0 !important;
+			line-height: 1em !important;
+		}
+		
+		input[type="number"] {
+			padding: 5px 10px !important;
+			margin: 0 !important;
+			line-height: 1em !important;
+		}
+
+		//
+		// success / error cells
+		//
+
+		&.error {
+			color: @medium-red;
+		}
+
+		&.success {
+			color: @medium-green;
+		}
 	}
 
 	//
 	// table contents
 	//
 
-	ul {
-		-webkit-padding-start: 10px;
-	}
+	tbody {
+		ul {
+			-webkit-padding-start: 10px;
+		}
 
-	.version, .version a {
-		color: black;
-		font-weight: bold;
-		font-size: 14px;
+		.version, .version a {
+			color: black;
+			font-weight: bold;
+			font-size: 14px;
+		}
 	}
 
 	//
@@ -265,7 +322,7 @@ table {
 			text-align: center;
 			background: @ultra-light-grey;
 			padding: 5px;
-			border-radius: 10px;
+			border-radius: 5px;
 		}
 	}
 }
@@ -274,11 +331,11 @@ table {
 	text-align: center;
 	background: @ultra-light-grey;
 	padding: 5px;
-	border-radius: 10px;
+	border-radius: 5px;
 }
 
 //
-// responsive table styles
+// responsive tables
 //
 
 .table-responsive {
@@ -287,36 +344,49 @@ table {
 	overflow-y: hidden;
 }
 
-/* 
- * sortable table styles
- */
+//
+// sortable tables
+//
 
 table.tablesorter {
 	thead tr {
 		.tablesorter-header:not(.sorter-false) {
-			background-image: url(../vendor/jquery/tablesorter/images/bg.gif);
 			background-repeat: no-repeat;
 			background-position: center right;
 			cursor: pointer;
-			padding-right: 20px;
 			margin-right: 0px;
 			outline: none;
+
+			.tablesorter-header-inner {
+				background-image: url(../vendor/jquery/tablesorter/images/bg.gif);
+				background-repeat: no-repeat;
+				background-position: center right;
+				padding-right: 20px;
+			}
 		}
 
 		.tablesorter-headerAsc:not(.sorter-false) {
-			background-image: url(../vendor/jquery/tablesorter/images/asc.gif);
 			background-color: @brand-primary;
+			background-image: none;
+
+			.tablesorter-header-inner {
+				background-image: url(../vendor/jquery/tablesorter/images/asc.gif);
+			}
 		}
 
 		.tablesorter-headerDesc:not(.sorter-false) {
-			background-image: url(../vendor/jquery/tablesorter/images/desc.gif);
 			background-color: @brand-primary;
+			background-image: none;
+
+			.tablesorter-header-inner {
+				background-image: url(../vendor/jquery/tablesorter/images/desc.gif);
+			}
 		}
 	}
 }
 
 //
-// small table styles
+// small tables
 //
 
 @media (max-width: @screen-sm-min) {
@@ -328,6 +398,65 @@ table.tablesorter {
 		}
 		td {
 			padding: 5px;
+		}
+	}
+}
+
+//
+// condensed tables
+//
+
+table.condensed {
+	th, td {
+		padding: 0;
+		max-width: 100px;	
+	}
+
+	th.date td.date {
+		width: 1px;
+	}
+}
+
+table {
+	th.condensed,
+	td.condensed {
+		padding: 0;
+		max-width: 100px;
+	}
+}
+
+//
+// centered tables
+//
+
+#run-queue-summary {
+	text-align: center;
+}
+
+//
+// numbered tables
+//
+
+table.numbered {
+	counter-reset: row-number;
+
+	tr {
+		&::before {
+			display: inline-block;
+			content: '';
+		}
+	}
+
+	tbody {
+		tr {
+			&::before {
+
+				// numbering
+				//
+				content: counter(row-number) + '.';
+				counter-increment: row-number;
+				padding: 5px;
+			}
 		}
 	}
 }

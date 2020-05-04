@@ -1,30 +1,19 @@
-<% if (!model.isDeactivated() || showDeactivatedPackages) { %>
-
-<% if (showNumbering) { %>
-<td class="prepend number">
-	<%- index %>
-</td>
-<% } %>
-
-<td class="package first">
-	<a href="<%- url %>"><%= textToHtml(model.get('name')) %></a>
+<td class="package">
+	<a href="<%= url %>" target="_blank"><%= textToHtml(name) %></a>
 </td>
 
 <td class="type">
-	<%- model.getPackageTypeName() %>
+	<%= typeName %>
 </td>
 
-<td class="create-date datetime last">
-	<% if (model.hasCreateDate()) { %>
-	<%= dateToSortableHTML(model.getCreateDate()) %>
-	<% } %>
+<td class="date datetime">
+	<%= dateToSortableHTML(create_date) %>
 </td>
 
 <% if (showDelete) { %>
-<td class="delete append">
-	<% if (!model.isDeactivated()) { %>
-	<button type="button" class="btn btn-sm" uid="<%- model.get('package_uuid') %>"><i class="fa fa-close"></i></button>
+<td class="delete">
+	<% if (!isDeactivated) { %>
+	<button type="button" class="btn btn-sm"><i class="fa fa-close"></i></button>
 	<% } %>
 </td>
-<% } %>
 <% } %>

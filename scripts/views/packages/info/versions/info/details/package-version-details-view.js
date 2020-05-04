@@ -12,7 +12,7 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2019 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2020 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 define([
@@ -75,9 +75,7 @@ define([
 
 			// go to run new assessment view
 			//
-			Backbone.history.navigate('#assessments/run?package-version=' + this.model.get('package_version_uuid'), {
-				trigger: true
-			});
+			application.navigate('#assessments/run?package-version=' + this.model.get('package_version_uuid'));
 		},
 
 		onClickDownloadVersion: function() {
@@ -108,9 +106,7 @@ define([
 
 							// return to package view
 							//
-							Backbone.history.navigate('#packages/' + self.model.get('package_uuid'), {
-								trigger: true
-							});
+							application.navigate('#packages/' + self.model.get('package_uuid'));
 						},
 
 						error: function() {
@@ -130,18 +126,14 @@ define([
 
 			// go to package version view
 			//
-			Backbone.history.navigate('#packages/' + this.options.package.get('package_uuid'), {
-				trigger: true
-			});
+			application.navigate('#packages/' + this.options.package.get('package_uuid'));
 		},
 
 		onClickNext: function() {
 
 			// go to package version contents view
 			//
-			Backbone.history.navigate('#packages/versions/' + this.model.get('package_version_uuid') + '/source', {
-				trigger: true
-			});
+			application.navigate('#packages/versions/' + this.model.get('package_version_uuid') + '/source');
 		}
 	});
 });

@@ -12,7 +12,7 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2019 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2020 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 define([
@@ -75,8 +75,7 @@ define([
 
 			// compute sort value
 			//
-			var versionString = $.trim(versionString);
-			var substrings = versionString.split('.');
+			var substrings = $.trim(versionString).split('.');
 			var value = 0;
 			var placeValue = 1;
 			for (var i = 0; i < substrings.length; i++) {

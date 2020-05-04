@@ -12,7 +12,7 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2019 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2020 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 define([
@@ -55,9 +55,7 @@ define([
 		//
 
 		addProject: function() {
-			Backbone.history.navigate('#projects/add', {
-				trigger: true
-			});
+			application.navigate('#projects/add');
 		},
 
 		//
@@ -88,12 +86,6 @@ define([
 		// rendering methods
 		//
 
-		templateContext: function() {
-			return {
-				showNumbering: application.options.showNumbering
-			};
-		},
-
 		onRender: function() {
 			var self = this;
 
@@ -106,11 +98,23 @@ define([
 
 		showLists: function() {
 
+			// preserve existing sorting column and order
+			//
+			if (this.hasChildView('owned') && this.collection.length > 0) {
+				this.options.sortBy1 = this.getChildView('owned').getSorting();
+			}
+			if (this.hasChildView('joined') && this.collection.length > 0) {
+				this.options.sortBy2 = this.getChildView('joined').getSorting();
+			}
+
 			// show list of owned projects
 			//
 			this.showChildView('owned', new ProjectsListView({
 				collection: this.collection.getOwnedBy(application.session.user),
-				showNumbering: application.options.showNumbering,
+
+				// options
+				//
+				sortBy: this.options.sortBy1,
 				showDelete: true
 			}));
 
@@ -118,7 +122,10 @@ define([
 			//
 			this.showChildView('joined', new ProjectsListView({
 				collection: this.collection.getNotOwnedBy(application.session.user),
-				showNumbering: application.options.showNumbering,
+
+				// options
+				//
+				sortBy: this.options.sortBy2,
 				showDelete: true
 			}));
 		},
@@ -133,7 +140,6 @@ define([
 
 		onClickShowNumbering: function(event) {
 			application.setShowNumbering($(event.target).is(':checked'));
-			this.showLists();
 		}
 	});
 });

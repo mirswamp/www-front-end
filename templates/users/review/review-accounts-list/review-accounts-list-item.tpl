@@ -1,72 +1,97 @@
-<% if (showNumbering) { %>
-<td class="prepend number">
-	<%- index %>
-</td>
-<% } %>
-
-<td class="username first">
-	<a href="<%- url %>"><%- model.get('username') %></a>
+<td class="username">
+	<a href="<%- url %>" target="_blank"><%- username %></a>
 </td>
 
 <td class="name">
-	<% if (model.has('email')) { %>
-	<a href="mailto:<%- model.get('email') %>"><%- model.getFullName() %></a>
+	<% if (email) { %>
+	<a href="mailto:<%- email %>"><%= name %></a>
 	<% } else { %>
-	<%- model.getFullName() %>
+	<%= name %>
 	<% } %>
 </td>
 
 <td class="affiliation hidden-md hidden-sm hidden-xs">
-	<%- model.get('affiliation') %>
+	<%- affiliation %>
 </td>
 
-<td class="type hidden-sm hidden-xs">
-	<% if (model.has('user_type')) { %>
-	<%- model.get('user_type').replace('-', ' ') %>
+<% if (showType) { %>
+<td class="type hidden-md hidden-sm hidden-xs">
+	<% if (user_type) { %>
+	<%= user_type.replace('-', ' ') %>
 	<% } %>
-</td>
-
-<% if (showForcePasswordReset && !config['ldap_readonly']) { %>
-<td class="force-password-reset hidden-xs">
-	<input type="checkbox" name="select"<% if (model.get('forcepwreset_flag')) { %> checked<% } %>/>
 </td>
 <% } %>
 
-<% if (showHibernate && !config['ldap_readonly']) { %>
-<td class="hibernate hidden-xs">
-	<input type="checkbox" name="select"<% if (model.get('hibernate_flag')) { %> checked<% } %>/>
+<% if (showForcePasswordReset && !application.config.ldap_readonly) { %>
+<td class="force-password-reset condensed hidden-sm hidden-xs">
+	<input type="checkbox" name="select"<% if (forcepwreset_flag) { %> checked<% } %>/>
+</td>
+<% } %>
+
+<% if (showHibernate && !application.config.ldap_readonly) { %>
+<td class="hibernate condensed hidden-sm hidden-xs">
+	<input type="checkbox" name="select"<% if (hibernate_flag) { %> checked<% } %>/>
 </td>
 <% } %>
 
 <% if (showLinkedAccount) { %>
-<td class="has-linked-account hidden-xs">
-	<% if (model.get('has_linked_account')) { %>
-	<i class="fa fa-chain"></i>
+<td class="has-linked-account condensed hidden-sm hidden-xs">
+	<% if (has_linked_account) { %>
+	yes
+	<% } else { %>
+	no
 	<% } %>
 </td>
 <% } %>
 
+<% if (showStats) { %>
+
+<% if (showNumPackages) { %>
+<td class="num-packages condensed hidden-xs">
+</td>
+<% } %>
+
+<% if (showNumProjects) { %>
+<td class="num-projects condensed hidden-xs">
+</td>
+<% } %>
+
+<% if (showNumRuns) { %>
+<td class="num-runs condensed hidden-xs">
+</td>
+<% } %>
+
+<% if (showNumResults) { %>
+<td class="num-results condensed hidden-xs">
+</td>
+<% } %>
+
+<% if (showSuccessRate) { %>
+<td class="success-rate condensed hidden-xs">
+</td>
+<% } %>
+
+<% } %>
+
 <td class="create-date datetime hidden-xxs">
-	<% if (model.hasCreateDate()) { %>
-	<%= dateToSortableHTML(model.getCreateDate()) %>
+	<%= dateToSortableHTML(create_date) %>
+</td>
+
+<td class="last-login-date datetime hidden-md hidden-sm hidden-xs">
+	<% if (ultimate_login_date) { %>
+	<%= dateToSortableHTML(ultimate_login_date) %>
 	<% } %>
 </td>
 
-<td class="last-login-date datetime hidden-sm hidden-xs">
-	<% if (model.has('ultimate_login_date')) { %>
-	<%= dateToSortableHTML(model.get('ultimate_login_date')) %>
-	<% } %>
-</td>
-
-<td class="status last">
-	<% if (config['ldap_readonly']) { %>
-	<%- model.getStatus().toTitleCase() %>
+<td class="status">
+	<% if (application.config.ldap_readonly) { %>
+	<%= status.toTitleCase() %>
 	<% } else { %>
 	<div class="btn-group">
 		<a class="btn btn-sm dropdown-toggle" data-toggle="dropdown">
-			<% if (!model.isEnabled()) { %><span class="warning"><% } %>
-			<%- model.getStatus().toTitleCase() %>
-			<% if (!model.isEnabled()) { %></span><% } %>
+			<% if (!isEnabled) { %><span class="warning"><% } %>
+			<%- status.toTitleCase() %>
+			<% if (!isEnabled) { %></span><% } %>
 			<span class="caret"></span>
 		</a>
 		<ul class="dropdown-menu">

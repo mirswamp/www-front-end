@@ -1,10 +1,6 @@
 <thead>
 	<tr>
-		<% if (showNumbering) { %>
-		<th class="prepend number"></th>
-		<% } %>
-		
-		<th class="version-string first">
+		<th class="version-string">
 			<i class="fa fa-list-ol"></i>
 			<span>Version</span>
 		</th>
@@ -21,15 +17,16 @@
 		</th>
 		<% } %>
 		
-		<th class="date last">
+		<th class="date">
 			<i class="fa fa-calendar"></i>
 			<span>Date Added</span>
 		</th>
 
 		<% if (showDelete) { %>
-		<th class="append"></th>
+		<th class="delete"></th>
 		<% } %>
 	</tr>
 </thead>
+
 <tbody>
 </tbody>

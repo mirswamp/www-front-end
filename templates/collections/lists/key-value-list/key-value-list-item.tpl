@@ -1,14 +1,9 @@
-<% if (showNumbering) { %>
-<td class="prepend number">
-</td>
-<% } %>
-
-<td <% if (editable) { %>contenteditable="true" <% } %>class="key code first">
+<td <% if (editable) { %>contenteditable="true" <% } %>class="key code">
 	<%= key %>
 </td>
 
 <td <% if (editable) { %>contenteditable="true" <% } %>class="value code<% if (!editable) { %> last<% } %>">
-	<% if (value != undefined) { %>
+	<% if (value !== undefined) { %>
 	<%= value %>
 	<% } else { %>
 	<span class="warning">undefined</span>
@@ -16,7 +11,7 @@
 </td>
 
 <% if (editable) { %>
-<td class="order last">
+<td class="order">
 <% if (index != 0) { %>
 <button type="button" class="move-up btn btn-sm" tabindex="-1"><i class="fa fa-arrow-up"></i></button>
 <% } %>
@@ -27,9 +22,7 @@
 <% } %>
 
 <% if (showDelete) { %>
-<td class="delete append">
+<td class="delete">
 	<button type="button" class="btn btn-sm" tabindex="-1"><i class="fa fa-times"></i></button>
 </td>
 <% } %>
-
-

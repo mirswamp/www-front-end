@@ -1,19 +1,16 @@
 <thead>
-	<tr class="titles">
-		<% if (showNumbering) { %>
-		<th class="prepend number"></th>
-		<% } %>
-
+	<tr>
 		<th class="description">
 			<i class="fa fa-quote-left"></i>
 			<span>Description</span>
 		</th>
 
-		<th class="datetime last">
+		<th class="datetime">
 			<i class="fa fa-calendar"></i>
 			<span>Date</span>
 		</th>
 	</tr>
 </thead>
+
 <tbody>
 </tbody>

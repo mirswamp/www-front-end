@@ -5,7 +5,7 @@
 	<li><a href="#resources"><i class="fa fa-book"></i>Resources</a></li>
 	<li><a href="#tools/public"><i class="fa fa-wrench"></i>Tools</a></li>
 	<li><a href="#tools/<%- tool.get('tool_uuid') %>"><i class="fa fa-wrench"></i><%- tool_name %></a></li>
-	<li><a href="#tools/versions/<%- model.get('tool_version_uuid') %>"><i class="fa fa-wrench"></i>Tool Version <%- version_string %></a></li>
+	<li><a href="#tools/versions/<%- tool_version_uuid %>"><i class="fa fa-wrench"></i>Tool Version <%- version_string %></a></li>
 	<li><i class="fa fa-pencil"></i>Edit Tool Version</i>
 </ol>
 

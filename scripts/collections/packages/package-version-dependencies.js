@@ -12,7 +12,7 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2019 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2020 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 define([
@@ -81,15 +81,6 @@ define([
 		fetchMostRecent: function(packageUuid, options) {
 			return Backbone.Collection.prototype.fetch.call(this, _.extend(options, {
 				url: Config.servers.web + '/packages/' + packageUuid + '/versions/dependencies/recent'
-			}));
-		},
-
-		updateAll: function(options) {
-			return this.fetch(_.extend(options, {
-				type: 'PUT',
-				data: {
-					data: this.toJSON()
-				}
 			}));
 		}
 	});

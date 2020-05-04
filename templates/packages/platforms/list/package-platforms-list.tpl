@@ -1,11 +1,7 @@
 <thead>
-	<tr class="titles">
-		<% if (showNumbering) { %>
-		<th class="prepend number"></th>
-		<% } %>
-
+	<tr>
 		<% if (false) { %>
-		<th class="package first">
+		<th class="package">
 			<i class="fa fa-gift"></i>
 			<span class="hidden-xxs">Package</span>
 		</th>
@@ -21,15 +17,16 @@
 			<span class="hidden-xxs">Platform Version</span>
 		</th>
 
-		<th class="compatible last">
+		<th class="compatible">
 			<i class="fa fa-handshake-o"></i>
 			<span class="hidden-xxs">Compatible</span>
 		</th>
 
 		<% if (showDelete) { %>
-		<th class="append"></th>
+		<th class="delete"></th>
 		<% } %>
 	</tr>
 </thead>
+
 <tbody>
 </tbody>

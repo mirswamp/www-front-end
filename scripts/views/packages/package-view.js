@@ -12,7 +12,7 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2019 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2020 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 define([
@@ -51,8 +51,8 @@ define([
 
 		templateContext: function() {
 			return {
-				model: this.model,
 				nav: this.options.nav,
+				isOwned: this.model.isOwned(),
 				showCompatibility: false
 			};
 		},
@@ -73,6 +73,10 @@ define([
 			});
 		},
 
+		//
+		// badge rendering methods
+		//
+
 		addBadge: function(selector, num) {
 			if (num > 0) {
 				this.$el.find(selector).append('<span class="badge">' + num + '</span>');
@@ -81,11 +85,8 @@ define([
 			}
 		},
 
-		addBadges: function(projects) {
+		addNumAssessmentsBadge: function(projects) {
 			var self = this;
-
-			// add num assessments badge
-			//
 			if (projects.length > 0) {
 				AssessmentRuns.fetchNumByProjects(projects, {
 					data: {
@@ -98,9 +99,10 @@ define([
 			} else {
 				this.addBadge("#assessments", 0);
 			}
+		},
 
-			// add num results badge
-			//
+		addNumResultsBadge: function(projects) {
+			var self = this;
 			if (projects.length > 0) {
 				ExecutionRecords.fetchNumByProjects(projects, {
 					data: {
@@ -113,9 +115,10 @@ define([
 			} else {
 				this.addBadge("#results", 0);
 			}
+		},
 
-			// add num scheduled runs badge
-			//
+		addNumRunsBadge: function(projects) {
+			var self = this;
 			if (projects.length > 0) {
 				ScheduledRuns.fetchNumByProjects(projects, {
 					data: {
@@ -130,6 +133,12 @@ define([
 			}
 		},
 
+		addBadges: function(projects) {
+			this.addNumAssessmentsBadge(projects);
+			this.addNumResultsBadge(projects);
+			this.addNumRunsBadge(projects);
+		},
+
 		//
 		// event handling methods
 		//
@@ -138,45 +147,35 @@ define([
 
 			// go to assessments view
 			//
-			Backbone.history.navigate('#assessments?package=' + this.model.get('package_uuid'), {
-				trigger: true
-			});
+			application.navigate('#assessments?package=' + this.model.get('package_uuid'));
 		},
 
 		onClickResults: function() {
 
 			// go to assessment results view
 			//
-			Backbone.history.navigate('#results?package=' + this.model.get('package_uuid'), {
-				trigger: true
-			});
+			application.navigate('#results?package=' + this.model.get('package_uuid'));
 		},
 
 		onClickRuns: function() {
 
 			// go to run requests view
 			//
-			Backbone.history.navigate('#run-requests?package=' + this.model.get('package_uuid'), {
-				trigger: true
-			});
+			application.navigate('#run-requests?package=' + this.model.get('package_uuid'));
 		},
 
 		onClickDetails: function() {
 
 			// go to package details view / tab
 			//
-			Backbone.history.navigate('#packages/' + this.model.get('package_uuid'), {
-				trigger: true
-			});
+			application.navigate('#packages/' + this.model.get('package_uuid'));
 		},
 
 		onClickCompatibility: function() {
 
 			// go to package compatibility view / tab
 			//
-			Backbone.history.navigate('#packages/' + this.model.get('package_uuid') + '/compatibility', {
-				trigger: true
-			});
+			application.navigate('#packages/' + this.model.get('package_uuid') + '/compatibility');
 		}
 	});
 });

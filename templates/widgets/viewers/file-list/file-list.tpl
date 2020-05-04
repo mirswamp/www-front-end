@@ -3,10 +3,10 @@
 		<table>
 			<thead>
 				<tr>
-					<th class="name first">
+					<th class="name">
 						Name
 					</th>
-					<th class="size last">
+					<th class="size">
 						Size
 					</th>
 				</tr>

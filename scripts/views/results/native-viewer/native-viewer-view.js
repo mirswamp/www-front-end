@@ -12,7 +12,7 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2019 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2020 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 define([
@@ -23,6 +23,7 @@ define([
 	'models/files/directory',
 	'models/packages/package-version',
 	'models/assessments/assessment-results',
+	'collections/results/weaknesses',
 	'views/base-view',
 	'views/results/native-viewer/list/weaknesses-list-view',
 	'views/files/directory-tree/directory-tree-view',
@@ -33,7 +34,7 @@ define([
 	'utilities/web/query-strings',
 	'utilities/time/date-format',
 	'utilities/time/date-utils'
-], function($, _, Tab, Template, Directory, PackageVersion, AssessmentResults, BaseView, WeaknessesListView, DirectoryTreeView, PackageVersionDirectoryTreeView, NavButtonBarView, KeyCodes) {
+], function($, _, Tab, Template, Directory, PackageVersion, AssessmentResults, Weaknesses, BaseView, WeaknessesListView, DirectoryTreeView, PackageVersionDirectoryTreeView, NavButtonBarView, KeyCodes) {
 	return BaseView.extend({
 
 		//
@@ -66,11 +67,11 @@ define([
 
 			// get values from query string
 			//
-			if (hasQueryVariable(queryString, 'from')) {
-				this.from = parseInt(getQueryVariable(queryString, 'from'));
+			if (hasQueryStringValue(queryString, 'from')) {
+				this.from = parseInt(getQueryStringValue(queryString, 'from'));
 			}
-			if (hasQueryVariable(queryString, 'to')) {
-				this.to = parseInt(getQueryVariable(queryString, 'to'));
+			if (hasQueryStringValue(queryString, 'to')) {
+				this.to = parseInt(getQueryStringValue(queryString, 'to'));
 			}
 
 			// compute items per page
@@ -86,13 +87,13 @@ define([
 			// set filter
 			//
 			var data = queryStringToData(queryString);
-			if (data['include']) {
+			if (data.include) {
 				this.filter_type = 'include';
-				this.filter = data['include'].split(',');
+				this.filter = data.include.split(',');
 			}
-			if (data['exclude']) {
+			if (data.exclude) {
 				this.filter_type = 'exclude';
-				this.filter = data['exclude'].split(',');
+				this.filter = data.exclude.split(',');
 			}
 		},
 
@@ -127,10 +128,10 @@ define([
 			if (this.filter) {
 				switch (this.filter_type) {
 					case 'include':
-						data['include'] = this.filter;
+						data.include = this.filter;
 						break;
 					case 'exclude':
-						data['exclude'] = this.filter;
+						data.exclude = this.filter;
 						break;
 				}
 			}
@@ -149,6 +150,8 @@ define([
 				// pageNumber: this.pageOf(this.from || 1),
 				// numPages: this.numPages(),
 
+				// urls
+				//
 				packageUrl: report.package && report.package.package_uuid?
 					application.getURL() + '#packages/' + report.package.package_uuid : '',
 				packageVersionUrl: report.package && report.package.package_version_uuid?
@@ -164,7 +167,8 @@ define([
 				platformVersionUrl: report.platform && report.platform.platform_version_uuid?
 					application.getURL() + '#platforms/versions/' + report.platform.platform_version_uuid : '',
 	
-				showNumbering: application.options.showNumbering,
+				// options
+				//
 				showGrouping: application.options.showGrouping
 			};
 		},
@@ -182,9 +186,19 @@ define([
 		},
 
 		showList: function() {
+
+			// preserve existing sorting column and order
+			//
+			if (this.getChildView('list')) {
+				this.options.sortBy = this.getChildView('list').getSorting();
+			}
+
 			this.showChildView('list', new WeaknessesListView({
-				collection: new Backbone.Collection(this.options.json.AnalyzerReport.BugInstances),
-				showNumbering: application.options.showNumbering,
+				collection: new Weaknesses(this.options.json.AnalyzerReport.BugInstances),
+				
+				// options
+				//
+				sortBy: this.options.sortBy,
 				showGrouping: application.options.showGrouping,
 				start: this.from? this.from - 1: 0,
 				results: this.options.results,
@@ -411,14 +425,14 @@ define([
 
 								// get query string data
 								//
-								var data = queryStringToData(getQueryString());
+								data = queryStringToData(getQueryString());
 
 								// go to first page
 								//
-								if (data['from']) {
-									delete data['from'];
+								if (data.from) {
+									delete data.from;
 								}
-								data['to'] = self.itemsPerPage;							
+								data.to = self.itemsPerPage;							
 
 								// add filter data
 								//
@@ -448,7 +462,6 @@ define([
 
 		onClickShowNumbering: function(event) {
 			application.setShowNumbering($(event.target).is(':checked'));
-			this.showList();
 		},
 
 		onClickShowGrouping: function(event) {

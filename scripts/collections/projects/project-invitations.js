@@ -12,7 +12,7 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2019 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2020 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 define([
@@ -59,16 +59,14 @@ define([
 
 		send: function(options) {
 			var self = this;
+			var successes = 0, errors = 0;
 
 			// duplicate list so we can remove them while iterating the original
 			//
 			var invitations = _.clone(this);
-
-			// save project invitations individually
-			//
-			var successes = 0, errors = 0;
-			for (var i = 0; i < invitations.length; i++) {
-				invitations.at(i).save(undefined, {
+			
+			function sendItem(item) {
+				item.save(undefined, {
 
 					// callbacks
 					//
@@ -100,6 +98,12 @@ define([
 						}
 					}
 				});
+			}
+
+			// save project invitations individually
+			//
+			for (var i = 0; i < invitations.length; i++) {
+				sendItem(invitations.at(i));
 			}
 		}
 	}, {

@@ -12,7 +12,7 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2019 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2020 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 define([
@@ -45,7 +45,7 @@ define([
 		},
 
 		isDeactivated: function() {
-			return (this.hasDeleteDate());
+			return typeof delete_date !== 'undefined';
 		},
 
 		supports: function(packageTypeName) {
@@ -75,15 +75,21 @@ define([
 		isCompatibleWith: function(viewer) {
 			if (viewer) {
 				var name = viewer.get('name').toLowerCase();
-				for (var i = 0; i < this.viewer_names.length; i++) {
-					if (this.viewer_names[i].toLowerCase() == name) {
-						return true;
+				if (this.viewer_names) {
+					for (var i = 0; i < this.viewer_names.length; i++) {
+						if (this.viewer_names[i].toLowerCase() == name) {
+							return true;
+						}
 					}
 				}
 				return false;
 			} else {
 				return true;
 			}
+		},
+
+		getAppUrl: function() {
+			return application.getURL() + '#tools/' + this.get('tool_uuid');
 		},
 
 		//
@@ -218,7 +224,11 @@ define([
 				// callbacks
 				//
 				success: function(response) {
-					options.approved(response);
+					if (response.status == 'approved' || response.status == 'granted') {
+						options.approved(response);
+					} else {
+						options.denied(response);
+					}
 				},
 
 				error: function(response) {
@@ -241,9 +251,7 @@ define([
 				// callbacks
 				//
 				accept: function() {
-					Backbone.history.navigate('#my-account/permissions', {
-						trigger: true
-					});
+					application.navigate('#my-account/permissions');
 				}
 			});
 		},

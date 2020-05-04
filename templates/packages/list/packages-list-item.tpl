@@ -1,16 +1,8 @@
-<% if (!model.isDeactivated() || showDeactivatedPackages) { %>
-
-<% if (showNumbering) { %>
-<td class="prepend number">
-	<%- index %>
-</td>
-<% } %>
-
 <td class="package">
 	<% if (url) { %>
-	<a href="<%- url %>"><%= textToHtml(model.get('name')) %></a>
+	<a href="<%= url %>"><%= textToHtml(name) %></a>
 	<% } else { %>
-	<%= textToHtml(model.get('name')) %>
+	<%= textToHtml(name) %>
 	<% } %>
 </td>
 
@@ -26,26 +18,23 @@
 	<%- package_type %>
 </td>
 
-<td class="versions last">
+<td class="versions">
 	<ul>
-	<% var versionStrings = model.get('version_strings'); %>
-	<% for (var i = 0; i < versionStrings.length; i++) { %>
-		<li><%- versionStrings[i] %></li>
+	<% for (var i = 0; i < version_strings.length; i++) { %>
+		<li><%- version_strings[i] %></li>
 	<% } %>
 	</ul>
-	<% if (num_versions == model.get('version_strings').length + 1) { %>
+	<% if (num_versions == version_strings.length + 1) { %>
 	and 1 other
-	<% } else if (num_versions > model.get('version_strings').length) { %>
-	and <%= num_versions - model.get('version_strings').length %> others
+	<% } else if (num_versions > version_strings.length) { %>
+	and <%= num_versions - version_strings.length %> others
 	<% } %>
 </td>
 
 <% if (showDelete) { %>
-<td class="delete append">
-	<% if (model.isOwned()) { %>
+<td class="delete">
+	<% if (isOwned) { %>
 	<button type="button" class="btn btn-sm"><i class="fa fa-times"></i></button>
 	<% } %>
 </td>
-<% } %>
-
 <% } %>

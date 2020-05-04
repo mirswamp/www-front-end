@@ -12,7 +12,7 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2019 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2020 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 define([
@@ -20,10 +20,10 @@ define([
 	'underscore',
 	'text!templates/scheduled-runs/list/scheduled-runs-list.tpl',
 	'views/base-view',
-	'views/collections/tables/sortable-table-list-view',
+	'views/collections/tables/groupable-table-list-view',
 	'views/scheduled-runs/list/scheduled-runs-list-item-view'
-], function($, _, Template, BaseView, SortableTableListView, ScheduledRunsListItemView) {
-	return SortableTableListView.extend({
+], function($, _, Template, BaseView, GroupableTableListView, ScheduledRunsListItemView) {
+	return GroupableTableListView.extend({
 
 		//
 		// attributes
@@ -36,20 +36,10 @@ define([
 			template: _.template("No scheduled runs.")
 		}),
 
-		sorting: {
-
-			// disable sorting on delete column
-			//
-			headers: {
-				3: { 
-					sorter: false 
-				}
-			},
-
-			// sort on package column in descending order 
-			//
-			sortList: [[0, 0]]
-		},
+		// sort by package column in ascending order 
+		//
+		sortBy: ['package', 'ascending'],
+		groupExcept: ['schedule', 'delete'],
 
 		//
 		// constructor
@@ -60,7 +50,7 @@ define([
 
 			// call superclass method
 			//
-			SortableTableListView.prototype.initialize.call(this, options);
+			GroupableTableListView.prototype.initialize.call(this, options);
 		},
 
 		//
@@ -81,9 +71,12 @@ define([
 			return {
 				collection: this.collection,
 				runRequestUrl: this.getRunRequestUrl(),
+
+				// options
+				//
 				showProjects: this.options.showProjects,
-				showNumbering: this.options.showNumbering,
 				showSchedule: this.options.showSchedule,
+				showGrouping: this.options.showGrouping,
 				showDelete: this.options.showDelete
 			};
 		},
@@ -101,12 +94,18 @@ define([
 			return {
 				index: this.collection.indexOf(model),
 				collection: this.collection,
+
+				// options
+				//
 				showProjects: this.options.showProjects,
-				showNumbering: this.options.showNumbering,
 				showSchedule: this.options.showSchedule,
+				showGrouping: this.options.showGrouping,
 				showDelete: this.options.showDelete,
-				onDelete: this.options.onDelete,
-				parent: this
+				parent: this,
+
+				// callbacks
+				//
+				onDelete: this.options.onDelete
 			};
 		}
 	});

@@ -8,7 +8,7 @@
 |        deal with strings used for URLs.                                      |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2019 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2020 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 function urlEncode(string) {
@@ -154,7 +154,7 @@ function urlEncodeText(text) {
 
 function urlDecodeText(URL) {
 	var words = URL.split('%');
-	var text = new Array();
+	var text = [];
 	var lines = 1;
 	text[lines - 1] = words[0];
 	

@@ -12,7 +12,7 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2019 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2020 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 define([
@@ -32,20 +32,9 @@ define([
 
 		childView: AdminInvitationsListItemView,
 
-		sorting: {
-
-			// disable sorting on remove column
-			//
-			headers: {
-				4: { 
-					sorter: false 
-				}
-			},
-
-			// sort on date column in descending order 
-			//
-			sortList: [[2, 1]]
-		},
+		// sort by date column in ascending order 
+		//
+		sortBy: ['date', 'ascending'],
 
 		//
 		// rendering methods

@@ -12,16 +12,15 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2019 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2020 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 define([
 	'jquery',
 	'underscore',
 	'text!templates/admin/settings/system-email/system-email-list/system-email-list-item.tpl',
-	'models/users/user',
 	'views/collections/tables/table-list-item-view',
-], function($, _, Template, User, TableListItemView) {
+], function($, _, Template, TableListItemView) {
 	return TableListItemView.extend({
 
 		//
@@ -36,11 +35,9 @@ define([
 
 		templateContext: function() {
 			return {
-				User: User,
-				model: this.model,
-				url: application.getURL() + '#accounts',
-				index: this.options.index,
-				showNumbering: this.options.showNumbering,
+				name: this.model.getFullName(),
+				url: this.model.getAppUrl(),
+				is_hibernating: this.model.isHibernating(),
 				showHibernate: this.options.showHibernate
 			};
 		}

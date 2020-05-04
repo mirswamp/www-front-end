@@ -5,7 +5,7 @@
 
 <ol class="breadcrumb">
 	<li><a href="#home"><i class="fa fa-home"></i>Home</a></li>
-	<li><i class="fa fa-check"></i><span id="breadcrumb"><%= shortTitle %></span></li>
+	<li><i class="fa fa-check"></i><span id="breadcrumb">Assessment Results</span></li>
 </ol>
 
 <% if (showNavigation) { %>
@@ -64,11 +64,14 @@
 <div style="clear:both"></div>
 
 <div id="assessment-runs-list">
-	<div align="center"><i class="fa fa-spinner fa-spin fa-2x"></i><br/>Loading assessment runs...</div>
+	<div class="loading">
+		<i class="fa fa-spinner fa-spin"></i>
+		<div class="message">Loading assessment runs...</div>
+	</div>
 </div>
 
 <label>
-	<input type="checkbox" id="show-numbering" <% if (showNumbering) { %>checked<% } %>>
+	<input type="checkbox" id="show-numbering" <% if (application.options.showNumbering) { %>checked<% } %>>
 	Show numbering
 </label>
 

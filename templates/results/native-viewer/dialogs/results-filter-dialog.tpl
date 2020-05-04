@@ -12,14 +12,16 @@
 	<div style="max-height:300px; overflow:auto">
 		<table>
 			<thead>
-				<tr class="titles">
-					<th class="checkboxes first">
+				<tr>
+					<th class="checkboxes">
 					</th>
+
 					<th class="bug-type">
 						<i class="fa fa-bug"></i>
 						<span>Code</span>
 					</th>
-					<th class="bug-count last">
+
+					<th class="bug-count">
 						<i class="fa fa-list"></i>
 						<span>Count</span>
 					</th>
@@ -27,14 +29,16 @@
 			</thead>
 			<tbody>
 				<% for (var i = 0; i < catalog.length; i++) { %>
-				<tr class="titles">
-					<td class="checkboxes first">
+				<tr>
+					<td class="checkboxes">
 						<input type="checkbox" id="<%= catalog[i].code %>"<% if (filter_type == 'include'? filter.includes(catalog[i].code) : !filter.includes(catalog[i].code)) { %> checked<% } %>/>
 					</td>
+
 					<td class="bug-type">
 						<%= htmlEncode(catalog[i].code) %>
 					</td>
-					<td class="bug-count last">
+
+					<td class="bug-count">
 						<span class="badge"><%= catalog[i].count %></span>
 					</td>
 				</tr>

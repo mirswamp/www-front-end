@@ -13,7 +13,7 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2019 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2020 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 var passwordPolicy = "Passwords must be at least 10 characters long and include at least three of the following character types: uppercase, lowercase, number, or symbol. Common and simple passwords will be rejected. Maximum length is 200 characters (additional characters will be truncated). Characters outside of the ASCII range of 32 to 126 are not allowed.";

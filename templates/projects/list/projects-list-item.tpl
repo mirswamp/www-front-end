@@ -1,27 +1,19 @@
-<% if (!model.isDeactivated() || showDeactivatedProjects) { %>
+<% if (!isDeactivated || showDeactivatedProjects) { %>
 
-<% if (showNumbering) { %>
-<td class="prepend number">
-	<%- index %>
-</td>
-<% } %>
-
-<td class="project first">
-	<a href="#projects/<%- project_uid %>"><%- full_name %></a>
+<td class="project">
+	<a href="<%= url %>"><%- full_name %></a>
 </td>
 
 <td class="description">
 	<%- description %>
 </td>
 
-<td class="create-date datetime last">
-	<% if (model.hasCreateDate()) { %>
-	<%= dateToSortableHTML(model.getCreateDate()) %>
-	<% } %>
+<td class="create-date datetime">
+	<%= dateToSortableHTML(create_date) %>
 </td>
 
 <% if (showDelete) { %>
-<td class="delete append">
+<td class="delete">
 	<button type="button" class="btn btn-sm"><i class="fa fa-times"></i></button>
 </td>
 <% } %>

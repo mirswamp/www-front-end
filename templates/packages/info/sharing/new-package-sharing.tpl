@@ -16,7 +16,10 @@
 <% } %>
 
 <div id="select-projects-list">
-	<div align="center"><i class="fa fa-spinner fa-spin fa-2x"></i><br/>Loading projects...</div>
+	<div class="loading">
+		<i class="fa fa-spinner fa-spin"></i>
+		<div class="message">Loading projects...</div>
+	</div>
 </div>
 
 <div class="bottom buttons">

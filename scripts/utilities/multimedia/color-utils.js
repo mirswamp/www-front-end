@@ -12,7 +12,7 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2019 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2020 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 define([], function() {
@@ -33,10 +33,10 @@ define([], function() {
 			var r = Math.round(parseFloat(values[1]));
 			var g = Math.round(parseFloat(values[2]));
 			var b = Math.round(parseFloat(values[3]));
-			return "#" 
-				+ (r + 0x10000).toString(16).substring(3).toUpperCase() 
-				+ (g + 0x10000).toString(16).substring(3).toUpperCase()
-				+ (b + 0x10000).toString(16).substring(3).toUpperCase();
+			return "#" + 
+				(r + 0x10000).toString(16).substring(3).toUpperCase() + 
+				(g + 0x10000).toString(16).substring(3).toUpperCase() + 
+				(b + 0x10000).toString(16).substring(3).toUpperCase();
 		},
 
 		namedColorToRGBColor: function(color) {
@@ -86,19 +86,19 @@ define([], function() {
 			var r = parseInt(f[0].slice(4));
 			var g = parseInt(f[1]);
 			var b = parseInt(f[2]);
-			var f = color2.split(",");
-			var r2 = parseInt(f[0].slice(4));
-			var g2 = parseInt(f[1]);
-			var b2 = parseInt(f[2]);
+			var f2 = color2.split(",");
+			var r2 = parseInt(f2[0].slice(4));
+			var g2 = parseInt(f2[1]);
+			var b2 = parseInt(f2[2]);
 			return "rgb(" + (r + r2) + "," + (g + g2) + "," + (b + b2) + ")";
 		},
 
 		blendRGBColors: function(c0, c1, p) {
 			var f = c0.split(",");
 			var t = c1.split(",");
-			var r=parseInt(f[0].slice(4));
-			var g=parseInt(f[1]);
-			var b=parseInt(f[2]);
+			var r = parseInt(f[0].slice(4));
+			var g = parseInt(f[1]);
+			var b = parseInt(f[2]);
 			r = Math.round((parseInt(t[0].slice(4)) - r) * p) + r;
 			g = Math.round((parseInt(t[1]) - g) * p) + g;
 			b = Math.round((parseInt(t[2]) - b) * p) + b;
@@ -175,5 +175,5 @@ define([], function() {
 			//
 			return "rgba(" + (r * 100) + "%," + (g * 100) + "%," + (b * 100) + "%, " + alpha + ")";
 		}
-	}
+	};
 });

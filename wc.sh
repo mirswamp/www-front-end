@@ -1,0 +1,14 @@
+wc -l `find . \
+-path \
+-prune -o -path ./.git \
+-prune -o -path ./build \
+-prune -o -path ./fonts \
+-prune -o -path ./images \
+-prune -o -path ./library \
+-prune -o -path ./project \
+-prune -o -path ./sounds \
+-prune -o -path ./styles/bootstrap \
+-prune -o -path ./styles/bootstrap-dev \
+-prune -o -path ./styles/jquery \
+-prune -o -path ./vendor \
+-prune -o -type f -print`

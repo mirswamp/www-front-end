@@ -12,7 +12,7 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2019 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2020 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 define([
@@ -329,16 +329,16 @@ define([
 					// set model attributes
 					//
 					self.model.set({
-						'build_system': buildInfo['build_system'],
-						'config_dir': buildInfo['config_dir'],
-						'config_cmd': buildInfo['config_cmd'],
-						'config_opt': buildInfo['config_opt'],
-						'build_dir': buildInfo['build_dir'],
-						'build_file': buildInfo['build_file'],
-						'build_cmd': buildInfo['build_cmd'],
-						'no_build_cmd': buildInfo['no_build_cmd'],
-						'build_opt': buildInfo['build_opt'],
-						'package_info': buildInfo['package_info']
+						'build_system': buildInfo.build_system,
+						'config_dir': buildInfo.config_dir,
+						'config_cmd': buildInfo.config_cmd,
+						'config_opt': buildInfo.config_opt,
+						'build_dir': buildInfo.build_dir,
+						'build_file': buildInfo.build_file,
+						'build_cmd': buildInfo.build_cmd,
+						'no_build_cmd': buildInfo.no_build_cmd,
+						'build_opt': buildInfo.build_opt,
+						'package_info': buildInfo.package_info
 					});
 
 					// peform callback
@@ -376,23 +376,22 @@ define([
 					// callbacks
 					//
 					success: function(buildSystem) {
-						
-						// set build system
-						//
-						self.getChildView('form').setBuildSystem(buildSystem);
+						if (buildSystem != 'none') {
+							// set build system
+							//
+							self.getChildView('form').setBuildSystem(buildSystem);
 
-						// show notice about current build system
-						//
-						if (self.model.has('build_system')) {
-							self.showNotice();
+							// show notice about current build system
+							//
+							if (self.model.has('build_system')) {
+								self.showNotice();
+							}
+						} else {
+
+							// set to default build system for each package type
+							//
+							self.getChildView('form').setBuildSystem();	
 						}
-					},
-
-					error: function() {
-
-						// set to default build system for each package type
-						//
-						self.getChildView('form').setBuildSystem();
 					}
 				});
 			}

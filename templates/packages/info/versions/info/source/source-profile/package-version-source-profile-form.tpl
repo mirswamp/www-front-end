@@ -1,10 +1,10 @@
 <form action="/" class="form-horizontal" onsubmit="return false;">
 
-	<div class="form-group"<% if (model.isAtomic()) { %> style="display:none"<% } %>>
+	<div class="form-group"<% if (isAtomic) { %> style="display:none"<% } %>>
 		<label class="required control-label">Package path</label>
 		<div class="controls">
 			<div class="input-group">
-				<input id="package-path" class="required form-control" name="package-path" type="text" maxlength="1000" value="<%- model.get('source_path') %>">
+				<input id="package-path" class="required form-control" name="package-path" type="text" maxlength="1000" value="<%- source_path %>">
 				<div class="input-group-addon">
 					<i class="active fa fa-question-circle" data-toggle="popover" data-placement="top" data-container="body" title="Package path" data-content="This is the name of the directory / folder within the compressed package file that contains your package source code. "></i>
 				</div>
@@ -15,7 +15,7 @@
 		</div>
 	</div>
 
-	<% if (language_version || package.hasLanguageVersion()) { %>
+	<% if (language_version || hasLanguageVersion) { %>
 	<div class="form-group" id="language-version">
 		<label class="required control-label">Language version</label>
 		<div class="controls">
@@ -38,7 +38,7 @@
 		</div>
 	</div>
 	<% } else { %>
-	<% if (model.isAtomic()) { %>
+	<% if (isAtomic) { %>
 	<p>No package source information may be specified for this type of package.</p>
 	<% } %>
 	<% } %>

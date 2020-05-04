@@ -12,7 +12,7 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2019 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2020 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 define([
@@ -72,6 +72,10 @@ define([
 			});
 		},
 
+		//
+		// badge rendering methods
+		//
+
 		addBadge: function(selector, num) {
 			if (num > 0) {
 				this.$el.find(selector).append('<span class="badge">' + num + '</span>');
@@ -80,11 +84,8 @@ define([
 			}
 		},
 
-		addBadges: function(projects) {
+		addNumAssessmentsBadge: function() {
 			var self = this;
-
-			// add num assessments badge
-			//
 			if (projects.length > 0) {
 				AssessmentRuns.fetchNumByProjects(projects, {
 					data: {
@@ -97,9 +98,10 @@ define([
 			} else {
 				this.addBadge("#assessments", 0);
 			}
+		},
 
-			// add num results badge
-			//
+		addNumResultsBadge: function() {
+			var self = this;
 			if (projects.length > 0) {
 				ExecutionRecords.fetchNumByProjects(projects, {
 					data: {
@@ -111,10 +113,11 @@ define([
 				});
 			} else {
 				this.addBadge("#results", 0);
-			}
+			}		
+		},
 
-			// add num scheduled runs badge
-			//
+		addNumRunsBadge: function() {
+			var self = this;
 			if (projects.length > 0) {
 				ScheduledRuns.fetchNumByProjects(projects, {
 					data: {
@@ -126,7 +129,13 @@ define([
 				});
 			} else {
 				this.addBadge("#runs", 0);
-			}
+			}			
+		},
+
+		addBadges: function(projects) {
+			this.addNumAssessmentsBadge();
+			this.addNumResultsBadge();
+			this.addNumRunsBadge();
 		},
 
 		//
@@ -137,45 +146,35 @@ define([
 
 			// go to tool details view
 			//
-			Backbone.history.navigate('#tools/' + this.model.get('tool_uuid'), {
-				trigger: true
-			});
+			application.navigate('#tools/' + this.model.get('tool_uuid'));
 		},
 
 		onClickSharing: function() {
 
 			// go to tool sharing view
 			//
-			Backbone.history.navigate('#tools/' + this.model.get('tool_uuid') + '/sharing', {
-				trigger: true
-			});
+			application.navigate('#tools/' + this.model.get('tool_uuid') + '/sharing');
 		},
 
 		onClickAssessments: function() {
 
 			// go to assessments view
 			//
-			Backbone.history.navigate('#assessments?tool=' + this.model.get('tool_uuid'), {
-				trigger: true
-			});
+			application.navigate('#assessments?tool=' + this.model.get('tool_uuid'));
 		},
 
 		onClickResults: function() {
 
 			// go to assessment results view
 			//
-			Backbone.history.navigate('#results?tool=' + this.model.get('tool_uuid'), {
-				trigger: true
-			});
+			application.navigate('#results?tool=' + this.model.get('tool_uuid'));
 		},
 
 		onClickRuns: function() {
 
 			// go to run requests view
 			//
-			Backbone.history.navigate('#run-requests?tool=' + this.model.get('tool_uuid'), {
-				trigger: true
-			});
+			application.navigate('#run-requests?tool=' + this.model.get('tool_uuid'));
 		}
 	});
 });

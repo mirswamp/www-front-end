@@ -12,7 +12,7 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2019 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2020 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 define([
@@ -36,47 +36,13 @@ define([
 			template: _.template("No packages.")
 		}),
 
-		sorting: {
-
-			// sort on name column in ascending order 
-			//
-			sortList: [[0, 0]]
-		},
-
+		// sort by package column in ascending order 
 		//
-		// constructor
-		//
-
-		initialize: function() {
-			if (this.options.showProjects) {
-
-				// disable sorting on projects, versions, and delete columns
-				//
-				this.sorting.headers = {
-					2: { 
-						sorter: false 
-					},
-					4: { 
-						sorter: false 
-					},
-					5: { 
-						sorter: false 
-					}
-				};
-			} else {
-
-				// disable sorting on versions and delete columns
-				//
-				this.sorting.headers = {
-					3: { 
-						sorter: false 
-					},
-					4: { 
-						sorter: false 
-					}
-				};
-			}
-		},
+		sortBy: ['package', 'ascending'],
+		unsorted: SortableTableListView.prototype.unsorted.concat(
+			['projects', 'versions']),
+		groupExcept: SortableTableListView.prototype.unsorted.concat(
+			['projects']),
 
 		//
 		// rendering methods
@@ -85,7 +51,6 @@ define([
 		templateContext: function() {
 			return {
 				collection: this.collection,	
-				showNumbering: this.options.showNumbering,
 				showProjects: this.options.showProjects,
 				showDelete: this.options.showDelete
 			};
@@ -93,20 +58,14 @@ define([
 
 		childViewOptions: function(model) {
 
-			// check if empty view
-			//
-			if (!model) {
-				return {};
-			}
-
 			// return view options
 			//
 			return {
 				index: this.collection.indexOf(model),
 				showDeactivatedPackages: this.options.showDeactivatedPackages,
-				showNumbering: this.options.showNumbering,
 				showProjects: this.options.showProjects,
-				showDelete: this.options.showDelete
+				showDelete: this.options.showDelete,
+				parent: this
 			};
 		}
 	});

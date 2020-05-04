@@ -12,7 +12,7 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2019 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2020 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 define([
@@ -130,7 +130,7 @@ define([
 			// add package data
 			//
 			if (package && package != 'any') {
-				data['package'] = package;
+				data.package = package;
 			}
 
 			// add package version data

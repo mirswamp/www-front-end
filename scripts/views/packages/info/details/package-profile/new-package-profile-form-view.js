@@ -12,7 +12,7 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2019 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2020 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 define([
@@ -65,21 +65,16 @@ define([
 		// querying methods
 		//
 
-		useExternalUrl: function() {
-			return this.$el.find('input[value="use-external-url"]').is(':checked') ||
-				this.$el.find('input[value="use-external-git-url"]').is(':checked');
-		},
-
-		useExternalGitUrl: function() {
-			return this.$el.find('input[value="use-external-git-url"]').is(':checked');
+		getFileSource: function() {
+			return this.$el.find('input[name="file-source"]:checked').val();
 		},
 
 		getExternalUrl: function() {
-			if (!this.useExternalGitUrl()) {
-				return this.$el.find('#external-url input').val();
-			} else {
-				return this.$el.find('#external-git-url input').val();
-			}
+			return this.$el.find('#external-url input').val();
+		},
+
+		getExternalGitUrl: function() {
+			return this.$el.find('#external-git-url input').val();
 		},
 
 		//
@@ -88,7 +83,7 @@ define([
 
 		templateContext: function() {
 			return {
-				model: this.model
+				hasValidArchiveUrl: this.model.hasValidArchiveUrl()
 			};
 		},
 
@@ -108,6 +103,8 @@ define([
 				trigger: 'focus'
 			});
 
+			// add form validation methods
+			//
 			this.addValidators();
 
 			// call superclass method
@@ -118,6 +115,17 @@ define([
 		//
 		// form methods
 		//
+
+		applyTo: function(package, packageVersion) {
+
+			// call superclass method
+			//
+			FormView.prototype.applyTo.call(this, package);
+
+			// call child form method
+			//
+			this.getChildView('form').applyTo(packageVersion);
+		},
 
 		addValidators: function() {
 			var self = this;
@@ -135,7 +143,7 @@ define([
 			// add file validation rule
 			//
 			$.validator.addMethod('file', function(value) {
-				return (value != '') || (self.$el.find('#external-url').val() != '');
+				return Package.isValidArchiveName(value) || (self.$el.find('#external-url').val() != '');
 			}, "Please select an archive file.");
 		},
 
@@ -143,7 +151,8 @@ define([
 			return {
 				'name': this.$el.find('#name input').val(),
 				'description': this.$el.find('#description textarea').val(),
-				'external_url': this.useExternalUrl()? this.getExternalUrl(): null
+				'external_url_type': this.getFileSource() != 'local'? this.getFileSource() : '',
+				'external_url': this.getFileSource() != 'local'? (this.getFileSource() == 'git'? this.getExternalGitUrl(): this.getExternalUrl()) : '',
 			};
 		},
 
@@ -154,26 +163,29 @@ define([
 		onClickFileSource: function(event) {
 			var source = $(event.target).val();
 			switch (source) {
-				case 'use-local-file':
-					this.$el.find('#git-message').hide();
+
+				case 'local':
 					this.$el.find('#external-url').hide();
 					this.$el.find('#external-git-url').hide();
+					this.$el.find('#git-message').hide();
 					this.$el.find('#webhook-callback').hide();
 					this.$el.find('#checkout-argument').hide();
 					this.$el.parent().find('#file').show();
 					break;
-				case 'use-external-url':
-					this.$el.find('#git-message').hide();
+
+				case 'download':
 					this.$el.find('#external-url').show();
 					this.$el.find('#external-git-url').hide();
+					this.$el.find('#git-message').hide();
 					this.$el.find('#webhook-callback').hide();
 					this.$el.find('#checkout-argument').hide();
 					this.$el.parent().find('#file').hide();
 					break;
-				case 'use-external-git-url':
-					this.$el.find('#git-message').show();
+
+				case 'git':
 					this.$el.find('#external-url').hide();
 					this.$el.find('#external-git-url').show();
+					this.$el.find('#git-message').show();
 					this.$el.find('#webhook-callback').show();
 					this.$el.find('#checkout-argument').show();
 					this.$el.parent().find('#file').hide();

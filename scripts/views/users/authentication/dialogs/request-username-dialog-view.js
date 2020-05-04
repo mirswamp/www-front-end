@@ -1,18 +1,13 @@
 /******************************************************************************\
 |                                                                              |
-|                        request-username-dialog-view.js                       |
+|                       request-username-dialog-view.js                        |
 |                                                                              |
 |******************************************************************************|
 |                                                                              |
-|        This defines a dialog box that is used to request a username.         |
-|                                                                              |
-|        Author(s): Abe Megahed                                                |
-|                                                                              |
-|        This file is subject to the terms and conditions defined in           |
-|        'LICENSE.txt', which is part of this source code distribution.        |
+|        This defines an dialog box that is used to request a username.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2019 Software Assurance Marketplace (SWAMP)        |
+|          Copyright (C) 2012 - 2020, Morgridge Institute for Research         |
 \******************************************************************************/
 
 define([
@@ -23,6 +18,8 @@ define([
 	'models/users/user',
 	'views/dialogs/dialog-view',
 ], function($, _, Popover, Template, User, DialogView) {
+	'use strict';
+
 	return DialogView.extend({
 
 		//
@@ -33,7 +30,8 @@ define([
 
 		events: {
 			'click #request-username': 'onClickRequestUsername',
-			'click #cancel': 'onClickCancel'
+			'click #cancel': 'onClickCancel',
+			'keypress': 'onKeyPress'
 		},
 
 		//
@@ -50,6 +48,9 @@ define([
 				// callbacks
 				//
 				success: function() {
+
+					// show notification
+					//
 					application.notify({
 						message: "If the email address you submitted matches a valid account, an email containing your username will be sent."
 					});
@@ -57,7 +58,7 @@ define([
 		
 				error: function(jqXHR) {
 
-					// show error message
+					// show error
 					//
 					application.error({
 						message: jqXHR.responseText
@@ -84,13 +85,13 @@ define([
 		//
 
 		onClickRequestUsername: function() {
-			var email = this.$el.find('#email-address').val();
 
+			var email = this.$el.find('#email-address').val();
 			if (email) {
 				this.requestUsernameByEmail(email);
 			} else {
 
-				// show notification message
+				// show notification
 				//
 				application.notify({
 					message: "You must supply a user name or email address."
@@ -101,6 +102,10 @@ define([
 				this.options.accept();
 			}
 
+			// close modal dialog
+			//
+			this.hide();
+
 			// disable default form submission
 			//
 			return false;
@@ -109,6 +114,19 @@ define([
 		onClickCancel: function() {
 			if (this.options.reject) {
 				this.options.reject();
+			}
+		},
+
+		onKeyPress: function(event) {
+
+			// respond to enter key press
+			//
+			if (event.keyCode === 13) {
+				this.onClickResetPassword();
+
+				// close modal dialog
+				//
+				this.dialog.hide();
 			}
 		}
 	});

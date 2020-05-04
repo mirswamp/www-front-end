@@ -12,7 +12,7 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2019 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2020 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 define([
@@ -48,13 +48,7 @@ define([
 		//
 		// rendering methods
 		//
-
-		templateContext: function() {
-			return {
-				config: application.config
-			};
-		},
-
+		
 		onRender: function() {
 			this.showLightBox();
 
@@ -195,16 +189,7 @@ define([
 		},
 
 		showSignIn: function() {
-			require([
-				'views/users/authentication/dialogs/sign-in-dialog-view'
-			], function (SignInDialogView) {
-
-				// show sign in dialog
-				//
-				application.show(new SignInDialogView(), {
-					focus: '#ok'
-				});
-			});
+			application.showSignInDialog();
 		},
 
 		showWarning: function(message) {
@@ -225,22 +210,16 @@ define([
 		},
 
 		onClickSignUp: function() {
-			if (application.config['linked_accounts_enabled']) {
-				require([
-					'views/users/registration/dialogs/sign-up-dialog-view'
-				], function (SignUpDialogView) {
+			if (application.config.linked_accounts_enabled) {
 
-					// show sign up dialog
-					//
-					application.show(new SignUpDialogView());
-				});
+				// show sign up dialog
+				//
+				application.showSignUpDialog();
 			} else {
 
 				// go to registration view
 				//
-				Backbone.history.navigate('#register', {
-					trigger: true
-				});
+				application.navigate('#register');
 			}
 		},
 

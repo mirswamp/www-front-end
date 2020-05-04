@@ -12,7 +12,7 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2019 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2020 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 define([
@@ -36,23 +36,9 @@ define([
 			template: _.template("No project members.")
 		}),
 
-		sorting: {
-
-			// disable sorting on admin and delete columns
-			//
-			headers: { 
-				5: { 
-					sorter: false 
-				},
-				6: { 
-					sorter: false 
-				}
-			},
-
-			// sort on date column in descending order 
-			//
-			sortList: [[4, 1]] 
-		},
+		// sort by join date column in descending order 
+		//
+		sortBy: ['join-date', 'descending'],
 
 		//
 		// rendering methods
@@ -64,7 +50,6 @@ define([
 				showEmail: this.options.showEmail,
 				showUsername: this.options.showUsername,
 				showDelete: this.options.showDelete,
-				showNumbering: this.options.showNumbering,
 				readOnly: this.options.readOnly
 			};
 		},
@@ -88,7 +73,6 @@ define([
 				showEmail: this.options.showEmail,
 				showUsername: this.options.showUsername,
 				showDelete: this.options.showDelete,
-				showNumbering: this.options.showNumbering,
 				readOnly: this.options.readOnly
 			};
 		}

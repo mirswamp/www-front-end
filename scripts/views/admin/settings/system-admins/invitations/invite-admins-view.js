@@ -12,7 +12,7 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2019 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2020 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 define([
@@ -82,8 +82,10 @@ define([
 
 					// update
 					//
-					self.fetchAndShowAdminInvitations();
-
+					window.setTimeout(function() {
+						self.fetchAndShowAdminInvitations();
+					}, 1000);
+					
 					// show success notification dialog
 					//
 					application.notify({
@@ -96,13 +98,14 @@ define([
 
 					// update
 					//
-					self.fetchAndShowAdminInvitations();
+					window.setTimeout(function() {
+						self.fetchAndShowAdminInvitations();
+					}, 1000);
 					
 					// show notification
 					//
 					application.notify({
-						message: response.responseText
-						// message: "Could not send administrator invitations."
+						message: response.responseText || "Could not send all administrator invitations."
 					});
 				}
 			});
@@ -207,9 +210,7 @@ define([
 
 			// to to admin settings view
 			//
-			Backbone.history.navigate('#settings/admins', {
-				trigger: true
-			});
+			application.navigate('#settings/admins');
 		}
 	});
 });

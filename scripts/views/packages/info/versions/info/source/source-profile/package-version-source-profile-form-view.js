@@ -13,7 +13,7 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2019 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2020 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 define([
@@ -23,7 +23,7 @@ define([
 	'utilities/scripting/file-utils',
 	'models/packages/package',
 	'views/forms/form-view',
-], function($, _, Template, FileUtils, Package, FormView, PackageVersionGemInfoView) {
+], function($, _, Template, FileUtils, Package, FormView) {
 	return FormView.extend({
 
 		//
@@ -57,8 +57,8 @@ define([
 
 		templateContext: function() {
 			return {
-				model: this.model,
-				package: this.options.package
+				isAtomic: this.model.isAtomic(),
+				hasLanguageVersion: this.options.package.hasLanguageVersion()
 			};
 		},
 

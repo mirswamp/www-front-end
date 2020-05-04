@@ -22,7 +22,7 @@
 <div id="details"></div>
 
 <label>
-	<input type="checkbox" id="show-numbering" <% if (showNumbering) { %>checked<% } %>>
+	<input type="checkbox" id="show-numbering" <% if (application.options.showNumbering) { %>checked<% } %>>
 	Show numbering
 </label>
 

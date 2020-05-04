@@ -9,14 +9,14 @@
 <%= contact.support.message %>
 <% } %>
 
-<% if (contact.support.email || config['email_enabled']) { %>
+<% if (contact.support.email || application.config.email_enabled) { %>
 <h2><i class="fa fa-envelope"></i>Email</h2>
 <p>
 <% if (contact.support.email) { %>
 Email us at <a href="mailto:<%= contact.support.email %>"><%= contact.support.email %></a>.
 <% } %>
 
-<% if (config['email_enabled'] && config['contact_form_enabled']) { %>
+<% if (application.config.email_enabled && application.config.contact_form_enabled) { %>
 <% if (contact.support.email) { %>
 You may also fill out and submit the contact form below. 
 <% } else { %>
@@ -44,7 +44,7 @@ Please fill out and submit the contact form below.
 <% } %>
 
 <div class="bottom buttons">
-	<% if (config['email_enabled'] && config['contact_form_enabled']) { %>
+	<% if (application.config.email_enabled && application.config.contact_form_enabled) { %>
 	<button id="submit" class="btn btn-primary btn-lg"><i class="fa fa-envelope"></i>Submit</button>
 	<button id="cancel" class="btn btn-lg"><i class="fa fa-times"></i>Cancel</button>
 	<% } %>

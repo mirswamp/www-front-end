@@ -12,7 +12,7 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2019 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2020 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 define([
@@ -256,7 +256,7 @@ define([
 						// find source code file to display
 						//
 						var bugInstances = data.results.AnalyzerReport.BugInstances;
-						var bugInstance = bugIndex != undefined? bugInstances[bugIndex] : undefined;
+						var bugInstance = bugInstances && bugIndex != undefined? bugInstances[bugIndex] : undefined;
 						var bugLocation = bugInstance? AssessmentResults.getPrimaryBugLocation(bugInstance.BugLocations) : undefined;
 						var filename = params.file? params.file : bugLocation.SourceFile;
 

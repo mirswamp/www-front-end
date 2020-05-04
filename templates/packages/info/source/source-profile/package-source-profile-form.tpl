@@ -1,10 +1,10 @@
 <form action="/" class="form-horizontal" onsubmit="return false;">
 
-	<div class="form-group"<% if (model.isAtomic()) { %> style="display:none"<% } %>>
+	<div class="form-group"<% if (isAtomic) { %> style="display:none"<% } %>>
 		<label class="required control-label">Package path</label>
 		<div class="controls">
 			<div class="input-group">
-				<input type="text" class="form-control" id="package-path" name="package-path" maxlength="1000" class="required" value="<%- model.get('source_path') %>" />
+				<input type="text" class="form-control" id="package-path" name="package-path" maxlength="1000" class="required" value="<%- source_path %>" />
 				<div class="input-group-addon">
 					<i class="active fa fa-question-circle" data-toggle="popover" data-placement="top" data-container="body" title="Package path" data-content="This is the name of the directory / folder within the compressed package file that contains your package source code. "></i>
 				</div>
@@ -15,7 +15,6 @@
 		</div>
 	</div>
 
-	<% var packageType = package.getPackageType() %>
 	<div class="form-group">
 		<label class="required control-label">Language</label>
 		<div class="controls">
@@ -100,12 +99,12 @@
 					<div id="java-version-info" class="nested panel-collapse collapse in">
 						<div class="radio">
 							<label class="radio" id="java7">
-								<input type="radio" name="java-version" value="java7" <% if (!packageType || packageType == 'java7-source-code' || packageType == 'java7-bytecode') { %>checked<% } %> />
+								<input type="radio" name="java-version" value="java7" <% if (packageType == 'java7-source-code' || packageType == 'java7-bytecode') { %>checked<% } %> />
 								Java7
 								<p>The package contains Java code for the Java7 platform.</p>
 							</label>
 							<label class="radio" id="java8">
-								<input type="radio" name="java-version" value="java8" <% if (packageType == 'java8-source-code' || packageType == 'java8-bytecode') { %>checked<% } %> />
+								<input type="radio" name="java-version" value="java8" <% if (!packageType || packageType == 'java8-source-code' || packageType == 'java8-bytecode') { %>checked<% } %> />
 								Java8
 								<p>The package contains Java code for the Java8 platform.</p>
 							</label>
@@ -134,12 +133,12 @@
 				<div id="python-version-info" class="nested panel-collapse collapse in">
 					<div class="radio">
 						<label class="radio" id="python2">
-							<input type="radio" name="python-version" value="python2" <% if (packageType != 'python3') { %>checked<% } %> />
+							<input type="radio" name="python-version" value="python2" <% if (packageType == 'python2') { %>checked<% } %> />
 							Python2
 							<p>The package contains Python source code in its original (2000 - 2008) dialect (version 2.x).</p>
 						</label>
 						<label class="radio" id="python3">
-							<input type="radio" name="python-version" value="python3" <% if (packageType == 'python3') { %>checked<% } %> />
+							<input type="radio" name="python-version" value="python3" <% if (!packageType || packageType == 'python3') { %>checked<% } %> />
 							Python3
 							<p>The package contains Python source code in its most recent (2008 onwards) dialect (3.x).</p>
 						</label>

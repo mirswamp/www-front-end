@@ -13,7 +13,7 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2019 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2020 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 define([
@@ -84,9 +84,7 @@ define([
 
 							// return to package version build info view
 							//
-							Backbone.history.navigate('#packages/versions/' + self.model.get('package_version_uuid') + '/build', {
-								trigger: true
-							});
+							application.navigate('#packages/versions/' + self.model.get('package_version_uuid') + '/build');
 						}
 					});
 				},
@@ -104,13 +102,6 @@ define([
 
 		saveDependencies: function(options) {
 			var self = this;
-			
-			// set dependencies to belong to this package version
-			//
-			var packageVersionUuid = this.model.get('package_version_uuid');
-			this.packageVersionDependencies.each(function(item) { 
-				item.set('package_version_uuid', packageVersionUuid);
-			});
 
 			// save package dependencies
 			// 
@@ -139,8 +130,9 @@ define([
 
 		templateContext: function() {
 			return {
-				model: this.model,
-				package: this.options.package,
+				package_name: this.options.package.get('name'),
+				package_url: this.options.package.getAppUrl(),
+				package_version_url: this.model.getAppUrl(),
 				show_source_files: !this.options.package.isBuildable() && !this.model.isAtomic(),
 				show_build_script: this.model.hasBuildScript() && this.options.package.hasBuildScript()
 			};
@@ -362,9 +354,7 @@ define([
 
 			// go to package versions view
 			//
-			Backbone.history.navigate('#packages/versions/' + this.model.get('package_version_uuid') + '/build', {
-				trigger: true
-			});
+			application.navigate('#packages/versions/' + this.model.get('package_version_uuid') + '/build');
 		}
 	});
 });

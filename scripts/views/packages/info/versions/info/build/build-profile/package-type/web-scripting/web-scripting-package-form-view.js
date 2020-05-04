@@ -13,7 +13,7 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2019 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2020 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 define([
@@ -169,6 +169,10 @@ define([
 					//
 					this.$el.find('#configure-settings').hide();
 					this.$el.find('#build-settings').hide();
+
+					// show  hide fields
+					//
+					this.$el.find('#other-build-command').hide();
 					break;
 
 				case 'npm':
@@ -178,6 +182,10 @@ define([
 					//
 					this.$el.find('#configure-settings').show();
 					this.$el.find('#build-settings').hide();
+
+					// show  hide fields
+					//
+					this.$el.find('#other-build-command').hide();
 					break;
 
 				case 'none':
@@ -187,6 +195,10 @@ define([
 					//
 					this.$el.find('#configure-settings').show();
 					this.$el.find('#build-settings').hide();
+
+					// show  hide fields
+					//
+					this.$el.find('#other-build-command').hide();
 					break;
 
 				case 'other':
@@ -287,7 +299,7 @@ define([
 			// show / hide no build notice
 			//
 			if (buildSystem == 'no-build') {
-				this.options.parent.options.parent.showNotice(this.notices['none']);
+				this.options.parent.options.parent.showNotice(this.notices.none);
 			} else {
 				this.options.parent.options.parent.hideNotice();
 			}

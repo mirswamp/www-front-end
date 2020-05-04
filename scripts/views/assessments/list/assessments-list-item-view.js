@@ -12,7 +12,7 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2019 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2020 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 define([
@@ -49,24 +49,24 @@ define([
 		getQueryString: function() {
 			var data = {};
 
-			data['project'] = this.model.get('project_uuid');
+			data.project = this.model.get('project_uuid');
 
 			if (this.model.has('package_version_uuid')) {
 				data['package-version'] = this.model.get('package_version_uuid');
 			} else if (this.model.has('package_uuid')) {
-				data['package'] = this.model.get('package_uuid');
+				data.package = this.model.get('package_uuid');
 			}
 
 			if (this.model.get('tool_version_uuid')) {
 				data['tool-version'] = this.model.get('tool_version_uuid');
 			} else if (this.model.get('tool_uuid')) {
-				data['tool'] = this.model.get('tool_uuid');
+				data.tool = this.model.get('tool_uuid');
 			}
 
 			if (this.model.get('platform_version_uuid')) {
 				data['platform-version'] = this.model.get('platform_version_uuid');
 			} else if (this.model.get('platform_uuid')) {
-				data['platform'] = this.model.get('platform_uuid');
+				data.platform = this.model.get('platform_uuid');
 			}
 
 			return toQueryString(data);
@@ -120,8 +120,9 @@ define([
 
 		templateContext: function() {
 			return {
-				index: this.options.index,
-				showNumbering: this.options.showNumbering,
+
+				// urls
+				//
 				projectUrl: this.getProjectUrl(),
 				packageUrl: this.getPackageUrl(),
 				packageVersionUrl: this.getPackageVersionUrl(),
@@ -129,6 +130,11 @@ define([
 				toolVersionUrl: this.getToolVersionUrl(),
 				platformUrl: this.getPlatformUrl(),
 				platformVersionUrl: this.getPlatformVersionUrl(),
+
+				// options
+				//
+				showProjects: this.options.showProjects,
+				showDelete: this.options.showDelete
 			};
 		},
 
@@ -145,14 +151,11 @@ define([
 		// event handling methods
 		//
 
-		onClickResults: function() {
-			var queryString = this.getQueryString();
+		onClickResults: function(event) {
 
-			// go to assessment results view
+			// append query string to results link
 			//
-			Backbone.history.navigate('#results' + (queryString != ''? '?' + queryString : ''), {
-				trigger: true
-			});
+			this.$el.find('a').attr('href', '#results?' + this.getQueryString());
 		},
 		
 		onClickDelete: function() {

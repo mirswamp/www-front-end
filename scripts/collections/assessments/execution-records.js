@@ -12,7 +12,7 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2019 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2020 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 define([
@@ -55,6 +55,36 @@ define([
 			var self = this;
 			var successes = 0, failures = 0;
 
+			function killItem(item) {
+				item.kill({
+					hard: options.hard,
+
+					// callbacks
+					//
+					success: function() {
+						successes++;
+
+						// perform callback when complete
+						//
+						if (successes === count) {
+							if (options.success) {
+								options.success();
+							}
+						}
+					},
+
+					error: function() {
+						failures++;
+
+						// report first error
+						//
+						if (failures === 1 && options.error) {
+							options.error();
+						}
+					}
+				});
+			}
+
 			function finish() {
 				if (failures) {
 					if (options && options.error) {
@@ -66,10 +96,10 @@ define([
 					}
 				}
 			}
-
+			
 			// destroy models individually
 			//
-			function kill(item, options) {
+			function killNext(item, options) {
 				item.kill({
 					hard: options? options.hard : false,
 
@@ -77,8 +107,9 @@ define([
 					//
 					success: function() {
 						successes++;
+
 						if (self.length > 0) {
-							kill(self.pop(), options);
+							killNext(self.pop(), options);
 						} else {
 							finish();	
 						}
@@ -86,14 +117,14 @@ define([
 
 					error: function() {
 						failures++;
+
 						if (self.length > 0) {
-							kill(self.pop(), options);
+							killNext(self.pop(), options);
 						} else {
 							finish();
 						}	
 					}
 				});
-					
 			}
 
 			// check for empty 
@@ -115,34 +146,7 @@ define([
 				//	
 				var count = this.length;	
 				for (var i = 0; i < count; i++) {
-					var item = this.pop();
-					item.kill({
-						hard: options.hard,
-
-						// callbacks
-						//
-						success: function() {
-							successes++;
-
-							// perform callback when complete
-							//
-							if (successes === count) {
-								if (options.success) {
-									options.success();
-								}
-							}
-						},
-
-						error: function() {
-							failures++;
-
-							// report first error
-							//
-							if (failures === 1 && options.error) {
-								options.error();
-							}
-						}
-					});
+					killItem(this.pop());
 				}
 			} else {
 
@@ -150,7 +154,7 @@ define([
 				// before proceeding to the next item
 				//
 				if (this.length > 0) {
-					kill(this.pop(), {
+					killNext(this.pop(), {
 						hard: options.hard
 					});
 				}

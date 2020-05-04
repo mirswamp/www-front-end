@@ -12,7 +12,7 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2019 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2020 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 define([
@@ -56,6 +56,36 @@ define([
 		},
 
 		//
+		// querying methods
+		//
+
+		getProjectTitle: function() {
+			var project = this.options.data.project;
+			if (project) {
+				if (project.isTrialProject()) {
+					return 'My Packages';
+				} else {
+					return '<span class="name">' + project.get('full_name') + '</span>' + ' Packages';
+				}
+			} else {
+				return 'Packages';
+			}
+		},
+
+		getTitle: function() {
+			var title = this.getProjectTitle();
+			var type = this.options.data.type;
+
+			// add type info
+			//
+			if (type) {
+				title += ' of ' + '<span class="name">' + type + '</span>';
+			}
+
+			return title;
+		},
+
+		//
 		// query string / filter methods
 		//
 
@@ -81,7 +111,7 @@ define([
 
 		fetchProjectPackages: function(project, done) {
 			var filterData = this.getFilterData();
-			delete filterData['project'];
+			delete filterData.project;
 
 			// fetch packages for a single project
 			//
@@ -110,7 +140,7 @@ define([
 
 		fetchProjectsPackages: function(projects, done) {
 			var filterData = this.getFilterData();
-			delete filterData['project'];
+			delete filterData.project;
 
 			// fetch packages for multiple projects
 			//
@@ -138,16 +168,16 @@ define([
 		},
 
 		fetchPackages: function(done) {
-			if (this.options.data['project']) {
+			if (this.options.data.project) {
 
 				// fetch packages for a single project
 				//
-				this.fetchProjectPackages(this.options.data['project'], done);
-			} else if (this.options.data['projects'] && this.options.data['projects'].length > 0) {
+				this.fetchProjectPackages(this.options.data.project, done);
+			} else if (this.options.data.projects && this.options.data.projects.length > 0) {
 
 				// fetch packages for multiple projects
 				//
-				this.fetchProjectsPackages(this.options.data['projects'], done);
+				this.fetchProjectsPackages(this.options.data.projects, done);
 			} else {
 
 				// fetch packages for trial project
@@ -166,10 +196,10 @@ define([
 
 		templateContext: function() {
 			return {
-				project: this.options.data['project'],
-				packageType: this.options.data['type'],
-				loggedIn: application.session.user != null,
-				showNumbering: application.options.showNumbering
+				title: this.getTitle(),
+				project: this.options.data.project,
+				packageType: this.options.data.type,
+				loggedIn: application.session.user != null
 			};
 		},
 
@@ -218,10 +248,20 @@ define([
 		},
 
 		showList: function() {
+
+			// preserve existing sorting column and order
+			//
+			if (this.hasChildView('list') && this.collection.length > 0) {
+				this.options.sortBy = this.getChildView('list').getSorting();
+			}
+			
 			this.showChildView('list', new PackagesListView({
 				collection: this.collection,
-				showProjects: application.session.user.get('has_projects'),
-				showNumbering: application.options.showNumbering,
+
+				// options
+				//
+				sortBy: this.options.sortBy,
+				showProjects: application.session.user.hasProjects(),
 				showDelete: true,
 			}));
 		},
@@ -239,6 +279,10 @@ define([
 
 		onChange: function() {
 
+			// update title
+			//
+			this.$el.find('#title').html(this.getTitle());
+			
 			// update list
 			//
 			this.fetchAndShowList();
@@ -249,17 +293,18 @@ define([
 		},
 
 		onClickAddNewPackage: function() {
+			var queryString = this.getQueryString();
+			if (!queryString) {
+				queryString = 'project=default';
+			}
 
 			// go to add new package view
 			//
-			Backbone.history.navigate('#packages/add', {
-				trigger: true
-			});
+			application.navigate('#packages/add' + '?' + queryString);
 		},
 
 		onClickShowNumbering: function(event) {
 			application.setShowNumbering($(event.target).is(':checked'));
-			this.showList();
 		}
 	});
 });

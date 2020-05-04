@@ -13,7 +13,7 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2019 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2020 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 define([
@@ -54,12 +54,7 @@ define([
 
 					// update user
 					//
-					if (self.options.parent.collection.length == 1) {
-
-						// update user
-						//
-						application.session.user.set('has_projects', false);
-					}
+					application.session.user.set('num_projects', application.session.user.get('num_projects') - 1);
 				},
 
 				error: function() {
@@ -104,11 +99,9 @@ define([
 
 		templateContext: function() {
 			return {
-				model: this.model,
-				collection: this.collection,
-				index: this.options.index + 1,
+				url: this.model.getAppUrl(),
+				isDeactivated: this.model.isDeactivated(),
 				showDeactivatedProjects: this.options.showDeactivatedProjects,
-				showNumbering: this.options.showNumbering,
 				showDelete: this.options.showDelete && this.model.isOwnedBy(application.session.user) && !this.model.isTrialProject()
 			};
 		},

@@ -1,23 +1,17 @@
-<% if (showNumbering) { %>
-<td class="prepend number">
-	<%- index %>
-</td>
-<% } %>
-
-<td class="prepend select-group">
+<td class="select-group">
 	<div data-toggle="popover" title="Select Group" data-content="Click to select or deselect all items in group." data-placement="top">
 		<input type="checkbox" name="select-group">
 	</div>
 </td>
 
 <% var invalid = (package_name == '?' || (package_version_string == '?') || (tool_name == '?') || (tool_version_string == '?') || (platform_name == '?') || (platform_version_string == '?')); %>
-<td class="prepend select">
+<td class="select">
 	<% if (!invalid || showDelete) { %>
 	<input type="checkbox" name="select" />
 	<% } %>
 </td>
 
-<td class="package first">
+<td class="package">
 	<div class="name">
 		<% if (packageUrl) { %>
 		<a href="<%- packageUrl %>" target="_blank"><%= textToHtml(package_name) %></a>
@@ -86,16 +80,20 @@
 <td class="results last" style="text-align:center;font-weight:normal">
 	<% if (num_execution_records > 0) { %>
 	<div class="active badge-group" data-toggle="tooltip" data-content="Click to view results of assessment runs using this assessment." data-placement="top" data-container="body">
-		<span class="badge"><%- num_execution_records %></span>
+		<a href="#results" target="blank">
+			<span class="badge"><%- num_execution_records %></span>
+		</a>
 	</div>
 	<% } else { %>
 	<div class="active badge-group" data-toggle="tooltip" data-content="Click to view results of assessment runs using this assessment." data-placement="top" data-container="body">
-		<span class="badge badge-important"><%- num_execution_records %></span>
+		<a href="#results" target="_blank">
+			<span class="badge badge-important"><%- num_execution_records %></span>
+		</a>
 	</div>
 	<% } %>
 </td>
 
-<td class="append delete hidden-xs">
+<td class="delete hidden-xs">
 	<% if (showDelete) { %>
 	<button type="button" class="btn btn-sm"><i class="fa fa-times"></i></button>
 	<% } %>

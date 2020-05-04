@@ -10,23 +10,28 @@
 <div class="top buttons" style="margin-bottom:0">
 	<button id="add-new-project" class="btn btn-primary"><i class="fa fa-plus"></i>Add New Project</button>
 </div>
-<br />
 
 <div id="owned-projects">
 	<h2>Projects I Own</h2>
 	<div id="owned-projects-list">
-		<div align="center"><i class="fa fa-spinner fa-spin fa-2x"></i><br/>Loading owned rojects...</div>
+		<div class="loading">
+			<i class="fa fa-spinner fa-spin"></i>
+			<div class="message">Loading owned projects...</div>
+		</div>
 	</div>
 </div>
 
 <div id="joined-projects">
 	<h2>Projects I Joined</h2>
 	<div id="joined-projects-list">
-		<div align="center"><i class="fa fa-spinner fa-spin fa-2x"></i><br/>Loading joined projects...</div>
+		<div class="loading">
+			<i class="fa fa-spinner fa-spin"></i>
+			<div class="message">Loading joined projects...</div>
+		</div>
 	</div>
 </div>
 
 <label>
-	<input type="checkbox" id="show-numbering" <% if (showNumbering) { %>checked<% } %>>
+	<input type="checkbox" id="show-numbering" <% if (application.options.showNumbering) { %>checked<% } %>>
 	Show numbering
 </label>

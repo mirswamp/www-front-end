@@ -1,10 +1,6 @@
 <thead>
 	<tr>
-		<% if (showNumbering) { %>
-		<th class="prepend number"></th>
-		<% } %>
-		
-		<th class="project first">
+		<th class="project">
 			<i class="fa fa-folder-open"></i>
 			<span>Project</span>
 		</th>
@@ -19,11 +15,12 @@
 			<span>Create Date</span>
 		</th>
 
-		<th class="status last">
+		<th class="status">
 			<i class="fa fa-info-circle"></i>
 			<span>Status</span>
 		</th>
 	</tr>
 </thead>
+
 <tbody>
 </tbody>

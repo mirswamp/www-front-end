@@ -38,7 +38,6 @@
 </div>
 
 <div class="bottom buttons">
-	<button id="ok" class="btn btn-primary btn-lg"><i class="fa fa-check"></i>OK</button>
 	<button id="kill" class="btn btn-lg"<% if (!showKillButton) { %> style="display:none"<% } %>><i class="fa fa-times"></i>Kill Assessment Run</button>
 	<button id="delete" class="btn btn-lg"><i class="fa fa-trash"></i>Delete Assessment Run</button>
 </div>

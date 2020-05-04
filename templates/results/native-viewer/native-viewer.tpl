@@ -1,7 +1,7 @@
 <h1>
 	<div class="icon"><i class="fa fa-bug"></i></div>
 	<span id="title">Native Viewer Report</span>
-	<% if (typeof numPages != 'undefined' && numPages > 1) { %>
+	<% if (typeof numPages !== 'undefined' && numPages > 1) { %>
 	(Page <%= pageNumber %> / <%= numPages %>)
 	<% } %>
 </h1>
@@ -117,9 +117,7 @@
 		<a role="tab" data-toggle="tab" href="#tree-panel"><i class="fa fa-tree"></i>Tree</a>
 	</li>
 
-	<div class="top buttons" style="float:right; margin-bottom:-10px">
-		<button id="filter" class="btn btn-primary"><i class="fa fa-filter"></i>Filter</button>
-	</div>
+	<button id="filter" class="btn btn-primary" style="float:right"><i class="fa fa-filter"></i>Filter</button>
 </ul>
 
 <div class="tab-content">
@@ -127,7 +125,7 @@
 		<div id="weakness-list"></div>
 
 		<label>
-			<input type="checkbox" id="show-numbering" <% if (showNumbering) { %>checked<% } %>>
+			<input type="checkbox" id="show-numbering" <% if (application.options.showNumbering) { %>checked<% } %>>
 			Show numbering
 		</label>
 

@@ -1,12 +1,12 @@
 <h1>
 	<div class="icon"><i class="fa fa-play"></i></div>
-	Run New Assessment
+	Add New Assessment
 </h1>
 
 <ol class="breadcrumb">
 	<li><a href="#home"><i class="fa fa-home"></i>Home</a></li>
 	<li><a href="#assessments"><i class="fa fa-check"></i>Assessments</a></li>
-	<li><i class="fa fa-plus"></i>Run New Assessment</li>
+	<li><i class="fa fa-plus"></i>Add New Assessment</li>
 </ol>
 
 <p>To create a new assessment, please specify the following information:</p>

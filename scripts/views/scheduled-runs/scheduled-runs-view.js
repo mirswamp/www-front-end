@@ -13,7 +13,7 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2019 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2020 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 define([
@@ -24,11 +24,12 @@ define([
 	'collections/assessments/assessment-runs',
 	'collections/assessments/execution-records',
 	'collections/assessments/scheduled-runs',
+	'collections/run-requests/run-requests',
 	'views/base-view',
 	'views/scheduled-runs/filters/scheduled-runs-filters-view',
 	'views/scheduled-runs/list/scheduled-runs-list-view',
 	'views/scheduled-runs/lists/scheduled-runs-lists-view'
-], function($, _, Template, Project, AssessmentRuns, ExecutionRecords, ScheduledRuns, BaseView, ScheduledRunsFiltersView, ScheduledRunsListView, ScheduledRunsListsView) {
+], function($, _, Template, Project, AssessmentRuns, ExecutionRecords, ScheduledRuns, RunRequests, BaseView, ScheduledRunsFiltersView, ScheduledRunsListView, ScheduledRunsListsView) {
 	return BaseView.extend({
 
 		//
@@ -44,10 +45,10 @@ define([
 
 		events: {
 			'click #assessments': 'onClickAssessments',
-			'click #results': 'onClickResults',
+			'click #schedules': 'onClickSchedules',
 			'click #add-new-scheduled-runs': 'onClickAddNewScheduledRuns',
 			'click #show-numbering': 'onClickShowNumbering',
-			'click #show-schedules': 'onClickShowSchedules'
+			'click #show-grouping': 'onClickShowGrouping'
 		},
 
 		//
@@ -62,13 +63,13 @@ define([
 		// querying methods
 		//
 
-		getShortTitle: function() {
-			var project = this.options.data['project'];
+		getProjectTitle: function() {
+			var project = this.options.data.project;
 			if (project) {
 				if (project.isTrialProject()) {
 					return 'My Scheduled Runs';
 				} else {
-					return project.get('full_name') + ' Scheduled Runs';
+					return '<span class="name">' + project.get('full_name') + '</span>' + ' Scheduled Runs';
 				}
 			} else {
 				return 'Scheduled Runs';
@@ -76,12 +77,12 @@ define([
 		},
 
 		getTitle: function() {
-			var title = this.getShortTitle();
-			var package = this.options.data['package'];
+			var title = this.getProjectTitle();
+			var package = this.options.data.package;
 			var packageVersion = this.options.data['package-version'];
-			var tool = this.options.data['tool'];
+			var tool = this.options.data.tool;
 			var toolVersion = this.options.data['tool-version'];
-			var platform = this.options.data['platform'];
+			var platform = this.options.data.platform;
 			var platformVersion = this.options.data['platform-version'];
 
 			// add package info
@@ -135,7 +136,7 @@ define([
 
 			// fetch scheduled runs for a project
 			//
-			this.collection.fetchByProject(this.options.data['project'], {
+			this.collection.fetchByProject(this.options.data.project, {
 
 				// attributes
 				//
@@ -187,16 +188,16 @@ define([
 		},
 
 		fetchScheduledRuns: function(done) {
-			if (this.options.data['project']) {
+			if (this.options.data.project) {
 
 				// fetch scheduled runs for a project
 				//
-				this.fetchProjectScheduledRuns(this.options.data['project'], done);
-			} else if (this.options.data['projects'] && this.options.data['projects'].length > 0) {
+				this.fetchProjectScheduledRuns(this.options.data.project, done);
+			} else if (this.options.data.projects && this.options.data.projects.length > 0) {
 
 				// fetch scheduled runs for multiple projects
 				//
-				this.fetchProjectsScheduledRuns(this.options.data['projects'], done);
+				this.fetchProjectsScheduledRuns(this.options.data.projects, done);
 			} else {
 
 				// fetch scheduled runs for trial project
@@ -216,9 +217,8 @@ define([
 		templateContext: function() {
 			return {
 				title: this.getTitle(),
-				shortTitle: this.getShortTitle(),
 				showNavigation: Object.keys(this.options.data).length > 0,
-				showNumbering: application.options.showNumbering
+				showGrouping: application.options.showGrouping
 			};
 		},
 
@@ -270,10 +270,21 @@ define([
 		},
 
 		showList: function() {
+
+			// preserve existing sorting column and order
+			//
+			if (this.getChildView('list') && this.collection.length > 0) {
+				this.options.sortBy = this.getChildView('list').getSorting();
+			}
+
 			this.showChildView('list', new ScheduledRunsListView({
 				collection: this.collection,
-				showProjects: application.session.user.get('has_projects'),
-				showNumbering: application.options.showNumbering,
+
+				// options
+				//
+				sortBy: this.options.sortBy,
+				showProjects: application.session.user.hasProjects(),
+				showGrouping: application.options.showGrouping,
 				showDelete: true,
 				parent: this
 			}));
@@ -281,18 +292,36 @@ define([
 
 		showLists: function() {
 			var self = this;
+
+			// preserve existing sorting column and order
+			//
+			if (this.getChildView('lists') && this.collection.length > 0) {
+				this.options.sortBy = this.getChildView('lists').getSorting();
+			}
+
 			this.showChildView('lists', new ScheduledRunsListsView({
 				collection: this.collection.getRunRequests(),
+
+				// options
+				//
+				sortBy: this.options.sortBy,
 				scheduledRuns: this.collection,
-				showProjects: application.session.user.get('has_projects'),
-				showNumbering: application.options.showNumbering,
+				showProjects: application.session.user.hasProjects(),
+				showGrouping: application.options.showGrouping,
 				showDelete: true,
+				parent: this,
+
+				// callbacks
+				//
 				onDelete: function() {
 					self.fetchAndShowLists();
-				},
-				parent: this
+				}
 			}));
 		},
+
+		//
+		// badge rendering methods
+		//
 
 		addBadge: function(selector, num) {
 			var element = this.$el.find(selector)[0];
@@ -319,21 +348,18 @@ define([
 			}
 		},
 		
-		addBadges: function() {
+		addNumAssessmentsBadge: function() {
 			var self = this;
-
-			// add num assessments badge
-			//
-			if (this.options.data['project']) {
-				AssessmentRuns.fetchNumByProject(this.options.data['project'], {
+			if (this.options.data.project) {
+				AssessmentRuns.fetchNumByProject(this.options.data.project, {
 					data: this.getFilterAttrs(['package', 'tool', 'platform']),
 
 					success: function(number) {
 						self.addBadge("#assessments", number);
 					}
 				});
-			} else if (this.options.data['projects'] && this.options.data['projects'].length > 0) {
-				AssessmentRuns.fetchNumByProjects(this.options.data['projects'], {
+			} else if (this.options.data.projects && this.options.data.projects.length > 0) {
+				AssessmentRuns.fetchNumByProjects(this.options.data.projects, {
 					data: this.getFilterAttrs(['package', 'tool', 'platform']),
 
 					success: function(number) {
@@ -343,28 +369,34 @@ define([
 			} else {
 				this.addBadge("#assessments", 0);
 			}
+		},
 
-			// add num results badge
-			//
-			if (this.options.data['project']) {
-				ExecutionRecords.fetchNumByProject(this.options.data['project'], {
+		addNumSchedulesBadge: function() {
+			var self = this;
+			if (this.options.data.project) {
+				RunRequests.fetchNumSchedulesByProject(this.options.data.project, {
 					data: this.getFilterAttrs(['package', 'tool', 'platform']),
 
 					success: function(number) {
-						self.addBadge("#results", number);
+						self.addBadge("#schedules", number);
 					}
 				});
-			} else if (this.options.data['projects'] && this.options.data['projects'].length > 0) {
-				ExecutionRecords.fetchNumByProjects(this.options.data['projects'], {
+			} else if (this.options.data.projects && this.options.data.projects.length > 0) {
+				RunRequests.fetchNumSchedulesByProjects(this.options.data.projects, {
 					data: this.getFilterAttrs(['package', 'tool', 'platform']),
 
 					success: function(number) {
-						self.addBadge("#results", number);
+						self.addBadge("#schedules", number);
 					}
 				});
 			} else {
 				this.addBadge("#results", 0);
-			}
+			}		
+		},
+
+		addBadges: function() {
+			this.addNumAssessmentsBadge();
+			this.addNumSchedulesBadge();
 		},
 
 		//
@@ -380,10 +412,9 @@ define([
 			this.model = this.options.data.project;
 			this.options.data.projects = projects;
 
-			// update titles
+			// update title
 			//
 			this.$el.find('#title').html(this.getTitle());
-			this.$el.find('#breadcrumb').html(this.getShortTitle());
 
 			// update list
 			//
@@ -395,48 +426,33 @@ define([
 		},
 
 		onClickAssessments: function() {
-			var queryString = this.getQueryString();
 
 			// go to assessments view
 			//
-			Backbone.history.navigate('#assessments' + (queryString != ''? '?' + queryString : ''), {
-				trigger: true
-			});
+			application.navigate('#assessments');
 		},
 
-		onClickResults: function() {
-			var queryString = this.getQueryString();
-			
-			// go to assessment results view
+		onClickSchedules: function() {
+
+			// go to my schedules view
 			//
-			Backbone.history.navigate('#results' + (queryString != ''? '?' + queryString : ''), {
-				trigger: true
-			});
+			application.navigate('#run-requests/schedules');		
 		},
 
 		onClickAddNewScheduledRuns: function() {
-			var queryString = this.getQueryString();
 			
-			// go to my assessments view
+			// go to add run requests view
 			//
-			Backbone.history.navigate('#assessments' + (queryString != ''? '?' + queryString : ''), {
-				trigger: true
-			});
+			application.navigate('#run-requests/add');
 		},
 
 		onClickShowNumbering: function(event) {
 			application.setShowNumbering($(event.target).is(':checked'));
-			this.showLists();
 		},
 
-		onClickShowSchedules: function() {
-			var queryString = this.getQueryString();
-
-			// go to my schedules view
-			//
-			Backbone.history.navigate('#run-requests/schedules' + (queryString != ''? '?' + queryString : ''), {
-				trigger: true
-			});		
+		onClickShowGrouping: function(event) {
+			application.setShowGrouping($(event.target).is(':checked'));
+			this.showLists();
 		}
 	});
 });

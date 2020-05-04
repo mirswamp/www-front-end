@@ -12,7 +12,7 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2019 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2020 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 define([
@@ -47,7 +47,6 @@ define([
 			'click #results': 'onClickResults',
 			'click #runs': 'onClickRuns',
 			'click #reset-filters': 'onClickResetFilters',
-			'click input[name="select"], input.select-all': 'onClickInputSelect',
 			'click #show-numbering': 'onClickShowNumbering',
 			'click #show-grouping': 'onClickShowGrouping',
 			'click #delete': 'onClickDelete',
@@ -70,8 +69,8 @@ define([
 		// querying methods
 		//
 
-		getShortTitle: function() {
-			var project = this.options.data['project'];
+		getProjectTitle: function() {
+			var project = this.options.data.project;
 			if (project) {
 				if (project.isTrialProject()) {
 					return 'My Assessments';
@@ -84,12 +83,12 @@ define([
 		},
 
 		getTitle: function() {
-			var title = this.getShortTitle();
-			var package = this.options.data['package'];
+			var title = this.getProjectTitle();
+			var package = this.options.data.package;
 			var packageVersion = this.options.data['package-version'];
-			var tool = this.options.data['tool'];
+			var tool = this.options.data.tool;
 			var toolVersion = this.options.data['tool-version'];
-			var platform = this.options.data['platform'];
+			var platform = this.options.data.platform;
 			var platformVersion = this.options.data['platform-version'];
 
 			// add package info
@@ -125,6 +124,10 @@ define([
 			return title;
 		},
 
+		hasSelected: function() {
+			return this.$el.find('.select input:checked').length != 0;
+		},
+
 		//
 		// button enabling / disabling methods
 		//
@@ -137,11 +140,11 @@ define([
 			this.$el.find('#delete').prop('disabled', true);
 		},
 
-		configureButtons: function() {
+		updateButtons: function() {
 
 			// enable buttons if one or more checkboxes is checked
 			//
-			if (this.$el.find('input[name="select"]:checked').length != 0) {
+			if (this.hasSelected()) {
 				this.enableButtons();
 			} else {
 				this.disableButtons();
@@ -209,16 +212,16 @@ define([
 		},
 
 		fetchAssessments: function(done) {
-			if (this.options.data['project']) {
+			if (this.options.data.project) {
 
 				// fetch assessments for a single project
 				//
-				this.fetchProjectAssessments(this.options.data['project'], done);
-			} else if (this.options.data['projects'] && this.options.data['projects'].length > 0) {
+				this.fetchProjectAssessments(this.options.data.project, done);
+			} else if (this.options.data.projects && this.options.data.projects.length > 0) {
 
 				// fetch assessments for multiple projects
 				//
-				this.fetchProjectsAssessments(this.options.data['projects'], done);
+				this.fetchProjectsAssessments(this.options.data.projects, done);
 			} else {
 
 				// no project
@@ -257,10 +260,8 @@ define([
 		templateContext: function() {
 			return {
 				title: this.getTitle(),
-				shortTitle: this.getShortTitle(),
 				showNavigation: Object.keys(this.options.data).length > 0,
-				showProjects: application.session.user.get('has_projects'),
-				showNumbering: application.options.showNumbering,
+				showProjects: application.session.user.hasProjects(),
 				showGrouping: application.options.showGrouping
 			};
 		},
@@ -320,16 +321,17 @@ define([
 
 				// enable / disable buttons
 				//
-				self.configureButtons();
+				self.updateButtons();
 			});
 		},
 
 		showList: function() {
+			var self = this;
 
-			// preserve existing sorting order
+			// preserve existing sorting column and order
 			//
 			if (this.hasChildView('list') && this.collection.length > 0) {
-				this.options.sortList = this.getChildView('list').getSortList();
+				this.options.sortBy = this.getChildView('list').getSorting();
 			}
 			
 			// show select assessments list view
@@ -337,12 +339,20 @@ define([
 			this.showChildView('list', new SelectAssessmentsListView({
 				model: this.model,
 				collection: this.collection,
-				sortList: this.options.sortList,
+
+				// options
+				//
+				sortBy: this.options.sortBy,
 				selectedAssessments: this.options.selectedAssessments,
-				showProjects: application.session.user.get('has_projects'),
-				showNumbering: application.options.showNumbering,
+				showProjects: application.session.user.hasProjects(),
 				showGrouping: application.options.showGrouping,
-				showDelete: true
+				showDelete: true,
+
+				// callbacks
+				//
+				onSelect: function() {
+					self.updateButtons();
+				}
 			}));
 		},
 
@@ -352,10 +362,9 @@ define([
 
 		onChange: function() {
 
-			// update titles
+			// update title
 			//
 			this.$el.find('#title').html(this.getTitle());
-			this.$el.find('#breadcrumb').html(this.getShortTitle());
 
 			// update list
 			//
@@ -366,13 +375,8 @@ define([
 			this.getChildView('filters').reset();
 		},
 
-		onClickInputSelect: function() {
-			this.configureButtons();
-		},
-
 		onClickShowNumbering: function(event) {
 			application.setShowNumbering($(event.target).is(':checked'));
-			this.showList();
 		},
 
 		onClickShowGrouping: function(event) {
@@ -435,9 +439,15 @@ define([
 		},
 
 		onClickDone: function() {
-			var selectedAssessments = this.getChildView('list').getSelected();
 			var self = this;
+			var selectedAssessments = this.getChildView('list').getSelected();
 			
+			// preserve existing sorting column and order
+			//
+			if (this.hasChildView('list') && this.collection.length > 0) {
+				this.options.sortBy = this.getChildView('list').getSorting();
+			}
+
 			require([
 				'views/assessments/assessments-view'
 			], function (AssessmentsView) {
@@ -455,8 +465,12 @@ define([
 						// show project assessments view
 						//
 						view.showChildView('content', new AssessmentsView({
-							data: self.options.data,
 							model: view.model,
+							
+							// options
+							//
+							data: self.options.data,
+							sortBy: self.options.sortBy,
 							selectedAssessments: selectedAssessments
 						}));
 					}

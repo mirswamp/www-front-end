@@ -8,7 +8,10 @@
 
 <p>The following SWAMP users have previously been invited to be administrators:</p>
 <div id="admin-invitations-list">
-	<div align="center"><i class="fa fa-spinner fa-spin fa-2x"></i><br/>Loading administrator invitations...</div>
+	<div class="loading">
+		<i class="fa fa-spinner fa-spin"></i>
+		<div class="message">Loading administrator invitations...</div>
+	</div>
 </div>
 <br />
 

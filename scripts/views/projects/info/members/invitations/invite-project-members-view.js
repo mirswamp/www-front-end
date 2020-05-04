@@ -12,7 +12,7 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2019 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2020 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 define([
@@ -77,6 +77,8 @@ define([
 			// check form validation
 			//
 			if (this.getChildView('new_list').isValid()) {
+				this.getChildView('new_list').update();
+
 				if (this.collection.length > 0) {
 					this.collection.send({
 
@@ -106,21 +108,17 @@ define([
 							//
 							var message = "Could not send project invitations";
 							if (response.status != 500 && response.responseText != "") {
-								var errorMessages = JSON.parse(response.responseText);
 
-								if (errorMessages.length > 0) {
-									var errorMessage = errorMessages.join();
-								} else if (typeof errorMessages == 'object') {
-									var errorMessage = errorMessages.error.message;
+								if (response.responseText.startsWith('{')) {
+									var json = JSON.parse(response.responseText);
+									if (json.error) {
+										response.responseText = json.error.message;
+									}
 								}
-
-								// uncapitalize first letter
-								//
-								errorMessage = errorMessage.charAt(0).toLowerCase() + errorMessage.slice(1);
 
 								// add to message
 								//
-								message += " because " + errorMessage;
+								message += " because " + response.responseText;
 							}
 
 							// show notification
@@ -232,10 +230,6 @@ define([
 				'confirm_route': '#projects/' + this.model.get('project_uid') +'/members/invite/confirm',
 				'register_route': '#register'
 			}));
-
-			// update view
-			//
-			this.getChildView('new_list').render();
 		},
 
 		onClickSend: function() {
@@ -255,9 +249,7 @@ define([
 
 			// go to project view
 			//
-			Backbone.history.navigate('#projects/' + this.model.get('project_uid'), {
-				trigger: true
-			});
+			application.navigate('#projects/' + this.model.get('project_uid'));
 		}
 	});
 });

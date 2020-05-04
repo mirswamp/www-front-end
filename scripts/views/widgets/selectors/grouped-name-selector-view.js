@@ -1,6 +1,6 @@
 /******************************************************************************\
 |                                                                              |
-|                            grouped-name-selector-view.js                     |
+|                          grouped-name-selector-view.js                       |
 |                                                                              |
 |******************************************************************************|
 |                                                                              |
@@ -13,7 +13,7 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2019 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2020 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 define([
@@ -53,22 +53,62 @@ define([
 		},
 
 		//
-		// rendering methods
+		// querying methods
 		//
 
-		templateContext: function() {
-			return {
-				selected: this.selected
-			};
+		hasSelected: function() {
+			return this.getSelected() != undefined;
 		},
 
-		onRender: function() {
+		hasEmptyOption: function() {
+			return this.$el.find('option.empty').length != 0;
+		},
 
-			// apply select2 selector
+		getSelected: function() {
+			return this.selected;
+		},
+
+		getSelectedName: function() {
+			return this.el.value;
+		},
+
+		getSelectedIndex: function() {
+			var index = this.el.selectedIndex;
+			if (this.hasEmptyOption()) {
+				index--;
+			}
+			return index;
+		},
+
+		getItemByIndex: function(index) {
+
+			// search collections of names
 			//
-			this.selector = this.$el.select2({
-				dropdownAutoWidth: 'true'
-			});
+			var items = 0;
+			for (var i = 0; i < this.collection.length; i++) {
+				if (!this.collection.at(i).has('group')) {
+
+					// select individual items
+					//
+					if (index === i) {
+						return this.collection.at(i).get('model');
+					} else {
+						items++;
+					}
+				} else {
+					var collectionIndex = i - items;
+
+					// select items in groups
+					//
+					var group = this.collection.at(i).get('group');
+					var offset = index - items;
+					if (offset < group.length) {
+						return group.at(offset);
+					} else {
+						items += group.length;
+					}
+				}
+			}
 		},
 
 		//
@@ -108,54 +148,22 @@ define([
 		},
 
 		//
-		// querying methods
+		// rendering methods
 		//
 
-		hasSelected: function() {
-			return this.getSelected() != undefined;
+		templateContext: function() {			
+			return {
+				selected: this.selected
+			};
 		},
 
-		getSelected: function() {
-			return this.selected;
-		},
+		onRender: function() {
 
-		getSelectedName: function() {
-			return this.el.value;
-		},
-
-		getSelectedIndex: function() {
-			return this.el.selectedIndex;
-		},
-
-		getItemByIndex: function(index) {
-
-			// search collections of names
+			// apply select2 selector
 			//
-			var items = 0;
-			for (var i = 0; i < this.collection.length; i++) {
-				if (!this.collection.at(i).has('group')) {
-
-					// select individual items
-					//
-					if (index === i) {
-						return this.collection.at(i).get('model');
-					} else {
-						items++;
-					}
-				} else {
-					var collectionIndex = i - items;
-
-					// select items in groups
-					//
-					var group = this.collection.at(i).get('group');
-					var offset = index - items;
-					if (offset < group.length) {
-						return group.at(offset);
-					} else {
-						items += group.length;
-					}
-				}
-			}
+			this.selector = this.$el.select2({
+				dropdownAutoWidth: 'true'
+			});
 		},
 
 		//

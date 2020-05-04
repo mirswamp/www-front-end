@@ -1,10 +1,6 @@
 <thead>
-	<tr class="titles">
-		<% if (showNumbering) { %>
-		<th class="prepend number"></th>
-		<% } %>
-
-		<th class="package first">
+	<tr>
+		<th class="package">
 			<i class="fa fa-gift"></i>
 			<span class="hidden-xxs">Package</span>
 		</th>
@@ -26,13 +22,13 @@
 			<span class="hidden-xxs">Type</span>
 		</th>
 		
-		<th class="versions last">
+		<th class="versions">
 			<i class="fa fa-list-ol"></i>
 			<span class="hidden-xxs">Versions</span>
 		</th>
 
 		<% if (showDelete) { %>
-		<th class="append"></th>
+		<th class="delete"></th>
 		<% } %>
 	</tr>
 </thead>

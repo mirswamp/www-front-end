@@ -1,21 +1,21 @@
 <thead>
 	<tr>
-		<th class="name first">
+		<th class="name">
 			Name
 		</th>
 
-		<% if (config['email_enabled']) { %>
-		<th class="email last">
+		<% if (application.config.email_enabled) { %>
+		<th class="email">
 			Email
 		</th>
 		<% } else { %>
-		<th class="username last">
+		<th class="username">
 			Username
 		</th>
 		<% } %>
 
 		<% if (showDelete) { %>
-		<th class="append"></th>
+		<th class="delete"></th>
 		<% } %>
 	</tr>
 </thead>

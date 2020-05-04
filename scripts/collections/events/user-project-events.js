@@ -12,7 +12,7 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2019 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2020 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 define([
@@ -45,24 +45,6 @@ define([
 			return Events.prototype.fetch.call(this, _.extend(options || {}, {
 				url: this.url + '/' + user.get('user_uid') + '/events'
 			}));
-		},	
-
-		//
-		// overridden Backbone methods
-		//
-
-		parse: function(data) {
-			var events = [];
-			for (var i = 0; i < data.length; i++) {
-				var item = data[i];
-				events.push(new UserProjectEvent({
-					'date': Date.parseIso8601(item.event_date),
-					'event_type': data[i].event_type,
-					'user': new User(item.user),
-					'project_uid': item.project_uid
-				}));
-			}
-			return events;
 		}
 	}, {
 
@@ -71,7 +53,7 @@ define([
 		//
 
 		fetchNumByUser: function(project, user, options) {
-			return $.ajax(this.prototype.url + '/' + user.get('user_uid') + '/events/num', {
+			return $.ajax(this.prototype.url + '/' + user.get('user_uid') + '/events', {
 				success: function(data) {
 
 					// count events belonging to specific project

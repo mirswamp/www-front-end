@@ -7,7 +7,7 @@
 
 <p>Below are resources to help you use the SWAMP application. 
 <% if (contact) { %>
-<% if (config['email_enabled']) { %>
+<% if (application.config.email_enabled) { %>
 Please use the <a href="#contact">contact form</a> if you need further assistance. 
 <% } %>
 You may also call <%= contact.support.phoneNumber %> to contact <%= contact.support.description %>.  <%= contact.support.message %> 

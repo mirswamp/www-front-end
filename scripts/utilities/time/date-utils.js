@@ -12,7 +12,7 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2019 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2020 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 define([
@@ -43,7 +43,7 @@ define([
 			date.getTime() - 
 			(new Date()).getTimezoneOffset() * 60 * 1000
 		);
-	}
+	};
 
 	window.localDateToUTCDate = function(date) {
 		if (!date) {
@@ -53,7 +53,7 @@ define([
 		// parse date if necessary
 		//
 		if (typeof date == 'string') {
-			date = Date.parseIso8601(date.replace(/-/g, '/'))
+			date = Date.parseIso8601(date.replace(/-/g, '/'));
 		} else if (date.date) {
 			date = Date.parseIso8601(date.date.replace(/-/g, '/'));
 		}
@@ -62,7 +62,7 @@ define([
 			date.getTime() + 
 			(new Date()).getTimezoneOffset() * 60 * 1000
 		);
-	}
+	};
 
 	window.UTCLocalTimeOfDay = function(timeOfDay) {
 		if (!timeOfDay) {
@@ -85,7 +85,7 @@ define([
 		}
 
 		return time;
-	}
+	};
 
 	window.UTCTimeOfDayToLocalDate = function(timeOfDay) {
 		if (!timeOfDay) {
@@ -98,7 +98,7 @@ define([
 		date.setMinutes(time.minutes);
 		date.setSeconds(time.seconds);
 		return date;
-	}
+	};
 
 	window.UTCToLocalTimeOfDay = function(timeOfDay) {
 		if (!timeOfDay) {
@@ -106,7 +106,7 @@ define([
 		}
 		var time_date = UTCTimeOfDayToLocalDate(timeOfDay);
 		return dateFormat(time_date, "HH:MM");
-	}
+	};
 
 	window.UTCToLocalTimeOfDayMeridian = function(timeOfDay) {
 		if (!timeOfDay) {
@@ -114,7 +114,7 @@ define([
 		}
 		var time_date = UTCTimeOfDayToLocalDate(timeOfDay);
 		return dateFormat(time_date, "h:MM TT");
-	}
+	};
 
 	//
 	// HTML date formatting methods
@@ -141,7 +141,7 @@ define([
 		html += ' ' + timezone;
 		html += '</div>';
 		return html;	
-	}
+	};
 
 	window.datetimeToHTML = function(date) {
 		if (!date) {
@@ -176,7 +176,7 @@ define([
 
 		html += '</div>';	
 		return html;
-	}
+	};
 
 	window.dateToSortableHTML = function(date) {
 		if (!date) {
@@ -195,11 +195,11 @@ define([
 		//
 		var html = '<div class="datetime">';
 		var timezone = Moment.tz(Moment.tz.guess()).format('z');
-		var date = UTCDateToLocalDate(date);
-		html += date? date.format('mm/dd/yyyy HH:MM') : '';
+		var localDate = UTCDateToLocalDate(date);
+		html += localDate? localDate.format('mm/dd/yyyy HH:MM') : '';
 		html += ' ' + timezone;
 		html += '</div>';
 		
 		return html;
-	}
+	};
 });

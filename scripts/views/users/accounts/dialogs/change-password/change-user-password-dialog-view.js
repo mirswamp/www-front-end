@@ -13,7 +13,7 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2019 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2020 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 define([
@@ -66,9 +66,7 @@ define([
 
 							// return to user account view
 							//
-							Backbone.history.navigate('#accounts/' + self.model.get('user_uid'), {
-								trigger: true
-							});
+							application.navigate('#accounts/' + self.model.get('user_uid'));
 						}
 					});
 				},

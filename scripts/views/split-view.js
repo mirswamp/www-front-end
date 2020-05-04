@@ -12,7 +12,7 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2019 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2020 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 define([
@@ -92,17 +92,17 @@ define([
 			//
 			var sum = 0;
 			var num = 0;
-			for (var i = 0; i < sizes.length; i++) {
-				if (sizes[i]) {
-					sum += sizes[i];
+			for (var j = 0; j < sizes.length; j++) {
+				if (sizes[j]) {
+					sum += sizes[j];
 					num++;
 				}
 			}
 			if (sum < 100) {
 				var size = (100 - sum) / (sizes.length - num);
-				for (var i = 0; i < sizes.length; i++) {
-					if (!sizes[i]) {
-						sizes[i] = size;
+				for (var k = 0; k < sizes.length; k++) {
+					if (!sizes[k]) {
+						sizes[k] = size;
 					}
 				}
 			}

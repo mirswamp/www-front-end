@@ -62,11 +62,14 @@
 </div>
 
 <div id="assessment-runs-list">
-	<div align="center"><i class="fa fa-spinner fa-spin fa-2x"></i><br/>Loading assessment results...</div>
+	<div class="loading">
+		<i class="fa fa-spinner fa-spin"></i>
+		<div class="message">Loading assessment results...</div>
+	</div>
 </div>
 
 <label>
-	<input type="checkbox" id="show-numbering" <% if (showNumbering) { %>checked<% } %>>
+	<input type="checkbox" id="show-numbering" <% if (application.options.showNumbering) { %>checked<% } %>>
 	Show numbering
 </label>
 
@@ -78,4 +81,3 @@
 <div class="bottom buttons">
 	<button id="cancel" class="btn btn-lg"><i class="fa fa-times"></i>Cancel</button>
 </div>
-

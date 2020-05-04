@@ -12,7 +12,7 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2019 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2020 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 define([
@@ -125,7 +125,7 @@ define([
 			// add tool data
 			//
 			if (tool && tool != 'any') {
-				data['tool'] = tool;
+				data.tool = tool;
 			}
 
 			// add tool version data

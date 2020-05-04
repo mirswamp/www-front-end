@@ -1,4 +1,4 @@
-<td class="name first">
+<td class="name">
 	<% if (size == 0) { %>
 	<i class="fa fa-folder-open"></i>
 	<% } else { %>
@@ -6,6 +6,6 @@
 	<% } %>
 	<%- name %>
 </td>
-<td class="size last">
+<td class="size">
 	<%- size %>
 </td>

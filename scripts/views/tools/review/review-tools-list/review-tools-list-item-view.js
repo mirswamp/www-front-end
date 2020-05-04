@@ -13,7 +13,7 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2019 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2020 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 define([
@@ -48,12 +48,12 @@ define([
 
 		templateContext: function() {
 			return {
-				model: this.model,
-				collection: this.collection,
-				index: this.options.index + 1,
-				url: application.getURL() + '#tools/' + this.model.get('tool_uuid'),
+				isDeactivated: this.model.isDeactivated(),
+				url: this.model.getAppUrl(),
+								
+				// options
+				//
 				showDeactivatedTools: this.options.showDeactivatedTools,
-				showNumbering: this.options.showNumbering,
 				showDelete: this.options.showDelete
 			};
 		},

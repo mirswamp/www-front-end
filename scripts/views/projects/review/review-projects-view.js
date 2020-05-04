@@ -13,7 +13,7 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2019 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2020 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 define([
@@ -126,8 +126,7 @@ define([
 
 		templateContext: function() {
 			return {
-				showDeactivatedProjects: this.options.showDeactivatedProjects ? true : false,
-				showNumbering: application.options.showNumbering
+				showDeactivatedProjects: this.options.showDeactivatedProjects ? true : false
 			};
 		},
 		
@@ -179,12 +178,21 @@ define([
 		showList: function() {
 			var self = this;
 
+			// preserve existing sorting column and order
+			//
+			if (this.hasChildView('list') && this.collection.length > 0) {
+				this.options.sortBy = this.getChildView('list').getSorting();
+			}
+
 			// show review projects list
 			//
 			this.showChildView('list', new ReviewProjectsListView({
 				collection: this.collection,
+
+				// options
+				//
+				sortBy: this.options.sortBy,
 				showDeactivatedProjects: this.options.showDeactivatedProjects,
-				showNumbering: application.options.showNumbering,
 
 				// callbacks
 				//
@@ -230,9 +238,7 @@ define([
 
 			// return to overview
 			//
-			Backbone.history.navigate('#overview', {
-				trigger: true
-			});
+			application.navigate('#overview');
 		},
 
 		onClickShowDeactivatedProjects: function(event) {
@@ -242,7 +248,6 @@ define([
 
 		onClickShowNumbering: function(event) {
 			application.setShowNumbering($(event.target).is(':checked'));
-			this.showList();
 		}
 	});
 });

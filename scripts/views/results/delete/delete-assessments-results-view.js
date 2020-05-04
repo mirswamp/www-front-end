@@ -13,7 +13,7 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2019 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2020 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 define([
@@ -66,8 +66,8 @@ define([
 		// querying methods
 		//
 
-		getShortTitle: function() {
-			var project = this.options.data['project'];
+		getProjectTitle: function() {
+			var project = this.options.data.project;
 			if (project) {
 				if (project.isTrialProject()) {
 					return 'My Assessment Results';
@@ -80,12 +80,12 @@ define([
 		},
 
 		getTitle: function() {
-			var title = this.getShortTitle();
-			var package = this.options.data['package'];
+			var title = this.getProjectTitle();
+			var package = this.options.data.package;
 			var packageVersion = this.options.data['package-version'];
-			var tool = this.options.data['tool'];
+			var tool = this.options.data.tool;
 			var toolVersion = this.options.data['tool-version'];
-			var platform = this.options.data['platform'];
+			var platform = this.options.data.platform;
 			var platformVersion = this.options.data['platform-version'];
 
 			// add package info
@@ -140,14 +140,18 @@ define([
 
 			// check if a project filter is selected
 			//
-			} else if (this.options.data['project']) {
-				return this.options.data['project'].get('project_uid');
+			} else if (this.options.data.project) {
+				return this.options.data.project.get('project_uid');
 
 			// use default project
 			//
 			} else {
 				return this.model.get('project_uid');
 			}
+		},
+
+		hasSelected: function() {
+			return this.$el.find('.select input:checked').length != 0;
 		},
 
 		//
@@ -227,16 +231,16 @@ define([
 		},
 
 		fetchExecutionRecords: function(done) {
-			if (this.options.data['project']) {
+			if (this.options.data.project) {
 
 				// fetch execution records for a single project
 				//
-				this.fetchProjectExecutionRecords(this.options.data['project'], done);
-			} else if (this.options.data['projects'] && this.options.data['projects'].length > 0) {
+				this.fetchProjectExecutionRecords(this.options.data.project, done);
+			} else if (this.options.data.projects && this.options.data.projects.length > 0) {
 
 				// fetch execution records for multiple projects
 				//
-				this.fetchProjectsExecutionRecords(this.options.data['projects'], done);
+				this.fetchProjectsExecutionRecords(this.options.data.projects, done);
 			} else {
 
 				// fetch execution records for trial project
@@ -256,17 +260,19 @@ define([
 		templateContext: function() {
 			return {
 				title: this.getTitle(),
-				shortTitle: this.getShortTitle(),
 				showNavigation: Object.keys(this.options.data).length > 0,
 				viewers: this.options.viewers,
-				showProjects: application.session.user.get('has_projects'),
-				showNumbering: application.options.showNumbering,
+
+				// options
+				//
+				showProjects: application.session.user.hasProjects(),
 				showGrouping: application.options.showGrouping,
 				autoRefresh: application.options.autoRefresh
 			};
 		},
 
 		onRender: function() {
+			var self = this;
 
 			// show assessments results filters
 			//
@@ -274,7 +280,12 @@ define([
 
 			// show assessments runs list and schedule refresh
 			//
-			this.fetchAndShowList();
+			this.fetchAndShowList(function() {
+
+				// set initial state of buttons
+				//
+				self.updateDeleteButton();			
+			});
 		},
 
 		showFilters: function() {
@@ -331,12 +342,13 @@ define([
 		},
 
 		showList: function() {
+			var self = this;
 			var selected = this.getSelected();
 
-			// preserve existing sorting order
+			// preserve existing sorting column and order
 			//
 			if (this.getChildView('list') && this.collection.length > 0) {
-				this.options.sortList = this.getChildView('list').getSortList();
+				this.options.sortBy = this.getChildView('list').getSorting();
 			}
 			
 			// show assessment runs list view
@@ -344,22 +356,41 @@ define([
 			this.showChildView('list', new SelectAssessmentRunsListView({
 				model: this.model,
 				collection: this.collection,
+
+				// options
+				//
+				sortBy: this.options.sortBy,
 				viewer: this.options.viewer,
 				viewers: this.options.viewers,
 				selectedExecutionRecords: this.options.selectedExecutionRecords,
 				errorViewer: this.options.viewers.getNative(),
 				selected: selected,
-				sortList: this.options.sortList,
 				queryString: this.getQueryString(),
 				editable: true,
-				showProjects: application.session.user.get('has_projects'),
-				showNumbering: application.options.showNumbering,
+				showProjects: application.session.user.hasProjects(),
 				showGrouping: application.options.showGrouping,
 				showStatus: true,
 				showErrors: true,
 				showDelete: true,
-				showSsh: true
+				showSsh: true,
+
+				// callbacks
+				//
+				onSelect: function() {
+					self.updateDeleteButton();
+				}
 			}));
+		},
+
+		updateDeleteButton: function() {
+
+			// enable delete buttons if one or more checkboxes is checked
+			//
+			if (this.hasSelected()) {
+				this.$el.find('#delete').prop('disabled', false);
+			} else {
+				this.$el.find('#delete').prop('disabled', true);
+			}
 		},
 
 		//
@@ -368,10 +399,9 @@ define([
 
 		onChange: function() {
 
-			// update titles
+			// update title
 			//
 			this.$el.find('#title').html(this.getTitle());
-			this.$el.find('#breadcrumb').html(this.getShortTitle());
 
 			// update list
 			//
@@ -384,7 +414,6 @@ define([
 
 		onClickShowNumbering: function(event) {
 			application.setShowNumbering($(event.target).is(':checked'));
-			this.showList();
 		},
 
 		onClickShowGrouping: function(event) {
@@ -397,11 +426,12 @@ define([
 			var selectedExecutionRecords = this.getChildView('list').getSelected();
 
 			if (selectedExecutionRecords.length > 0) {
+				var message;
 
 				if (selectedExecutionRecords.length > 1) {
-					var message = "Are you sure that you would like to delete these " + selectedExecutionRecords.length + " assessment results?";
+					message = "Are you sure that you would like to delete these " + selectedExecutionRecords.length + " assessment results?";
 				} else {
-					var message = "Are you sure that you would like to delete this assessment result?";
+					message = "Are you sure that you would like to delete this assessment result?";
 				}
 
 				// show confirmation
@@ -446,9 +476,15 @@ define([
 		},
 
 		onClickDone: function() {
-			var selectedExecutionRecords = this.getSelected();
 			var self = this;
+			var selectedExecutionRecords = this.getSelected();
 			
+			// preserve existing sorting column and order
+			//
+			if (this.getChildView('list') && this.collection.length > 0) {
+				this.options.sortBy = this.getChildView('list').getSorting();
+			}
+
 			require([
 				'views/results/assessments-results-view'
 			], function (AssessmentsResultsView) {
@@ -466,8 +502,12 @@ define([
 						// show assessments results view
 						//
 						view.showChildView('content', new AssessmentsResultsView({
-							data: self.options.data,
 							model: view.model,
+
+							// options
+							//
+							sortBy: self.options.sortBy,
+							data: self.options.data,
 							viewers: self.options.viewers,
 							selectedExecutionRecords: selectedExecutionRecords
 						}));

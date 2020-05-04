@@ -1,7 +1,10 @@
 <p>The following domains are not permitted for user account email verification.</p>
 
 <div id="restricted-domains-list">
-	<div align="center"><i class="fa fa-spinner fa-spin fa-2x"></i><br/>Loading restricted domains...</div>
+	<div class="loading-spinner">
+		<i class="fa fa-spinner fa-spin"></i>
+		<div class="message">Loading restricted domains...</div>
+	</div>
 </div>
 
 <div class="bottom buttons">

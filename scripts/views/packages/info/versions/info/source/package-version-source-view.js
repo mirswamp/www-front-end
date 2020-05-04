@@ -13,7 +13,7 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2019 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2020 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 define([
@@ -51,8 +51,8 @@ define([
 
 		templateContext: function() {
 			return {
-				model: this.model,
-				package: this.options.package,
+				isGem: _.contains(['ruby', 'sinatra', 'rails', 'padrino'], this.options.package.getPackageType()),
+				isWheel: this.model.getFilename().endsWith('.whl'),
 				showNavigation: this.options.showNavigation
 			};
 		},
@@ -94,7 +94,7 @@ define([
 
 				// show package version gem info dialog
 				//
-				application.show(new PackageVersionGemInfoView({
+				application.show(new PackageVersionGemInfoDialogView({
 					model: self.model,
 					packagePath: self.model.get('source_path')
 				}), {
@@ -130,27 +130,21 @@ define([
 
 			// go to package version view
 			//
-			Backbone.history.navigate('#packages/versions/' + this.model.get('package_version_uuid'), {
-				trigger: true
-			});
+			application.navigate('#packages/versions/' + this.model.get('package_version_uuid'));
 		},
 
 		onClickNext: function() {
 
 			// go to package version build view
 			//
-			Backbone.history.navigate('#packages/versions/' + this.model.get('package_version_uuid') + '/build', {
-				trigger: true
-			});
+			application.navigate('#packages/versions/' + this.model.get('package_version_uuid') + '/build');
 		},
 
 		onClickCancel: function() {
 
 			// go to package view
 			//
-			Backbone.history.navigate('#packages/' + this.options.package.get('package_uuid'), {
-				trigger: true
-			});
+			application.navigate('#packages/' + this.options.package.get('package_uuid'));
 		}
 	});
 });

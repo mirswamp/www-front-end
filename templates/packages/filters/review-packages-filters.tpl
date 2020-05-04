@@ -1,5 +1,6 @@
 <div class="filters panel-group" id="filters-accordion">
 	<div class="panel">
+
 		<div class="panel-heading">
 			<label>
 				<i class="fa fa-filter" ></i>
@@ -8,6 +9,7 @@
 			<span id="filter-controls"></span>
 			<span class="tag" id="reset-filters"><i class="fa fa-remove"></i></span>
 		</div>
+
 		<div id="filters-info" class="nested panel-collapse collapse in">
 			<div class="filters panel-group">
 				<div id="package-type-filter" class="accordion-body <% if (typeof expanded !== 'undefined' && expanded['type-filter']) { %>in <% } %>collapse" />
@@ -17,4 +19,3 @@
 		</div>
 	</div>
 </div>
-

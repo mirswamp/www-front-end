@@ -12,7 +12,7 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2019 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2020 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 define([
@@ -39,6 +39,7 @@ define([
 			'click #accounts': 'onClickAccounts',
 			'click #passwords': 'onClickPasswords',
 			'click #classes': 'onClickClasses',
+			'click #events': 'onClickEvents',
 			"click #edit": "onClickEdit",
 			'click #change-password': 'onClickChangePassword',
 			'click #reset-password': 'onClickResetPassword',
@@ -51,8 +52,7 @@ define([
 
 		templateContext: function() {
 			return {
-				model: this.model,
-				config: application.config
+				name: this.model.getFullName()
 			};
 		},
 
@@ -81,6 +81,10 @@ define([
 				case 'classes':
 					this.$el.find('.nav li').removeClass('active');
 					this.$el.find('.nav li#classes').addClass('active');
+					break;
+				case 'events':
+					this.$el.find('.nav li').removeClass('active');
+					this.$el.find('.nav li#events').addClass('active');
 					break;	
 				default:
 					this.$el.find('.nav li').removeClass('active');
@@ -109,6 +113,9 @@ define([
 				case 'classes':
 					this.showUserClasses();
 					break;
+				case 'events':
+					this.showUserEvents();
+					break;
 				default:
 					this.showUserProfile();
 					break;
@@ -118,7 +125,7 @@ define([
 		showUserProfile: function() {
 			var self = this;
 			require([
-				'views/users/user-profile/user-profile-view'
+				'views/users/accounts/user-profile/user-profile-view'
 			], function (UserProfileView) {
 				self.showChildView('profile', new UserProfileView({
 					model: self.model,
@@ -142,7 +149,7 @@ define([
 		showUserPermissions: function() {
 			var self = this;
 			require([
-				'views/users/permissions/user-permissions-view'
+				'views/users/accounts/permissions/user-permissions-view'
 			], function (UserPermissionsView) {
 				self.showChildView('profile', new UserPermissionsView({
 					model: self.model,
@@ -154,7 +161,7 @@ define([
 		showUserLinkedAccounts: function() {
 			var self = this;
 			require([
-				'views/users/linked-accounts/user-linked-accounts-view',
+				'views/users/accounts/linked-accounts/user-linked-accounts-view',
 			], function (UserLinkedAccountsView) {
 				self.showChildView('profile', new UserLinkedAccountsView({
 					model: self.model,
@@ -166,7 +173,7 @@ define([
 		showUserPasswords: function() {
 			var self = this;
 			require([
-				'views/users/passwords/user-passwords-view',
+				'views/users/accounts/passwords/user-passwords-view',
 			], function (UserPasswordsView) {
 				self.showChildView('profile', new UserPasswordsView({
 					model: self.model,
@@ -178,10 +185,23 @@ define([
 		showUserClasses: function() {
 			var self = this;
 			require([
-				'views/users/classes/user-classes-view',
+				'views/users/accounts/classes/user-classes-view',
 			], function (UserClassesView) {
 				self.showChildView('profile', new UserClassesView({
 					model: self.model,
+					parent: self
+				}));
+			});
+		},
+
+		showUserEvents: function() {
+			var self = this;
+			require([
+				'views/users/accounts/events/user-events-view',
+			], function (UserEventsView) {
+				self.showChildView('profile', new UserEventsView({
+					model: self.model,
+					data: self.options.data,
 					parent: self
 				}));
 			});
@@ -192,39 +212,31 @@ define([
 		//
 		
 		onClickProfile: function() {
-			Backbone.history.navigate('#accounts/' + this.model.get('user_uid'), {
-				trigger: true
-			});
+			application.navigate('#accounts/' + this.model.get('user_uid'));
 		},
 
 		onClickPermissions: function() {
-			Backbone.history.navigate('#accounts/' + this.model.get('user_uid') + '/permissions', {
-				trigger: true
-			});
+			application.navigate('#accounts/' + this.model.get('user_uid') + '/permissions');
 		},
 
 		onClickAccounts: function() {
-			Backbone.history.navigate('#accounts/' + this.model.get('user_uid') + '/accounts', {
-				trigger: true
-			});
+			application.navigate('#accounts/' + this.model.get('user_uid') + '/accounts');
 		},
 
 		onClickPasswords: function() {
-			Backbone.history.navigate('#accounts/' + this.model.get('user_uid') + '/passwords', {
-				trigger: true
-			});
+			application.navigate('#accounts/' + this.model.get('user_uid') + '/passwords');
 		},
 
 		onClickClasses: function() {
-			Backbone.history.navigate('#accounts/' + this.model.get('user_uid') + '/classes', {
-				trigger: true
-			});
+			application.navigate('#accounts/' + this.model.get('user_uid') + '/classes');
+		},
+
+		onClickEvents: function() {
+			application.navigate('#accounts/' + this.model.get('user_uid') + '/events');
 		},
 
 		onClickEdit: function() {
-			Backbone.history.navigate('#accounts/' + this.model.get('user_uid') + '/edit', {
-				trigger: true
-			});
+			application.navigate('#accounts/' + this.model.get('user_uid') + '/edit');
 		},
 
 		onClickChangePassword: function() {
@@ -292,9 +304,7 @@ define([
 
 									// return to review accounts view
 									//
-									Backbone.history.navigate('#accounts/review', {
-										trigger: true
-									});
+									application.navigate('#accounts/review');
 								}
 							});
 						},
@@ -313,9 +323,7 @@ define([
 		},
 
 		onClickCancel: function() {
-			Backbone.history.navigate('#accounts/review', {
-				trigger: true
-			});
+			application.navigate('#accounts/review');
 		}
 	});
 });

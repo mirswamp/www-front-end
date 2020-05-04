@@ -1,11 +1,3 @@
-<h1><div class="icon"><i class="fa fa-flag"></i></div>Acceptable Use Policy</h1>
-
-<ol class="breadcrumb">
-	<li><a href="#home"><i class="fa fa-home"></i>Home</a></li>
-	<li><a href="#policies"><i class="fa fa-gavel"></i>Policies</a></li>
-	<li><i class="fa fa-flag"></i>Acceptable Use Policy</li>
-</ol>
-
 <p>Before you can register to use the SWAMP, you must first agree to the following terms and conditions:</p>
 
 <h2>1.0 Overview</h2>

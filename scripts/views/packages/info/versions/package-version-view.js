@@ -12,7 +12,7 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2019 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2020 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 define([
@@ -55,7 +55,8 @@ define([
 		templateContext: function() {
 			return {
 				nav: this.options.nav,
-				package: this.options.package,
+				is_owned: this.options.package.isOwned(),
+				url: this.options.package.getAppUrl(),
 				name: this.options.package.get('name')
 			};
 		},
@@ -91,6 +92,10 @@ define([
 			});
 		},
 
+		//
+		// badge rendering methods
+		//
+
 		addBadge: function(selector, num) {
 			if (num > 0) {
 				this.$el.find(selector).append('<span class="badge">' + num + '</span>');
@@ -99,11 +104,8 @@ define([
 			}
 		},
 
-		addBadges: function(projects) {
+		addNumAssessmentsBadge: function(projects) {
 			var self = this;
-
-			// add num assessments badge
-			//
 			if (projects.length > 0) {
 				AssessmentRuns.fetchNumByProjects(projects, {
 					data: {
@@ -116,9 +118,10 @@ define([
 			} else {
 				this.addBadge("#assessments", 0);
 			}
+		},
 
-			// add num results badge
-			//
+		addNumResultsBadge: function(projects) {
+			var self = this;
 			if (projects.length > 0) {
 				ExecutionRecords.fetchNumByProjects(projects, {
 					data: {
@@ -131,9 +134,10 @@ define([
 			} else {
 				this.addBadge("#results", 0);
 			}
+		},
 
-			// add num scheduled runs badge
-			//
+		addNumRunsBadge: function(projects) {
+			var self = this;
 			if (projects.length > 0) {
 				ScheduledRuns.fetchNumByProjects(projects, {
 					data: {
@@ -145,7 +149,13 @@ define([
 				});
 			} else {
 				this.addBadge("#runs", 0);
-			}
+			}			
+		},
+
+		addBadges: function(projects) {
+			this.addNumAssessmentsBadge(projects);
+			this.addNumResultsBadge(projects);
+			this.addNumRunsBadge(projects);
 		},
 
 		//
@@ -156,72 +166,56 @@ define([
 
 			// go to assessments view
 			//
-			Backbone.history.navigate('#assessments?package-version=' + this.model.get('package_version_uuid'), {
-				trigger: true
-			});
+			application.navigate('#assessments?package-version=' + this.model.get('package_version_uuid'));
 		},
 
 		onClickResults: function() {
 
 			// go to assessment results view
 			//
-			Backbone.history.navigate('#results?package-version=' + this.model.get('package_version_uuid'), {
-				trigger: true
-			});
+			application.navigate('#results?package-version=' + this.model.get('package_version_uuid'));
 		},
 
 		onClickRuns: function() {
 
 			// go to run requests view
 			//
-			Backbone.history.navigate('#run-requests?package-version=' + this.model.get('package_version_uuid'), {
-				trigger: true
-			});
+			application.navigate('#run-requests?package-version=' + this.model.get('package_version_uuid'));
 		},
 
 		onClickDetails: function() {
 
 			// go to package version details view / tab
 			//
-			Backbone.history.navigate('#packages/versions/' + this.model.get('package_version_uuid'), {
-				trigger: true
-			});
+			application.navigate('#packages/versions/' + this.model.get('package_version_uuid'));
 		},
 
 		onClickSource: function() {
 
 			// go to package version source view / tab
 			//
-			Backbone.history.navigate('#packages/versions/' + this.model.get('package_version_uuid') + '/source', {
-				trigger: true
-			});
+			application.navigate('#packages/versions/' + this.model.get('package_version_uuid') + '/source');
 		},
 
 		onClickBuild: function() {
 
 			// go to package version build view / tab
 			//
-			Backbone.history.navigate('#packages/versions/' + this.model.get('package_version_uuid') + '/build', {
-				trigger: true
-			});
+			application.navigate('#packages/versions/' + this.model.get('package_version_uuid') + '/build');
 		},
 
 		onClickCompatibility: function() {
 
 			// go to package version compatibility view / tab
 			//
-			Backbone.history.navigate('#packages/versions/' + this.model.get('package_version_uuid') + '/compatibility', {
-				trigger: true
-			});	
+			application.navigate('#packages/versions/' + this.model.get('package_version_uuid') + '/compatibility');	
 		},
 
 		onClickSharing: function() {
 
 			// go to package version sharing view / tab
 			//
-			Backbone.history.navigate('#packages/versions/' + this.model.get('package_version_uuid') + '/sharing', {
-				trigger: true
-			});
+			application.navigate('#packages/versions/' + this.model.get('package_version_uuid') + '/sharing');
 		}
 	});
 });

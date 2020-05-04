@@ -12,7 +12,7 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2019 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2020 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 define([
@@ -40,28 +40,28 @@ define([
 
 			// create project from query string data
 			//
-			if (data['project'] == 'default') {
+			if (data.project == 'default') {
 
 				// use the default 'trial' project
 				//
-				data['project']	= project;	
-			} else if (data['project'] == 'any' || !data['project']) {
+				data.project	= project;	
+			} else if (data.project == 'any' || !data.project) {
 
 				// use all projects
 				//
-				data['project'] = undefined;
+				data.project = undefined;
 			} else {
 
 				// use a particular specified project
 				//
-				data['project'] = new Project({
-					project_uid: data['project']
+				data.project = new Project({
+					project_uid: data.project
 				});
 			}
 
 			// fetch data for all projects
 			//
-			data['projects'] = new Projects();
+			data.projects = new Projects();
 
 			return data;
 		},
@@ -70,9 +70,9 @@ define([
 
 			// create models from query string data
 			//
-			if (data['package']) {
-				data['package'] = new Package({
-					package_uuid: data['package']
+			if (data.package) {
+				data.package = new Package({
+					package_uuid: data.package
 				});
 			}
 			if (data['package-version'] && data['package-version'] != 'latest') {
@@ -80,9 +80,9 @@ define([
 					package_version_uuid: data['package-version']
 				});
 			}
-			if (data['tool']) {
-				data['tool'] = new Tool({
-					tool_uuid: data['tool']
+			if (data.tool) {
+				data.tool = new Tool({
+					tool_uuid: data.tool
 				});
 			}
 			if (data['tool-version'] && data['tool-version'] != 'latest') {
@@ -90,9 +90,9 @@ define([
 					tool_version_uuid: data['tool-version']
 				});
 			}
-			if (data['platform']) {
-				data['platform'] = new Platform({
-					platform_uuid: data['platform']
+			if (data.platform) {
+				data.platform = new Platform({
+					platform_uuid: data.platform
 				});
 			}
 			if (data['platform-version'] && data['platform-version'] != 'latest') {
@@ -103,11 +103,11 @@ define([
 
 			// parse limit
 			//
-			if (data['limit']) {
-				if (data['limit'] != 'none') {
-					data['limit'] = parseInt(data['limit']);
+			if (data.limit) {
+				if (data.limit != 'none') {
+					data.limit = parseInt(data.limit);
 				} else {
-					data['limit'] = null;
+					data.limit = null;
 				}
 			}
 
@@ -119,17 +119,17 @@ define([
 			// create models from version data
 			//
 			if (data['package-version'] && data['package-version'] != 'latest') {
-				data['package'] = new Package({
+				data.package = new Package({
 					package_uuid: data['package-version'].get('package_uuid')
 				});
 			}
 			if (data['tool-version'] && data['tool-version'] != 'latest') {
-				data['tool'] = new Tool({
+				data.tool = new Tool({
 					tool_uuid: data['tool-version'].get('tool_uuid')
 				});
 			}
 			if (data['platform-version'] && data['platform-version'] != 'latest') {
-				data['platform'] = new Platform({
+				data.platform = new Platform({
 					platform_uuid: data['platform-version'].get('platform_uuid')
 				});
 			}
@@ -161,13 +161,13 @@ define([
 			// fetch models
 			//
 			$.when(
-				data['project']? data['project'].fetch() : null,
-				data['projects']? data['projects'].fetch() : null,
-				data['package']? data['package'].fetch() : null,
+				data.project? data.project.fetch() : null,
+				data.projects? data.projects.fetch() : null,
+				data.package? data.package.fetch() : null,
 				data['package-version'] && data['package-version'] != 'latest'? data['package-version'].fetch() : null,
-				data['tool']? data['tool'].fetch() : null,
+				data.tool? data.tool.fetch() : null,
 				data['tool-version'] && data['tool-version'] != 'latest'? data['tool-version'].fetch() : null,
-				data['platform']? data['platform'].fetch() : null,
+				data.platform? data.platform.fetch() : null,
 				data['platform-version'] && data['platform-version'] != 'latest'? data['platform-version'].fetch() : null
 			).done(function(project, projects, package, packageVersion, tool, toolVersion, platform, platformVersion) {
 				self.createVersions(data);
@@ -175,9 +175,9 @@ define([
 				// fetch models
 				//
 				$.when(
-					data['package-version'] && data['package-version'] != 'latest'? data['package'].fetch() : null,
-					data['tool-version'] && data['tool-version'] != 'latest'? data['tool'].fetch() : null,
-					data['platform-version'] && data['platform-version'] != 'latest'? data['platform'].fetch() : null
+					data['package-version'] && data['package-version'] != 'latest'? data.package.fetch() : null,
+					data['tool-version'] && data['tool-version'] != 'latest'? data.tool.fetch() : null,
+					data['platform-version'] && data['platform-version'] != 'latest'? data.platform.fetch() : null
 				).done(function(packageVersion, toolVersion, platformVersion) {
 
 					// perform callback
@@ -202,9 +202,9 @@ define([
 					// fetch models
 					//
 					$.when(
-						data['package-version'] && data['package-version'] != 'latest'? data['package'].fetch() : null,
-						data['tool-version'] && data['tool-version'] != 'latest'? data['tool'].fetch() : null,
-						data['platform-version'] && data['platform-version'] != 'latest'? data['platform'].fetch() : null
+						data['package-version'] && data['package-version'] != 'latest'? data.package.fetch() : null,
+						data['tool-version'] && data['tool-version'] != 'latest'? data.tool.fetch() : null,
+						data['platform-version'] && data['platform-version'] != 'latest'? data.platform.fetch() : null
 					).done(function(packageVersion, toolVersion, platformVersion) {
 
 						// perform callback

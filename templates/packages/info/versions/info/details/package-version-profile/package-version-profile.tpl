@@ -15,7 +15,7 @@
 	</div>
 	<% } %>
 
-	<% if (typeof checkout_argument != 'undefined') { %>
+	<% if (typeof checkout_argument !== 'undefined') { %>
 	<div class="form-group">
 		<label class="form-label">Checkout argument</label>
 		<div class="controls"><%- checkout_argument %></div>
@@ -30,31 +30,29 @@
 	<fieldset>
 		<legend>Dates</legend>
 
-		<% if (model.hasCreateDate()) { %>
 		<div class="form-group">
 			<label class="form-label">Creation date</label>
-			<div class="controls"><%= datetimeToHTML(model.getCreateDate()) %></div>
+			<div class="controls"><%= datetimeToHTML(create_date) %></div>
 		</div>
-		<% } %>
 
-		<% if (model.hasUpdateDate()) { %>
+		<% if (typeof update_date !== 'undefined') { %>
 		<div class="form-group">
 			<label class="form-label">Last modified date</label>
-			<div class="controls"><%= datetimeToHTML(model.getUpdateDate()) %></div>
+			<div class="controls"><%= datetimeToHTML(update_date) %></div>
 		</div>
 		<% } %>
 
-		<% if (model.has('release_date')) { %>
+		<% if (typeof release_date !== 'undefined') { %>
 		<div class="form-group">
 			<label class="form-label">Release date</label>
-			<div class="controls"><%= datetimeToHTML(model.get('release_date')) %></div>
+			<div class="controls"><%= datetimeToHTML(release_date) %></div>
 		</div>
 		<% } %>
 
-		<% if (model.has('retire_date')) { %>
+		<% if (typeof retire_date !== 'undefined') { %>
 		<div class="form-group">
 			<label class="form-label">Retire date</label>
-			<div class="controls"><%= datetimeToHTML(model.get('retire_date')) %></div>
+			<div class="controls"><%= datetimeToHTML(retire_date) %></div>
 		</div>
 		<% } %>
 	</fieldset>

@@ -11,16 +11,22 @@
 <h2>Open tools</h2>
 <p>These tools are free for anyone to use without restrictions.</p>
 <div id="open-tools-list">
-	<div align="center"><i class="fa fa-spinner fa-spin fa-2x"></i><br/>Loading public tools...</div>
+	<div class="loading">
+		<i class="fa fa-spinner fa-spin"></i>
+		<div class="message">Loading public tools...</div>
+	</div>
 </div>
 
 <h2>Commercial tools</h2>
 <p>These tools may be used with permission. Request access on the Permissions tab of your user account.</p>
 <div id="commercial-tools-list">
-	<div align="center"><i class="fa fa-spinner fa-spin fa-2x"></i><br/>Loading protected tools...</div>
+	<div class="loading">
+		<i class="fa fa-spinner fa-spin"></i>
+		<div class="message">Loading protected tools...</div>
+	</div>
 </div>
 
 <label>
-	<input type="checkbox" id="show-numbering" <% if (showNumbering) { %>checked<% } %>>
+	<input type="checkbox" id="show-numbering" <% if (application.options.showNumbering) { %>checked<% } %>>
 	Show numbering
 </label>

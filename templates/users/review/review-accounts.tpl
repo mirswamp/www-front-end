@@ -9,11 +9,6 @@
 <div id="user-filters"></div>
 <br />
 
-<div class="pull-right">
-	<span class="required"></span>
-	Limit filter includes disabled accounts.
-</div>
-
 <label>
 	<input type="checkbox" id="show-signed-in-accounts" <%- showSignedInAccounts ? 'checked="checked"' : '' %>>
 	Show signed in accounts
@@ -24,12 +19,20 @@
 	Show disabled accounts
 </label>
 
+<label>
+	<input type="checkbox" id="show-stats" <%- showStats ? 'checked="checked"' : '' %>>
+	Show stats
+</label>
+
 <div id="review-accounts-list">
-	<div align="center"><i class="fa fa-spinner fa-spin fa-2x"></i><br/>Loading user accounts...</div>
+	<div class="loading">
+		<i class="fa fa-spinner fa-spin"></i>
+		<div class="message">Loading user accounts...</div>
+	</div>
 </div>
 
 <label>
-	<input type="checkbox" id="show-numbering" <% if (showNumbering) { %>checked<% } %>>
+	<input type="checkbox" id="show-numbering" <% if (application.options.showNumbering) { %>checked<% } %>>
 	Show numbering
 </label>
 

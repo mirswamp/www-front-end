@@ -12,7 +12,7 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2019 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2020 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 define([
@@ -81,7 +81,7 @@ define([
 		//
 
 		fetchExecutionRecords: function(done) {
-			this.collection.fetchAll({
+			this.request = this.collection.fetchAll({
 
 				// attributes
 				//
@@ -126,17 +126,16 @@ define([
 
 		templateContext: function() {
 			return {
-				project: this.options.data['project'],
-				package: this.options.data['package'],
+				project: this.options.data.project,
+				package: this.options.data.package,
 				packageVersion: this.options.data['package-version'],
-				tool: this.options.data['tool'],
+				tool: this.options.data.tool,
 				toolVersion: this.options.data['tool-version'],
-				platform: this.options.data['platform'],
+				platform: this.options.data.platform,
 				platformVersion: this.options.data['platform-version'],
 				showNavigation: Object.keys(this.options.data).length > 0,
-				showNumbering: application.showNumbering,
-				showGrouping: application.showGrouping,
-				autoRefresh: application.autoRefresh,
+				showGrouping: application.options.showGrouping,
+				autoRefresh: application.options.autoRefresh,
 				viewers: this.options.viewers
 			};
 		},
@@ -188,16 +187,24 @@ define([
 
 		showList: function() {
 
+			// preserve existing sorting column and order
+			//
+			if (this.getChildView('list') && this.collection.length > 0) {
+				this.options.sortBy = this.getChildView('list').getSorting();
+			}
+			
 			// show assessment runs list
 			//
 			this.showChildView('list', new AssessmentRunsListView({
 				model: this.model,
 				collection: this.collection,
+
+				// options
+				//
+				sortBy: this.options.sortBy,
 				viewers: this.options.viewers,
 				checked: this.checked,
-				sortList: this.options.sortList,
 				queryString: this.getQueryString(),
-				showNumbering: application.options.showNumbering,
 				showGrouping: application.options.showGrouping,
 				showStatus: true,
 				showErrors: false,
@@ -348,23 +355,17 @@ define([
 		},
 
 		onClickViewAssessments: function() {
-			var queryString = this.getQueryString();
 
 			// go to assessments view
 			//
-			Backbone.history.navigate('#assessments' + (queryString != ''? '?' + queryString : ''), {
-				trigger: true
-			});
+			application.navigate('#assessments');
 		},
 
 		onClickViewRuns: function() {
-			var queryString = this.getQueryString();
 
 			// go to run requests view
 			//
-			Backbone.history.navigate('#run-requests' + (queryString != ''? '?' + queryString : ''), {
-				trigger: true
-			});
+			application.navigate('#run-requests');
 		},
 
 		onClickResetFilters: function() {
@@ -398,7 +399,6 @@ define([
 
 		onClickShowNumbering: function(event) {
 			application.setShowNumbering($(event.target).is(':checked'));
-			this.showList();
 		},
 
 		onClickShowGrouping: function() {
@@ -410,9 +410,7 @@ define([
 
 			// return to overview
 			//
-			Backbone.history.navigate('#overview', {
-				trigger: true
-			});
+			application.navigate('#overview');
 		},
 
 		//
@@ -420,8 +418,14 @@ define([
 		//
 
 		onBeforeDestroy: function() {
-			if (this.interval) {
-				window.clearInterval(this.interval);
+			if (this.timeout) {
+				window.clearTimeout(this.timeout);
+			}
+
+			// clear pending requests
+			//
+			if (this.request && this.request.state() == 'pending') {
+				this.request.abort();
 			}
 		}
 	});

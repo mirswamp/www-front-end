@@ -12,7 +12,7 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2019 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2020 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 define([
@@ -80,9 +80,7 @@ define([
 
 							// return to packages view
 							//
-							Backbone.history.navigate('#packages', {
-								trigger: true
-							});
+							application.navigate('#packages');
 						},
 
 						error: function() {
@@ -133,8 +131,7 @@ define([
 		templateContext: function() {
 			return {
 				isOwned: this.model.isOwned(),
-				isPublic: this.model.isPublic(),
-				showNumbering: application.options.showNumbering
+				isPublic: this.model.isPublic()
 			};
 		},
 
@@ -161,8 +158,7 @@ define([
 			this.showChildView('list', new PackageVersionsListView({
 				model: this.model,
 				collection: this.collection,
-				showProjects: application.session.user.get('has_projects'),
-				showNumbering: application.options.showNumbering
+				showProjects: application.session.user.hasProjects()
 			}));
 		},
 
@@ -174,23 +170,18 @@ define([
 
 			// go to add new package version view
 			//
-			Backbone.history.navigate('#packages/' + this.model.get('package_uuid') + '/versions/add', {
-				trigger: true
-			});
+			application.navigate('#packages/' + this.model.get('package_uuid') + '/versions/add');
 		},
 
 		onClickShowNumbering: function(event) {
 			application.setShowNumbering($(event.target).is(':checked'));
-			this.showPackageVersions();
 		},
 
 		onClickRunNewAssessment: function() {
 
 			// go to run new assessment view
 			//
-			Backbone.history.navigate('#assessments/run?package=' + this.model.get('package_uuid'), {
-				trigger: true
-			});
+			application.navigate('#assessments/run?package=' + this.model.get('package_uuid'));
 		},
 
 		onClickDeletePackage: function() {

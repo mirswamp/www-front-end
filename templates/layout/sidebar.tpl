@@ -9,14 +9,6 @@
 	}
 	%>
 
-	<% if (showHome) { %>
-	<a href="#home">
-		<div class="active tile well<% if (nav == 'home') { %> selected<% } %>" id="home" data-placement="<%- opposite(orientation) %>" data-content="Home" data-container="body">
-			<i class="fa fa-home"></i>
-		</div>
-	</a>
-	<% } %>
-
 	<a href="#packages">
 		<div class="active tile well<% if (nav == 'packages') { %> selected<% } %>" id="packages" data-placement="<%- opposite(orientation) %>" data-content="Packages" data-container="body">
 			<i class="fa fa-gift"></i>
@@ -41,19 +33,25 @@
 		</div>
 	</a>
 
-	<a href="#run-requests">
-		<div class="active tile well<% if (nav == 'runs') { %> selected<% } %>" id="runs" data-placement="<%- opposite(orientation) %>" data-content="Scheduled Runs" data-container="body">
-			<i class="fa fa-bus"></i>
-		</div>
-	</a>
-
 	<a href="#projects">
 		<div class="active tile well<% if (nav == 'projects') { %> selected<% } %>" id="projects" data-placement="<%- opposite(orientation) %>" data-content="Projects" data-container="body">
 			<i class="fa fa-folder-open"></i>
 		</div>
 	</a>
 
-	<a href="#events?project=any">
+	<a href="#run-requests/schedules">
+		<div class="active tile well<% if (nav == 'schedules') { %> selected<% } %>" id="schedules" data-placement="<%- opposite(orientation) %>" data-content="Schedules" data-container="body">
+			<i class="fa fa-calendar"></i>
+		</div>
+	</a>
+
+	<a href="#run-requests">
+		<div class="active tile well<% if (nav == 'runs') { %> selected<% } %>" id="runs" data-placement="<%- opposite(orientation) %>" data-content="Scheduled Runs" data-container="body">
+			<i class="fa fa-bus"></i>
+		</div>
+	</a>
+
+	<a href="#events?project=any" style="display:none">
 		<div class="active tile well<% if (nav == 'events') { %> selected<% } %>" id="events" data-placement="<%- opposite(orientation) %>" data-content="Events" data-container="body">
 			<i class="fa fa-bullhorn"></i>
 		</div>
@@ -73,7 +71,7 @@
 	</a>
 	<% } %>
 
-	<div class="tile well last">
+	<div class="tile well">
 		<% if (typeof orientation !== 'undefined' && orientation == 'left') { %>
 		<div class="icons" align="center">
 			<i id="top-nav" class="active fa fa-toggle-up" data-placement="right" data-content="Switch to top navigation bar" data-container="body"></i>
@@ -89,5 +87,3 @@
 		<% } %>
 	</div>
 </div>
-
-

@@ -12,7 +12,7 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2019 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2020 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 define([
@@ -62,7 +62,7 @@ define([
 
 				// nuke unneeded project data
 				//
-				delete data['project'];
+				delete data.project;
 
 				return data;
 			}
@@ -74,7 +74,7 @@ define([
 
 				// nuke unneeded project attributes
 				//
-				delete attrs['project_uuid'];
+				delete attrs.project_uuid;
 
 				return attrs;
 			}
@@ -118,8 +118,7 @@ define([
 
 		templateContext: function() {
 			return {
-				loggedIn: application.session.user != null,
-				showNumbering: application.options.showNumbering
+				loggedIn: application.session.user != null
 			};
 		},
 
@@ -147,9 +146,19 @@ define([
 		},
 
 		showList: function() {
+
+			// preserve existing sorting column and order
+			//
+			if (this.getChildView('list') && this.collection.length > 0) {
+				this.options.sortBy = this.getChildView('list').getSorting();
+			}
+
 			this.showChildView('list', new ToolsListView({
 				collection: this.collection,
-				showNumbering: application.options.showNumbering
+
+				// options
+				//
+				sortBy: this.options.sortBy
 			}));
 		},
 
@@ -163,7 +172,6 @@ define([
 
 		onClickShowNumbering: function(event) {
 			application.setShowNumbering($(event.target).is(':checked'));
-			this.showList();
 		}
 	});
 });

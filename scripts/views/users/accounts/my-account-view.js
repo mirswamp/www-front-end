@@ -12,7 +12,7 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2019 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2020 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 define([
@@ -39,6 +39,7 @@ define([
 			'click #accounts': 'onClickAccounts',
 			'click #passwords': 'onClickPasswords',
 			'click #classes': 'onClickClasses',
+			'click #events': 'onClickEvents',
 			'click #edit': 'onClickEdit',
 			'click #change-password': 'onClickChangePassword',
 			'click #reset-password': 'onClickResetPassword',
@@ -59,12 +60,6 @@ define([
 		//
 		// rendering methods
 		//
-
-		templateContext: function() {
-			return {
-				config: application.config
-			};
-		},
 
 		onRender: function() {
 
@@ -91,6 +86,10 @@ define([
 				case 'classes':
 					this.$el.find('.nav li').removeClass('active');
 					this.$el.find('.nav li#classes').addClass('active');
+					break;
+				case 'events':
+					this.$el.find('.nav li').removeClass('active');
+					this.$el.find('.nav li#events').addClass('active');
 					break;	
 				default:
 					this.$el.find('.nav li').removeClass('active');
@@ -119,6 +118,9 @@ define([
 				case 'classes':
 					this.showMyClasses();
 					break;
+				case 'events':
+					this.showMyEvents();
+					break;
 				default:
 					this.showMyProfile();
 					break;
@@ -128,7 +130,7 @@ define([
 		showMyProfile: function() {
 			var self = this;
 			require([
-				'views/users/user-profile/user-profile-view'
+				'views/users/accounts/user-profile/user-profile-view'
 			], function (UserProfileView) {
 				self.showChildView('profile', new UserProfileView({
 					model: self.model,
@@ -152,7 +154,7 @@ define([
 		showMyPermissions: function() {
 			var self = this;
 			require([
-				'views/users/permissions/my-permissions-view'
+				'views/users/accounts/permissions/my-permissions-view'
 			], function (MyPermissionsView) {
 				self.showChildView('profile', new MyPermissionsView({
 					model: self.model,
@@ -164,7 +166,7 @@ define([
 		showMyLinkedAccounts: function() {
 			var self = this;
 			require([
-				'views/users/linked-accounts/my-linked-accounts-view',
+				'views/users/accounts/linked-accounts/my-linked-accounts-view',
 			], function (MyLinkedAccountsView) {
 				self.showChildView('profile', new MyLinkedAccountsView({
 					model: self.model,
@@ -176,7 +178,7 @@ define([
 		showMyPasswords: function() {
 			var self = this;
 			require([
-				'views/users/passwords/my-passwords-view',
+				'views/users/accounts/passwords/my-passwords-view',
 			], function (MyPasswordsView) {
 				self.showChildView('profile', new MyPasswordsView({
 					model: self.model,
@@ -188,10 +190,23 @@ define([
 		showMyClasses: function() {
 			var self = this;
 			require([
-				'views/users/classes/my-classes-view',
+				'views/users/accounts/classes/my-classes-view',
 			], function (MyClassesView) {
 				self.showChildView('profile', new MyClassesView({
 					model: self.model,
+					parent: self
+				}));
+			});
+		},
+
+		showMyEvents: function() {
+			var self = this;
+			require([
+				'views/users/accounts/events/user-events-view',
+			], function (UserEventsView) {
+				self.showChildView('profile', new UserEventsView({
+					model: self.model,
+					data: self.options.data,
 					parent: self
 				}));
 			});
@@ -233,9 +248,7 @@ define([
 
 									// go to welcome view
 									//
-									Backbone.history.navigate('#', {
-										trigger: true
-									});
+									application.navigate('#');
 								},
 								
 								error: function(jqxhr, textstatus, errorThrown) {
@@ -267,39 +280,31 @@ define([
 		//
 
 		onClickProfile: function() {
-			Backbone.history.navigate('#my-account', {
-				trigger: true
-			});
+			application.navigate('#my-account');
 		},
 
 		onClickPermissions: function() {
-			Backbone.history.navigate('#my-account/permissions', {
-				trigger: true
-			});
+			application.navigate('#my-account/permissions');
 		},
 
 		onClickAccounts: function() {
-			Backbone.history.navigate('#my-account/accounts', {
-				trigger: true
-			});
+			application.navigate('#my-account/accounts');
 		},
 
 		onClickPasswords: function() {
-			Backbone.history.navigate('#my-account/passwords', {
-				trigger: true
-			});
+			application.navigate('#my-account/passwords');
 		},
 
 		onClickClasses: function() {
-			Backbone.history.navigate('#my-account/classes', {
-				trigger: true
-			});
+			application.navigate('#my-account/classes');
+		},
+
+		onClickEvents: function() {
+			application.navigate('#my-account/events');
 		},
 
 		onClickEdit: function() {
-			Backbone.history.navigate('#my-account/edit', {
-				trigger: true
-			});
+			application.navigate('#my-account/edit');
 		},
 
 		onClickChangePassword: function() {

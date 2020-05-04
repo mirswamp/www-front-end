@@ -12,7 +12,7 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2019 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2020 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 define([
@@ -61,7 +61,7 @@ define([
 
 			// add tags
 			//
-			if (application.session.user.get('has_projects')) {
+			if (application.session.user.hasProjects()) {
 				tags += this.getChildView('project').getTag();
 			}
 			tags += this.getChildView('package').getTag();
@@ -191,26 +191,26 @@ define([
 		templateContext: function() {
 			return {
 				highlighted: {
-					'project-filter': this.options.data['project'] != undefined,
-					'package-filter': this.options.data['package'] != undefined || this.options.data['package-version'] != undefined,
-					'tool-filter': this.options.data['tool'] != undefined || this.options.data['tool-version'] != undefined,
-					'platform-filter': this.options.data['platform'] != undefined || this.options.data['platform-version'] != undefined,
-					'limit-filter': this.options.data['limit'] !== null
+					'project-filter': this.options.data.project != undefined,
+					'package-filter': this.options.data.package != undefined || this.options.data['package-version'] != undefined,
+					'tool-filter': this.options.data.tool != undefined || this.options.data['tool-version'] != undefined,
+					'platform-filter': this.options.data.platform != undefined || this.options.data['platform-version'] != undefined,
+					'limit-filter': this.options.data.limit !== null
 				}
 			};
 		},
 
 		onRender: function() {
 			var self = this;
-			var hasProject = this.options.data['project'] && this.options.data['project'].constructor == Project;
-			var hasProjects = this.options.data['project'] && this.options.data['project'].constructor == Projects;
+			var hasProject = this.options.data.project && this.options.data.project.constructor == Project;
+			var hasProjects = this.options.data.project && this.options.data.project.constructor == Projects;
 
 			// show subviews
 			//
 			this.showChildView('project', new ProjectFilterView({
-				collection: hasProjects? this.options.data['project'] : undefined,
+				collection: hasProjects? this.options.data.project : undefined,
 				defaultValue: undefined,
-				initialValue: !hasProjects? this.options.data['project'] : undefined,
+				initialValue: !hasProjects? this.options.data.project : undefined,
 
 				// callbacks
 				//
@@ -221,8 +221,8 @@ define([
 			}));
 			this.showChildView('package', new PackageFilterView({
 				model: this.getChildView('project').getSelected(),
-				projects: this.options.data['projects'],
-				initialSelectedPackage: this.options.data['package'],
+				projects: this.options.data.projects,
+				initialSelectedPackage: this.options.data.package,
 				initialSelectedPackageVersion: this.options.data['package-version'],
 				versionDefaultOptions: ["Any", "Latest"],
 				versionSelectedOptions: ['any', 'latest'],
@@ -236,9 +236,9 @@ define([
 			}));
 			this.showChildView('tool', new ToolFilterView({
 				model: this.getChildView('project').getSelected(),
-				initialSelectedTool: this.options.data['tool'],
+				initialSelectedTool: this.options.data.tool,
 				initialSelectedToolVersion: this.options.data['tool-version'],
-				packageSelected: this.options.data['package'],
+				packageSelected: this.options.data.package,
 				versionDefaultOptions: ["Any", "Latest"],
 				versionSelectedOptions: ['any', 'latest'],
 				
@@ -251,9 +251,9 @@ define([
 			}));
 			this.showChildView('platform', new PlatformFilterView({
 				model: this.getChildView('project').getSelected(),
-				initialSelectedPlatform: this.options.data['platform'],
+				initialSelectedPlatform: this.options.data.platform,
 				initialSelectedPlatformVersion: this.options.data['platform-version'],
-				toolSelected: this.options.data['tool'],
+				toolSelected: this.options.data.tool,
 				versionDefaultOptions: ["Any", "Latest"],
 				versionSelectedOptions: ['any', 'latest'],
 				
@@ -265,7 +265,7 @@ define([
 			}));
 			this.showChildView('limit', new LimitFilterView({
 				defaultValue: undefined,
-				initialValue: this.options.data['limit'],
+				initialValue: this.options.data.limit,
 
 				// callbacks
 				//

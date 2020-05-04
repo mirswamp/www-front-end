@@ -1,36 +1,30 @@
-<td class="name first">
-	<% if (invitee)	{ %>
-		<% if (invitee.has('user_uid')) { %>
-			<a href="<%- url %>/<%- invitee.get('user_uid') %>"><%- invitee.getFullName() %></a>
-		<% } else { %>
-			<%- invitee.getFullName() %>
-		<% } %>
+<td class="name">
+	<% if (invitee_url) { %>
+		<a href="<%= invitee_url %>" target="_blank"><%- invitee_name %></a>
+	<% } else { %>
+		<%- invitee_name %>
 	<% } %>
 </td>
 
 <td class="inviter" style="border-right:none">
-	<% if (inviter)	{ %>
-		<% if (inviter.has('user_uid')) { %>
-			<a href="<%- url %>/<%- inviter.get('user_uid') %>"><%- inviter.getFullName() %></a>
-		<% } else { %>
-			<%- inviter.getFullName() %>
-		<% } %>
+	<% if (inviter_url) { %>
+		<a href="<%= inviter_url %>" target="_blank"><%= inviter_name %></a>
+	<% } else { %>
+		<%= inviter_name %>
 	<% } %>
 </td>
 
 <td class="date datetime" style="border-right:none">
-	<% if (model.hasCreateDate()) { %>
-	<%= dateToSortableHTML(model.getCreateDate()) %>
-	<% } %>
+	<%= dateToSortableHTML(create_date) %>
 </td>
 
-<td class="status last">
-	<%- model.getStatus() %>
+<td class="status">
+	<%- status %>
 </td>
 
 <% if (showDelete) { %>
-<td class="delete append">
-	<% if (model.isPending()) { %>
+<td class="delete">
+	<% if (isPending) { %>
 	<button type="button" class="btn btn-sm"><i class="fa fa-times"></i></button>
 	<% } %>
 </td>

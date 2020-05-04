@@ -13,7 +13,7 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2019 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2020 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 //
@@ -25,6 +25,10 @@ require.config({
 	// timeout
 	//
 	waitSeconds: 0,
+
+	// cache busting
+	//
+	urlArgs: 'version=1.34',
 
 	// paths
 	//
@@ -286,8 +290,8 @@ require([
 
 		// store page load time
 		//
-		if (window.timing['url'] == undefined) {
-			window.timing['url'] = window.top.location.href;
+		if (window.timing.url == undefined) {
+			window.timing.url = window.top.location.href;
 		}
 
 		// go!

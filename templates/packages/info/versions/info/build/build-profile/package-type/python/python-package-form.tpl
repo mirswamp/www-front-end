@@ -4,8 +4,7 @@
 <form action="/" class="form-horizontal" onsubmit="return false;">
 	<fieldset>
 		<legend>Python build info</legend>
-		<% var isWheel = model.getFilename().endsWith('.whl'); %>
-
+		
 		<div id="build-system" class="form-group">
 			<label class="required control-label">Build system</label>
 			<div class="controls">

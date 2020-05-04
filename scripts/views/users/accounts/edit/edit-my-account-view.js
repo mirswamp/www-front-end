@@ -12,7 +12,7 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2019 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2020 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 define([
@@ -21,7 +21,7 @@ define([
 	'text!templates/users/accounts/edit/edit-my-account.tpl',
 	'views/base-view',
 	'views/users/dialogs/user-validation-error-dialog-view',
-	'views/users/user-profile/user-profile-form-view'
+	'views/users/accounts/user-profile/user-profile-form-view'
 ], function($, _, Template, BaseView, UserValidationErrorDialogView, UserProfileFormView) {
 	return BaseView.extend({
 
@@ -142,18 +142,14 @@ define([
 
 											// return to my account view
 											//
-											Backbone.history.navigate("#my-account", {
-												trigger: true
-											});
+											application.navigate("#my-account");
 										}
 									});
 								} else {
 
 									// return to my account view
 									//
-									Backbone.history.navigate("#my-account", {
-										trigger: true
-									});				
+									application.navigate("#my-account");				
 								}
 							},
 
@@ -187,9 +183,7 @@ define([
 
 			// go to my account view
 			//
-			Backbone.history.navigate("#my-account", {
-				trigger: true
-			});
+			application.navigate("#my-account");
 		}
 	});
 });

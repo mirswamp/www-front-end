@@ -17,10 +17,13 @@
 <br />
 
 <div id="tools-list">
-	<div align="center"><i class="fa fa-spinner fa-spin fa-2x"></i><br/>Loading tools...</div>
+	<div class="loading">
+		<i class="fa fa-spinner fa-spin"></i>
+		<div class="message">Loading tools...</div>
+	</div>
 </div>
 
 <label>
-	<input type="checkbox" id="show-numbering" <% if (showNumbering) { %>checked<% } %>>
+	<input type="checkbox" id="show-numbering" <% if (application.options.showNumbering) { %>checked<% } %>>
 	Show numbering
 </label>

@@ -13,7 +13,7 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2019 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2020 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 define([
@@ -32,10 +32,41 @@ define([
 
 		template: _.template(Template),
 		childView: RestrictedDomainsListItemView,
+		className: 'input',
 
 		emptyView: BaseView.extend({
 			template: _.template("No restricted domains.")
 		}),
+
+		// sort by domain-name column in ascending order
+		//
+		// sortBy: ['domain-name', 'ascending'],
+
+		//
+		// constructor
+		//
+
+		/*
+		initialize: function(options) {
+
+			// call superclass constructor
+			//
+			SortableTableListView.prototype.initialize.call(this, options);
+
+			// add parser for input elements
+			//
+			$.tablesorter.addParser({ 
+				id: "input", 
+				is: function(s, table, cell, $cell) { 
+					return table.className.contains('input');
+				}, 
+				format: function(s, t, node) {
+					return $(node).find('input').val();
+				}, 
+				type: "text" 
+			});
+		},
+		*/
 
 		//
 		// rendering methods

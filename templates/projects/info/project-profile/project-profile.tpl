@@ -7,20 +7,20 @@
 
 	<div class="form-group" style="display:none">
 		<label class="form-label">Project type</label>
-		<div class="controls"><%- model.getProjectTypeStr() %></div>
+		<div class="controls"><%- projectType %></div>
 	</div>
 
 	<div class="form-group">
 		<label class="form-label">Owner</label>
 		<div class="controls">
-		<% if (model && model.has('owner')) { %>
+		<% if (ownerName) { %>
 
-		<% if (config['email_enabled']) { %>
-			<a href="mailto:<%- model.get('owner').get('email') %>">
-				<%- model.get('owner').getFullName() %>
+		<% if (application.config.email_enabled) { %>
+			<a href="mailto:<%- ownerEmail %>">
+				<%- ownerName %>
 			</a>
 		<% } else { %>
-			<%- model.get('owner').getFullName() %>
+			<%- ownerName %>
 		<% } %>
 
 		<% } %>
@@ -46,17 +46,15 @@
 	<div class="form-group">
 		<label class="form-label">Creation date</label>
 		<div class="controls">
-			<% if (model.hasCreateDate()) { %>
-			<%= datetimeToHTML( model.getCreateDate() ) %>
-			<% } %>
+			<%= datetimeToHTML(create_date) %>
 		</div>
 	</div>
 
-	<% if (model.hasUpdateDate()) { %>
+	<% if (typeof update_date !== 'undefined') { %>
 	<div class="form-group">
 		<label class="form-label">Last modified date</label>
 		<div class="controls">
-			<%= datetimeToHTML( model.getUpdateDate() ) %>
+			<%= datetimeToHTML(update_date) %>
 		</div>
 	</div>
 	<% } %>

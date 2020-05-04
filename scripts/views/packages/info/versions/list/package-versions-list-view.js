@@ -12,7 +12,7 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2019 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2020 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 define([
@@ -37,28 +37,11 @@ define([
 			template: _.template("No package versions.")
 		}),
 
-		sorting: {
-
-			// disable sorting on delete column
-			//
-			headers: {
-				0: {
-					sorter: 'versions'
-				},
-				
-				3: { 
-					sorter: false 
-				},
-
-				4: { 
-					sorter: false 
-				}
-			},
-
-			// sort on version column in descending order 
-			//
-			sortList: [[0, 1]] 
-		},
+		// sort by version column in descending order 
+		//
+		sortBy: ['version-string', 'descending'],
+		unsorted: SortableTableListView.prototype.unsorted.concat(
+			['projects']),
 
 		sortParsers: [{
 
@@ -91,7 +74,6 @@ define([
 				model: this.model,
 				collection: this.collection,
 				showProjects: this.options.showProjects,
-				showNumbering: this.options.showNumbering,
 				showDelete: this.model.isOwned()
 			};
 		},
@@ -112,8 +94,7 @@ define([
 				package: this.model,
 				collection: this.collection,
 				showProjects: this.options.showProjects,
-				showDelete: this.model.isOwned(),
-				showNumbering: this.options.showNumbering
+				showDelete: this.model.isOwned()
 			};
 		}
 	});

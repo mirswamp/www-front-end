@@ -12,7 +12,7 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2019 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2020 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 define([
@@ -45,7 +45,8 @@ define([
 		//
 
 		initialize: function() {
-			this.collection = new Tools();
+			this.openTools = new Tools();
+			this.commercialTools = new Tools();
 		},
 
 		//
@@ -54,8 +55,7 @@ define([
 
 		templateContext: function() {
 			return {
-				loggedIn: application.session.user != null,
-				showNumbering: application.options.showNumbering
+				loggedIn: application.session.user != null
 			};
 		},
 
@@ -63,65 +63,43 @@ define([
 
 			// show subviews
 			//
-			this.showOpenToolsList();
-			this.showCommercialToolsList();
+			this.fetchAndShowLists();
 		},
 
 		showOpenToolsList: function() {
-			var self = this;
-			this.collection.fetchPublic({
 
-				// callbacks
+			// preserve existing sorting column and order
+			//
+			if (this.getChildView('open') && this.openTools.length > 0) {
+				this.options.sortBy1 = this.getChildView('open').getSorting();
+			}
+
+			this.showChildView('open', new ToolsListView({
+				collection: this.openTools,
+
+				// options
 				//
-				success: function() {
-
-					// show list of open tools
-					//
-					self.showChildView('open', new ToolsListView({
-						collection: self.collection.getOpen(),
-						showNumbering: application.options.showNumbering,
-						showDelete: false
-					}));
-				},
-
-				error: function() {
-
-					// show error message
-					//
-					application.error({
-						message: "Could not get list of public tools."
-					});
-				}
-			});
+				sortBy: this.options.sortBy1,
+				showDelete: false
+			}));
 		},
 
 		showCommercialToolsList: function() {
-			var self = this;
-			var collection = new Tools();
-			collection.fetchRestricted({
 
-				// callbacks
+			// preserve existing sorting column and order
+			//
+			if (this.getChildView('commercial') && this.commercialTools.length > 0) {
+				this.options.sortBy2 = this.getChildView('commercial').getSorting();
+			}
+
+			this.showChildView('commercial', new ToolsListView({
+				collection: this.commercialTools,
+
+				// options
 				//
-				success: function() {
-
-					// show list of commercial tools
-					//
-					self.showChildView('commercial', new ToolsListView({
-						collection: collection,
-						showNumbering: application.options.showNumbering,
-						showDelete: false
-					}));
-				},
-
-				error: function() {
-
-					// show error message
-					//
-					application.error({
-						message: "Could not get list of public tools."
-					});
-				}
-			});
+				sortBy: this.options.sortBy2,
+				showDelete: false
+			}));
 		},
 
 		showLists: function() {
@@ -130,12 +108,62 @@ define([
 		},
 
 		//
+		// ajax fetching methods
+		//
+
+		fetchAndShowOpenToolsList: function() {
+			var self = this;
+			this.openTools.fetchPublic({
+
+				// callbacks
+				//
+				success: function() {
+					self.showOpenToolsList();
+				},
+
+				error: function() {
+
+					// show error message
+					//
+					application.error({
+						message: "Could not get list of public open tools."
+					});
+				}
+			});
+		},
+
+		fetchAndShowCommercialToolsList: function() {
+			var self = this;
+			this.commercialTools.fetchRestricted({
+
+				// callbacks
+				//
+				success: function(collection) {
+					self.showCommercialToolsList();
+				},
+
+				error: function() {
+
+					// show error message
+					//
+					application.error({
+						message: "Could not get list of public commercial tools."
+					});
+				}
+			});
+		},
+
+		fetchAndShowLists: function() {
+			this.fetchAndShowOpenToolsList();
+			this.fetchAndShowCommercialToolsList();
+		},
+
+		//
 		// event handling methods
 		//
 
 		onClickShowNumbering: function(event) {
 			application.setShowNumbering($(event.target).is(':checked'));
-			this.showLists();
 		}
 	});
 });

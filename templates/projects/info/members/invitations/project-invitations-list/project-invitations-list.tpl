@@ -1,11 +1,11 @@
 <thead>
-	<tr class="titles">
-		<th class="name first">
+	<tr>
+		<th class="name">
 			<i class="fa fa-user"></i>
 			<span>Name</span>
 		</th>
 
-		<% if (config['email_enabled']) { %>
+		<% if (application.config.email_enabled) { %>
 		<th class="email">
 			<i class="fa fa-envelope"></i>
 			<span>Email</span>
@@ -22,15 +22,16 @@
 			<span>Date</span>
 		</th>
 
-		<th class="status last">
+		<th class="status">
 			<i class="fa fa-info-circle"></i>
 			<span>Status</span>
 		</th>
 
 		<% if (showDelete) { %>
-		<th class="append"></th>
+		<th class="delete"></th>
 		<% } %>
 	</tr>
 </thead>
+
 <tbody>
 </tbody>

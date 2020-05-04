@@ -12,7 +12,7 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2019 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2020 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 define([
@@ -29,11 +29,11 @@ define([
 
 		// parse limit
 		//
-		if (data['limit']) {
-			if (data['limit'] != 'none') {
-				data['limit'] = parseInt(data['limit']);
+		if (data.limit) {
+			if (data.limit != 'none') {
+				data.limit = parseInt(data.limit);
 			} else {
-				data['limit'] = null;
+				data.limit = null;
 			}
 		}
 

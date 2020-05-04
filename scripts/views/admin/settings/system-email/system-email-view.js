@@ -12,7 +12,7 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2019 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2020 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 define([
@@ -71,8 +71,7 @@ define([
 
 		templateContext: function() {
 			return {
-				showInactiveAccounts: this.options.showInactiveAccounts,
-				showNumbering: this.options.showNumbering
+				showInactiveAccounts: this.options.showInactiveAccounts
 			};
 		},
 
@@ -92,7 +91,7 @@ define([
 				// callbacks
 				//
 				success: function(collection) {
-					self.showSystemEmailList();
+					self.showList();
 				},
 
 				error: function() {
@@ -106,8 +105,14 @@ define([
 			});
 		},
 
-		showSystemEmailList: function() {
+		showList: function() {
 			var self = this;
+
+			// preserve existing sorting column and order
+			//
+			if (this.hasChildView('list') && this.collection.length > 0) {
+				this.options.sortBy = this.getChildView('list').getSorting();
+			}
 
 			// show system email list view
 			//
@@ -115,7 +120,10 @@ define([
 				collection: new Users(this.collection.filter(function(user) {
 					return user.isEnabled() && (self.options.showInactiveAccounts || user.isActive());
 				})),
-				showNumbering: this.options.showNumbering,
+
+				// options
+				//
+				sortBy: this.options.sortBy,
 				showHibernate: this.options.showInactiveAccounts
 			}));
 		},
@@ -126,7 +134,7 @@ define([
 
 		onClickShowInactiveAccounts: function(event) {
 			this.options.showInactiveAccounts = $(event.target).is(':checked');
-			this.showSystemEmailList();
+			this.showList();
 		},
 
 		onClickSendEmail: function() {
@@ -143,8 +151,17 @@ define([
 				// callbacks
 				//
 				success: function(response) {
+					var message = "System email sent successfully. ";
+
+					// add failed emails
+					//
+					if (response.responseText) {
+						message += "Failed sending for the following users:<br/><br/>";
+						message += '<textarea rows="12">' + JSON.stringify(response) + '</textarea>';
+					}
+
 					application.notify({
-						message: 'System email sent successfully. Failed sending for the following users:<br/><br/><textarea rows="12">' + JSON.stringify( response ) + '</textarea>'
+						message: message
 					});
 				},
 				error: function(response) {
@@ -166,8 +183,6 @@ define([
 
 		onClickShowNumbering: function(event) {
 			application.setShowNumbering($(event.target).is(':checked'));
-			this.options.showNumbering = application.options.showNumbering;
-			this.showSystemEmailList();
 		}
 	});
 });

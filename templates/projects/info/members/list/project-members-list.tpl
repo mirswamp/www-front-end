@@ -1,10 +1,6 @@
 <thead>
 	<tr>
-		<% if (showNumbering) { %>
-		<th class="prepend number"></th>
-		<% } %>
-		
-		<th class="user first">
+		<th class="user">
 			<i class="fa fa-user"></i>
 			<span>User</span>
 		</th>
@@ -33,15 +29,16 @@
 			<span>Join Date</span>
 		</th>
 
-		<th class="admin last">
+		<th class="admin">
 			<i class="fa fa-user-md"></i>
 			<span>Admin</span>
 		</th>
 
 		<% if (showDelete) { %>
-		<th class="append"></th>
+		<th class="delete"></th>
 		<% } %>
 	</tr>
 </thead>
+
 <tbody>
 </tbody>

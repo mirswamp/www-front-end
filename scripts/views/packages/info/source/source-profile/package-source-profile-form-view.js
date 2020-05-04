@@ -12,7 +12,7 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2019 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2020 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 define([
@@ -351,8 +351,8 @@ define([
 
 		templateContext: function() {
 			return {
-				model: this.model,
-				package: this.options.package,
+				isAtomic: this.model.isAtomic(),
+				packageType: this.options.package.getPackageType(),
 				rubyVersions: Defaults['package-types'].ruby.versions
 			};
 		},
@@ -887,28 +887,26 @@ define([
 
 				// show select package version directory dialog
 				//
-				application.show(
-					new SelectPackageVersionDirectoryDialogView({
-						model: self.model,
-						title: "Select Package Path",
-						selectedDirectoryName: self.getPackagePath(),
-						
-						// callbacks
-						//
-						accept: function(selectedDirectoryName) {
+				application.show(new SelectPackageVersionDirectoryDialogView({
+					model: self.model,
+					title: "Select Package Path",
+					selectedDirectoryName: self.getPackagePath(),
+					
+					// callbacks
+					//
+					accept: function(selectedDirectoryName) {
 
-							// set package path input
-							//
-							self.$el.find('#package-path').val(selectedDirectoryName);
-						
-							// reset default package type
-							//
-							self.setDefaultPackageType();
-						}
-					}), {
-						size: 'large'
+						// set package path input
+						//
+						self.$el.find('#package-path').val(selectedDirectoryName);
+					
+						// reset default package type
+						//
+						self.setDefaultPackageType();
 					}
-				);
+				}), {
+					size: 'large'
+				});
 			});
 		},
 

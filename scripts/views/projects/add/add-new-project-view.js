@@ -12,7 +12,7 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2019 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2020 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 define([
@@ -115,13 +115,11 @@ define([
 
 						// update user
 						//
-						application.session.user.set('has_projects', true);
+						application.session.user.set('num_projects', application.session.user.get('num_projects') + 1);
 
 						// advance to project view
 						//
-						Backbone.history.navigate('#projects/' + project.get('project_uid'), {
-							trigger: true
-						});
+						application.navigate('#projects/' + project.get('project_uid'));
 
 					},
 
@@ -144,9 +142,7 @@ define([
 
 			// return to projects view
 			//
-			Backbone.history.navigate('#projects', {
-				trigger: true
-			});
+			application.navigate('#projects');
 		}
 	});
 });

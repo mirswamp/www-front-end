@@ -12,7 +12,7 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2019 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2020 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 define([
@@ -54,13 +54,13 @@ define([
 
 		save: function(options) {
 			var self = this;
+			var count = 0, saves = 0, successes = 0, errors = 0;
 
-			// save models individually
-			//
-			var saves = 0, successes = 0, errors = 0;
-			for (var i = 0; i < this.length; i++) {
-				var model = this.at(i);
+			function saveItem(model) {
+				count++;
 
+				// check if model needs saving
+				//
 				if (model.isNew() || model.hasChanged()) {
 					saves++;
 					model.save(undefined, {
@@ -72,7 +72,7 @@ define([
 
 							// report success when completed
 							//
-							if (i === self.length && successes === saves) {
+							if (count === self.length && successes === saves) {
 								if (options.success) {
 									options.success();
 								}
@@ -91,7 +91,22 @@ define([
 							}
 						}
 					});
+				} else {
+
+					// report success when completed
+					//
+					if (count === self.length && successes === saves) {
+						if (options.success) {
+							options.success();
+						}
+					}
 				}
+			}
+
+			// save models individually
+			//
+			for (var i = 0; i < this.length; i++) {
+				saveItem(this.at(i));
 			}
 
 			// check for no changes
@@ -112,8 +127,8 @@ define([
 			// destroy models individually
 			//
 			var successes = 0, errors = 0, count = this.length;
-			for (var i = 0; i < count; i++) {
-				var item = this.pop();
+
+			function destroyItem(item) {
 				item.destroy({
 
 					// callbacks
@@ -141,6 +156,10 @@ define([
 						}
 					}
 				});
+			}
+
+			for (var i = 0; i < count; i++) {
+				destroyItem(this.pop());
 			}
 
 			// check for no changes

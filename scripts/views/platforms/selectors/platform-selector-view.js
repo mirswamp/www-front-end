@@ -12,7 +12,7 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2019 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2020 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 define([
@@ -196,17 +196,18 @@ define([
 		showVersion: function() {
 			var self = this;
 			var selectedPlatform = this.getSelected();
+			var collection;
 			
 			if (!selectedPlatform) {
-
+				
 				// create collection of platform versions
 				//
 				if (this.options.allowLatest) {
-					var collection = new PlatformVersions([{
+					collection = new PlatformVersions([{
 						version_string: 'Latest'
 					}]);
 				} else {
-					var collection = new PlatformVersions();
+					collection = new PlatformVersions();
 				}
 
 				// show version selector view
@@ -224,7 +225,7 @@ define([
 
 				// fetch platform versions
 				//
-				var collection = new PlatformVersions([]);
+				collection = new PlatformVersions([]);
 				collection.fetchByPlatform(selectedPlatform, {
 
 					// callbacks
@@ -282,15 +283,21 @@ define([
 				//
 				if (self.options.packageSelected) {
 					if (self.options.packageSelected.getPackageType() == 'c-source') {
+						var item;
+
+						// remove public platforms
+						//
 						for (var i = 0; i < publicPlatforms.length; i++) {
-							var item = publicPlatforms.at(i);
+							item = publicPlatforms.at(i);
 							if (item.get('name').contains('Android')) {
 								publicPlatforms.remove(item);
 							}
 						}
 
-						for (var i = 0; i < protectedPlatforms.length; i++) {
-							var item = protectedPlatforms.at(i);
+						// remove protected platforms
+						//
+						for (var j = 0; j < protectedPlatforms.length; j++) {
+							item = protectedPlatforms.at(j);
 							if (item.get('name').contains('Android')) {
 								protectedPlatforms.remove(item);
 							}

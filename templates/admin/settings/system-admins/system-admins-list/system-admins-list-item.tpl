@@ -1,23 +1,23 @@
-<td class="user first">
-	<% if (model.has('user_uid')) { %>
-		<a href="<%- url %>/<%- model.get('user_uid') %>"><%- model.getFullName() %></a>
+<td class="user">
+	<% if (url) { %>
+		<a href="<%= url %>" target="_blank"><%= name %></a>
 	<% } else { %>
-		<%- model.getFullName() %>
+		<%= name %>
 	<% } %>
 </td>
  
-<% if (config['email_enabled']) { %>
-<td class="email last">
-	<a href="mailto:<%- email %>"><%= emailToHTML(email) %></a>
+<% if (application.config.email_enabled) { %>
+<td class="email">
+	<a href="mailto:<%- email %>"><%= email %></a>
 </td>
 <% } else { %>
-<td class="username last">
+<td class="username">
 	<%= username %>
 </td>
 <% } %>
 
 <% if (showDelete) { %>
-<td class="delete append">
+<td class="delete">
 	<button type="button" class="btn btn-sm"><i class="fa fa-times"></i></button>
 </td>
 <% } %>

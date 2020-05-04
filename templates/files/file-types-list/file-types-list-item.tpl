@@ -1,10 +1,11 @@
-<td width="50%" class="file-extension first">
+<td width="50%" class="file-extension">
 	<% if (extension != '') { %>
 	.<%- extension %>
 	<% } else { %>
 	none
 	<% } %>
 </td>
-<td width="50%" class="status last">
+
+<td width="50%" class="count">
 	<%- count %>
 </td>

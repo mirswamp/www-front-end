@@ -12,7 +12,7 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2019 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2020 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 define([
@@ -30,6 +30,10 @@ define([
 		idAttribute: 'package_version_uuid',
 		urlRoot: Config.servers.web + '/packages/versions',
 
+		defaults: {
+			checkout_argument: undefined
+		},
+
 		//
 		// constructor
 		//
@@ -39,67 +43,67 @@ define([
 
 				// attributes
 				//
-				'package_uuid': attributes['package_uuid'],
-				'platform_uuid': attributes['platform_uuid'],
+				'package_uuid': attributes.package_uuid,
+				'platform_uuid': attributes.platform_uuid,
 
 				// version attributes
 				//
-				'version_string': attributes['version_string'],
-				'language_version': attributes['language_version'],
-				'version_sharing_status': attributes['version_sharing_status'],
+				'version_string': attributes.version_string,
+				'language_version': attributes.language_version,
+				'version_sharing_status': attributes.version_sharing_status,
 				
 				// date / detail attributes
 				//
-				'release_date': attributes['release_date'],
-				'retire_date': attributes['retire_date'],
-				'notes': attributes['notes'],
+				'release_date': attributes.release_date,
+				'retire_date': attributes.retire_date,
+				'notes': attributes.notes,
 
 				// path attributes
 				//
-				'source_path': attributes['source_path'],
-				'exclude_paths': attributes['exclude_paths'],
-				'filename': attributes['filename'],
+				'source_path': attributes.source_path,
+				'exclude_paths': attributes.exclude_paths,
+				'filename': attributes.filename,
 
 				// config attributes
 				//
-				'config_dir': attributes['config_dir'],
-				'config_cmd': attributes['config_cmd'],
-				'config_opt': attributes['config_opt'],
+				'config_dir': attributes.config_dir,
+				'config_cmd': attributes.config_cmd,
+				'config_opt': attributes.config_opt,
 
 				// build attributes
 				//
-				'build_file': attributes['build_file'],
-				'build_system': attributes['build_system'],
-				'build_target': attributes['build_target'],
+				'build_file': attributes.build_file,
+				'build_system': attributes.build_system,
+				'build_target': attributes.build_target,
 
 				// advanced build attributes
 				//
-				'build_dir': attributes['build_dir'],
-				'build_cmd': attributes['build_cmd'],
-				'build_opt': attributes['build_opt'],
+				'build_dir': attributes.build_dir,
+				'build_cmd': attributes.build_cmd,
+				'build_opt': attributes.build_opt,
 
 				// java source code attributes
 				//
-				'use_gradle_wrapper': attributes['use_gradle_wrapper'],
-				'maven_version': attributes['maven_version'],
+				'use_gradle_wrapper': attributes.use_gradle_wrapper,
+				'maven_version': attributes.maven_version,
 
 				// java bytecode attributes
 				//
-				'bytecode_class_path': attributes['bytecode_class_path'],
-				'bytecode_aux_class_path': attributes['bytecode_aux_class_path'],
-				'bytecode_source_path': attributes['bytecode_source_path'],
+				'bytecode_class_path': attributes.bytecode_class_path,
+				'bytecode_aux_class_path': attributes.bytecode_aux_class_path,
+				'bytecode_source_path': attributes.bytecode_source_path,
 
 				// android attributes
 				//
-				'android_sdk_target': attributes['android_sdk_target'],
-				'android_lint_target': attributes['android_lint_target'],
-				'android_redo_build': attributes['android_redo_build'],
-				'android_maven_plugin': attributes['android_maven_plugin'],
+				'android_sdk_target': attributes.android_sdk_target,
+				'android_lint_target': attributes.android_lint_target,
+				'android_redo_build': attributes.android_redo_build,
+				'android_maven_plugin': attributes.android_maven_plugin,
 
 				// dot net attributes
 				//
-				'package_info': attributes['package_info'],
-				'package_build_settings': attributes['package_build_settings'],
+				'package_info': attributes.package_info,
+				'package_build_settings': attributes.package_build_settings,
 			});
 		},
 
@@ -123,6 +127,7 @@ define([
 		
 		getFilenameFromPath: function(filePath) {
 			if (filePath) {
+				var substrings;
 
 				// split file path by slashes
 				//
@@ -130,12 +135,12 @@ define([
 
 					// file path uses forward slashes
 					//
-					var substrings = filePath.split('/');
+					substrings = filePath.split('/');
 				} else {
 
 					// file path uses back slashes
 					//
-					var substrings = filePath.split('\\');
+					substrings = filePath.split('\\');
 				}
 
 				// return last portion of string
@@ -170,6 +175,10 @@ define([
 			var isGem = filename.endsWith('.gem');
 
 			return !isApk && !isGem;
+		},
+
+		getAppUrl: function() {
+			return application.getURL() + '#packages/versions/' + this.get('package_version_uuid');
 		},
 
 		//
@@ -301,7 +310,7 @@ define([
 				if (!options.data) {
 					options.data = {};
 				}
-				options.data['package_path'] = this.get('package_path');
+				options.data.package_path = this.get('package_path');
 			}
 			$.ajax(_.extend(options, {
 				url: this.urlRoot + '/' + (this.isNew()? 'new': this.get('package_version_uuid')) + '/file-types',
@@ -314,7 +323,7 @@ define([
 				if (!options.data) {
 					options.data = {};
 				}
-				options.data['package_path'] = this.get('package_path');
+				options.data.package_path = this.get('package_path');
 			}
 			$.ajax(_.extend(options, {
 				url: this.urlRoot + '/' + (this.isNew()? 'new': this.get('package_version_uuid')) + '/file-list',
@@ -327,7 +336,7 @@ define([
 				if (!options.data) {
 					options.data = {};
 				}
-				options.data['package_path'] = this.get('package_path');
+				options.data.package_path = this.get('package_path');
 			}
 			$.ajax(_.extend(options, {
 				url: this.urlRoot + '/' + (this.isNew()? 'new': this.get('package_version_uuid')) + '/file-tree',
@@ -340,7 +349,7 @@ define([
 				if (!options.data) {
 					options.data = {};
 				}
-				options.data['package_path'] = this.get('package_path');
+				options.data.package_path = this.get('package_path');
 			}
 			$.ajax(_.extend(options, {
 				url: this.urlRoot + '/' + (this.isNew()? 'new': this.get('package_version_uuid')) + '/directory-list',
@@ -353,7 +362,7 @@ define([
 				if (!options.data) {
 					options.data = {};
 				}
-				options.data['package_path'] = this.get('package_path')
+				options.data.package_path = this.get('package_path');
 			}
 			$.ajax(_.extend(options, {
 				url: this.urlRoot + '/' + (this.isNew()? 'new': this.get('package_version_uuid')) + '/directory-tree',
@@ -370,8 +379,8 @@ define([
 				if (!options.data) {
 					options.data = {};
 				}
-				options.data['package_path'] = this.get('package_path');
-				options.data['source_path'] = this.get('source_path');
+				options.data.package_path = this.get('package_path');
+				options.data.source_path = this.get('source_path');
 			}
 			$.ajax(_.extend(options, {
 				url: this.urlRoot + '/' + (this.isNew()? 'new': this.get('package_version_uuid')) + '/build-system',
@@ -384,8 +393,8 @@ define([
 				if (!options.data) {
 					options.data = {};
 				}
-				options.data['package_path'] = this.get('package_path');
-				options.data['source_path'] = this.get('source_path');
+				options.data.package_path = this.get('package_path');
+				options.data.source_path = this.get('source_path');
 			}
 			$.ajax(_.extend(options, {
 				url: this.urlRoot + '/' + (this.isNew()? 'new': this.get('package_version_uuid')) + '/build-info',
@@ -398,7 +407,7 @@ define([
 				if (!options.data) {
 					options.data = {};
 				}
-				options.data['package_path'] = this.get('package_path')
+				options.data.package_path = this.get('package_path');
 			}
 			$.ajax(_.extend(options, {
 				url: this.urlRoot + '/' + (this.isNew()? 'new': this.get('package_version_uuid')) + '/ruby-gem-info',
@@ -411,7 +420,7 @@ define([
 				if (!options.data) {
 					options.data = {};
 				}
-				options.data['package_path'] = this.get('package_path')
+				options.data.package_path = this.get('package_path');
 			}
 			$.ajax(_.extend(options, {
 				url: this.urlRoot + '/' + (this.isNew()? 'new': this.get('package_version_uuid')) + '/python-wheel-info',
@@ -524,12 +533,13 @@ define([
 
 		inferPackageTypes: function(options) {
 			var self = this;
+			var success, error;
 
 			// check for gemfiles
 			//
 			if (this.getFilename().endsWith('.gem')) {
-				var success = options.success;
-				var error = options.error;
+				success = options.success;
+				error = options.error;
 
 				// fetch ruby gem info
 				//
@@ -553,8 +563,8 @@ define([
 			// check for wheel files
 			//
 			if (this.getFilename().endsWith('.whl')) {
-				var success = options.success;
-				var error = options.error;
+				success = options.success;
+				error = options.error;
 
 				// get director name to look for wheel files
 				//
@@ -602,10 +612,10 @@ define([
 			// fetch file types
 			//
 			if (this.isNew()) {
-				options.data['package_path'] = this.get('package_path')
+				options.data.package_path = this.get('package_path');
 			}
-			var success = options.success;
-			var error = options.error;
+			success = options.success;
+			error = options.error;
 			this.fetchFileTypes(_.extend(options, {
 
 				// callbacks
@@ -745,9 +755,9 @@ define([
 
 		gemToPackageType: function(gem) {
 			for (var i = 0; i < gem.length; i++) {
-				term = gem[i];
+				var term = gem[i];
 				if (term.strlit == 'sinatra') {
-					return 'sinatra'
+					return 'sinatra';
 				} else if (term.strlit == 'rails') {
 					return 'rails';
 				} else if (term.strlit == 'padrino') {
@@ -760,31 +770,34 @@ define([
 		gemInfoToPackageType: function(gemInfo) {
 			for (var i = 0; i < gemInfo.length; i++) {
 				var item = gemInfo[i];
+				var packageType;
 
 				// check gems
 				//
-				if (item['gem']) {
-					var gem = item['gem'];
-					var packageType = this.gemToPackageType(gem);
+				if (item.gem) {
+					var gem = item.gem;
+					
+					packageType = this.gemToPackageType(gem);
 					if (packageType != 'ruby') {
 						return packageType;
 					}
 
 				// check groups of gems
 				//
-				} else if (item['group']) {
-					var gems = item['gems'];
+				} else if (item.group) {
+					var gems = item.gems;
 					for (var j = 0; j < gems.length; j++) {
 
 						// check gems
 						//
-						var packageType = this.gemToPackageType(gems[j].gem);
+						packageType = this.gemToPackageType(gems[j].gem);
 						if (packageType != 'ruby') {
 							return packageType;
 						}
 					}
 				}
 			}
+			
 			return 'ruby';
 		},
 
@@ -794,8 +807,8 @@ define([
 
 				// check ruby info
 				//
-				if (item['ruby']) {
-					return item['ruby'].strlit;
+				if (item.ruby) {
+					return item.ruby.strlit;
 				}
 			}
 		},
@@ -808,24 +821,24 @@ define([
 
 				// check key value pairs
 				//
-				if (item['Tag']) {
-					var tag = item['Tag'];
+				if (item.Tag) {
+					var tag = item.Tag;
 
 					// check tag
 					//
 					if (tag.indexOf("py2") != -1) {
-						packageTypes['python2'] = true;
+						packageTypes.python2 = true;
 					} else if (tag.indexOf("py3") != -1) {
-						packageTypes['python3'] = true;
+						packageTypes.python3 = true;
 					}
 				}
 			}
 
 			// python3 takes precedence over python2
 			//
-			if (packageTypes['python2']) {
+			if (packageTypes.python3) {
 				return 'python3';
-			} else if (packageTypes['python3']) {
+			} else if (packageTypes.python2) {
 				return 'python2';
 			}
 		},

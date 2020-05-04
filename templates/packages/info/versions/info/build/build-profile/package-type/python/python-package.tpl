@@ -1,7 +1,6 @@
 <div id="python-package-info" class="form-horizontal">
 	<fieldset>
 		<legend>Python build info</legend>
-		<% var isWheel = model.getFilename().endsWith('.whl'); %>
 
 		<div class="form-group">
 			<label class="form-label">Build system</label>

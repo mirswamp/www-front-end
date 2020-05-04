@@ -1,10 +1,6 @@
 <thead>
-	<tr>
-		<% if (showNumbering) { %>
-		<th class="prepend number"></th>
-		<% } %>
-			
-		<th class="package first">
+	<tr>	
+		<th class="package">
 			<i class="fa fa-gift"></i>
 			<span>Package</span>
 		</th>
@@ -19,13 +15,13 @@
 			<span>Platform</span>
 		</th>
 
-		<th class="results last">
+		<th class="results">
 			<i class="fa fa-check"></i>
 			<span>Results</span>
 		</th>
 
 		<% if (showDelete) { %>
-		<th class="append delete hidden-xs"></th>
+		<th class="delete hidden-xs"></th>
 		<% } %>
 	</tr>
 </thead>

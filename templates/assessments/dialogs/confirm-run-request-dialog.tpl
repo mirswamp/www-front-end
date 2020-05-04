@@ -10,7 +10,7 @@
 	<i class="alert-icon fa fa-3x fa-question-circle" style="float:left; margin-left:10px; margin-right:20px"></i>
 	<p>Please confirm that you would like to run these assessments now.</p>
 
-	<% if (config['email_enabled']) { %>
+	<% if (application.config.email_enabled) { %>
 	<br />
 	<form>
 		<div class="checkbox well">

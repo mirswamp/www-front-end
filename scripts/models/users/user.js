@@ -12,7 +12,7 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2019 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2020 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 define([
@@ -60,6 +60,10 @@ define([
 			return this.hasName()? this.get('first_name') + ' ' + this.get('last_name') : '';
 		},
 
+		getAppUrl: function() {
+			return application.getURL() + '#accounts/' + this.get('user_uid');
+		},
+
 		isOwnerOf: function(project) {
 			return this.get('user_uid') ===  project.get('projectOwnerUid');
 		},
@@ -94,6 +98,10 @@ define([
 
 		hasSshAccess: function() {
 			return this.get('ssh_access_flag');
+		},
+
+		hasProjects: function() {
+			return this.get('has_projects');
 		},
 
 		isPasswordResetRequired: function() {

@@ -2,13 +2,13 @@
 
 <ol class="breadcrumb">
 	<li><a href="#home"><i class="fa fa-home"></i>Home</a></li>
-	<% if (package.isOwned()) { %>
+	<% if (is_owned) { %>
 	<li><a href="#packages"><i class="fa fa-gift"></i>Packages</a></li>
 	<% } else { %>
 	<li><a href="#resources"><i class="fa fa-book"></i>Resources</a></li>
 	<li><a href="#packages/public"><i class="fa fa-gift"></i>Packages</a></li>
 	<% } %>
-	<li><a href="#packages/<%- package.get('package_uuid') %>"><i class="fa fa-gift"></i><%- name %></a></li>
+	<li><a href="<%= url %>"><i class="fa fa-gift"></i><%= name %></a></li>
 	<li><i class="fa fa-gift"></i>Package Version <%- version_string %></li>
 </ol>
 

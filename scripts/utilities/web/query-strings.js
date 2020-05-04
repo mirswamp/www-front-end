@@ -8,7 +8,7 @@
 |        deal with URL query strings.                                          |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2019 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2020 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 //
@@ -33,9 +33,16 @@ function getWindowBaseLocation() {
 	}
 }
 
+function hasQueryString() {
+	return getQueryString() != undefined;
+}
+
 function getQueryString() {
 	return window.top.location.href.split('?')[1];
-	// return window.top.location.search.substring(1);
+}
+
+function getQueryStringData() {
+	return queryStringToData(getQueryString());
 }
 
 function getFragment() {
@@ -74,7 +81,7 @@ function queryStringToData(queryString) {
 		for (var i = 0; i < substrings.length; i++) {
 			var pair = substrings[i].split('=');
 			var key = pair[0];
-			var value = decodeURI(pair[1]);
+			var value = decodeURIComponent(pair[1]);
 			data[key] = value;
 		}
 	}
@@ -118,7 +125,7 @@ function arrayToQueryString(name, array) {
 // methods to handle individual query variables
 //
 
-function getQueryVariable(queryString, variable) {
+function getQueryStringValue(queryString, key) {
 	if (!queryString) {
 		return undefined;
 	}
@@ -126,34 +133,26 @@ function getQueryVariable(queryString, variable) {
 	var vars = queryString.split('&');
 	for (var i = 0; i < vars.length; i++) {
 		var pair = vars[i].split('=');
-		if (pair[0] == variable) {
-			return pair[1];
+		if (pair[0] == key) {
+			return decodeURIComponent(pair[1]);
 		}
 	}
 	
 	return undefined;
 }
 
-function hasQueryVariable(queryString, variable) {
-	return (getQueryVariable(queryString, variable) != undefined);
+function hasQueryStringValue(queryString, key) {
+	return (getQueryStringValue(queryString, key) != undefined);
 }
 
-function getQueryVariables(queryString, variable) {
-	if (!queryString) {
-		return new Array();
-	}
-
-	var queryVariables = new Array();
-	var vars = queryString.split('&');
-	var count = 0;
-	
-	for (var i = 0; i < vars.length; i++) {
-		var pair = vars[i].split('=');
-		if (pair[0] == variable) {
-			queryVariables[count] = pair[1];
-			count += 1;
+function getQueryStringValues(queryString, keys) {
+	var values = {};
+	for (var i = 0; i < keys.length; i++) {
+		var key = keys[i];
+		var value = getQueryStringValue(queryString, key);
+		if (value) {
+			values[key] = value;
 		}
-	} 
-	
-	return queryVariables;
+	}
+	return values;
 }

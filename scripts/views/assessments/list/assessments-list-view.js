@@ -13,7 +13,7 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2019 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2020 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 define([
@@ -21,10 +21,10 @@ define([
 	'underscore',
 	'text!templates/assessments/list/assessments-list.tpl',
 	'views/base-view',
-	'views/collections/tables/sortable-table-list-view',
+	'views/collections/tables/groupable-table-list-view',
 	'views/assessments/list/assessments-list-item-view'
-], function($, _, Template, BaseView, SortableTableListView, AssessmentsListItemView) {
-	return SortableTableListView.extend({
+], function($, _, Template, BaseView, GroupableTableListView, AssessmentsListItemView) {
+	return GroupableTableListView.extend({
 
 		//
 		// attributes
@@ -37,21 +37,9 @@ define([
 			template: _.template("No assessments.")
 		}),
 
-
-		sorting: {
-
-			// disable sorting on delete column
-			//
-			headers: {
-				4: { 
-					sorter: false 
-				}
-			},
-
-			// sort on name in ascending order 
-			//
-			sortList: [[0, 0]]
-		},
+		// sort by packages column in ascending order
+		//
+		sortBy: ['package', 'ascending'],
 		
 		//
 		// rendering methods
@@ -59,8 +47,7 @@ define([
 
 		templateContext: function() {
 			return {
-				collection: this.collection,
-				showNumbering: this.options.showNumbering
+				collection: this.collection
 			};
 		},
 
@@ -75,8 +62,7 @@ define([
 			// return view options
 			//
 			return {
-				index: this.collection.indexOf(model),
-				showNumbering: this.options.showNumbering
+				index: this.collection.indexOf(model)
 			};
 		}
 	});

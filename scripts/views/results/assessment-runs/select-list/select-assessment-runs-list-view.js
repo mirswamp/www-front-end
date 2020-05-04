@@ -12,7 +12,7 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2019 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2020 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 define([
@@ -37,30 +37,12 @@ define([
 			'click .select-all': 'onClickSelectAll'
 		},
 
-		sorting: {
+		// sort by date column in descending order 
+		//
+		sortBy: ['date', 'descending'],
 
-			// disable sorting on checkboxes and delete columns
-			//
-			headers: {
-				0: { 
-					sorter: false 
-				},
-				1: { 
-					sorter: false 
-				},
-				9: {
-					sorter: false
-				},
-				10: {
-					sorter: false
-				}
-			},
-
-			// sort on date column in descending order
-			//
-			sortList: [[6, 1]]
-		},
-
+		// disable grouping on selected columns
+		//
 		groupExcept: ['select', 'delete', 'results', 'ssh'],
 
 		//
@@ -69,16 +51,6 @@ define([
 
 		initialize: function(options) {
 			var self = this;
-
-			// use specified sort order 
-			//
-			if (options.sortList) {
-				this.sorting.sortList = options.sortList;
-			} else if (this.options.showProjects) {
-				this.sorting.sortList = [[6, 1]];
-			} else {
-				this.sorting.sortList = [[5, 1]];
-			}
 
 			// set attributes
 			//
@@ -248,8 +220,10 @@ define([
 		templateContext: function() {
 			return {
 				collection: this.collection,
+
+				// options
+				//
 				showProjects: this.options.showProjects,
-				showNumbering: this.options.showNumbering,
 				showGrouping: this.options.showGrouping,
 				showStatus: this.options.showStatus,
 				showErrors: this.options.showErrors,
@@ -277,8 +251,10 @@ define([
 				editable: this.options.editable,
 				selected: this.options.selected,
 				queryString: this.options.queryString,
+
+				// options
+				//
 				showProjects: this.options.showProjects,
-				showNumbering: this.options.showNumbering,
 				showGrouping: this.options.showGrouping,
 				showStatus: this.options.showStatus,
 				showErrors: this.options.showErrors,

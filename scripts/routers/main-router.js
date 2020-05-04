@@ -12,7 +12,7 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2019 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2020 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 define([
@@ -56,6 +56,16 @@ define([
 			//
 			'register': 'showRegister',
 			'register/verify-email/:verification_key': 'showVerifyEmail',
+
+			// linked account registration routes
+			//
+			'providers/:provider/register': 'showLinkedAccountRegistration',
+			'providers/:provider/register/error(/:type)': 'showLinkedAccountRegistrationError',
+
+			// linked account authentication routes
+			//
+			'providers/:provider/sign-in/add': 'showAddSignIn',
+			'providers/:provider/sign-in/error(/:type)': 'showLinkedAccountSignInError',
 		
 			// email change verification
 			//
@@ -73,6 +83,7 @@ define([
 			'my-account/accounts': 'showMyLinkedAccounts',
 			'my-account/passwords': 'showMyPasswords',
 			'my-account/classes': 'showMyClasses',
+			'my-account/events': 'showMyEvents',
 			'my-account/edit': 'showEditMyAccount',
 
 			// administration routes
@@ -87,17 +98,12 @@ define([
 			'accounts/:user_uid/accounts': 'showUserLinkedAccounts',
 			'accounts/:user_uid/passwords': 'showUserPasswords',
 			'accounts/:user_uid/classes': 'showUserClasses',
+			'accounts/:user_uid/events': 'showUserEvents',
 			'accounts/:user_uid/edit': 'showEditUserAccount',
 
 			// user event routes
 			//
 			'events(?*query_string)': 'showEvents',
-
-			// linked account integration routes
-			//
-			'linked-account/prompt': 'showLinkedAccountPrompt',
-			'linked-account/login': 'showLinkedAccountLogin',
-			'linked-account/error/:type': 'showLinkedAccountError',
 
 			// system settings routes
 			//
@@ -308,22 +314,91 @@ define([
 		// user registration route handlers
 		//
 
-		showRegister: function() {
+		showRegister: function(provider) {
 			require([
-				'views/users/registration/sign-aup-view'
-			], function (SignAupView) {
+				'views/users/registration/sign-up-view'
+			], function (SignUpView) {
 
 				// show aup view
 				//
-				application.showMain(new SignAupView());
+				application.show(new SignUpView({
+					provider: provider
+				}));
 			});
 		},
+
+		//
+		// linked account registration routes
+		//
+
+		showLinkedAccountRegistration: function(provider) {
+			require([
+				'views/users/registration/linked-accounts/linked-account-registration-view'
+			], function (LinkedAccountRegistrationView) {
+
+				// show linked account registration view
+				//
+				application.show(new LinkedAccountRegistrationView({
+					provider: provider
+				}));
+			});
+		},
+
+		showLinkedAccountRegistrationError: function(provider, errorType) {
+			require([
+				'views/users/registration/linked-accounts/linked-account-registration-error-view'
+			], function (LinkedAccountRegistrationErrorView) {
+
+				// show linked account registration error view
+				//
+				application.show(new LinkedAccountRegistrationErrorView({
+					provider: provider,
+					type: errorType
+				}));
+			});
+		},
+
+		//
+		// linked account authentication routes
+		//
+
+		showAddSignIn: function(provider) {
+			require([
+				'views/users/accounts/linked-accounts/add-sign-in-view'
+			], function (AddSignInView) {
+
+				// show add sign in view
+				//
+				application.show(new AddSignInView({
+					provider: provider
+				}));
+			});
+		},
+
+		showLinkedAccountSignInError: function(provider, errorType) {
+			require([
+				'views/users/authentication/linked-accounts/linked-account-sign-in-error-view'
+			], function (LinkedAccountSignInErrorView) {
+
+				// show linked account sign in error view
+				//
+				application.show(new LinkedAccountSignInErrorView({
+					provider: provider,
+					type: errorType
+				}));
+			});
+		},
+
+		
+		//
+		// email verification route handlers
+		//
 
 		showVerifyEmail: function(verificationKey) {
 			require([
 				'models/users/user',
 				'models/users/email-verification',
-				'views/users/registration/verify-email-view'
+				'views/users/registration/email/verify-email-view'
 			], function (User, EmailVerification, VerifyEmailView) {
 
 				// fetch email verification
@@ -361,7 +436,7 @@ define([
 			require([
 				'models/users/user',
 				'models/users/email-verification',
-				'views/users/registration/verify-email-changed-view'
+				'views/users/registration/email/verify-email-changed-view'
 			], function (User, EmailVerification, VerifyEmailChangedView) {
 
 				// fetch email verification
@@ -403,8 +478,8 @@ define([
 			require([
 				'models/users/user',
 				'models/users/password-reset',
-				'views/users/reset-password/reset-password-view',
-				'views/users/reset-password/invalid-reset-password-view'
+				'views/users/authentication/reset-password/reset-password-view',
+				'views/users/authentication/reset-password/invalid-reset-password-view'
 			], function (User, PasswordReset, ResetPasswordView, InvalidResetPasswordView) {
 
 				// fetch password reset
@@ -558,11 +633,13 @@ define([
 			});
 		},
 
-		showMyAccount: function(options) {
+		showMyAccount: function(queryString, options) {
 			var self = this;
+
 			require([
+				'routers/query-string-parser',
 				'views/users/accounts/my-account-view'
-			], function (MyAccountView) {
+			], function (QueryStringParser, MyAccountView) {
 
 				// show content view
 				//
@@ -573,18 +650,22 @@ define([
 					// callbacks
 					//
 					done: function(view) {
+						var data = QueryStringParser.parse(queryString, view.model);
+						QueryStringParser.fetch(data, function(data) {
 
-						// show user account view
-						//
-						view.showChildView('content', new MyAccountView({
-							nav: options && options.nav? options.nav : 'profile'
-						}));
+							// show user account view
+							//
+							view.showChildView('content', new MyAccountView({
+								nav: options && options.nav? options.nav : 'profile',
+								data: data
+							}));
 
-						// perform callback
-						//
-						if (options && options.done) {
-							options.done();
-						}
+							// perform callback
+							//
+							if (options && options.done) {
+								options.done();
+							}
+						});
 					}
 				});
 			});
@@ -622,27 +703,33 @@ define([
 			});
 		},
 
-		showMyPermissions: function(options) {
-			this.showMyAccount(_.extend(options || {}, {
+		showMyPermissions: function(queryString, options) {
+			this.showMyAccount(queryString, _.extend(options || {}, {
 				nav: 'permissions'
 			}));
 		},
 
-		showMyLinkedAccounts: function(options) {
-			this.showMyAccount(_.extend(options || {}, {
+		showMyLinkedAccounts: function(queryString, options) {
+			this.showMyAccount(queryString, _.extend(options || {}, {
 				nav: 'accounts'
 			}));
 		},
 
-		showMyPasswords: function(options) {
-			this.showMyAccount(_.extend(options || {}, {
+		showMyPasswords: function(queryString, options) {
+			this.showMyAccount(queryString, _.extend(options || {}, {
 				nav: 'passwords'
 			}));
 		},
 
-		showMyClasses: function(options) {
-			this.showMyAccount(_.extend(options || {}, {
+		showMyClasses: function(queryString, options) {
+			this.showMyAccount(queryString, _.extend(options || {}, {
 				nav: 'classes'
+			}));
+		},
+
+		showMyEvents: function(queryString, options) {
+			this.showMyAccount(queryString, _.extend(options || {}, {
+				nav: 'events'
 			}));
 		},
 
@@ -650,12 +737,13 @@ define([
 		// user account route handlers
 		//
 
-		showUserAccount: function(userUid, options) {
+		showUserAccount: function(userUid, queryString, options) {
 			var self = this;
 			require([
 				'models/users/user',
+				'routers/query-string-parser',
 				'views/users/accounts/user-account-view',
-			], function (User, UserAccountView) {
+			], function (User, QueryStringParser, UserAccountView) {
 
 				// fetch user associated with account
 				//
@@ -678,19 +766,23 @@ define([
 							// callbacks
 							//
 							done: function(view) {
+								var data = QueryStringParser.parse(queryString, view.model);
+								QueryStringParser.fetch(data, function(data) {
 
-								// show user account view
-								//
-								view.showChildView('content', new UserAccountView({
-									model: user,
-									nav: options? options.nav : 'profile'
-								}));
+									// show user account view
+									//
+									view.showChildView('content', new UserAccountView({
+										model: user,
+										nav: options? options.nav : 'profile',
+										data: data
+									}));
 
-								// perform callback
-								//
-								if (options && options.done) {
-									options.done();
-								}
+									// perform callback
+									//
+									if (options && options.done) {
+										options.done();
+									}
+								});
 							}
 						});
 					},
@@ -707,7 +799,7 @@ define([
 			});
 		},
 
-		showEditUserAccount: function(userUid, options) {
+		showEditUserAccount: function(userUid, queryString, options) {
 			var self = this;
 			require([
 				'models/users/user',
@@ -763,104 +855,34 @@ define([
 			});
 		},
 
-		showUserAccountPermissions: function(userUid, options) {
-			this.showUserAccount(userUid, _.extend(options || {}, {
+		showUserAccountPermissions: function(userUid, queryString, options) {
+			this.showUserAccount(userUid, queryString, _.extend(options || {}, {
 				nav: 'permissions'
 			}));
 		},
 
-		showUserLinkedAccounts: function(userUid, options) {
-			this.showUserAccount(userUid, _.extend(options || {}, {
+		showUserLinkedAccounts: function(userUid, queryString, options) {
+			this.showUserAccount(userUid, queryString, _.extend(options || {}, {
 				nav: 'accounts'
 			}));
 		},
 
-		showUserPasswords: function(userUid, options) {
-			this.showUserAccount(userUid, _.extend(options || {}, {
+		showUserPasswords: function(userUid, queryString, options) {
+			this.showUserAccount(userUid, queryString, _.extend(options || {}, {
 				nav: 'passwords'
 			}));
 		},
 
-		showUserClasses: function(userUid, options) {
-			this.showUserAccount(userUid, _.extend(options || {}, {
+		showUserClasses: function(userUid, queryString, options) {
+			this.showUserAccount(userUid, queryString, _.extend(options || {}, {
 				nav: 'classes'
 			}));
 		},
 
-		//
-		// user event route handlers
-		//
-
-		showEvents: function(queryString) {
-			var self = this;
-			require([
-				'routers/query-string-parser',
-				'views/events/events-view'
-			], function (QueryStringParser, EventsView) {
-
-				// show content view
-				//
-				application.showContent({
-					nav1: 'home',
-					nav2: 'events', 
-
-					// callbacks
-					//
-					done: function(view) {
-
-						// parse and fetch query string data
-						//
-						QueryStringParser.fetch(QueryStringParser.parse(queryString, view.model), function(data) {
-		
-							// show project events view
-							//
-							view.showChildView('content', new EventsView({
-								model: view.model,
-								data: data
-							}));
-						});
-					}
-				});
-			});
-		},
-
-		//
-		// linked account login route handlers
-		//
-
-		showLinkedAccountPrompt: function() {
-			require([
-				'views/users/prompts/linked-account-prompt-view'
-			], function (LinkedAccountPromptView) {
-
-				// show linked account prompt view
-				//
-				application.showMain(new LinkedAccountPromptView({}));
-			});
-		},
-
-		showLinkedAccountLogin: function() {
-			require([
-				'views/users/prompts/linked-account-login-prompt-view'
-			], function (LinkedAccountLoginPromptView) {
-
-				// show linked account login prompt view
-				//
-				application.showMain(new LinkedAccountLoginPromptView({}));
-			});
-		},
-
-		showLinkedAccountError: function(type) {
-			require([
-				'views/users/prompts/linked-account-error-prompt-view'
-			], function (LinkedAccountErrorPromptView) {
-
-				// show linked account error prompt view
-				//
-				application.showMain(new LinkedAccountErrorPromptView({
-					'type': type
-				}));
-			});
+		showUserEvents: function(userUid, queryString, options) {
+			this.showUserAccount(userUid, queryString, _.extend(options || {}, {
+				nav: 'events'
+			}));
 		},
 
 		//
@@ -886,7 +908,7 @@ define([
 						// show settings view
 						//
 						view.showChildView('content', new SettingsView({
-							nav: application.config['email_enabled']? (options && options.nav? options.nav : 'restricted-domains') : 'admins'
+							nav: application.config.email_enabled? (options && options.nav? options.nav : 'restricted-domains') : 'admins'
 						}));
 
 						// perform callback

@@ -12,7 +12,7 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2019 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2020 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 define([
@@ -20,9 +20,10 @@ define([
 	'underscore',
 	'config',
 	'text!templates/packages/info/details/package-profile/package-profile-form.tpl',
+	'models/packages/package',
 	'views/forms/form-view',
 	'utilities/web/address-bar'
-], function($, _, Config, Template, FormView, AddressBar) {
+], function($, _, Config, Template, Package, FormView, AddressBar) {
 	return FormView.extend({
 
 		//
@@ -34,6 +35,7 @@ define([
 		events: {
 			'focus #language-type': 'onFocusLanguageType',
 			'change #language-type': 'onChangeLanguageType',
+			'click input[name="file-source"]': 'onClickFileSource',
 			'click #generate-token': 'onClickGenerateToken'
 		},
 
@@ -46,32 +48,13 @@ define([
 				required: true
 			},
 			'external-url': {
-				url: true
+				url: true,
+				external_url: true
+			},
+			'external-git-url': {
+				url: true,
+				external_git_url: true
 			}
-		},
-
-		//
-		// constructor
-		//
-
-		initialize: function() {
-			var self = this;
-
-			$.validator.addMethod('external-url', function(value) {
-				self.model.set('external_url', value);
-				if (value === '') {
-					return true;
-				}
-				if (self.model.hasValidExternalUrl()) {
-					var file = $(document).find('#archive').val('');
-					return true;
-				}
-				return false;
-			}, "Not a valid external URL.");
-
-			jQuery.validator.addMethod('selectcheck', function (value) {
-				return (value != 'none');
-			}, "Please specify the package's programming language.");
 		},
 
 		//
@@ -109,15 +92,16 @@ define([
 			}
 		},
 
-		getSecretToken: function() {
-			return this.$el.find('#secret-token input').val();
+		getFileSource: function() {
+			return this.$el.find('input[name="file-source"]:checked').val();
 		},
 
-		getSuggestedSecretToken: function() {
-			function s4() {
-				return Math.floor((1 + Math.random()) * 0x10000).toString(16).substring(1);
-			}
-			return s4() + s4() + '-' + s4() + '-' + s4() + '-' + s4() + '-' + s4() + s4() + s4();
+		getExternalUrl: function() {
+			return this.$el.find('#external-url input').val();
+		},
+
+		getExternalGitUrl: function() {
+			return this.$el.find('#external-git-url input').val();
 		},
 
 		getPayloadUrl: function() {
@@ -130,6 +114,17 @@ define([
 			}
 		},
 
+		getSecretToken: function() {
+			return this.$el.find('#secret-token input').val();
+		},
+
+		getSuggestedSecretToken: function() {
+			function s4() {
+				return Math.floor((1 + Math.random()) * 0x10000).toString(16).substring(1);
+			}
+			return s4() + s4() + '-' + s4() + '-' + s4() + '-' + s4() + '-' + s4() + s4() + s4();
+		},
+
 		//
 		// rendering methods
 		//
@@ -140,6 +135,17 @@ define([
 				payload_url: this.getPayloadUrl(),
 				suggested_secret_token: this.getSuggestedSecretToken()
 			};
+		},
+
+		onRender: function() {
+
+			// add form validation methods
+			//
+			this.addValidators();
+
+			// call superclass method
+			//
+			FormView.prototype.onRender.call(this);
 		},
 
 		showLanguageType: function() {
@@ -157,11 +163,36 @@ define([
 		// form methods
 		//
 
+		addValidators: function() {
+			var self = this;
+
+			// add external url validation rule
+			//
+			$.validator.addMethod('external_url', function(value) {
+				return Package.isValidArchiveName(value);
+			}, "Not a valid external archive URL.");
+
+			$.validator.addMethod('external_git_url', function(value) {
+				return Package.isValidGitUrl(value);
+			}, "Not a valid GitHub HTTPS URL.");
+
+			// add file validation rule
+			//
+			$.validator.addMethod('file', function(value) {
+				return Package.isValidArchiveName(value) || (self.$el.find('#external-url').val() != '');
+			}, "Please select an archive file.");
+
+			$.validator.addMethod('selectcheck', function (value) {
+				return (value != 'none');
+			}, "Please specify the package's programming language.");
+		},
+
 		getValues: function() {
 			return {
 				'name': this.$el.find('#name input').val(),
 				'description': this.$el.find('#description textarea').val(),
-				'external_url': this.$el.find('#external-url input').val(),
+				'external_url_type': this.getFileSource() != 'local'? this.getFileSource() : '',
+				'external_url': this.getFileSource() != 'local'? (this.getFileSource() == 'git'? this.getExternalGitUrl(): this.getExternalUrl()) : '',
 				'secret_token': this.$el.find('#secret-token input').val()
 			};
 		},
@@ -196,6 +227,33 @@ define([
 
 		onChangeLanguageType: function() {
 			this.showLanguageType();
+		},
+
+		onClickFileSource: function(event) {
+			var source = $(event.target).val();
+			switch (source) {
+
+				case 'local':
+					this.$el.find('#external-url').hide();
+					this.$el.find('#external-git-url').hide();
+					this.$el.find('#git-message').hide();
+					this.$el.find('#webhook-callback').hide();
+					break;
+
+				case 'download':
+					this.$el.find('#external-url').show();
+					this.$el.find('#external-git-url').hide();
+					this.$el.find('#git-message').hide();
+					this.$el.find('#webhook-callback').hide();
+					break;
+
+				case 'git':
+					this.$el.find('#external-url').hide();
+					this.$el.find('#external-git-url').show();
+					this.$el.find('#git-message').show();
+					this.$el.find('#webhook-callback').show();
+					break;
+			}
 		},
 
 		onClickGenerateToken: function() {

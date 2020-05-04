@@ -12,7 +12,7 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2019 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2020 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 define([
@@ -46,13 +46,7 @@ define([
 		//
 		// rendering methods
 		//
-
-		templateContext: function() {
-			return {
-				config: application.config
-			};
-		},
-
+		
 		onRender: function() {
 
 			// update top navigation
@@ -89,33 +83,26 @@ define([
 
 		//
 		// event handling methods
-		//
 
 		onClickDomains: function() {
 
 			// go to restricted domains view
 			//
-			Backbone.history.navigate('#settings/restricted-domains', {
-				trigger: true
-			});
+			application.navigate('#settings/restricted-domains');
 		},
 
 		onClickAdmins: function() {
 
 			// go to admins view
 			//
-			Backbone.history.navigate('#settings/admins', {
-				trigger: true
-			});
+			application.navigate('#settings/admins');
 		},
 
 		onClickEmail: function() {
 
 			// go to email settings view
 			//
-			Backbone.history.navigate('#settings/email', {
-				trigger: true
-			});
+			application.navigate('#settings/email');
 		}
 	});
 });

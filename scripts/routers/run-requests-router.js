@@ -12,7 +12,7 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2019 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2020 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 define([
@@ -35,6 +35,7 @@ define([
 			//
 			'run-requests(?*query_string)': 'showRunRequests',
 			'run-requests/add(?*query_string)': 'showAddRunRequests',
+			'run-requests/schedule(?*query_string)': 'showScheduleRunRequests',
 
 			// run request schedule routes
 			//
@@ -53,7 +54,7 @@ define([
 			require([
 				'routers/query-string-parser',
 				'collections/viewers/viewers',
-							'views/scheduled-runs/scheduled-runs-view'
+				'views/scheduled-runs/scheduled-runs-view'
 			], function (QueryStringParser, Viewers, ScheduledRunsView) {
 
 				// show content view
@@ -87,7 +88,41 @@ define([
 			require([
 				'routers/query-string-parser',
 				'models/projects/project',
-							'views/scheduled-runs/schedule-run-requests/schedule-run-requests-view'
+				'views/scheduled-runs/add/add-scheduled-runs-view'
+			], function (QueryStringParser, Project, AddScheduledRunsView) {
+
+				// show content view
+				//
+				application.showContent({
+					nav1: 'home',
+					nav2: 'runs', 
+
+					// callbacks
+					//
+					done: function(view) {
+
+						// parse and fetch query string data
+						//
+						QueryStringParser.fetch(QueryStringParser.parse(queryString, view.model), function(data) {
+
+							// show project's schedule run requests view
+							//
+							view.showChildView('content', new AddScheduledRunsView({
+								model: data.project || view.model,
+								data: data
+							}));
+						});
+					}
+				});
+			});
+		},
+
+		showScheduleRunRequests: function(queryString) {
+			var self = this;
+			require([
+				'routers/query-string-parser',
+				'models/projects/project',
+				'views/scheduled-runs/schedule-run-requests/schedule-run-requests-view'
 			], function (QueryStringParser, Project, ScheduleRunRequestsView) {
 
 				// show content view
@@ -107,7 +142,7 @@ define([
 							// show project's schedule run requests view
 							//
 							view.showChildView('content', new ScheduleRunRequestsView({
-								model: data['project'] || view.model,
+								model: data.project || view.model,
 								data: data
 							}));
 						});
@@ -125,14 +160,14 @@ define([
 			require([
 				'routers/query-string-parser',
 				'models/projects/project',
-							'views/scheduled-runs/schedules/add/add-schedule-view'
+				'views/schedules/add/add-schedule-view'
 			], function (QueryStringParser, Project, AddScheduleView) {
 
 				// show content view
 				//
 				application.showContent({
 					nav1: 'home',
-					nav2: 'runs', 
+					nav2: 'schedules', 
 
 					// callbacks
 					//
@@ -141,13 +176,13 @@ define([
 						// parse and fetch query string data
 						//
 						QueryStringParser.fetch(QueryStringParser.parse(queryString, view.model), function(data) {
-							if (data['project']) {
+							if (data.project) {
 
 								// show project's add schedule view
 								//
 								view.showChildView('content', new AddScheduleView({
-									project: data['project'],
-									assessmentRunUuids: data['assessments']
+									project: data.project,
+									assessmentRunUuids: data.assessments
 								}));
 							} else {
 
@@ -155,7 +190,7 @@ define([
 								//
 								view.showChildView('content', new AddScheduleView({
 									project: view.model,
-									assessmentRunUuids: data['assessments']
+									assessmentRunUuids: data.assessments
 								}));
 							}
 						});
@@ -169,14 +204,14 @@ define([
 			require([
 				'models/projects/project',
 				'models/run-requests/run-request',
-				'views/scheduled-runs/schedules/schedule/schedule-view',
-						], function (Project, RunRequest, ScheduleView) {
+				'views/schedules/schedule/schedule-view',
+			], function (Project, RunRequest, ScheduleView) {
 
 				// show content view
 				//
 				application.showContent({
 					nav1: 'home',
-					nav2: 'runs', 
+					nav2: 'schedules', 
 
 					// callbacks
 					//
@@ -193,36 +228,46 @@ define([
 							// callbacks
 							//
 							success: function() {
+								if (runRequest.has('project_uuid')) {
 
-								// fetch run request's project
-								//
-								var project = new Project({
-									project_uid: runRequest.get('project_uuid')
-								});
-
-								project.fetch({
-
-									// callbacks
+									// fetch run request's project
 									//
-									success: function() {
+									var project = new Project({
+										project_uid: runRequest.get('project_uuid')
+									});
 
-										// show schedule view
+									project.fetch({
+
+										// callbacks
 										//
-										view.showChildView('content', new ScheduleView({
-											model: runRequest,
-											project: project
-										}));
-									},
+										success: function() {
 
-									error: function() {
+											// show schedule view
+											//
+											view.showChildView('content', new ScheduleView({
+												model: runRequest,
+												project: project
+											}));
+										},
 
-										// show error message
-										//
-										application.error({
-											message: "Could not fetch run request's project."
-										});				
-									}
-								});
+										error: function() {
+
+											// show error message
+											//
+											application.error({
+												message: "Could not fetch run request's project."
+											});				
+										}
+									});
+								} else {
+
+									// show schedule view
+									//
+									view.showChildView('content', new ScheduleView({
+										model: runRequest,
+										project: null
+									}));	
+								}
 							},
 
 							error: function() {
@@ -244,14 +289,14 @@ define([
 			require([
 				'models/projects/project',
 				'models/run-requests/run-request',
-				'views/scheduled-runs/schedules/edit/edit-schedule-view',
-						], function (Project, RunRequest, EditScheduleView) {
+				'views/schedules/edit/edit-schedule-view',
+			], function (Project, RunRequest, EditScheduleView) {
 
 				// show content view
 				//
 				application.showContent({
 					nav1: 'home',
-					nav2: 'runs', 
+					nav2: 'schedules', 
 
 					// callbacks
 					//
@@ -319,14 +364,14 @@ define([
 			require([
 				'routers/query-string-parser',
 				'models/projects/project',
-							'views/scheduled-runs/schedules/schedules-view'
+				'views/schedules/schedules-view'
 			], function (QueryStringParser, Project, SchedulesView) {
 
 				// show content view
 				//
 				application.showContent({
 					nav1: 'home',
-					nav2: 'runs', 
+					nav2: 'schedules', 
 
 					// callbacks
 					//

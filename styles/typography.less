@@ -12,7 +12,7 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2019 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2020 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 //
@@ -22,97 +22,25 @@
 body, input, button, textarea, p, .popover, .form-control, .tooltip {
 	font-family: "Gill Sans MT", "Gill Sans", Calibri, sans-serif;
 	font-size: 16px;
+	font-kerning: none;
 }
 
 //
-// header font styles
+// emphasized font styles
 //
 
-h1, h2, h3, .brand, label, .nav, .navbar, .btn, th, legend {
+.brand, label, .nav, .navbar, .btn, th, legend {
 	font-family: 'TradeGothicBold', sans-serif;
 	font-weight: normal;
 }
 
-h1, h2, h3, .brand, label, .nav, .navbar, th, legend, .tagline {
+.brand, label, .nav, .navbar, th, legend, .tagline {
 	font-weight: normal;
 }
 
-h1 {
-	line-height: 1em;
-	color: @very-dark-grey;
-	font-size: 250%;
-	padding-bottom: 5px;
-	border-bottom: 2px solid @brand-primary;
-	margin-bottom: 20px;
-
-	i {
-		color: @brand-primary;
-		float: left;
-		margin-top: 5px;
-		margin-right: 15px;
-	}
-}
-
-h2, h3 {
-	line-height: 1.25em;
-}
-
 //
-// medium header font styles
+// paragraph font styles
 //
-
-@media (max-width: 991px) {
-	h1 {
-		font-size: 225%;
-		margin-bottom: 5px;
-	}
-}
-
-//
-// mobile header font styles
-//
-
-@media (max-width: 767px) {
-	h1 {
-		font-size: 175%;
-	}
-}
-
-h2 {
-	margin-top: 20px;
-	color: @brand-secondary;
-
-	i {
-		color: @dark-grey;
-		float: left;
-		margin-top: 3px;
-		margin-right: 6px;
-	}
-}
-
-h3 {
-	color: @brand-secondary;
-
-	i {
-		margin-right: 10px;
-	}
-}
-
-h2 {
-	font-size: 125%;
-}
-
-.help h2 {
-	color: @very-dark-grey;
-}
-
-h3 {
-	font-size: 100%;
-}
-
-/*
- * paragraph font styles
- */
 
 p {
 	color: @dark-grey;
@@ -141,10 +69,6 @@ p {
 
 .warning, .warning a {
 	color: @medium-red;
-}
-
-h1 .name {
-	color: @brand-secondary;
 }
 
 .highlighted {

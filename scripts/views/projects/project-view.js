@@ -12,7 +12,7 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2019 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2020 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 define([
@@ -58,7 +58,6 @@ define([
 			'click #delete-project': 'onClickDeleteProject',
 			'click #save-changes:not(.disabled)': 'onClickSaveChanges',
 			'click #save-changes.disabled': 'onClickSaveChangesDisabled',
-			'click #cancel': 'onClickCancel',
 			'click #show-numbering': 'onClickShowNumbering'
 		},
 
@@ -122,15 +121,11 @@ define([
 					// update user
 					//
 					self.numProjects--;
-					if (self.numProjects == 1) {
-						application.session.user.set('has_projects', false);
-					}
+					application.session.user.set('num_projects', application.session.user.get('num_projects') - 1);
 
 					// return to projects view
 					//
-					Backbone.history.navigate('#projects', {
-						trigger: true
-					});
+					application.navigate('#projects');
 				},
 
 				error: function() {
@@ -157,8 +152,7 @@ define([
 				isAdmin: application.session.isAdmin(),
 				isProjectAdmin: application.session.isAdmin() ||
 					this.options.projectMembership && this.options.projectMembership.isAdmin(),
-				allowPublicTools: true,
-				showNumbering: application.options.showNumbering
+				allowPublicTools: true
 			};
 		},
 
@@ -206,13 +200,23 @@ define([
 		},
 
 		showList: function() {
+
+			// preserve existing sorting column and order
+			//
+			if (this.hasChildView('list') && this.collection.length > 0) {
+				this.options.sortBy = this.getChildView('list').getSorting();
+			}
+
 			this.showChildView('list', new ProjectMembersListView({
 				model: this.model,
 				collection: this.collection,
+
+				// options
+				//
+				sortBy: this.options.sortBy,
 				showEmail: application.config.email_enabled,
 				showUsername: true,
 				showDelete: this.options.projectMembership && this.options.projectMembership.isAdmin(),
-				showNumbering: application.options.showNumbering,
 				readOnly: !(application.session.isAdmin() ||
 					this.options.projectMembership && this.options.projectMembership.isAdmin())
 			}));
@@ -226,6 +230,10 @@ define([
 			this.$el.find('#number-of-members').html(numberOfMembers);
 		},
 
+		//
+		// badge rendering methods
+		//
+
 		addBadge: function(selector, num) {
 			if (num > 0) {
 				this.$el.find(selector).append('<span class="badge">' + num + '</span>');
@@ -234,52 +242,57 @@ define([
 			}
 		},
 
-		addBadges: function() {
+		addNumAssessmentsBadge: function() {
 			var self = this;
-
-			// add num assessments badge
-			//
 			AssessmentRuns.fetchNumByProject(this.model, {
 				success: function(number) {
 					self.addBadge("#assessments", number);
 				}
 			});
+		},
 
-			// add num results badge
-			//
+		addNumResultsBadge: function() {
+			var self = this;
 			ExecutionRecords.fetchNumByProject(this.model, {
 				success: function(number) {
 					self.addBadge("#results", number);
 				}
-			});
+			});		
+		},
 
-			// add num scheduled runs badge
-			//
+		addNumRunsBadge: function() {
+			var self = this;
 			ScheduledRuns.fetchNumByProject(this.model, {
 				success: function(number) {
 					self.addBadge("#runs", number);
 				}
-			});
+			});		
+		},
 
-			// add num schedules badge
-			//
+		addNumSchedulesBadge: function() {
+			var self = this;
 			RunRequests.fetchNumSchedulesByProject(this.model, {
 				success: function(number) {
 					self.addBadge("#schedules", number);
 				}
-			});
+			});		
+		},
 
-			// add num events badge
-			//
-			ProjectEvents.fetchNumByUser(this.model, application.session.user, {
-				success: function(numProjectEvents) {
-					UserProjectEvents.fetchNumByUser(self.model, application.session.user, {
-						success: function(numUserProjectEvents) {
-							self.addBadge("#events", numProjectEvents + numUserProjectEvents);
-						}
-					});
+		addNumEventsBadge: function() {
+			var self = this;
+			UserProjectEvents.fetchNumByUser(this.model, application.session.user, {
+				success: function(numUserProjectEvents) {
+					self.addBadge("#events", numUserProjectEvents);
 				}
-			});
+			});	
+		},
+
+		addBadges: function() {
+			this.addNumAssessmentsBadge();
+			this.addNumResultsBadge();
+			this.addNumRunsBadge();
+			this.addNumSchedulesBadge();
+			this.addNumEventsBadge();
 		},
 
 		//
@@ -290,54 +303,42 @@ define([
 
 			// go to assessments view
 			//
-			Backbone.history.navigate('#assessments?project=' + this.model.get('project_uid'), {
-				trigger: true
-			});
+			application.navigate('#assessments?project=' + this.model.get('project_uid'));
 		},
 
 		onClickResults: function() {
 
 			// go to assessment results view
 			//
-			Backbone.history.navigate('#results?project=' + this.model.get('project_uid'), {
-				trigger: true
-			});
+			application.navigate('#results?project=' + this.model.get('project_uid'));
 		},
 
 		onClickRuns: function() {
 
 			// go to run requests view
 			//
-			Backbone.history.navigate('#run-requests?project=' + this.model.get('project_uid'), {
-				trigger: true
-			});
+			application.navigate('#run-requests?project=' + this.model.get('project_uid'));
 		},
 
 		onClickSchedules: function() {
 
 			// go to run request schedules view
 			//
-			Backbone.history.navigate('#run-requests/schedules?project=' + this.model.get('project_uid'), {
-				trigger: true
-			});
+			application.navigate('#run-requests/schedules?project=' + this.model.get('project_uid'));
 		},
 
 		onClickEvents: function() {
 
 			// go to events view
 			//
-			Backbone.history.navigate('#events?type=project&project=' + this.model.get('project_uid'), {
-				trigger: true
-			});
+			application.navigate('#my-account/events?type=project&project=' + this.model.get('project_uid'));
 		},
 
 		onClickInvite: function() {
 
 			// go to invite members view
 			//
-			Backbone.history.navigate('#projects/' + this.model.get('project_uid') + '/members/invite', {
-				trigger: true
-			});
+			application.navigate('#projects/' + this.model.get('project_uid') + '/members/invite');
 		},
 
 		onClickCheck: function() {
@@ -354,18 +355,14 @@ define([
 
 			// go to run new assessment view
 			//
-			Backbone.history.navigate('#assessments/run?project=' + this.model.get('project_uid'), {
-				trigger: true
-			});
+			application.navigate('#assessments/run?project=' + this.model.get('project_uid'));
 		},
 
 		onClickEditProject: function() {
 
 			// go to edit project view
 			//
-			Backbone.history.navigate('#projects/' + this.model.get('project_uid') + '/edit', {
-				trigger: true
-			});
+			application.navigate('#projects/' + this.model.get('project_uid') + '/edit');
 		},
 
 		onClickDeleteProject: function() {
@@ -407,15 +404,8 @@ define([
 			});
 		},
 
-		onClickCancel: function() {
-			Backbone.history.navigate('#projects', {
-				trigger: true
-			});			
-		},
-
 		onClickShowNumbering: function(event) {
 			application.setShowNumbering($(event.target).is(':checked'));
-			this.showList();
 		}
 	});
 });

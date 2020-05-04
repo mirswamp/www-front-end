@@ -12,7 +12,7 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2019 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2020 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 define([
@@ -184,67 +184,41 @@ define([
 
 				// if user logged in, go to home view
 				//
-				Backbone.history.navigate('#home', {
-					trigger: true
-				});
+				application.navigate('#home');
 			} else {
 
 				// go to welcome view
 				//
-				Backbone.history.navigate('#', {
-					trigger: true
-				});
+				application.navigate('#');
 			}
 		},
 
 		onClickAbout: function() {
-			Backbone.history.navigate('#about', {
-				trigger: true
-			});
+			application.navigate('#about');
 		},
 
 		onClickContact: function() {
-			Backbone.history.navigate('#contact', {
-				trigger: true
-			});
+			application.navigate('#contact');
 		},
 
 		onClickResources: function() {
-			Backbone.history.navigate('#resources', {
-				trigger: true
-			});
+			application.navigate('#resources');
 		},
 
 		onClickPolicies: function() {
-			Backbone.history.navigate('#policies', {
-				trigger: true
-			});
+			application.navigate('#policies');
 		},
 
 		onClickHelp: function() {
-			Backbone.history.navigate('#help', {
-				trigger: true
-			});
+			application.navigate('#help');
 		},
 
 		onClickMyAccount: function() {
-			Backbone.history.navigate('#my-account', {
-				trigger: true
-			});
+			application.navigate('#my-account');
 		},
 
 		onClickSignIn: function() {
-			var self = this;
-			require([
-				'views/users/authentication/dialogs/sign-in-dialog-view'
-			], function (SignInDialogView) {
-
-				// show sign in dialog
-				//
-				application.show(new SignInDialogView(), {
-					focus: '#ok'
-				});
-			});
+			application.showSignInDialog();
 		},
 
 		onClickNotifications: function(event) {

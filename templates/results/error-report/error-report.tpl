@@ -15,7 +15,7 @@
 		<label class="form-label">Package</label>
 		<div class="controls">
 
-			<% if (typeof package_name != 'undefined') { %>
+			<% if (typeof package_name !== 'undefined') { %>
 			<% if (package_url) { %>
 			<a href="<%= package_url %>"><%= package_name %></a>
 			<% } else { %>
@@ -23,9 +23,9 @@
 			<% } %>
 			<% } %>
 
-			<% if (typeof package_version != 'undefined') { %>
+			<% if (typeof package_version !== 'undefined') { %>
 			<b>version</b>
-			<% if (typeof package_version_url != 'undefined') { %>
+			<% if (typeof package_version_url !== 'undefined') { %>
 			<a href="<%= package_version_url %>"><b class="version"><%= package_version %></b></a>
 			<% } else { %>
 			<b class="version"><%= package_version %></b>
@@ -38,17 +38,17 @@
 		<label class="form-label">Tool</label>
 		<div class="controls">
 
-			<% if (typeof tool_name != 'undefined') { %>
-			<% if (typeof tool_url != 'undefined') { %>
+			<% if (typeof tool_name !== 'undefined') { %>
+			<% if (typeof tool_url !== 'undefined') { %>
 			<a href="<%= tool_url %>"><%= tool_name %></a>
 			<% } else { %>
 			<%= tool_name %>
 			<% } %>
 			<% } %>
 
-			<% if (typeof tool_version != 'undefined') { %>
+			<% if (typeof tool_version !== 'undefined') { %>
 			<b>version</b>
-			<% if (typeof tool_version_url != 'undefined') { %>
+			<% if (typeof tool_version_url !== 'undefined') { %>
 			<a href="<%= tool_version_url %>"><b class="version"><%= tool_version %></b></a>
 			<% } else { %>
 			<b class="version"><%= tool_version %></b>
@@ -61,17 +61,17 @@
 		<label class="form-label">Platform</label>
 		<div class="controls">
 
-			<% if (typeof platform_name != 'undefined') { %>
-			<% if (typeof platform_url != 'undefined') { %>
+			<% if (typeof platform_name !== 'undefined') { %>
+			<% if (typeof platform_url !== 'undefined') { %>
 			<a href="<%= platform_url %>"><%= platform_name %></a>
 			<% } else { %>
 			<%= platform_name %>
 			<% } %>
 			<% } %>
 
-			<% if (typeof platform_version != 'undefined') { %>
+			<% if (typeof platform_version !== 'undefined') { %>
 			<b>version</b>
-			<% if (typeof platform_version_url != 'undefined') { %>
+			<% if (typeof platform_version_url !== 'undefined') { %>
 			<a href="<%= platform_version_url %>"><b class="version"><%= platform_version %></b></a>
 			<% } else { %>
 			<b class="version"><%= platform_version %></b>
@@ -83,10 +83,10 @@
 	<div class="form-group">
 		<label class="form-label">Assessment Time</label>
 		<div class="controls">
-			<% if (typeof assessment_start_ts != 'undefined') { %>
+			<% if (typeof assessment_start_ts !== 'undefined') { %>
 			<%= assessment_start_ts %>
 			<% } %>
-			<% if (typeof assessment_end_ts != 'undefined') { %>
+			<% if (typeof assessment_end_ts !== 'undefined') { %>
 			to <%= assessment_end_ts %>
 			<% } %>
 		</div>
@@ -95,7 +95,7 @@
 	<div class="form-group">
 		<label class="form-label">Assessment Info</label>
 		<div class="controls">
-			<% if (typeof version_information != 'undefined') { %>
+			<% if (typeof version_information !== 'undefined') { %>
 			<%= version_information %>
 			<% } %>
 		</div>
@@ -106,7 +106,7 @@
 <div class="well">
 	<ul>
 		<li><a href="https://www.swampinabox.org/doc/statusout.pdf" target="_blank">Status.out and Debugging SWAMP Failures FAQ (PDF)</a></li>
-		<% if (typeof url != 'undefined' && url && url != '') { %>
+		<% if (typeof url !== 'undefined' && url && url != '') { %>
 		<li><a href="<%= url %>" target="_blank">Download all failed results as a single file</a></li>
 		<% } %>
 	</ul>
@@ -115,7 +115,7 @@
 <h2>Error Information</h2>
 <div id="error-info" class="form-horizontal well" style="word-break:break-word">
 
-	<% if (typeof report_generation_ts != 'undefined') { %>
+	<% if (typeof report_generation_ts !== 'undefined') { %>
 	<div class="form-group">
 		<label class="form-label">Report Generation Time</label>
 		<div class="controls">
@@ -124,7 +124,7 @@
 	</div>
 	<% } %>
 
-	<% if (typeof error_message != 'undefined') { %>
+	<% if (typeof error_message !== 'undefined') { %>
 	<div class="form-group">
 		<% if (typeof error_message == 'string') { %>
 		<%= error_message %>
@@ -138,21 +138,21 @@
 	</div>
 	<% } %>
 
-	<% if (typeof status_out != 'undefined') { %>
+	<% if (typeof status_out !== 'undefined') { %>
 	<div class="form-group">
 		<label class="form-label">Contents of status.out</label>
 		<pre><%= status_out %></pre>
 	</div>
 	<% } %>
 
-	<% if (typeof stderr != 'undefined') { %>
+	<% if (typeof stderr !== 'undefined') { %>
 	<div class="form-group">
 		<label class="form-label">Contents of stderr</label>
 		<pre><%= stderr %></pre>
 	</div>
 	<% } %>
 
-	<% if (typeof stdout != 'undefined') { %>
+	<% if (typeof stdout !== 'undefined') { %>
 	<div class="form-group">
 		<label class="form-label">Contents of stdout</label>
 		<pre><%= stdout %></pre>

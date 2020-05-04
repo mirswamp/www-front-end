@@ -1,10 +1,4 @@
-<% if (showNumbering) { %>
-<td class="prepend number">
-	<%- index %>
-</td>
-<% } %>
-
-<td class="version-string first">
+<td class="version-string">
 	<% if (url) { %>
 	<a href="<%- url %>"><%- version_string %></a>
 	<% } else { %>
@@ -20,12 +14,12 @@
 <td class="projects"></td>
 <% } %>
 
-<td class="date datetime last">
-	<%= dateToSortableHTML(model.get('create_date')) %>
+<td class="date datetime">
+	<%= dateToSortableHTML(create_date) %>
 </td>
 
 <% if (showDelete) { %>
-<td class="delete append">
+<td class="delete">
 	<button type="button" class="btn btn-sm"><i class="fa fa-times"></i></button>
 </td>
 <% } %>

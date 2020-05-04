@@ -2,7 +2,7 @@
 
 <ol class="breadcrumb">
 	<li><a href="#home"><i class="fa fa-home"></i>Home</a></li>
-	<% if (model.isOwned()) { %>
+	<% if (isOwned) { %>
 	<li><a href="#packages"><i class="fa fa-gift"></i>Packages</a></li>
 	<% } else { %>
 	<li><a href="#resources"><i class="fa fa-book"></i>Resources</a></li>

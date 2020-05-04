@@ -12,7 +12,7 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2019 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2020 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 define([
@@ -78,8 +78,6 @@ define([
 
 			return {
 				model: this.model,
-				index: this.options.index + 1,
-				showNumbering: this.options.showNumbering,
 				filename: filename,
 				url: this.getUrl(),
 				queryString: this.getQueryString(),

@@ -12,7 +12,7 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2019 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2020 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 define([
@@ -35,6 +35,7 @@ define([
 	//
 
 	function stringToDate(string) {
+		var substrings, year, month, day;
 
 		// split string by delimiter
 		//
@@ -42,7 +43,7 @@ define([
 
 			// european date format
 			//
-			var substrings = string.split('-');
+			substrings = string.split('-');
 
 			// check for two digit year
 			//
@@ -52,14 +53,14 @@ define([
 
 			// parse date
 			//
-			var year = parseInt(substrings[0]);
-			var month = parseInt(substrings[1]);
-			var day = parseInt(substrings[2]);
+			year = parseInt(substrings[0]);
+			month = parseInt(substrings[1]);
+			day = parseInt(substrings[2]);
 		} else if (string.indexOf('/') != -1) {
 
 			// american date format
 			//
-			var substrings = string.split('/');
+			substrings = string.split('/');
 
 			// check for two digit year
 			//
@@ -69,9 +70,9 @@ define([
 
 			// parse date
 			//
-			var month = parseInt(substrings[0]);
-			var day = parseInt(substrings[1]);
-			var year = parseInt(substrings[2]);
+			month = parseInt(substrings[0]);
+			day = parseInt(substrings[1]);
+			year = parseInt(substrings[2]);
 		} else {
 			return;
 		}

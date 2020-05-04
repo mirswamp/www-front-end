@@ -12,7 +12,7 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2019 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2020 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 define([
@@ -20,10 +20,10 @@ define([
 	'underscore',
 	'text!templates/results/native-viewer/list/weaknesses-list.tpl',
 	'views/base-view',
-	'views/collections/tables/sortable-table-list-view',
+	'views/collections/tables/groupable-table-list-view',
 	'views/results/native-viewer/list/weaknesses-list-item-view'
-], function($, _, Template, BaseView, SortableTableListView, WeaknessesListItemView) {
-	return SortableTableListView.extend({
+], function($, _, Template, BaseView, GroupableTableListView, WeaknessesListItemView) {
+	return GroupableTableListView.extend({
 
 		//
 		// attributes
@@ -37,13 +37,12 @@ define([
 			template: _.template("No weaknesses have been found.")
 		}),
 
-		sorting: {
+		// sort by filename in ascending order 
+		//
+		sortBy: ['file', 'ascending'],
 
-			// sort on filename column in ascending order 
-			//
-			sortList: [[0, 0], [1, 0]]
-		},
-
+		// disable grouping on selected columns
+		//
 		groupExcept: ['group', 'code'],
 
 		//
@@ -51,9 +50,7 @@ define([
 		//
 
 		templateContext: function() {
-			return _.extend({
-				showNumbering: this.options.showNumbering
-			}, this.collection && this.collection.length > 0? this.collection.at(0).attributes : null);
+			return this.collection && this.collection.length > 0? this.collection.at(0).attributes : null;
 		},
 
 		childViewOptions: function(model) {
@@ -68,7 +65,6 @@ define([
 			//
 			return {
 				index: (this.options.start || 0) + this.collection.indexOf(model),
-				showNumbering: this.options.showNumbering,
 				filter_type: this.options.filter_type,
 				filter: this.options.filter,
 				parent: this

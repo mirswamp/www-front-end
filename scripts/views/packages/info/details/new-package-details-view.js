@@ -12,7 +12,7 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2019 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2020 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 define([
@@ -93,8 +93,9 @@ define([
 			
 			// append external url data
 			//
-			if (this.getChildView('form').useExternalUrl()) {
+			if (this.model.has('external_url')) {
 				formData.append('external_url', this.model.get('external_url'));
+				formData.append('external_url_type', this.model.get('external_url_type'));
 				formData.append('checkout_argument', this.options.packageVersion.get('checkout_argument'));
 			}
 
@@ -107,8 +108,11 @@ define([
 		// progress bar handling methods
 		//
 
+		showProgressMessage: function(message) {
+			this.$el.find('.bar-message').text(message);
+		},
+
 		showProgressBar: function() {
-			var message;
 
 			// fadeTo instead of fadeOut to prevent display: none;
 			//
@@ -116,13 +120,17 @@ define([
 			this.$el.find('.progress').removeClass('invisible');
 			this.$el.find('.progress').fadeTo(1000, 1.0);
 
-			if (this.model.has('external_url')) {
-				message = "Cloning repository";
-			} else {
-				message = "Uploading";
-			}
-			
-			this.$el.find('.bar-message').text(message);
+			switch (this.model.get('external_url_type')) {
+				case 'download':
+					this.showProgressMessage('Downloading archive...');
+					break;
+				case 'git':
+					this.showProgressMessage("Cloning repository...");
+					break;
+				default:
+					this.showProgressMessage("Uploading archive...");
+					break;
+			}	
 		},
 
 		resetProgressBar: function() {
@@ -201,7 +209,7 @@ define([
 						//
 						application.notify({
 							title: 'Package Upload Error',
-							message: "Package upload failed.  Please make sure that the file size of your package is smaller than the maximum upload size (" + application.config['max_upload_size'] + ")."
+							message: "Package upload failed."
 						});
 
 						self.resetProgressBar();
@@ -219,9 +227,7 @@ define([
 
 			// return to packages view
 			//
-			Backbone.history.navigate('#packages', {
-				trigger: true
-			});
+			application.navigate('#packages');
 		}
 	});
 });

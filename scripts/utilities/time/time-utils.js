@@ -12,7 +12,7 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2019 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2020 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 define([
@@ -30,7 +30,7 @@ define([
 			minutes: parseInt(strings[1], 10), 
 			seconds: parseInt(strings[2], 10) 
 		};
-	}
+	};
 
 	window.UTCLocalTimeOfDay = function(timeOfDay) {
 		var time = timeToObject(timeOfDay);
@@ -50,7 +50,7 @@ define([
 		}
 
 		return time;
-	}
+	};
 
 	window.sleep = function(milliseconds) {
 		var start = new Date().getTime();
@@ -59,7 +59,7 @@ define([
 				break;
 			}
 		}
-	}
+	};
 
 	//
 	// HTML time formatting methods
@@ -105,10 +105,11 @@ define([
 
 		// convert to HTML form
 		//
+		var html;
 		if (time2 - time1 < 0) {
-			var html = '<div class="negative time">';
+			html = '<div class="negative time">';
 		} else {
-			var html = '<div class="time">';
+			html = '<div class="time">';
 		}
 		if (years > 0) {
 			html += '<span class="years">' + years + '</span>';
@@ -129,5 +130,5 @@ define([
 		html += '</div>';
 
 		return html;
-	}
+	};
 });

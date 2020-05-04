@@ -10,14 +10,14 @@
 <p><%= contact.security.message %></p>
 <% } %>
 
-<% if (contact.security.email || config['email_enabled']) { %>
+<% if (contact.security.email || application.config.email_enabled) { %>
 <h2><i class="fa fa-envelope"></i>Email</h2>
 <p>
 <% if (contact.security.email) { %>
 Email us at <a href="mailto:<%= contact.security.email %>"><%= contact.security.email %></a>.
 <% } %>
 
-<% if (config['email_enabled'] && config['contact_form_enabled']) { %>
+<% if (application.config.email_enabled && application.config.contact_form_enabled) { %>
 <% if (contact.security.email) { %>
 You may also fill out and submit the incident report form below. 
 <% } else { %>
@@ -40,7 +40,7 @@ Please fill out and submit the incident report form below.
 <% } %>
 
 <div class="bottom buttons">
-	<% if (config['email_enabled'] && config['contact_form_enabled']) { %>
+	<% if (application.config.email_enabled && application.config.contact_form_enabled) { %>
 	<button id="submit" class="btn btn-primary btn-lg"><i class="fa fa-envelope"></i>Submit</button>
 	<button id="cancel" class="btn btn-lg"><i class="fa fa-times"></i>Cancel</button>
 	<% } %>

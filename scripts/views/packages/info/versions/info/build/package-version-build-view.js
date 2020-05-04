@@ -13,7 +13,7 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2019 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2020 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 define([
@@ -225,9 +225,7 @@ define([
 
 			// go to edit package version build info view
 			//
-			Backbone.history.navigate('#packages/versions/' + this.model.get('package_version_uuid') + '/build/edit', {
-				trigger: true
-			});
+			application.navigate('#packages/versions/' + this.model.get('package_version_uuid') + '/build/edit');
 		},
 
 		onClickShowSourceFiles: function() {
@@ -242,36 +240,28 @@ define([
 
 			// go to package version view
 			//
-			Backbone.history.navigate('#packages/' + this.options.package.get('package_uuid'), {
-				trigger: true
-			});
+			application.navigate('#packages/' + this.options.package.get('package_uuid'));
 		},
 
 		onClickPrev: function() {
 
 			// go to package version source view
 			//
-			Backbone.history.navigate('#packages/versions/' + this.model.get('package_version_uuid') + '/source', {
-				trigger: true
-			});
+			application.navigate('#packages/versions/' + this.model.get('package_version_uuid') + '/source');
 		},
 
 		onClickNext: function() {
 
 			// go to package version sharing view
 			//
-			Backbone.history.navigate('#packages/versions/' + this.model.get('package_version_uuid') + '/sharing', {
-				trigger: true
-			});
+			application.navigate('#packages/versions/' + this.model.get('package_version_uuid') + '/sharing');
 		},
 
 		onClickStart: function() {
 
 			// go to package version details view
 			//
-			Backbone.history.navigate('#packages/versions/' + this.model.get('package_version_uuid'), {
-				trigger: true
-			});
+			application.navigate('#packages/versions/' + this.model.get('package_version_uuid'));
 		}
 	});
 });

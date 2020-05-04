@@ -7,7 +7,7 @@
 |        This contains minor general purpose HTML formatting utilities.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2019 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2020 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 function textToHtml(string) {
@@ -71,9 +71,9 @@ function textToHtml(string) {
 		//
 		if (substrings.length > 0) {
 			string = '';
-			for (var i = 0; i < substrings.length; i++) {
-				string += substrings[i];
-				if (i < substrings.length - 1) {
+			for (var j = 0; j < substrings.length; j++) {
+				string += substrings[j];
+				if (j < substrings.length - 1) {
 					string += '<wbr>';
 				}
 			}
@@ -109,26 +109,4 @@ function unquotateHTML(string) {
 	string = string.replace(/\'/g, '&#39;');
 
 	return string;
-}
-
-function emailToHTML(email) {
-	if (email) {
-		var substrings = email.split('@');
-		if (substrings.length > 1) {
-			var user = substrings[0];
-			var domain = substrings[1].split('.');
-
-			var html = '<div class="email">';
-			html += '<span class="user">' + user + '</span>';
-			html += '<span class="domain">' + domain[0] + '</span>';
-			html += '<span class="tld">' + domain[1] + '</span>';
-			html += '</div>';
-			return html;
-		} else {
-			var html = '<div class="email">';
-			html += email;
-			html += '</div>';
-			return html;
-		}
-	}
 }

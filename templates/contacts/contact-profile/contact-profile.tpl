@@ -31,24 +31,24 @@
 		<div class="form-group">
 			<label class="form-label">Country code</label>
 			<span>
-				<% if (model.get('phone').has('country-code')) { %>
-					<%- model.get('phone').get('country-code') %>
+				<% if (phone.has('country-code')) { %>
+					<%- phone.get('country-code') %>
 				<% } %>
 			</span>
 		</div>
 		<div class="form-group">
 			<label class="form-label">Area code</label>
 			<span>
-				<% if (model.get('phone').has('area-code')) { %>
-					(<%- model.get('phone').get('area-code') %>)
+				<% if (phone.has('area-code')) { %>
+					(<%- phone.get('area-code') %>)
 				<% } %>
 			</span>
 		</div>
 		<div class="form-group">
 			<label class="form-label">Phone number</label>
 			<span>
-				<% if (model.get('phone').has('phone-number')) { %>
-					<%- model.get('phone').get('phone-number') %>
+				<% if (phone.has('phone-number')) { %>
+					<%- phone.get('phone-number') %>
 				<% } %>
 			</span>
 		</div>
@@ -65,17 +65,13 @@
 		<div class="form-group">
 			<label class="form-label">Creation date</label>
 			<span id="owner">
-				<% if (model.hasCreateDate()) { %>
-				<%= datetimeToHTML(model.getCreateDate()) %>
-				<% } %>
+				<%= datetimeToHTML(create_date) %>
 			</span>
 		</div>
 		<div class="form-group">
 			<label class="form-label">Last modified</label>
 			<span id="owner">
-				<% if (model.hasUpdateDate()) { %>
-				<%= datetimeToHTML(model.getUpdateDate()) %>
-				<% } %>
+				<%= datetimeToHTML(update_date) %>
 			</span>
 		</label>
 	</fieldset>

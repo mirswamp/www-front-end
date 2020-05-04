@@ -1,16 +1,10 @@
-<% if (showNumbering) { %>
-<td class="prepend number">
-	<%- index %>
-</td>
-<% } %>
-
 <% if (false) { %>
-<td class="package first">
-	<% if (package) { %>
+<td class="package">
+	<% if (package_name) { %>
 	<% if (package_url) { %>
-	<a href="<%- package_url %>"><%= textToHtml(package.get('name')) %></a>
+	<a href="<%- package_url %>"><%= textToHtml(package_name) %></a>
 	<% } else { %>
-	<%= textToHtml(package.get('name')) %>
+	<%= textToHtml(package_name) %>
 	<% } %>
 	<% } %>
 </td>
@@ -19,9 +13,9 @@
 <td class="platform">
 	<% if (platform) { %>
 	<% if (platform_url) { %>
-	<a href="<%- platform_url %>"><%= textToHtml(platform.get('name')) %></a>
+	<a href="<%- platform_url %>"><%= textToHtml(platform_name) %></a>
 	<% } else { %>
-	<%= textToHtml(platform.get('name')) %>
+	<%= textToHtml(platform_name) %>
 	<% } %>
 	<% } %>
 </td>
@@ -29,21 +23,19 @@
 <td class="platform-version">
 	<% if (platform_version) { %>
 	<% if (platform_version_url) { %>
-	<a href="<%- platform_version_url %>"><%= textToHtml(platform_version.get('version_string')) %></a>
+	<a href="<%- platform_version_url %>"><%= textToHtml(platform_version_string) %></a>
 	<% } else { %>
-	<%= textToHtml(platform_version.get('version_string')) %>
+	<%= textToHtml(platform_version_string) %>
 	<% } %>
 	<% } %>
 </td>
 
-<td class="compatible last">
+<td class="compatible">
 	<%= compatible_flag? 'yes' : 'no' %>
 </td>
 
 <% if (showDelete) { %>
-<td class="delete append">
-	<% if (model.isOwned()) { %>
+<td class="delete">
 	<button type="button" class="btn btn-sm"><i class="fa fa-times"></i></button>
-	<% } %>
 </td>
 <% } %>

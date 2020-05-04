@@ -1,9 +1,5 @@
 <thead>
 	<tr>
-		<% if (showNumbering) { %>
-		<th class="prepend number"></th>
-		<% } %>
-
 		<th class="package<% if (!showProjects) { %> first<% } %>">
 			<i class="fa fa-gift"></i>
 			<span>Package</span>
@@ -27,16 +23,17 @@
 		<% } %>
 
 		<% if (showSchedule) { %>
-		<th class="schedule last">
+		<th class="schedule">
 			<i class="fa fa-calendar"></i>
 			<span>Schedule</span>
 		</th>
 		<% } %>
 
 		<% if (showDelete) { %>
-		<th class="append"></th>
+		<th class="delete"></th>
 		<% } %>
 	</tr>
 </thead>
+
 <tbody>
 </tbody>

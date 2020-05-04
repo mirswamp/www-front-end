@@ -14,7 +14,10 @@
 	<% var id = (tab.replace(/ /g, '_').toLowerCase()); %>
 	<div id="<%= id %>-panel" role="tabpanel" class="tab-pane<% if (activeTab == tab || !activeTab && i == 0) { %> active<% } %>">
 		<div id="<%= id %>">
-			<div align="center"><i class="fa fa-spinner fa-spin fa-2x"></i><br/>Loading...</div> 
+			<div class="loading">
+				<i class="fa fa-spinner fa-spin"></i>
+				<div class="message">Loading...</div>
+			</div> 
 		</div>
 	</div>
 	<% } %>

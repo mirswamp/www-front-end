@@ -1,10 +1,6 @@
 <thead>
 	<tr>
-		<% if (showNumbering) { %>
-		<th class="prepend number"></th>
-		<% } %>
-		
-		<th class="tool first">
+		<th class="tool">
 			<i class="fa fa-wrench"></i>
 			<span>Tool</span>
 		</th>
@@ -19,15 +15,16 @@
 			<span>Sharing</span>
 		</th>
 
-		<th class="create-date last">
+		<th class="date">
 			<i class="fa fa-calendar"></i>
 			<span>Create Date</span>
 		</th>
 
 		<% if (showDelete) { %>
-		<th class="append"></th>
+		<th class="delete"></th>
 		<% } %>
 	</tr>
 </thead>
+
 <tbody>
 </tbody>

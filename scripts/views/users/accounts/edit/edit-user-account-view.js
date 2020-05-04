@@ -12,7 +12,7 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2019 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2020 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 define([
@@ -21,7 +21,7 @@ define([
 	'text!templates/users/accounts/edit/edit-user-account.tpl',
 	'views/base-view',
 	'views/users/dialogs/user-validation-error-dialog-view',
-	'views/users/user-profile/user-profile-form-view'
+	'views/users/accounts/user-profile/user-profile-form-view'
 ], function($, _, Template, BaseView, UserValidationErrorDialogView, UserProfileFormView) {
 	return BaseView.extend({
 
@@ -50,7 +50,8 @@ define([
 
 		templateContext: function() {
 			return {
-				model: this.model
+				name: this.model.getFullName(),
+				url: this.model.getAppUrl()
 			};
 		},
 
@@ -136,18 +137,14 @@ define([
 
 											// return to user account view
 											//
-											Backbone.history.navigate('#accounts/' + self.model.get('user_uid'), {
-												trigger: true
-											});
+											application.navigate('#accounts/' + self.model.get('user_uid'));
 										}
 									});
 								} else {
 									
 									// return to user account view
 									//
-									Backbone.history.navigate('#accounts/' + self.model.get('user_uid'), {
-										trigger: true
-									});				
+									application.navigate('#accounts/' + self.model.get('user_uid'));				
 								}
 
 
@@ -183,9 +180,7 @@ define([
 
 			// go to user accounts view
 			//
-			Backbone.history.navigate('#accounts/' + this.model.get('user_uid'), {
-				trigger: true
-			});
+			application.navigate('#accounts/' + this.model.get('user_uid'));
 		}
 	});
 });

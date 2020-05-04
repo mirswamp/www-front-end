@@ -1,7 +1,7 @@
 <div class="modal-header">
-	<button type="button" class="close" data-dismiss="modal" aria-hidden="true" tabindex="-1">×</button>
+	<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
 	<h1 id="modal-header-text">
-		<i class="fa fa-chevron-right"></i>Sign In
+		Sign In
 	</h1>
 </div>
 
@@ -9,6 +9,6 @@
 </div>
 
 <div class="modal-footer">
-	<button id="cancel" class="btn" data-dismiss="modal" tabindex="6"><i class="fa fa-times"></i>Cancel</button>
-	<button id="ok" class="btn btn-primary" tabindex="7"<% if (disabled) { %> disabled<% } %>><i class="fa fa-check"></i>OK</button>
+	<button id="ok" class="btn btn-primary"><i class="fa fa-check"></i>OK</button>
+	<button id="cancel" class="btn" data-dismiss="modal"><i class="fa fa-times"></i>Cancel</button>
 </div>

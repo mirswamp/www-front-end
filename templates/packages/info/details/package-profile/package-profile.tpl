@@ -26,22 +26,25 @@
 	</div>
 	<% } %>
 
-	<% if (model.hasCreateDate()) { %>
 	<div class="form-group">
 		<label class="form-label">Creation date</label>
-		<div class="controls"><%= datetimeToHTML(model.getCreateDate()) %></div>
+		<div class="controls"><%= datetimeToHTML(create_date) %></div>
 	</div>
-	<% } %>
 
-	<% if (model.hasUpdateDate()) { %>
 	<div class="form-group">
 		<label class="form-label">Last modified date</label>
-		<div class="controls"><%= datetimeToHTML(model.getUpdateDate()) %></div>
+		<div class="controls"><%= datetimeToHTML(update_date) %></div>
 	</div>
-	<% } %>
 
+	<% if (typeof external_url !== 'undefined') { %>
 	<div class="form-group">
-		<label class="form-label">External URL</label>
+		<label class="form-label">File source</label>
+		<div class="controls"><%- external_url_type? external_url_type : 'download' %></div>
+	</div>
+	
+	<% if (external_url_type == 'git') { %>
+	<div class="form-group">
+		<label class="form-label">External Git URL</label>
 		<div class="controls"><%- external_url? external_url : 'none' %></div>
 	</div>
 
@@ -53,4 +56,11 @@
 			<div class="controls"><%- secret_token %></div>
 		</div>
 	</fieldset>
+	<% } else { %>
+	<div class="form-group">
+		<label class="form-label">External URL</label>
+		<div class="controls"><%- external_url? external_url : 'none' %></div>
+	</div>
+	<% } %>
+	<% } %>
 </div>

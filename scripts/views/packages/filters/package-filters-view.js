@@ -12,7 +12,7 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2019 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2020 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 define([
@@ -57,7 +57,7 @@ define([
 
 			// add tags
 			//
-			if (application.session.user.get('has_projects')) {
+			if (application.session.user.hasProjects()) {
 				tags += this.getChildView('project').getTag();
 			}
 			tags += this.getChildView('package_type').getTag();
@@ -144,9 +144,9 @@ define([
 		templateContext: function() {
 			return {
 				highlighted: {
-					'project-filter': this.options.data['project'] != undefined,
-					'type-filter': this.options.data['type'] != undefined,
-					'limit-filter': this.options.data['limit'] != undefined
+					'project-filter': this.options.data.project != undefined,
+					'type-filter': this.options.data.type != undefined,
+					'limit-filter': this.options.data.limit != undefined
 				}
 			};
 		},
@@ -157,10 +157,10 @@ define([
 			// show subviews
 			//
 			this.showChildView('project', new ProjectFilterView({
-				collection: this.options.data['projects'],
+				collection: this.options.data.projects,
 				//defaultValue: this.model,
 				defaultValue: undefined,
-				initialValue: this.options.data['project'],
+				initialValue: this.options.data.project,
 
 				// callbacks
 				//
@@ -170,7 +170,7 @@ define([
 			}));
 			this.showChildView('package_type', new PackageTypeFilterView({
 				model: this.model,
-				initialValue: this.options.data['type'],
+				initialValue: this.options.data.type,
 
 				// callbacks
 				//
@@ -180,7 +180,7 @@ define([
 			}));
 			this.showChildView('limit', new LimitFilterView({
 				defaultValue: undefined,
-				initialValue: this.options.data['limit'],
+				initialValue: this.options.data.limit,
 
 				// callbacks
 				//

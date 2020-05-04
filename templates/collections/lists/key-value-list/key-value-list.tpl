@@ -1,10 +1,6 @@
 <thead>
 	<tr>
-		<% if (showNumbering) { %>
-		<th class="prepend number"></th>
-		<% } %>
-	
-		<th class="key first">
+		<th class="key">
 			<i class="fa fa-key"></i>
 			<span>Key</span>
 		</th>
@@ -15,12 +11,13 @@
 		</th>
 
 		<% if (editable) { %>
-		<th class="order last">
+		<th class="order">
 			<i class="fa fa-list"></i>
 			<span>Order</span>
 		</th>
 		<% } %>
 	</tr>
 </thead>
+
 <tbody>
 </tbody>

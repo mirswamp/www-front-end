@@ -12,7 +12,7 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2019 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2020 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 define([
@@ -29,6 +29,20 @@ define([
 		//
 
 		model: UserLinkedAccount,
+
+		//
+		// querying methods
+		//
+
+		hasItemNamed: function(name) {
+			return this.getItemNamed(name) != undefined;
+		},
+
+		getItemNamed: function(name) {
+			return this.findWhere({
+				title: name
+			});
+		},
 
 		//
 		// ajax methods

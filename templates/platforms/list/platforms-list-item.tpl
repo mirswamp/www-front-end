@@ -1,26 +1,19 @@
-<% if (showNumbering) { %>
-<td class="prepend number">
-	<%- index %>
-</td>
-<% } %>
-
-<td class="name first">
-	<% if (user) { %>
-	<a href="#platforms/<%- model.get('platform_uuid') %>"><%= textToHtml(model.get('name')) %></a>
+<td class="name">
+	<% if (url) { %>
+	<a href="<%= url %>"><%= textToHtml(name) %></a>
 	<% } else { %>
-	<%= textToHtml(model.get('name')) %>
+	<%= textToHtml(name) %>
 	<% } %>
 </td>
 
 <td class="description">
-	<%- model.get('description') %>
+	<%= description %>
 </td>
 
-<td class="versions last">
+<td class="versions">
 	<ul>
-	<% var versionStrings = model.get('version_strings'); %>
-	<% for (var i = 0; i < versionStrings.length; i++) { %>
-		<li><%- versionStrings[i] %></li>
+	<% for (var i = 0; i < version_strings.length; i++) { %>
+		<li><%- version_strings[i] %></li>
 	<% } %>
 	</ul>
 </td>

@@ -13,7 +13,7 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2019 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2020 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 define([
@@ -36,9 +36,9 @@ define([
 
 		events: {
 			'blur input': 'onBlurInput',
-			'focus #build-system': 'onFocusBuildSystem',
-			'change #build-system': 'onChangeBuildSystem',
-			'change #build-target': 'onChangeBuildTarget',
+			'focus #build-system select': 'onFocusBuildSystem',
+			'change #build-system select': 'onChangeBuildSystem',
+			'change #build-target select': 'onChangeBuildTarget',
 			'click #select-configure-path': 'onClickSelectConfigurePath',
 			'click #select-build-path': 'onClickSelectBuildPath',
 			'click #select-build-file': 'onClickSelectBuildFile'
@@ -91,23 +91,23 @@ define([
 			//
 			switch (buildSystem) {
 				case 'no-build':
-					this.$el.find("#build-system").val('no-build');
+					this.$el.find("#build-system select").val('no-build');
 					this.onSetBuildSystem();
 					break;
 				case 'android+ant':
-					this.$el.find("#build-system").val('ant');
+					this.$el.find("#build-system select").val('ant');
 					this.onSetBuildSystem();
 					break;
 				case 'android+maven':
-					this.$el.find("#build-system").val('maven');
+					this.$el.find("#build-system select").val('maven');
 					this.onSetBuildSystem();
 					break;
 				case 'android+gradle':
-					this.$el.find("#build-system").val('gradle');
+					this.$el.find("#build-system select").val('gradle');
 					this.onSetBuildSystem();
 					break;
 				case 'android+gradle-wrapper':
-					this.$el.find("#build-system").val('gradle');
+					this.$el.find("#build-system select").val('gradle');
 					this.$el.find("#use-gradle-wrapper input").prop("checked", true);
 					this.onSetBuildSystem();
 					break;
@@ -116,7 +116,7 @@ define([
 					// select 'no build' by default
 					//
 					if (this.hasBuildSystem('no-build')) {
-						this.$el.find("#build-system").val('no-build');	
+						this.$el.find("#build-system select").val('no-build');	
 					} else {
 						this.options.parent.options.parent.showWarning("This package does not appear to use a recognized build system for a Java source package.");
 					}
@@ -130,19 +130,15 @@ define([
 		//
 
 		getBuildSystem: function() {
-			switch (this.$el.find('#build-system').val()) {
+			switch (this.$el.find('#build-system select').val()) {
 				case 'no-build':
 					return 'no-build';
-					break;
 				case 'ant':
 					return 'android+ant';
-					break;
 				case 'maven':
 					return 'android+maven';
-					break;
 				case 'gradle':
 					return 'android+gradle';
-					break;
 			}
 		},
 
@@ -150,13 +146,10 @@ define([
 			switch (buildSystem) {
 				case 'android+ant':
 					return 'Ant';
-					break;
 				case 'android+maven':
 					return 'Maven';
-					break;
 				case 'android+gradle':
 					return 'Gradle';
-					break;
 			}
 		},
 
@@ -353,7 +346,7 @@ define([
 				//
 				'build_dir': this.$el.find('#build-path input:visible').val(),
 				'build_file': this.$el.find('#build-file input:visible').val(),
-				'build_opt': this.$el.find('#build-options').val(),
+				'build_opt': this.$el.find('#build-options input').val(),
 				'build_target': this.getBuildTarget()
 			};	
 		},
@@ -405,7 +398,7 @@ define([
 			if (buildSystem == 'no-build') {
 				this.options.parent.options.parent.showNotice(this.notices['no-build']);		
 			} else if (buildSystem == 'none') {
-				this.options.parent.options.parent.showNotice(this.notices['none']);
+				this.options.parent.options.parent.showNotice(this.notices.none);
 			} else {
 				this.options.parent.options.parent.hideNotice();
 			}
@@ -457,7 +450,7 @@ define([
 			// get paths
 			//
 			var sourcePath = this.model.get('source_path');
-			var configurePath = this.$el.find('#configure-path').val();
+			var configurePath = this.$el.find('#configure-path input').val();
 
 			// create directories
 			//
@@ -482,7 +475,7 @@ define([
 
 					// set configure path input
 					//
-					self.$el.find('#configure-path').val(selectedDirectoryName);
+					self.$el.find('#configure-path input').val(selectedDirectoryName);
 					self.onChange();
 				}
 			}), {
@@ -501,7 +494,7 @@ define([
 			// get paths
 			//
 			var sourcePath = this.model.get('source_path');
-			var buildPath = this.$el.find('#build-path').val();
+			var buildPath = this.$el.find('#build-path input').val();
 
 			// create dirctories
 			//
@@ -511,7 +504,7 @@ define([
 
 			// show select package version directory dialog
 			//
-			application.show(new SelectPackageVersionDirectoryView({
+			application.show(new SelectPackageVersionDirectoryDialogView({
 				model: this.model,
 				title: "Select Build Path",
 				selectedDirectoryName: sourceDirectory.getPathTo(buildPath),
@@ -526,7 +519,7 @@ define([
 
 					// set build path input
 					//
-					self.$el.find('#build-path').val(selectedDirectoryName);
+					self.$el.find('#build-path input').val(selectedDirectoryName);
 					self.onChange();
 				}
 			}), {
@@ -545,8 +538,8 @@ define([
 			// get paths
 			//
 			var sourcePath = this.model.get('source_path');
-			var buildPath = this.$el.find('#build-path').val();
-			var buildFile = this.$el.find('#build-file').val();
+			var buildPath = this.$el.find('#build-path input').val();
+			var buildFile = this.$el.find('#build-file input').val();
 
 			// create directories
 			//
@@ -574,7 +567,7 @@ define([
 					
 					// set build file input
 					//
-					self.$el.find('#build-file').val(selectedFileName);
+					self.$el.find('#build-file input').val(selectedFileName);
 					self.onChange();
 				}
 			}), {

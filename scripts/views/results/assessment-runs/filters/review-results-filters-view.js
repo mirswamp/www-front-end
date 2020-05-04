@@ -12,7 +12,7 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2019 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2020 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 define([
@@ -153,10 +153,10 @@ define([
 		templateContext: function() {
 			return {
 				highlighted: {
-					'tool-filter': this.options.data['tool'] != undefined || this.options.data['tool-version'] != undefined,
-					'platform-filter': this.options.data['platform'] != undefined || this.options.data['platform-version'] != undefined,
-					'date-filter': this.options.data['after'] != undefined || this.options.data['before'] != undefined,
-					'limit-filter': this.options.data['limit'] !== null
+					'tool-filter': this.options.data.tool != undefined || this.options.data['tool-version'] != undefined,
+					'platform-filter': this.options.data.platform != undefined || this.options.data['platform-version'] != undefined,
+					'date-filter': this.options.data.after != undefined || this.options.data.before != undefined,
+					'limit-filter': this.options.data.limit !== null
 				}
 			};
 		},
@@ -168,9 +168,9 @@ define([
 			//
 			this.showChildView('tool', new ToolFilterView({
 				model: this.model,
-				initialSelectedTool: this.options.data['tool'],
+				initialSelectedTool: this.options.data.tool,
 				initialSelectedToolVersion: this.options.data['tool-version'],
-				packageSelected: this.options.data['package'],
+				packageSelected: this.options.data.package,
 				versionDefaultOptions: ["Any"],
 				versionSelectedOptions: ['any'],
 				
@@ -182,9 +182,9 @@ define([
 			}));
 			this.showChildView('platform', new PlatformFilterView({
 				model: this.model,
-				initialSelectedPlatform: this.options.data['platform'],
+				initialSelectedPlatform: this.options.data.platform,
 				initialSelectedPlatformVersion: this.options.data['platform-version'],
-				toolSelected: this.options.data['tool'],
+				toolSelected: this.options.data.tool,
 				versionDefaultOptions: ["Any"],
 				versionSelectedOptions: ['any'],
 				
@@ -195,8 +195,8 @@ define([
 				}
 			}));
 			this.showChildView('date', new DateFilterView({
-				initialAfterDate: this.options.data['after'],
-				initialBeforeDate: this.options.data['before'],
+				initialAfterDate: this.options.data.after,
+				initialBeforeDate: this.options.data.before,
 
 				// callbacks
 				//
@@ -206,7 +206,7 @@ define([
 			}));
 			this.showChildView('limit', new LimitFilterView({
 				defaultValue: 50,
-				initialValue: this.options.data['limit'],
+				initialValue: this.options.data.limit,
 
 				// callbacks
 				//

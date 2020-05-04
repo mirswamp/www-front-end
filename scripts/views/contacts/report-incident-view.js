@@ -12,7 +12,7 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2019 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2020 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 define([
@@ -23,8 +23,8 @@ define([
 	'config',
 	'models/utilities/contact',
 	'views/base-view',
-	'views/contacts/contact-profile/new-contact-profile-form-view'
-], function($, _, Collapse, Template, Config, Contact, BaseView, NewContactProfileFormView) {
+	'views/contacts/contact-profile/new-security-incident-form-view'
+], function($, _, Collapse, Template, Config, Contact, BaseView, NewSecurityIncidentFormView) {
 	return BaseView.extend({
 
 		//
@@ -57,8 +57,7 @@ define([
 
 		templateContext: function() {
 			return {
-				contact: Config.contact,
-				config: application.config
+				contact: Config.contact
 			};
 		},
 
@@ -67,7 +66,7 @@ define([
 			// show new contact profile form
 			//
 			if (application.config.email_enabled && application.config.contact_form_enabled) {
-				this.showChildView('form', new NewContactProfileFormView({
+				this.showChildView('form', new NewSecurityIncidentFormView({
 					model: this.model
 				}));
 			}
@@ -91,10 +90,6 @@ define([
 
 		onClickSubmit: function() {
 
-			this.model.set({
-				'topic': 'security'
-			});
-
 			// check validation
 			//
 			if (!this.getChildView('form').submit({
@@ -115,9 +110,7 @@ define([
 
 							// go to home view
 							//
-							Backbone.history.navigate('#home', {
-								trigger: true
-							});
+							application.navigate('#home');
 						}
 					});
 				},
@@ -142,9 +135,7 @@ define([
 
 			// go to home view
 			//
-			Backbone.history.navigate('#home', {
-				trigger: true
-			});
+			application.navigate('#home');
 		}
 	});
 });

@@ -12,7 +12,7 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2019 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2020 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 define([
@@ -63,13 +63,13 @@ define([
 			// create new assessment run
 			//
 			this.model = new AssessmentRun({
-				'project_uuid': (self.options.data['project'] || this.options.project).get('project_uid')
+				'project_uuid': (self.options.data.project || this.options.project).get('project_uid')
 			});
 
 			// check for platform independent packages
 			//
-			if (this.options.data['package'] && !this.options.data['package'].isPlatformUserSelectable()) {
-				this.options.data['platform'] = undefined;
+			if (this.options.data.package && !this.options.data.package.isPlatformUserSelectable()) {
+				this.options.data.platform = undefined;
 				this.options.data['platform-version'] = undefined;
 			}
 		},
@@ -139,9 +139,7 @@ define([
 
 					// go to my assessments view
 					//
-					Backbone.history.navigate('#assessments' + (queryString != ''? '?' + queryString : ''), {
-						trigger: true
-					});
+					application.navigate('#assessments' + (queryString != ''? '?' + queryString : ''));
 				},
 
 				error: function(jqxhr, textstatus, errorThrown) {
@@ -155,7 +153,7 @@ define([
 			});
 		},
 
-		saveWithPermission: function(assessmentRun, selectedTool, options) {
+		saveWithPermission: function(assessmentRun, options) {
 			var self = this;
 
 			// get triplet information
@@ -222,8 +220,8 @@ define([
 
 						case 'project_unbound':
 							selectedTool.confirmToolProject({
-								trial_project: self.options.data['project'].isTrialProject(),
-								project_uid: self.options.data['project'].get('project_uid'),
+								trial_project: self.options.data.project.isTrialProject(),
+								project_uid: self.options.data.project.get('project_uid'),
 								user_permission_uid: response.user_permission_uid,
 
 								// callbacks
@@ -244,8 +242,9 @@ define([
 							// show notification
 							//
 							application.notify({
-								message: "The project owner has not designated \"" + self.options.data['project'].get('full_name') + "\" for use with \"" + selectedTool.get('name') + ".\" To do so the project owner must add an assessment which uses \"" + selectedTool.get('name') + ".\""
+								message: "The project owner has not designated \"" + self.options.data.project.get('full_name') + "\" for use with \"" + selectedTool.get('name') + ".\" To do so the project owner must add an assessment which uses \"" + selectedTool.get('name') + ".\""
 							});
+							break;
 
 						case 'package_unbound':
 							selectedTool.confirmToolPackage(selectedPackage);
@@ -289,7 +288,7 @@ define([
 				//
 				success: function() {
 					if (selectedTool) {
-						self.saveWithPermission(assessmentRun, selectedTool, options);
+						self.saveWithPermission(assessmentRun, options);
 					} else {
 
 						// disable save buttons
@@ -346,11 +345,14 @@ define([
 			var self = this;
 			var runRequest = new RunRequest();
 			var assessmentRunUuid = assessmentRun.get('assessment_run_uuid');
+			var assessmentRunUuids;
 
+			// find assessment run uuids based on parameter type
+			//
 			if (typeof assessmentRunUuid == 'string') {
-				var assessmentRunUuids = [assessmentRunUuid];
+				assessmentRunUuids = [assessmentRunUuid];
 			} else {
-				var assessmentRunUuids = assessmentRunUuid;
+				assessmentRunUuids = assessmentRunUuid;
 			}
 
 			// save run request
@@ -364,9 +366,7 @@ define([
 
 					// go to runs / results view
 					//
-					Backbone.history.navigate('#results' + (queryString != ''? '?' + queryString : ''), {
-						trigger: true
-					});
+					application.navigate('#results' + (queryString != ''? '?' + queryString : ''));
 				},
 
 				error: function() {
@@ -495,18 +495,18 @@ define([
 
 			if (this.options.data['package-version']) {
 				queryString = addQueryString(queryString, 'package-version=' + (this.options.data['package-version'] != 'latest'? this.options.data['package-version'].get('package_version_uuid') : 'latest'));
-			} else if (this.options.data['package']) {
-				queryString = addQueryString(queryString, 'package=' + this.options.data['package'].get('package_uuid'));
+			} else if (this.options.data.package) {
+				queryString = addQueryString(queryString, 'package=' + this.options.data.package.get('package_uuid'));
 			}
 			if (this.options.data['tool-version']) {
 				queryString = addQueryString(queryString, 'tool-version=' + (this.options.data['tool-version'] != 'latest'? this.options.data['tool-version'].get('tool_version_uuid') : 'latest'));
-			} else if (this.options.data['tool']) {
-				queryString = addQueryString(queryString, 'tool=' + this.options.data['tool'].get('tool_uuid'));
+			} else if (this.options.data.tool) {
+				queryString = addQueryString(queryString, 'tool=' + this.options.data.tool.get('tool_uuid'));
 			}
 			if (this.options.data['platform-version']) {
 				queryString = addQueryString(queryString, 'platform-version=' + (this.options.data['platform-version'] != 'latest'? this.options.data['platform-version'].get('platform_version_uuid') : 'latest'));
-			} else if (this.options.data['platform']) {
-				queryString = addQueryString(queryString, 'platform=' + this.options.data['platform'].get('platform_uuid'));
+			} else if (this.options.data.platform) {
+				queryString = addQueryString(queryString, 'platform=' + this.options.data.platform.get('platform_uuid'));
 			}
 
 			return queryString;
@@ -566,15 +566,15 @@ define([
 
 		templateContext: function() {
 			return {
-				hasProjects: application.session.user.get('has_projects'),
-				project: this.options.data['project'],
-				package: this.options.data['package'],
+				hasProjects: application.session.user.hasProjects(),
+				project: this.options.data.project,
+				package: this.options.data.package,
 				packageVersion: this.options.data['package-version'],
-				tool: this.options.data['tool'],
+				tool: this.options.data.tool,
 				toolVersion: this.options.data['tool-version'],
-				platform: this.options.data['platform'],
+				platform: this.options.data.platform,
 				platformVersion: this.options.data['platform-version'],
-				includePublic: this.options.data['package']? !this.options.data['package'].get('is_owned') : false
+				includePublic: this.options.data.package? !this.options.data.package.get('is_owned') : false
 			};
 		},
 
@@ -589,7 +589,7 @@ define([
 			var self = this;
 			return new ProjectSelectorView({
 				collection: self.options.projects,
-				initialValue: this.options.data['project'] || this.options.project,
+				initialValue: this.options.data.project || this.options.project,
 
 				// callbacks
 				//
@@ -609,11 +609,11 @@ define([
 			var self = this;
 			return new PackageSelectorView({
 				project: this.getProject(),
-				initialValue: this.options.data['package'],
+				initialValue: this.options.data.package,
 				initialVersion: this.options.data['package-version'] != 'latest'? this.options.data['package-version'] : undefined,
 				versionSelectorRegion: this.getRegion('package_version'),
-				showPlatformDependent: (this.options.data['platform'] != undefined
-					|| this.options.data['platform'] != undefined),
+				showPlatformDependent: (this.options.data.platform != undefined || 
+					this.options.data.platform != undefined),
 				showPublicPackages: showPublicPackages,
 
 				// callbacks
@@ -632,17 +632,16 @@ define([
 			var self = this;
 			return new ToolSelectorView({
 				project: this.getProject(),
-				initialValue: this.options.data['tool'],
+				initialValue: this.options.data.tool,
 				initialVersion: this.options.data['tool-version'] != 'latest'? this.options.data['tool-version'] : undefined,
-				packageSelected: this.options.data['package'],
-				platformSelected: this.options.data['platform'],
+				packageSelected: this.options.data.package,
+				platformSelected: this.options.data.platform,
 				versionSelectorRegion: this.getRegion('tool_version'),
 				addAssessmentView: this,
 
 				// callbacks
 				//
 				onChange: function(changes) {
-					self.$el.find('#platform-selection').show();
 					self.platformSelectorView.setTool(changes.tool);
 				}
 			});
@@ -652,10 +651,10 @@ define([
 			var self = this;
 			return new PlatformSelectorView({
 				project: this.getProject(),
-				initialValue: this.options.data['platform'],
+				initialValue: this.options.data.platform,
 				initialVersion: this.options.data['platform-version'] != 'latest'? this.options.data['platform-version'] : undefined,
-				packageSelected: this.options.data['package'],
-				toolSelected: this.options.data['tool'],
+				packageSelected: this.options.data.package,
+				toolSelected: this.options.data.tool,
 				versionSelectorRegion: this.getRegion('platform_version'),
 
 				// callbacks
@@ -671,7 +670,7 @@ define([
 
 			// create selectors
 			//
-			if (application.session.user.get('has_projects')) {
+			if (application.session.user.hasProjects()) {
 				this.projectSelectorView = this.getProjectSelector();
 			}
 			this.packageSelectorView = this.getPackageSelector(showPublicPackages);
@@ -680,7 +679,7 @@ define([
 
 			// show selectors
 			//
-			if (application.session.user.get('has_projects')) {
+			if (application.session.user.hasProjects()) {
 				this.showChildView('project', this.projectSelectorView);
 			}
 			this.showChildView('package', this.packageSelectorView);
@@ -700,11 +699,6 @@ define([
 			this.packageSelectorView.destroy();
 			this.packageSelectorView = this.getPackageSelector(showPublicPackages);
 			this.showChildView('package', this.packageSelectorView);
-
-			// hide selectors
-			//
-			this.$el.find('#tool-selection').hide();
-			this.$el.find('#platform-selection').hide();
 		},
 
 		onChange: function() {
@@ -761,9 +755,7 @@ define([
 
 					// go to my assessments view
 					//
-					Backbone.history.navigate('#assessments' + (queryString != ''? '?' + queryString : ''), {
-						trigger: true
-					});
+					application.navigate('#assessments' + (queryString != ''? '?' + queryString : ''));
 				},
 
 				error: function() {
@@ -803,16 +795,6 @@ define([
 
 		onClickCancel: function() {
 			history.back();
-			
-			/*
-			var queryString = this.getQueryString();
-
-			// go assessments view
-			//
-			Backbone.history.navigate('#assessments' + (queryString != ''? '?' + queryString : ''), {
-				trigger: true
-			});
-			*/
 		}
 	});
 });

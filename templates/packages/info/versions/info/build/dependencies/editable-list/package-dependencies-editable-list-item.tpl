@@ -1,10 +1,4 @@
-<% if (showNumbering) { %>
-<td class="prepend number">
-	<%- index %>
-</td>
-<% } %>
-
-<td class="platform description first">
+<td class="platform description">
 	<% if (platformUrl) { %>
 	<a href="<%- platformUrl %>"><span class="name"><%= textToHtml(platformVersionName) %></span></a>
 	<% } else { %>
@@ -18,7 +12,7 @@
 	<% } %>
 </td>
 
-<td class="dependency-list last">
+<td class="dependency-list">
 	<div class="input-group">
 		<input type="text" class="form-control" value="<%= dependencyList %>" />
 		<div class="input-group-addon">
@@ -28,7 +22,7 @@
 </td>
 
 <% if (showDelete) { %>
-<td class="delete append">
+<td class="delete">
 	<button type="button" class="btn btn-sm"><i class="fa fa-times"></i></button>
 </td>
 <% } %>

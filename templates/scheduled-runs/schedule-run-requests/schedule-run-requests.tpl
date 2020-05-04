@@ -1,6 +1,6 @@
 <h1>
 	<div class="icon"><i class="fa fa-bus"></i></div>
-	<% if (model.isTrialProject()) { %>
+	<% if (isTrialProject) { %>
 	Schedule Assessment Runs
 	<% } else { %>
 	Schedule <span class="name"><%- full_name %></span> Assessment Runs
@@ -9,35 +9,25 @@
 
 <ol class="breadcrumb">
 	<li><a href="#home"><i class="fa fa-home"></i>Home</a></li>
-
-	<% if (model) { %>
-	<% if (model.isTrialProject()) { %>
-	<li><a href="#assessments"><i class="fa fa-check"></i>Assessments</a></li>
-	<% } else { %>
-	<li><a href="#assessments?project=<%- model.get('project_uid') %>"><i class="fa fa-check"></i><%- model.get('full_name') %> Assessments</a></li>
-	<% } %>
-	<% } else { %>
-	<li><a href="#assessments?project=all"><i class="fa fa-bus"></i>All Assessments</a></li>
-	<% } %>
-
-	<% if (model.isTrialProject()) { %>
-	<li><i class="fa fa-bus"></i>Schedule Assessment Runs</li>
-	<% } else { %>
-	<li><i class="fa fa-bus"></i>Schedule <span class="name"><%- full_name %></span> Assessment Runs</li>
-	<% } %>
+	<li><a href="#run-requests"><i class="fa fa-bus"></i><span id="breadcrumb">Scheduled Runs</span></a></li>
+	<li><a href="#run-requests/add"><i class="fa fa-check"></i><span id="breadcrumb">Add New Scheduled Runs</span></a></li>
+	<li><i class="fa fa-check"></i><span id="breadcrumb">Schedule Runs</span></li>
 </ol>
 
-<p>Select a schedule for when to execute your <%- numberOfAssessments %> assessment runs: </p>
+<p>Select a schedule for when to execute your <%= numberOfAssessments > 1? numberOfAssessments + ' assessment runs' : 'assessment run' %>: </p>
 
 <div class="top buttons">
 	<button id="add-new-schedule" class="btn"><i class="fa fa-plus"></i>Add New Schedule</button>
 </div>
 
 <div id="select-schedules-list">
-	<div align="center"><i class="fa fa-spinner fa-spin fa-2x"></i><br/>Loading schedules...</div>
+	<div class="loading">
+		<i class="fa fa-spinner fa-spin"></i>
+		<div class="message">Loading schedules...</div>
+	</div>
 </div>
 
-<% if (config['email_enabled']) { %>
+<% if (application.config.email_enabled) { %>
 <br />
 <div class="well">
 	<label class="checkbox-inline">
@@ -48,6 +38,6 @@
 <% } %>
 
 <div class="bottom buttons">
-	<button id="schedule-assessments" class="btn btn-primary btn-lg"><i class="fa fa-plus"></i>Schedule Assessments</button>
+	<button id="schedule-assessments" class="btn btn-primary btn-lg"><i class="fa fa-calendar"></i>Schedule Assessments</button>
 	<button id="cancel" class="btn btn-lg"><i class="fa fa-times"></i>Cancel</button>
 </div>

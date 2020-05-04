@@ -5,7 +5,7 @@
 
 <ol class="breadcrumb">
 	<li><a href="#home"><i class="fa fa-home"></i>Home</a></li>
-	<li><i class="fa fa-trash"></i>Delete <span id="breadcrumb"><%= shortTitle %></span></li>
+	<li><i class="fa fa-trash"></i>Delete <span id="breadcrumb">Delete Assessments</span></li>
 </ol>
 
 <p>To delete assessments, select one or more assessments from the list below and click the delete button or delete them individually using the buttons to the right of each row. </p>
@@ -14,11 +14,14 @@
 <br />
 
 <div id="select-assessments-list">
-	<div align="center"><i class="fa fa-spinner fa-spin fa-2x"></i><br/>Loading assessments...</div>
+	<div class="loading">
+		<i class="fa fa-spinner fa-spin"></i>
+		<div class="message">Loading assessments...</div>
+	</div>
 </div>
 
 <label>
-	<input type="checkbox" id="show-numbering" <% if (showNumbering) { %>checked<% } %>>
+	<input type="checkbox" id="show-numbering" <% if (application.options.showNumbering) { %>checked<% } %>>
 	Show numbering
 </label>
 

@@ -12,7 +12,7 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2019 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2020 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 define([
@@ -22,7 +22,7 @@ define([
 	'models/run-requests/run-request',
 	'collections/run-requests/run-requests',
 	'views/base-view',
-	'views/scheduled-runs/schedules/select-list/select-schedules-list-view'
+	'views/schedules/select-list/select-schedules-list-view'
 ], function($, _, Template, RunRequest, RunRequests, BaseView, SelectSchedulesListView) {
 	return BaseView.extend({
 
@@ -51,7 +51,7 @@ define([
 
 			// parse assessment run uuids
 			//
-			this.assessmentRunUuids = this.options.data['assessments'].split('+');
+			this.assessmentRunUuids = this.options.data.assessments.split('+');
 		},
 
 		//
@@ -72,16 +72,13 @@ define([
 
 					// remove assessment run uuids from query string
 					//
-					if (self.options.data['assessments']) {
-						self.options.data['assessments'] = null;
+					if (self.options.data.assessments) {
+						self.options.data.assessments = null;
 					}
-					var queryString = self.getQueryString();
 
 					// go to run requests view
 					//
-					Backbone.history.navigate('#run-requests' + (queryString != ''? '?' + queryString : ''), {
-						trigger: true
-					});
+					application.navigate('#run-requests');
 				},
 
 				error: function() {
@@ -105,18 +102,20 @@ define([
 			if (this.model && !this.model.isTrialProject()) {
 				queryString = addQueryString(queryString, 'project=' + this.model.get('project_uid'));
 			}
-			if (this.options.data['package']) {
-				queryString = addQueryString(queryString, 'package=' + this.options.data['package'].get('package_uuid'));
+			if (this.options.data.package) {
+				queryString = addQueryString(queryString, 'package=' + this.options.data.package.get('package_uuid'));
 			}
-			if (this.options.data['tool']) {
-				queryString = addQueryString(queryString, 'tool=' + this.options.data['tool'].get('tool_uuid'));
+			if (this.options.data.tool) {
+				queryString = addQueryString(queryString, 'tool=' + this.options.data.tool.get('tool_uuid'));
 			}
-			if (this.options.data['platform']) {
-				queryString = addQueryString(queryString, 'platform=' + this.options.data['platform'].get('platform_uuid'));
+			if (this.options.data.platform) {
+				queryString = addQueryString(queryString, 'platform=' + this.options.data.platform.get('platform_uuid'));
 			}
-			if (this.options.data['assessments']) {
-				queryString = addQueryString(queryString, 'assessments=' + this.options.data['assessments']);
+			/*
+			if (this.options.data.assessments) {
+				queryString = addQueryString(queryString, 'assessments=' + this.options.data.assessments);
 			}
+			*/
 
 			return queryString;
 		},
@@ -127,9 +126,8 @@ define([
 
 		templateContext: function() {
 			return {
-				model: this.model,
-				numberOfAssessments: this.assessmentRunUuids.length,
-				config: application.config
+				isTrialProject: this.model.isTrialProject(),
+				numberOfAssessments: this.assessmentRunUuids.length
 			};
 		},
 
@@ -159,10 +157,21 @@ define([
 
 		showList: function() {
 
+			// preserve existing sorting column and order
+			//
+			if (this.getChildView('list') && this.collection.length > 0) {
+				this.options.sortBy = this.getChildView('list').getSorting();
+			}
+
 			// show select schedules list view
 			//
 			this.showChildView('list', new SelectSchedulesListView({
 				collection: this.collection,
+
+				// options
+				//
+				sortBy: this.options.sortBy,
+				showProjects: this.options.showProjects,
 				showDelete: true
 			}));	
 		},
@@ -172,13 +181,10 @@ define([
 		//
 
 		onClickAddNewSchedule: function() {
-			var queryString = this.getQueryString();
 
 			// go to add schedule view
 			//
-			Backbone.history.navigate('#run-requests/schedules/add' + (queryString != ''? '?' + queryString : ''), {
-				trigger: true
-			});
+			application.navigate('#run-requests/schedules/add');
 		},
 
 		onClickScheduleAssessments: function() {
@@ -196,13 +202,14 @@ define([
 		},
 
 		onClickCancel: function() {
-			var queryString = this.getQueryString();
 
-			// go to my assessments view
+			// reset query string to remove selected assessments
 			//
-			Backbone.history.navigate('#assessments' + (queryString != ''? '?' + queryString : ''), {
-				trigger: true
-			});
+			setQueryString(this.getQueryString());
+
+			// go to run requests view
+			//
+			application.navigate('#run-requests');
 		}
 	});
 });

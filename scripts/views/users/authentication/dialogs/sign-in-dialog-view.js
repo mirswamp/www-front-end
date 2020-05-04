@@ -1,18 +1,14 @@
 /******************************************************************************\
 |                                                                              |
-|                            sign-in-dialog-view.js                            |
+|                             sign-in-dialog-view.js                           |
 |                                                                              |
 |******************************************************************************|
 |                                                                              |
-|        This defines a dialog box that is used to sign in to the app.         |
-|                                                                              |
-|        Author(s): Abe Megahed                                                |
-|                                                                              |
-|        This file is subject to the terms and conditions defined in           |
-|        'LICENSE.txt', which is part of this source code distribution.        |
+|        This defines an notification dialog that is used to show a            |
+|        modal sign in dialog box.                                             |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2019 Software Assurance Marketplace (SWAMP)        |
+|          Copyright (C) 2012 - 2020, Morgridge Institute for Research         |
 \******************************************************************************/
 
 define([
@@ -22,8 +18,10 @@ define([
 	'text!templates/users/authentication/dialogs/sign-in-dialog.tpl',
 	'views/dialogs/dialog-view',
 	'views/users/authentication/forms/sign-in-form-view',
-	'utilities/web/query-strings'
-], function($, _, Popover, Template, DialogView, SignInFormView) {
+	'views/users/authentication/linked-accounts/forms/linked-account-sign-in-form-view'
+], function($, _, Popover, Template, DialogView, SignInFormView, LinkedAccountSignInFormView) {
+	'use strict';
+
 	return DialogView.extend({
 
 		//
@@ -33,72 +31,60 @@ define([
 		template: _.template(Template),
 
 		regions: {
-			form: ".modal-body"
+			form: '.modal-body'
 		},
 
 		events: {
-			'click #ok': 'onClickOk'
+			'click #ok': 'onClickOk',
+			'click .alert .close': 'onClickAlertClose',
+			'keypress': 'onKeyPress'
+		},
+
+		//
+		// constructor
+		//
+
+		initialize: function() {
+			this.constructor.dialog = this;
 		},
 
 		//
 		// rendering methods
 		//
 
-		templateContext: function() {
-			return {
-				config: application.config,
-				showHelpButtons: true,
-				disabled: application.authProvider == undefined
-			};
-		},
-
 		onRender: function() {
-			var self = this;
 
-			// show subviews
+			// show child views
 			//
-			this.showChildView('form', new SignInFormView({
-				parent: this,
-
-				// callback
-				//
-				onChange: function() {
-					self.update();
-				}
-			}));
-
-			// enable ok button
-			//
-			this.$el.find('#ok').prop('disabled', false);	
-
-			// display popovers on hover
-			//
-			this.$el.find('[data-toggle="popover"]').popover({
-				trigger: 'hover'
-			});
-		},
-
-		update: function() {
-			/*
-			if (this.getChildView('form').isValid()) {
-
-				// enable ok button
-				//
-				this.$el.find('#ok').prop('disabled', false);			
+			if (!application.config.linked_accounts_enabled) {
+				this.showChildView('form', new SignInFormView());
 			} else {
-
-				// disable ok button
-				//
-				this.$el.find('#ok').prop('disabled', true);
+				this.showChildView('form', new LinkedAccountSignInFormView());
 			}
-			*/
 		},
 
 		//
 		// methods
 		//
 
-		signIn: function() {
+		showHome: function() {
+
+			// remove event handlers
+			//
+			this.undelegateEvents();
+
+			// go to home view
+			//
+			Backbone.history.navigate('#home', {
+				trigger: true
+			});
+		},
+
+		//
+		// event handling methods
+		//
+
+		onSignIn: function() {
 			var self = this;
 			
 			// get user information
@@ -106,35 +92,38 @@ define([
 			application.session.getUser({
 				success: function(user) {
 					application.session.user = user;
-
-					// go to current view
-					//
-					Backbone.history.loadUrl('#' + (getFragment() || ''));
+					self.showHome();
 				}
 			});
 
-			// close dialog
+			// close modal dialog
 			//
 			this.hide();
 		},
 
 		//
-		// event handling methods
+		// mouse event handling methods
 		//
 
 		onClickOk: function() {
 			var self = this;
-
-			// make login request
-			//
 			this.getChildView('form').submit({
 
 				// callbacks
 				//
 				success: function() {
-					self.signIn();
+					self.onSignIn();
 				}
 			});
+		},
+
+		onKeyPress: function(event) {
+
+			// respond to enter key press
+			//
+			if (event.keyCode === 13) {
+				this.onClickOk();
+			}
 		},
 
 		//
@@ -142,7 +131,7 @@ define([
 		//
 
 		onBeforeDestroy: function() {
-			application.signingIn = false;
+			this.constructor.dialog = undefined;
 		}
 	});
 });

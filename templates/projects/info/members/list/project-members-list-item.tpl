@@ -1,16 +1,10 @@
-<% if (showNumbering) { %>
-<td class="prepend number">
-	<%- index %>
-</td>
-<% } %>
-
-<td class="user first">
+<td class="user">
 	<%- user.getFullName() %>
 </td>
 
 <% if (showEmail) { %>
 <td class="email">
-	<a href="mailto:<%- user.get('email') %>"><%= emailToHTML(user.get('email')) %></a>
+	<a href="mailto:<%- user.get('email') %>"><%= user.get('email') %></a>
 </td>
 <% } %>
 
@@ -31,7 +25,7 @@
 	<% } %>
 </td>
 
-<td class="admin last">
+<td class="admin">
 	<% if (admin_flag) { %>
 	<input type="checkbox" checked <% if (readOnly) { %> disabled="disabled" <% } %> />
 	<% } else {  %>
@@ -40,7 +34,7 @@
 </td>
 
 <% if (showDelete) { %>
-<td class="delete append">
+<td class="delete">
 	<button type="button" class="btn btn-sm"><i class="fa fa-times"></i></button>
 </td>
 <% } %>

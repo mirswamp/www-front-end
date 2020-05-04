@@ -12,7 +12,7 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2019 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2020 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 define([
@@ -46,6 +46,15 @@ define([
 		//
 
 		initialize: function() {
+
+			// set optional parameter defaults
+			//
+			if (this.options.allowAny == undefined) {
+				this.options.allowAny = true;
+			}
+
+			// set attributes
+			//		
 			if (this.options.initialValue) {
 				this.selected = this.options.initialValue;
 			}
@@ -112,7 +121,7 @@ define([
 			// add project
 			//
 			if (this.hasSelected()) {
-				data['project'] = this.getSelected();
+				data.project = this.getSelected();
 			}
 
 			return data;
@@ -177,7 +186,7 @@ define([
 			this.showChildView('selector', new ProjectSelectorView({
 				model: this.model,
 				initialValue: this.options.initialValue,
-				allowAny: true,
+				allowAny: this.options.allowAny,
 
 				// callbacks
 				//

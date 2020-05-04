@@ -13,7 +13,7 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2019 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2020 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 define([
@@ -72,8 +72,12 @@ define([
 
 		templateContext: function() {
 			return {
-				model: this.model,
-				index: this.options.index + 1,
+				isComplete: this.model.isComplete(),
+				hasResults: this.model.hasResults(),
+				hasErrors: this.model.hasErrors(),
+				
+				// urls
+				//
 				runUrl: this.getRunUrl(),
 				projectUrl: this.getProjectUrl(),
 				packageUrl: this.getPackageUrl(),
@@ -84,11 +88,13 @@ define([
 				platformVersionUrl: this.getPlatformVersionUrl(),
 				resultsUrl: this.getResultsUrl(),
 				errorUrl: this.options.showErrors? this.getErrorUrl() : undefined,
+				
+				// options
+				//
 				isChecked: this.options.selected? this.options.selected.contains(this.model) : false,
 				showSelect: this.options.editable || this.isViewable(),
 				isSelectable: this.isSelectable(),
 				showProjects: this.options.showProjects,
-				showNumbering: this.options.showNumbering,
 				showStatus: this.options.showStatus,
 				showErrors: this.options.showErrors,
 				showDelete: this.options.showDelete,

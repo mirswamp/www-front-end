@@ -13,7 +13,7 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2019 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2020 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 define([
@@ -60,10 +60,8 @@ define([
 
 		templateContext: function() {
 			return {
-				model: this.model,
 				type: this.getNotificationType(),
-				index: this.options.index + 1,
-				showNumbering: this.options.showNumbering
+				description: this.model.getDescription()
 			};
 		},
 
@@ -75,9 +73,7 @@ define([
 
 			// go to notification url
 			//
-			Backbone.history.navigate(this.model.getNotificationHash(), {
-				trigger: true
-			});
+			application.navigate(this.model.getNotificationHash());
 
 			// perform callback
 			//

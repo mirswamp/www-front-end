@@ -12,7 +12,7 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2019 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2020 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 define([
@@ -64,14 +64,16 @@ define([
 		//
 
 		toData: function() {
-			var object = new Object;
+			var data = [];
+
 			for (var i = 0; i < this.collection.length; i++) {
 				var model = this.collection.at(i);
 				var key = model.get('key');
 				var value = model.get('value');
-				object[key] = value;
+				data[key] = value;
 			}
-			return object;
+
+			return data;
 		},
 
 		//
@@ -82,7 +84,6 @@ define([
 			return {
 				collection: this.collection,
 				editable: this.options.editable,
-				showNumbering: this.options.showNumbering,
 				showDelete: this.options.showDelete
 			};
 		},
@@ -102,7 +103,6 @@ define([
 				index: this.collection.indexOf(model),
 				collection: this.collection,
 				editable: this.options.editable,
-				showNumbering: this.options.showNumbering,
 				showDelete: this.options.showDelete,
 				parent: this
 			};

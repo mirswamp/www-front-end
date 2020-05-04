@@ -13,7 +13,7 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2019 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2020 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 define([
@@ -21,10 +21,11 @@ define([
 	'underscore',
 	'bootstrap/dropdown',
 	'text!templates/users/review/review-accounts-list/review-accounts-list-item.tpl',
+	'models/users/user-info',
 	'views/collections/tables/table-list-item-view',
 	'utilities/time/date-format',
 	'utilities/time/date-utils'
-], function($, _, Dropdown, Template, TableListItemView, DateFormat) {
+], function($, _, Dropdown, Template, UserInfo, TableListItemView, DateFormat) {
 	return TableListItemView.extend({
 
 		//
@@ -47,15 +48,83 @@ define([
 
 		templateContext: function() {
 			return {
-				model: this.model,
-				config: application.config,
-				index: this.options.index + 1,
-				url: application.getURL() + '#accounts/' + this.model.get('user_uid'),
+				name: this.model.getFullName(),
+				url: this.model.getAppUrl(),
+				status: this.model.getStatus(),
+				isEnabled: this.model.isEnabled(),
+				
+				// options
+				//
+				showType: this.options.showType,
 				showForcePasswordReset: this.options.showForcePasswordReset,
 				showHibernate: this.options.showHibernate,
 				showLinkedAccount: this.options.showLinkedAccount,
-				showNumbering: this.options.showNumbering
+				showStats: this.options.showStats,
+				showNumPackages: this.options.showNumPackages,
+				showNumProjects: this.options.showNumProjects,
+				showNumRuns: this.options.showNumRuns,
+				showNumResults: this.options.showNumResults,
+				showSuccessRate: this.options.showSuccessRate	
 			};
+		},
+
+		onRender: function() {
+			
+			// call superclass method
+			//
+			TableListItemView.prototype.onRender.call(this);
+
+			// show additional statistical info
+			//
+			if (this.options.showStats) {
+				this.fetchAndShowStats();
+			}
+		},
+
+		fetchAndShowStats: function() {
+			var self = this;
+			new UserInfo({
+				user_uid: this.model.get('user_uid')
+			}).fetch({
+
+				// callbacks
+				//
+				success: function(data) {	
+					self.showStats(data);
+				}
+			});	
+		},
+
+		showStats: function(info) {
+			var numPackages = info.get('num_packages');
+			var numProjects = info.get('num_projects');
+			var numRuns = info.get('num_executions');
+			var numResults = info.get('num_results');
+			var successRate = numRuns != 0? Math.round(numResults / numRuns * 100) : undefined;
+
+			// update list item
+			//
+			this.$el.find('.num-packages').text(numPackages);
+			this.$el.find('.num-projects').text(numProjects);
+			this.$el.find('.num-runs').text(numRuns);
+			this.$el.find('.num-results').text(numResults);
+
+			if (successRate != undefined) {
+				this.$el.find('.success-rate').text(successRate.toString() + '%');
+
+				if (successRate > 50) {
+					this.$el.find('.success-rate').addClass('success');
+				} else {
+					this.$el.find('.success-rate').addClass('error');
+				}
+			}
+
+			// update list when entirely loaded
+			//
+			this.options.parent.count++;
+			if (this.options.parent.count == this.options.parent.collection.length) {
+				this.options.parent.update();
+			}
 		},
 
 		//

@@ -12,7 +12,7 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2019 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2020 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 define([
@@ -31,20 +31,9 @@ define([
 		template: _.template(Template),
 		childView: ReviewProjectsListItemView,
 
-		sorting: {
-
-			// disable sorting on delete column
-			//
-			headers: { 
-				4: { 
-					sorter: false 
-				}
-			},
-
-			// sort on date column in descending order 
-			//
-			sortList: [[2, 1]]
-		},
+		// sort by date column in descending order 
+		//
+		sortBy: ['create-date', 'descending'],
 
 		//
 		// querying methods
@@ -60,8 +49,7 @@ define([
 
 		templateContext: function() {
 			return {
-				collection: this.collection,
-				showNumbering: this.options.showNumbering
+				collection: this.collection
 			};
 		},
 
@@ -78,8 +66,10 @@ define([
 			return {
 				index: this.collection.indexOf(model),
 				collection: this.collection,
+
+				// options
+				//
 				showDeactivatedProjects: this.options.showDeactivatedProjects,
-				showNumbering: this.options.showNumbering,
 				onChange: this.options.onChange,
 				parent: this
 			};

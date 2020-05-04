@@ -1,10 +1,6 @@
 <thead>
-	<tr class="titles">
-		<% if (showNumbering) { %>
-		<th class="prepend number"></th>
-		<% } %>
-		
-		<th class="tool first">
+	<tr>
+		<th class="tool">
 			<i class="fa fa-wrench"></i>
 			<span>Tool</span>
 		</th>
@@ -25,5 +21,6 @@
 		</th>
 	</tr>
 </thead>
+
 <tbody>
 </tbody>

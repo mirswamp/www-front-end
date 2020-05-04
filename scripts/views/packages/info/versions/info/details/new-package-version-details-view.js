@@ -12,7 +12,7 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2019 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2020 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 define([
@@ -168,7 +168,7 @@ define([
 						//
 						application.notify({
 							title: 'Package Upload Error',
-							message: response.statusText
+							message: response.responseText || "This package could not be uploaded."
 						});
 
 						self.resetProgressBar();
@@ -186,14 +186,16 @@ define([
 
 			// go to package view
 			//
-			Backbone.history.navigate('#packages/' + this.options.package.get('package_uuid'), {
-				trigger: true
-			});
+			application.navigate('#packages/' + this.options.package.get('package_uuid'));
 		},
 
 		//
 		// progress bar handling methods
 		//
+
+		showProgressMessage: function(message) {
+			this.$el.find('.bar-message').text(message);
+		},
 
 		showProgressBar: function() {
 
@@ -203,13 +205,17 @@ define([
 			this.$el.find('.progress').removeClass('invisible');
 			this.$el.find('.progress').fadeTo(1000, 1.0);
 
-			if (this.model.has('external_url')) {
-				var message = "Cloning repository";
-			} else {
-				var message = "Uploading";
+			switch (this.options.package.get('external_url_type')) {
+				case 'download':
+					this.showProgressMessage('Downloading archive...');
+					break;
+				case 'git':
+					this.showProgressMessage("Cloning repository...");
+					break;
+				default:
+					this.showProgressMessage("Uploading archive...");
+					break;
 			}
-
-			this.$el.find('.bar-message').text(message);
 		},
 
 		resetProgressBar: function() {

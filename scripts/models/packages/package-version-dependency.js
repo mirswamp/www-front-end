@@ -12,17 +12,16 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2019 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2020 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 define([
 	'jquery',
 	'underscore',
 	'config',
-	'models/utilities/timestamped',
-	'models/behaviors/change-trackable'
-], function($, _, Config, Timestamped, ChangeTrackable) {
-	return Timestamped.extend(_.extend({}, ChangeTrackable, {
+	'models/utilities/timestamped'
+], function($, _, Config, Timestamped) {
+	return Timestamped.extend(_.extend({}, {
 
 		//
 		// Backbone attributes

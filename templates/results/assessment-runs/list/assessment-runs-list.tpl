@@ -1,10 +1,6 @@
 <thead>
 	<tr>
-		<% if (showNumbering) { %>
-		<th class="prepend number"></th>
-		<% } %>
-
-		<th class="package first">
+		<th class="package">
 			<i class="fa fa-gift"></i>
 			<span>Package</span>
 		</th>
@@ -19,7 +15,7 @@
 			<span>Platform</span>
 		</th>
 
-		<th class="datetime hidden-xs<% if (!showStatus) { %> last<% } %>">
+		<th class="date hidden-xs<% if (!showStatus) { %> last<% } %>">
 			<i class="fa fa-calendar"></i>
 			<span>Date</span>
 		</th>
@@ -31,18 +27,19 @@
 		</th>
 		<% } %>
 
-		<th class="results last">
+		<th class="results">
 			<i class="fa fa-bug"></i>
 			<span>Results</span>
 		</th>
 
 		<% if (showDelete) { %>
-		<th class="append delete hidden-xs"></th>
+		<th class="delete hidden-xs"></th>
 		<% } %>
 
 		<th style="display: none">
 		</th>
 	</tr>
 </thead>
+
 <tbody>
 </tbody>

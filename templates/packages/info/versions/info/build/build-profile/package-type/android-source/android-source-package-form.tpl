@@ -5,10 +5,10 @@
 	<fieldset>
 		<legend>Android source build info</legend>
 
-		<div class="form-group">
+		<div id="build-system" class="form-group">
 			<label class="required control-label">Build system</label>
 			<div class="controls">
-				<select id="build-system" name="build-system" data-toggle="popover" data-placement="right" title="Build System" data-content="This is the name of the system used to build the package (i.e. 'ant' etc)." >
+				<select name="build-system" data-toggle="popover" data-placement="right" title="Build System" data-content="This is the name of the system used to build the package (i.e. 'ant' etc)." >
 					<option disabled></option>
 					<option <% if (build_system == 'android+ant') { %> selected <% } %>
 						value="ant">Ant</option>
@@ -200,35 +200,34 @@
 									<select data-toggle="popover" data-placement="right" title="Build System" data-content="This is the name of the target that is created during the build."<% if (build_system != 'android+gradle' && build_system != 'android+ant') { %> style="display:none";<% } %>>
 
 										<!-- gradle build target options -->
-										<option class="gradle-settings"
-											<% if (build_system != 'android+gradle') { %> style="display:none" <% } %>
-											<% if (!build_target || build_target == 'compileReleaseSources') { %> selected <% } %>
-											value="compileReleaseSources">compileReleaseSources
+										<option class="gradle-settings" value="compileReleaseSources"
+											<% if (!otherBuildTarget && build_target == 'compileReleaseSources') { %> selected <% } %><% if (build_system != 'android+gradle') { %> style="display:none" <% } %>>
+											compileReleaseSources
 										</option>
-										<option class="gradle-settings"
-											<% if (build_system != 'android+gradle') { %> style="display:none" <% } %>
-											<% if (build_target == 'compileDebugSources') { %> selected <% } %> 
-											value="compileDebugSources">compileDebugSources
+										<option class="gradle-settings" value="compileDebugSources"
+											<% if (!otherBuildTarget && build_target == 'compileDebugSources') { %> selected <% } %><% if (build_system != 'android+gradle') { %> style="display:none" <% } %>>
+											compileDebugSources
 										</option>
 
 										<!-- ant build target options -->
-										<option class="ant-settings"
+										<option class="ant-settings" value="release"
 											<% if (build_system != 'android+ant') { %> style="display:none" <% } %>
-											<% if (!build_target || build_system == 'android+ant' && build_target == 'release') { %> selected <% } %>
-											value="release">release
+											<% if (!otherBuildTarget && build_target == 'release') { %> selected <% } %>>
+											release
 										</option>
-										<option class="ant-settings"
+										<option class="ant-settings" value="debug"
 											<% if (build_system != 'android+ant') { %> style="display:none" <% } %>
-											<% if (build_system == 'android+ant' && build_target == 'debug') { %> selected <% } %> 
-											value="debug">debug
+											<% if (!otherBuildTarget && build_target == 'debug') { %> selected <% } %>>
+											debug
 										</option>
 
 										<!-- other build target options -->
-										<option
-											<% if (otherBuildTarget) { %> selected <% } %>
-											value="other">other
+										<option value="other"
+											<% if (otherBuildTarget) { %> selected="selected" <% } %>>
+											other
 										</option>
 									</select>
+
 									<div class="maven-settings input-group"<% if (!build_target || build_system != 'android+maven') { %> style="display:none"<% } %>>
 										<input type="text" name="build-target" class="required form-control" value="<%- build_target %>">
 										<div class="input-group-addon">
@@ -239,7 +238,7 @@
 							</div>
 
 							<div id="other-build-target" class="form-group"
-								<% if (!build_target || build_target == '' || build_target == 'release' || build_target == 'debug' || build_target == 'compileReleaseSources' || build_Target == 'compileDebugSources') { %> style="display:none"<% } %>>
+								<% if (!otherBuildTarget) { %> style="display:none"<% } %>>
 								<label class="required control-label">Other build target</label>
 								<div class="controls">
 									<div class="input-group">

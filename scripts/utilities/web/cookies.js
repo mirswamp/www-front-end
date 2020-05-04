@@ -7,18 +7,19 @@
 |        This contains some utility functions for dealing with cookies.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2019 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2020 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 function createCookie(name, value, days) {
+	var expires;
+
 	if (days) {
 		var date = new Date();
 		date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
-		var expires = "; expires=" + date.toGMTString();
-	} else {
-		var expires = "";
+		expires = date.toGMTString();
 	}
-	document.cookie = name + "=" + value + expires + "; path=/";
+	
+	document.cookie = name + "=" + value + (expires? "; expires=" + expires : '') + "; path=/";
 }
 
 function readCookie(name) {

@@ -13,7 +13,7 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2019 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2020 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 define([
@@ -37,8 +37,7 @@ define([
 		},
 
 		events: {
-			'click input[name="file-source"]': 'onClickFileSource',
-			'click #archive': 'onClickArchive'
+			'click input[name="file-source"]': 'onClickFileSource'
 		},
 
 		//
@@ -51,7 +50,9 @@ define([
 			// add external url validation rule
 			//
 			$.validator.addMethod('archive', function(value) {
-				if (!self.useExternalUrl() && !self.hasValidFilename()) {
+				var fileSource = self.getFileSource();
+
+				if (fileSource == 'local' && !self.hasValidFilename()) {
 					return "This file is not a recognized archive file format.";
 				}
 				return true;
@@ -60,10 +61,11 @@ define([
 			// add file validation rule
 			//
 			$.validator.addMethod('file', function(value) {
+				var fileSource = self.getFileSource();
 
 				// check if we are using external url
 				//
-				if ((self.hasExternalUrl() && self.getExternalUrl() != '') || self.useExternalUrl()) {
+				if (fileSource && fileSource != 'local') {
 					return true;
 				}
 
@@ -77,16 +79,12 @@ define([
 		// querying methods
 		//
 
-		hasExternalUrl: function() {
-			return this.$el.closest('form').find('#external-url').length != 0;
+		getFileSource: function() {
+			return this.$el.find('input[name="file-source"]:checked').val();
 		},
 
 		getExternalUrl: function() {
 			return this.$el.closest('form').find('#external-url').val();
-		},
-
-		useExternalUrl: function() {
-			return this.$el.find('input[value="use-external-url"]').is(':checked');
 		},
 
 		hasValidFilename: function() {
@@ -111,7 +109,8 @@ define([
 			//
 			this.showChildView('form', new PackageVersionProfileFormView({
 				model: this.model,
-				package: this.options.package
+				package: this.options.package,
+				focusable: false
 			}));
 
 			// call superclass method
@@ -145,49 +144,27 @@ define([
 		onClickFileSource: function(event) {
 			var source = $(event.target).val();
 			switch (source) {
-				case 'use-local-file':
+				case 'local':
 					this.$el.find('#external-url').hide();
 					this.$el.find('#external-git-url').hide();
 					this.$el.find('#git-message').hide();
 					this.$el.find('#checkout-argument').hide();
 					this.$el.parent().find('#file').show();
 					break;
-				case 'use-external-url':
+				case 'download':
 					this.$el.find('#external-url').show();
 					this.$el.find('#external-git-url').hide();
 					this.$el.find('#git-message').hide();
 					this.$el.find('#checkout-argument').hide();
 					this.$el.parent().find('#file').hide();
 					break;
-				case 'use-git-url':
+				case 'git':
 					this.$el.find('#external-url').hide();
 					this.$el.find('#external-git-url').show();
 					this.$el.find('#git-message').show();
 					this.$el.find('#checkout-argument').show();
 					this.$el.parent().find('#file').hide();
 					break;
-			}
-		},
-
-		onClickArchive: function(event) {
-			var self = this;
-
-			// check to see if an external url was already specified
-			//
-			if (this.hasExternalUrl() && self.getExternalUrl() != '' || this.useExternalUrl()) {
-				var message = 'No file required. You have already provided a valid URL from which to retrieve your code. If you wish to upload an archive instead, please clear the External URL field first.';
-				if (self.$el.find('#use-external-url').length > 0) {
-					message = 'No file required. You have selected to retrieve your code from the External URL. If you wish to upload an archive instead, please clear the checkbox to use the External URL.';
-				}
-
-				event.preventDefault();
-
-				// show notification
-				//
-				application.notify({
-					title: 'No File Required',
-					message: message
-				});
 			}
 		},
 

@@ -13,7 +13,7 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2019 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2020 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 define([
@@ -42,11 +42,10 @@ define([
 
 		templateContext: function() {
 			return {
-				model: this.model,
-				index: this.options.index + 1,
-				url: application.session.user? '#packages/' + this.model.get('package_uuid'): undefined,
+				url: this.model.getAppUrl(),
+				isDeactivated: this.model.isDeactivated(),
+				isOwned: this.model.isOwned(),
 				showDeactivatedPackages: this.options.showDeactivatedPackages,
-				showNumbering: this.options.showNumbering,
 				showProjects: this.options.showProjects,
 				showDelete: this.options.showDelete
 			};
@@ -64,7 +63,7 @@ define([
 			return html;
 		},
 
-		onRender: function() {
+		onAttach: function() {
 			if (this.options.showProjects) {
 				this.showProjects();
 			}
@@ -106,21 +105,12 @@ define([
 				//
 				accept: function() {
 
-					// delete user
+					// delete package
 					//
 					self.model.destroy({
 
 						// callbacks
 						//
-						success: function() {
-
-							// return to packages view
-							//
-							Backbone.history.navigate('#packages', {
-								trigger: true
-							});
-						},
-
 						error: function() {
 
 							// show error message

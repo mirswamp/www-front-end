@@ -1,14 +1,10 @@
 <thead>
 	<tr>
-		<% if (showNumbering) { %>
-		<th class="prepend number"></th>
-		<% } %>
-	
-		<th class="prepend select">
+		<th class="select">
 			<input type="checkbox" id="select-all" class="select-all" />
 		</th>
 
-		<th class="username first">
+		<th class="username">
 			<i class="fa fa-laptop"></i>
 			<span>Username</span>
 		</th>
@@ -24,11 +20,12 @@
 		</th>
 
 		<% if (showHibernate) { %>
-		<th class="hibernate last">
+		<th class="hibernate">
 			<i class="fa fa-bed" data-toggle="popover" data-placement="top" data-content="Hibernating / Inactive" data-container="body"></i>
 		</th>
 		<% } %>
 	</tr>
 </thead>
+
 <tbody>
 </tbody>

@@ -1,18 +1,18 @@
 <div id="package-version-source-profile" class="form-horizontal">
 
 	<div class="well">
-		<% if (package.isOwned()) { %>
+		<% if (isOwned) { %>
 		<button id="edit-source-info" class="btn" style="float:right"><i class="fa fa-pencil"></i>Edit</button>
 		<% } %>
 
-		<% if (!model.isAtomic()) { %>
+		<% if (!isAtomic) { %>
 		<div class="form-group">
 			<label class="form-label">Package path</label>
 			<div class="controls"><%- source_path %></div>
 		</div>
 		<% } %>
 
-		<% if (language_version || package.hasLanguageVersion()) { %>
+		<% if (language_version || hasLanguageVersion) { %>
 		<div class="form-group">
 			<label class="form-label">Language version</label>
 			<div class="controls">

@@ -12,7 +12,7 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2019 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2020 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 define([
@@ -34,10 +34,7 @@ define([
 
 		events: {
 			'click #add': 'onClickAdd',
-			'click .delete button': 'onClickDelete',
-			'blur .name input': 'onBlurName',
-			'blur .email input': 'onBlurEmail',
-			'blur .username input': 'onBlurUsername'
+			'click .delete button': 'onClickDelete'
 		},
 
 		//
@@ -69,21 +66,28 @@ define([
 			return {
 				collection: this.collection,
 				model: this.model,
-				config: application.config,
 				showDelete: this.options.showDelete
 			};
 		},
 
 		onRender: function() {
-			// this.validate();
+			this.validate();
 		},
 
 		//
 		// form validation methods
 		//
 
+		getValues: function() {
+			return {
+				'invitee_name': this.$el.find('.name input').val(),
+				'invitee_email': this.$el.find('.email input').val(),
+				'invitee_username': this.$el.find('.username input').val()
+			};
+		},
+
 		validate: function() {
-			this.validator = this.$el.validate();
+			this.validator = this.$el.find('form').validate();
 		},
 
 		isValid: function() {
@@ -119,65 +123,6 @@ define([
 				accept: function() {
 					self.model.destroy();
 				}
-			});
-		},
-
-		onBlurName: function() {
-			var name = this.$el.find('.name input').val().trim();
-
-			// update model
-			//
-			if (name === '') {
-				name = undefined;
-			}
-			this.model.set({
-				'invitee_name': name
-			});
-		},
-
-		onBlurEmail: function() {
-			var self = this;
-			var email = this.$el.find('.email input').val().trim();
-
-			// update model
-			//
-			if (email === '') {
-				email = undefined;
-			}
-			this.model.set({
-				'invitee_email': email
-			});
-
-			// check if email exists
-			//
-			if (email !== '' && email !== ' ') {
-
-				// check for username uniqueness
-				//
-				var response = new User().checkValidation({
-					'email': email
-				}, {
-
-					// callbacks
-					//
-					error: function() {
-						var error = JSON.parse(response.responseText)[0];
-						error = error.substr(0,1).toUpperCase() + error.substr(1);
-						self.$el.removeClass('success').addClass('error');
-						self.$el.find('.error').removeClass('valid');
-						self.$el.find('label.error').html(error);
-					}
-				});
-			}
-		},
-
-		onBlurUsername: function() {
-			var username = this.$el.find('.username input').val().trim();
-			if (username === '') {
-				username = undefined;
-			}
-			this.model.set({
-				'invitee_username': username
 			});
 		}
 	});

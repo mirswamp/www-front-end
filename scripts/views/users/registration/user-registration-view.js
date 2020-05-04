@@ -1,18 +1,13 @@
 /******************************************************************************\
 |                                                                              |
-|                             user-registration-view.js                        |
+|                           user-registration-view.js                          |
 |                                                                              |
 |******************************************************************************|
 |                                                                              |
 |        This defines the introductory view of the application.                |
 |                                                                              |
-|        Author(s): Abe Megahed                                                |
-|                                                                              |
-|        This file is subject to the terms and conditions defined in           |
-|        'LICENSE.txt', which is part of this source code distribution.        |
-|                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2019 Software Assurance Marketplace (SWAMP)        |
+|          Copyright (C) 2012 - 2020, Morgridge Institute for Research         |
 \******************************************************************************/
 
 define([
@@ -23,9 +18,9 @@ define([
 	'models/users/email-verification',
 	'collections/users/user-classes',
 	'views/base-view',
-	'views/users/dialogs/user-validation-error-dialog-view',
-	'views/users/user-profile/new-user-profile-form-view'
-], function($, _, Template, User, EmailVerification, UserClasses, BaseView, UserValidationErrorDialogView, NewUserProfileFormView) {
+	'views/users/accounts/user-profile/new-user-profile-form-view',
+	'views/users/registration/email/email-verification-view'
+], function($, _, Template, User, EmailVerification, UserClasses, BaseView, NewUserProfileFormView, EmailVerificationView) {
 	return BaseView.extend({
 
 		//
@@ -35,7 +30,7 @@ define([
 		template: _.template(Template),
 
 		regions: {
-			profile: '#new-user-profile'
+			form: '#new-user-profile'
 		},
 
 		events: {
@@ -46,16 +41,12 @@ define([
 		},
 
 		//
-		// constructor
+		// methods
 		//
 
 		initialize: function() {
 			this.model = new User({});
 		},
-
-		//
-		// methods
-		//
 
 		verifyEmail: function() {
 			var self = this;
@@ -75,40 +66,22 @@ define([
 				// callbacks
 				//
 				success: function() {
-					require([
-						'views/users/registration/email-verification-view',
-					], function (EmailVerificationView) {
 
-						// show email verification
-						//
-						application.showMain(new EmailVerificationView({
-							model: self.model
-						}));
-					});
+					// show email verification view
+					//
+					application.show(new EmailVerificationView({
+						model: self.model
+					}));
 				},
 
 				error: function() {
 
-					// show error message
+					// show error
 					//
 					application.error({
 						message: "Could not save email verification."
 					});
 				}
-			});
-		},
-
-		accountCreated: function() {
-			var self = this;
-			require([
-				'views/users/registration/account-created-view'
-			], function (AccountCreatedView) {
-
-				// show account created page
-				//
-				application.showMain(new AccountCreatedView({
-					model: self.model
-				}));
 			});
 		},
 
@@ -133,7 +106,7 @@ define([
 
 						// display user profile form
 						//
-						self.showChildView('profile', new NewUserProfileFormView({
+						self.showChildView('form', new NewUserProfileFormView({
 							model: self.model,
 							classes: collection
 						}));
@@ -152,15 +125,10 @@ define([
 
 				// display user profile form
 				//
-				this.showChildView('profile', new NewUserProfileFormView({
+				this.showChildView('form', new NewUserProfileFormView({
 					model: this.model
 				}));	
 			}
-
-			// scroll to top
-			//
-			var el = this.$el.find('h1');
-			el[0].scrollIntoView(true);
 		},
 
 		showWarning: function() {
@@ -169,6 +137,23 @@ define([
 
 		hideWarning: function() {
 			this.$el.find('.alert-warning').hide();
+		},
+
+		//
+		// dialog rendering methods
+		//
+
+		showUserValidationError: function(errors) {
+			require([
+				'views/users/registration/dialogs/user-validation-error-dialog-view',
+			], function(UserValidationErrorDialogView) {
+
+				// show user validation dialog
+				//
+				application.show(new UserValidationErrorDialogView({
+					errors: errors
+				}));
+			});
 		},
 
 		//
@@ -194,11 +179,11 @@ define([
 
 			// check validation
 			//
-			if (this.getChildView('profile').isValid()) {
+			if (this.getChildView('form').isValid()) {
 
-				// update model
+				// update model from form
 				//
-				this.getChildView('profile').applyTo(this.model);
+				this.model.set(this.getChildView('form').getValues());
 
 				// check to see if model is valid
 				//
@@ -210,60 +195,42 @@ define([
 
 						// create new user
 						//
-						var response2 = self.model.save(undefined, {
+						self.model.save(undefined, {
 
 							// callbacks
 							//
 							success: function() {
 
-								// complete registration
+								// verify email
 								//
-								if (application.config['email_enabled']) {
+								if (application.config.email_enabled) {
 									self.verifyEmail();
 								} else {
-									self.accountCreated();
+
+									// go to sign in view
+									//
+									Backbone.history.navigate('#sign-in', {
+										trigger: true
+									});
 								}
 							},
 
 							error: function() {
 
-								// Check for extended LDAP error message in the response
+								// show error
 								//
-								var responseText = '';
-								var responseJSON = JSON.parse(response2.responseText);
-								if ((responseJSON !== null) && 
-									(responseJSON.error !== null)) {
-
-									// Set the additional output to the error message
-									//
-									responseText = responseJSON.error;
-
-									// Check for extended LDAP password policy module error message
-									// like "Constraint violation: 100: password less than 10 chars"
-									//
-									var regex = /.+: \d\d\d: (.+):.+/;
-									if (responseText.match(regex)) {
-										responseText = responseText.replace(regex,"$1");
-									}
-								}
-
-								// show notification
-								//
-								application.notify({
-									message: "Could not create new user" + (responseText? ' because "' + responseText + '"' : '') + "."
+								application.error({
+									message: "Could not create new user."
 								});
 							}
 						});
 					},
 
 					error: function() {
-						var errors = JSON.parse(response.responseText);
 
 						// show user validation dialog
 						//
-						application.show(new UserValidationErrorDialogView({
-							errors: errors
-						}));
+						self.showUserValidationError(JSON.parse(response.responseText));
 					}
 				});
 			} else {

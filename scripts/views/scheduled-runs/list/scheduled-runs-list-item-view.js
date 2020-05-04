@@ -12,7 +12,7 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2019 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2020 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 define([
@@ -95,8 +95,10 @@ define([
 			var runRequest = this.model.get('run_request');
 
 			return {
-				index: this.options.index + 1,
 				runRequest: runRequest,
+
+				// urls
+				//
 				runRequestUrl: '#run-requests/schedules/' + runRequest.get('run_request_uuid'),
 				projectUrl: this.getProjectUrl(),
 				packageUrl: this.getPackageUrl(),
@@ -105,8 +107,10 @@ define([
 				toolVersionUrl: this.getToolVersionUrl(),
 				platformUrl: this.getPlatformUrl(),
 				platformVersionUrl: this.getPlatformVersionUrl(),
+
+				// options
+				//
 				showProjects: this.options.showProjects,
-				showNumbering: this.options.showNumbering,
 				showSchedule: this.options.showSchedule,
 				showDelete: this.options.showDelete
 			};

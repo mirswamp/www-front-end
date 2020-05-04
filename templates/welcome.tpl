@@ -11,7 +11,7 @@
 				<br />
 			</div>
 
-			<% if (config['stats_enabled']) { %>
+			<% if (application.config.stats_enabled) { %>
 			<div id="banner"></div>
 			<% } %>
 		</div>
@@ -26,7 +26,7 @@
 
 			<div class="bottom buttons" style="text-align:center">
 				<button id="sign-in" class="btn btn-primary btn-lg visible-xs-inline"><i class="fa fa-chevron-right"></i>Sign In</button>
-				<% if (config['sign_up_enabled'] && !config['ldap_readonly']) { %>
+				<% if (application.config.sign_up_enabled && !application.config.ldap_readonly) { %>
 				<button id="sign-up" class="btn btn-lg"><i class="fa fa-pencil"></i>Sign Up!</button>
 				<% } %>
 			</div>

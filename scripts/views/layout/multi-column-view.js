@@ -12,7 +12,7 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2019 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2020 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 define([
@@ -179,6 +179,13 @@ define([
 		//
 
 		onKeyDown: function(event) {
+
+			// check for child view
+			//
+			if (!this.hasChildView('content')) {
+				return;
+			}
+
 			if (this.getChildView('content').onKeyDown) {
 
 				// let view handle event

@@ -12,7 +12,7 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2019 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2020 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 define([
@@ -20,11 +20,11 @@ define([
 	'underscore',
 	'bootstrap/popover',
 	'text!templates/layout/sidebar.tpl',
-	'text!templates/layout/sidebar-large.tpl',
 	'text!templates/layout/navbar.tpl',
 	'collections/tools/tools',
 	'views/base-view',
-], function($, _, PopOver, Sidebar, SidebarLarge, Navbar, Tools, BaseView) {
+	'utilities/web/query-strings'
+], function($, _, PopOver, Sidebar, Navbar, Tools, BaseView) {
 	return BaseView.extend({
 
 		//
@@ -32,8 +32,7 @@ define([
 		//
 
 		events: {
-			'click #maximize-nav': 'onClickMaximizeNav',
-			'click #minimize-nav': 'onClickMinimizeNav',
+			'click a': 'onClickLink',
 			'click #top-nav': 'onClickTopNav',
 			'click #bottom-nav': 'onClickBottomNav',
 			'click #left-nav': 'onClickLeftNav',
@@ -100,7 +99,7 @@ define([
 			if (orientation == 'top' || orientation == 'bottom') {
 				template = Navbar;
 			} else {
-				template = this.options.size == 'large'? SidebarLarge : Sidebar;
+				template = Sidebar;
 			}
 
 			return _.template(template);
@@ -112,9 +111,9 @@ define([
 
 			return {
 				nav: this.options.nav,
-				showHome: this.options.showHome,
 				orientation: orientation,
-				isAdmin: application.session.user.isAdmin()
+				isAdmin: application.session.user.isAdmin(),
+				queryString: getQueryString()
 			};
 		},
 
@@ -146,38 +145,25 @@ define([
 		},
 
 		//
-		// navbar positioning event handling methods
+		// event handling methods
 		//
 
-		onClickMaximizeNav: function() {
-
-			// clear popovers
+		onClickLink: function(event) {
+			var href = $(event.target).closest('a').attr('href');
+		
+			// prevent default link handling
 			//
-			$(".popover").remove();
+			event.stopPropagation();
+			event.preventDefault();
 
-			// set layout
+			// go to view
 			//
-			if (application.options.layout == 'two-columns-right-sidebar') {
-				this.setLayout('two-columns-right-sidebar-large');
-			} else {
-				this.setLayout('two-columns-left-sidebar-large');
-			}
+			application.navigate(href);
 		},
 
-		onClickMinimizeNav: function() {
-
-			// clear popovers
-			//
-			$(".popover").remove();
-
-			// set layout
-			//
-			if (application.options.layout == 'two-columns-right-sidebar-large') {
-				this.setLayout('two-columns-right-sidebar');
-			} else {
-				this.setLayout('two-columns-left-sidebar');
-			}
-		},
+		//
+		// navbar positioning event handling methods
+		//
 
 		onClickTopNav: function() {
 			this.setLayout('one-column-top-navbar');

@@ -12,7 +12,7 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2019 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2020 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 define([
@@ -100,6 +100,13 @@ define([
 		},
 
 		onRender: function() {
+
+			// call superclass method
+			//
+			ProjectsListView.prototype.onRender.call(this);
+
+			// perform selection
+			//
 			if (this.options.selectedProjectsUuids) {
 				this.selectProjectsByUuids(this.options.selectedProjectsUuids);
 			}

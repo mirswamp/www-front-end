@@ -1,12 +1,12 @@
 <h1>
-	<div class="icon"><i class="fa fa-pencil"></i></div>Edit <span class="name"><%- model.getFullName() %></span>'s User Profile
+	<div class="icon"><i class="fa fa-pencil"></i></div>Edit <span class="name"><%- name %></span>'s User Profile
 </h1>
 
 <ol class="breadcrumb">
 	<li><a href="#home"><i class="fa fa-home"></i>Home</a></li>
 	<li><a href="#overview"><i class="fa fa-eye"></i>System Overview</a></li>
 	<li><a href="#accounts/review"><i class="fa fa-eye"></i>Review Accounts</a></li>
-	<li><a href="#accounts/<%- model.get('user_uid') %>"><i class="fa fa-user"></i><%- model.getFullName() %>'s Account</a></li>
+	<li><a href="<%= url %>"><i class="fa fa-user"></i><%- name %>'s Account</a></li>
 	<li><i class="fa fa-pencil"></i>Edit Profile</li>
 </ol>
 

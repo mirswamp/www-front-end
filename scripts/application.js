@@ -12,7 +12,7 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2019 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2020 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 define([
@@ -54,6 +54,14 @@ define([
 		//
 
 		region: 'body',
+
+		// context to preseve in the query string during navigation
+		//
+		query_vars: ['project', 
+			'package', 'package-version', 
+			'tool', 'tool-version', 
+			'platform', 'platform-version',
+			'entityid'],
 
 		//
 		// constructor
@@ -128,8 +136,17 @@ define([
 						event.stopPropagation();
 						event.preventDefault();
 					} else if (jqXHR.status == 401) {
-						data = JSON.parse(jqXHR.responseText);
-						if (data.status == 'NO_SESSION') {
+						var status;
+
+						// find status
+						//
+						if (jqXHR.responseText.contains('{')) {
+							status = JSON.parse(jqXHR.responseText).status;
+						} else {
+							status = jqXHR.responseText;
+						}
+
+						if (status == 'NO_SESSION') {
 							self.sessionExpired();
 
 							// prevent further handling of event
@@ -239,6 +256,45 @@ define([
 				this.mainRouter.showNotFound();
 			}
 		},
+
+		navigate: function(url, options) {
+
+			// check if url is a hash and doesn't already contain a query string
+			//
+			if (url.startsWith('#') && !url.contains('?') && url != '#home') {
+
+				// preserve existing query string values
+				//
+				var values = getQueryStringValues(getQueryString(), this.query_vars);
+				var queryString = dataToQueryString(values);
+
+				// append query string to url
+				//
+				if (queryString && queryString != '') {
+					if (url.contains('?')) {
+						queryString = '&' + queryString;
+					} else {
+						queryString = '?' + queryString;
+					}
+
+					url = url + queryString;
+				}
+			}
+
+			Backbone.history.navigate(url, {
+				trigger: true
+			});
+
+			// force reload, even if url has not changed
+			//
+			if (options && options.reload) {
+				window.location.reload();
+			}
+		},
+
+		//
+		// browser methods
+		//
 
 		checkBrowserSupport: function() {
 			var browserList = "<ul>" + 
@@ -351,26 +407,11 @@ define([
 				case 'one-column-bottom-navbar':
 					return 'bottom';
 				case 'two-columns-left-sidebar':
-				case 'two-columns-left-sidebar-large':
 					return 'left';
 				case 'two-columns-right-sidebar':
-				case 'two-columns-right-sidebar-large':
 					return 'right';
 				default:
 					return 'left';
-			}
-		},
-
-		getNavbarSize: function(layout) {			
-			switch (layout) {
-				case 'two-columns-left-sidebar':
-				case 'two-columns-right-sidebar':
-					return 'small';
-				case 'two-columns-left-sidebar-large':
-				case 'two-columns-right-sidebar-large':
-					return 'large';
-				default:
-					return 'small';
 			}
 		},
 
@@ -393,6 +434,14 @@ define([
 		setShowNumbering: function(showNumbering) {
 			this.options.showNumbering = showNumbering;
 			this.saveOptions();
+
+			// update display
+			//
+			if (showNumbering) {
+				this._region.$el.find('table').addClass('numbered');
+			} else {
+				this._region.$el.find('table').removeClass('numbered');
+			}
 		},
 
 		setShowGrouping: function(showGrouping) {
@@ -492,9 +541,7 @@ define([
 
 					// go to welcome view
 					//
-					Backbone.history.navigate('#', {
-						trigger: true
-					});
+					application.navigate('#');
 				},
 				
 				error: function(jqxhr, textstatus, errorThrown) {
@@ -528,9 +575,7 @@ define([
 
 							// go to welcome view
 							//
-							Backbone.history.navigate("#", {
-								trigger: true
-							});
+							application.navigate("#");
 						}
 					});
 				}
@@ -634,8 +679,7 @@ define([
 						nav: options? options.nav2: 'home',
 						model: options? options.model: undefined,
 						done: options? options.done: undefined,
-						navbarOrientation: self.getLayoutOrientation(layout),
-						navbarSize: self.getNavbarSize(layout)
+						navbarOrientation: self.getLayoutOrientation(layout)
 					}), {
 						nav: options? options.nav1: undefined,
 						full: options.full
@@ -729,6 +773,43 @@ define([
 					self.show(new ErrorDialogView(options));
 				});
 			}, 100);
+		},
+
+		showSignInDialog: function() {
+			var self = this;
+			require([
+				'views/users/authentication/dialogs/sign-in-dialog-view'
+			], function (SignInDialogView) {
+
+				// abort if dialog is already shown
+				//
+				if (SignInDialogView.dialog) {
+					return;
+				}
+
+				// show sign in dialog
+				//
+				application.show(new SignInDialogView(), {
+					focus: '#ok'
+				});
+			});
+		},
+
+		showSignUpDialog: function() {
+			require([
+				'views/users/registration/dialogs/sign-up-dialog-view'
+			], function (SignUpDialogView) {
+
+				// abort if dialog is already shown
+				//
+				if (SignUpDialogView.dialog) {
+					return;
+				}
+
+				// show sign up dialog
+				//
+				application.show(new SignUpDialogView());
+			});
 		},
 
 		getActiveView: function() {

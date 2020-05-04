@@ -12,7 +12,7 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2019 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2020 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 define([
@@ -42,5 +42,5 @@ define([
 			$(event.target).parent().find('.panel-heading a i').removeClass('fa-minus-circle');
 			$(event.target).parent().find('.panel-heading a i').addClass('fa-plus-circle');
 		});
-	}
+	};
 });

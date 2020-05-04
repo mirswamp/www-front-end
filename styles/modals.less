@@ -12,7 +12,7 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2019 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2020 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 .modal {
@@ -21,94 +21,96 @@
 	//
 	pointer-events: none;
 
-	.modal-content {
-		.modal-header {
-			.vertical-gradient(@ultra-light-grey, @very-very-very-light-grey);
-			border-top-left-radius: 5px;
-			border-top-right-radius: 5px;
-			margin-top: 0;
+	.modal-dialog {
+		.modal-content {
+			.modal-header {
+				.vertical-gradient(@ultra-light-grey, @very-very-very-light-grey);
+				border-top-left-radius: 5px;
+				border-top-right-radius: 5px;
+				margin-top: 0;
 
-			button {
-				line-height: 1em;
-			}
+				button {
+					line-height: 1em;
+				}
 
-			h1 {
-				font-variant: normal;
-				font-size: 125%;
-				line-height: 1.25em;
-				color: @very-dark-grey;
-				margin: 0;
-				padding: 0;
-				border: none;
+				h1 {
+					font-variant: normal;
+					font-size: 125%;
+					line-height: 1.25em;
+					color: @very-dark-grey;
+					margin: 0;
+					padding: 0;
+					border: none;
 
-				i {
-					margin-top: 2px;
+					i {
+						margin-top: 2px;
+					}
+				}
+
+				//
+				// close buttons
+				//
+
+				button.close {
+					color: white;
+					font-weight: bold;
+					background-color: @primaryButtonColor;
+					.vertical-gradient(@brand-primary-highlight, @brand-primary);
+					border: 1px solid @brand-primary-border;
+					border-radius: 5px;
+					margin-top: 0;
+					padding-top: 3px;
+					padding-bottom: 4px;
+					padding-left: 8px;
+					padding-right: 8px;
+					opacity: 1;
+				}
+
+				button.close:hover {
+					.vertical-gradient(@brand-primary-hover, @brand-primary);
+					color: white;
+					opacity: 1;
+				}
+
+				i.close, i.close:hover {
+					color: @brand-primary;
+					float: right;
+					margin: 0;
+					opacity: 1;
 				}
 			}
 
-			//
-			// close buttons
-			//
+			.modal-header.error {
+				background: @medium-red;
+				border-top-left-radius: 5px;
+				border-top-right-radius: 5px;
 
-			button.close {
-				color: white;
-				font-weight: bold;
-				background-color: @primaryButtonColor;
-				.vertical-gradient(@brand-primary-highlight, @brand-primary);
-				border: 1px solid @brand-primary-border;
-				border-radius: 5px;
-				margin-top: 0;
-				padding-top: 3px;
-				padding-bottom: 4px;
-				padding-left: 8px;
-				padding-right: 8px;
-				opacity: 1;
+				#modal-header-text {
+					color: white;
+				}
 			}
 
-			button.close:hover {
-				.vertical-gradient(@brand-primary-hover, @brand-primary);
-				color: white;
-				opacity: 1;
+			.modal-body {
+				max-height: 500px;
+				
+				h2:first-child {
+					margin-top: 0;
+				}
+				
+				.well {
+					margin-bottom: 0;
+				}
+
+				.top.buttons {
+					margin: 0;
+					margin-top: 5px;
+					float: right;
+				}
 			}
 
-			i.close, i.close:hover {
-				color: @brand-primary;
-				float: right;
-				margin: 0;
-				opacity: 1;
+			.modal-footer {
+				border-top: 5px solid @brand-primary;
 			}
-		}
-
-		.modal-header.error {
-			background: @medium-red;
-			border-top-left-radius: 5px;
-			border-top-right-radius: 5px;
-
-			#modal-header-text {
-				color: white;
-			}
-		}
-
-		.modal-body {
-			max-height: 500px;
-			
-			h2:first-child {
-				margin-top: 0;
-			}
-			
-			.well {
-				margin-bottom: 0;
-			}
-
-			.top.buttons {
-				margin: 0;
-				margin-top: 5px;
-				float: right;
-			}
-		}
-
-		.modal-footer {
-			border-top: 5px solid @brand-primary;
 		}
 	}
 }
@@ -179,7 +181,8 @@
 		padding-bottom: 50px;
 
 		.modal-dialog {
-
+			width: 640px;
+			
 			// center modal windows vertically
 			//
 			margin: auto auto;

@@ -12,7 +12,7 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2019 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2020 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 define([
@@ -36,13 +36,6 @@ define([
 			template: _.template("No items.")
 		}),
 
-		sorting: {
-
-			// sort on submitted column in descending order 
-			//
-			sortList: [[0, 1]]
-		},
-
 		//
 		// constructor
 		//
@@ -53,10 +46,11 @@ define([
 			//
 			SortableTableListView.prototype.initialize.call(this, options);	
 
-			// allow sort order to be passed in
+			// if no sort order is specified, then 
+			// sort by first column in ascending order.
 			//
-			if (this.options.sortList) {
-				this.sorting.sortList = this.options.sortList;
+			if (!this.sortBy) {
+				this.sortBy = [this.options.fieldnames[0], 'ascending'];
 			}
 		},
 
@@ -66,8 +60,7 @@ define([
 
 		templateContext: function() {
 			return {
-				fieldnames: this.options.fieldnames,
-				showNumbering: this.options.showNumbering
+				fieldnames: this.options.fieldnames
 			};
 		},
 
@@ -83,8 +76,7 @@ define([
 			//
 			return {
 				index: this.collection.indexOf(model),
-				fieldnames: this.options.fieldnames,
-				showNumbering: this.options.showNumbering
+				fieldnames: this.options.fieldnames
 			};
 		}
 	});

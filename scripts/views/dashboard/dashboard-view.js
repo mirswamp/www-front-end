@@ -12,7 +12,7 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2019 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2020 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 define([
@@ -24,11 +24,12 @@ define([
 	'collections/tools/tools',
 	'collections/assessments/assessment-runs',
 	'collections/assessments/execution-records',
+	'collections/run-requests/run-request-schedules',
 	'collections/assessments/scheduled-runs',
 	'collections/events/user-events',
 	'views/base-view',
 	'utilities/time/date-utils'
-], function($, _, Template, Projects, Packages, Tools, AssessmentRuns, ExecutionRecords, ScheduledRuns, UserEvents, BaseView) {
+], function($, _, Template, Projects, Packages, Tools, AssessmentRuns, ExecutionRecords, RunRequestSchedules, ScheduledRuns, UserEvents, BaseView) {
 	return BaseView.extend({
 
 		//
@@ -83,6 +84,10 @@ define([
 			});
 		},
 
+		//
+		// badge rendering methods
+		//
+
 		addBadge: function(selector, num) {
 			if (num > 0) {
 				this.$el.find(selector).append('<span class="badge">' + num + '</span>');
@@ -91,11 +96,8 @@ define([
 			}
 		},
 
-		addBadges: function(projects) {
+		addNumPackagesBadge: function(projects) {
 			var self = this;
-			
-			// add num packages badge
-			//
 			if (projects.length > 0) {
 				Packages.fetchNumAllProtected(projects, {
 					success: function(number) {
@@ -104,18 +106,20 @@ define([
 				});
 			} else {
 				this.addBadge("#packages .icon", 0);
-			}
+			}			
+		},
 
-			// add num tools badge
-			//
+		addNumToolsBadge: function(projects) {
+			var self = this;
 			Tools.fetchNumByUser(application.session.user, {
 				success: function(number) {
 					self.addBadge("#tools .icon", number);
 				}
 			});
+		},
 
-			// add num assessments badge
-			//
+		addNumAssessmentsBadge: function(projects) {
+			var self = this;
 			if (projects.length > 0) {
 				AssessmentRuns.fetchNumByProjects(projects, {
 					success: function(number) {
@@ -125,9 +129,10 @@ define([
 			} else {
 				this.addBadge("#assessments .icon", 0);
 			}
+		},
 
-			// add num results badge
-			//
+		addNumResultsBadge: function(projects) {
+			var self = this;
 			if (projects.length > 0) {
 				ExecutionRecords.fetchNumByProjects(projects, {
 					success: function(number) {
@@ -136,10 +141,24 @@ define([
 				});
 			} else {
 				this.addBadge("#results .icon", 0);
-			}
+			}		
+		},
 
-			// add num scheduled runs badge
-			//
+		addNumSchedulesBadge: function(projects) {
+			var self = this;
+			if (projects.length > 0) {
+				RunRequestSchedules.fetchNumByProjects(projects, {
+					success: function(number) {
+						self.addBadge("#schedules .icon", number);
+					}
+				});
+			} else {
+				this.addBadge("#schedules .icon", 0);
+			}		
+		},
+
+		addNumRunsBadge: function(projects) {
+			var self = this;
 			if (projects.length > 0) {
 				ScheduledRuns.fetchNumByProjects(projects, {
 					success: function(number) {
@@ -148,25 +167,39 @@ define([
 				});
 			} else {
 				this.addBadge("#runs .icon", 0);
-			}
+			}		
+		},
 
-			// add num projects badge
-			//
+		addNumProjectsBadge: function(projects) {
 			this.addBadge("#projects .icon", projects.length);
+		},
 
-			// add num events badge
-			//
+		addNumEventsBadge: function(projects) {
+			var self = this;
 			UserEvents.fetchNumAll({
 				success: function(number) {
 					self.addBadge("#events .icon", number);
 				}
-			});
+			});			
 		},
 
+		addBadges: function(projects) {
+			this.addNumPackagesBadge(projects);
+			this.addNumToolsBadge(projects);
+			this.addNumAssessmentsBadge(projects);
+			this.addNumResultsBadge(projects);
+			this.addNumSchedulesBadge(projects);
+			this.addNumRunsBadge(projects);
+			this.addNumProjectsBadge(projects);
+			this.addNumEventsBadge(projects);
+		},
+
+		//
+		// mouse event handling methods
+		//
+
 		onClickMyAccount: function() {
-			Backbone.history.navigate('#my-account', {
-				trigger: true
-			});
+			application.navigate('#my-account');
 		},
 
 		onClickSignOut: function() {

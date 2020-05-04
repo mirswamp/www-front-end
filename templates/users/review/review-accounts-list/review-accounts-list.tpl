@@ -1,10 +1,6 @@
 <thead>
 	<tr>
-		<% if (showNumbering) { %>
-		<th class="prepend number"></th>
-		<% } %>
-
-		<th class="username first">
+		<th class="username">
 			<i class="fa fa-laptop"></i>
 			<span>Username</span>
 		</th>
@@ -19,29 +15,65 @@
 			<span>Affiliation</span>
 		</th>
 
-		<th class="type hidden-sm hidden-xs">
+		<% if (showType) { %>
+		<th class="type hidden-md hidden-sm hidden-xs">
 			<i class="fa fa-group"></i>
 			<span>Type</span>
 		</th>
+		<% } %>
 
-		<% if (showForcePasswordReset && !config['ldap_readonly']) { %>
-		<th class="force-password-reset hidden-xs">
-			<i class="fa fa-refresh" data-toggle="popover" data-placement="top" data-content="Force Password Reset" data-container="body"></i>
-			<input type="checkbox" class="select-all" <% if (config['ldap_readonly']) { %> disabled<% } %>/>
+		<% if (showForcePasswordReset && !application.config.ldap_readonly) { %>
+		<th class="force-password-reset condensed hidden-sm hidden-xs">
+			<i class="fa fa-refresh" data-toggle="tooltip" title="Force Password Reset" data-container="body"></i>
+			<input type="checkbox" class="select-all" <% if (application.config.ldap_readonly) { %> disabled<% } %>/>
 		</th>
 		<% } %>
 
-		<% if (showHibernate && !config['ldap_readonly']) { %>
-		<th class="hibernate hidden-xs">
-			<i class="fa fa-bed" data-toggle="popover" data-placement="top" data-content="Hibernating / Inactive" data-container="body"></i>
+		<% if (showHibernate && !application.config.ldap_readonly) { %>
+		<th class="hibernate condensed hidden-sm hidden-xs">
+			<i class="fa fa-bed" data-toggle="tooltip" title="Hibernating / Inactive"></i>
 			<input type="checkbox" class="select-all" />
 		</th>
 		<% } %>
 
 		<% if (showLinkedAccount) { %>
-		<th class="has-linked-account hidden-xs">
-			<i class="fa fa-link" data-toggle="popover" data-placement="top" data-content="Has Linked Account" data-container="body"></i>
+		<th class="has-linked-account condensed hidden-sm hidden-xs">
+			<i class="fa fa-link" data-toggle="tooltip" title="Has Linked Account"></i>
 		</th>
+		<% } %>
+
+		<% if (showStats) { %>
+
+		<% if (showNumPackages) { %>
+		<th class="num-packages condensed hidden-xs">
+			<i class="fa fa-gift" data-toggle="tooltip" title="Num Packages"></i>
+		</th>
+		<% } %>
+
+		<% if (showNumProjects) { %>
+		<th class="num-projects condensed hidden-xs">
+			<i class="fa fa-folder" data-toggle="tooltip" title="Num Projects"></i>
+		</th>
+		<% } %>
+
+		<% if (showNumRuns) { %>
+		<th class="num-runs condensed hidden-xs">
+			<i class="fa fa-check" data-toggle="tooltip" title="Num Runs"></i>
+		</th>
+		<% } %>
+		
+		<% if (showNumResults) { %>
+		<th class="num-results condensed hidden-xs">
+			<i class="fa fa-bug" data-toggle="tooltip" title="Num Results"></i>
+		</th>
+		<% } %>
+
+		<% if (showSuccessRate) { %>
+		<th class="success-rate condensed hidden-xs">
+			<i class="fa fa-smile-o" data-toggle="tooltip" title="Success Rate"></i>
+		</th>
+		<% } %>
+
 		<% } %>
 
 		<th class="create-date hidden-xxs">
@@ -49,16 +81,17 @@
 			<span>Create Date</span>
 		</th>
 
-		<th class="last-login-date hidden-sm hidden-xs">
+		<th class="last-login-date hidden-md hidden-sm hidden-xs">
 			<i class="fa fa-keyboard-o"></i>
-			<span>Last Login Date</span>
+			<span>Last Login</span>
 		</th>
 		
-		<th class="status last">
+		<th class="status">
 			<i class="fa fa-info-circle"></i>
 			<span>Status</span>
 		</th>
 	</tr>
 </thead>
+
 <tbody>
 </tbody>

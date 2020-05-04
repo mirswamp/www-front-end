@@ -13,7 +13,7 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2019 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2020 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 define([
@@ -23,10 +23,10 @@ define([
 	'text!templates/assessments/select-list/select-assessments-list.tpl',
 	'collections/assessments/assessment-runs',
 	'views/base-view',
-	'views/collections/tables/sortable-table-list-view',
+	'views/collections/tables/groupable-table-list-view',
 	'views/assessments/select-list/select-assessments-list-item-view'
-], function($, _, Popover, Template, AssessmentRuns, BaseView, SortableTableListView, SelectAssessmentsListItemView) {
-	return SortableTableListView.extend({
+], function($, _, Popover, Template, AssessmentRuns, BaseView, GroupableTableListView, SelectAssessmentsListItemView) {
+	return GroupableTableListView.extend({
 
 		//
 		// attributes
@@ -45,27 +45,12 @@ define([
 			'keyup': 'onKeyUp'
 		},
 
-		sorting: {
+		// sort by package in ascending order
+		//
+		sortBy: ['package', 'ascending'],
 
-			// disable sorting on select column
-			//
-			headers: { 
-				0: { 
-					sorter: false 
-				},
-				1: { 
-					sorter: false 
-				},
-				6: { 
-					sorter: false 
-				}
-			},
-
-			// sort on name column in ascending order 
-			//
-			sortList: [[2, 0]]
-		},
-
+		// don't allow grouping by selected columns
+		//
 		groupExcept: ['select-group', 'select', 'results', 'delete'],
 
 		//
@@ -74,12 +59,6 @@ define([
 
 		initialize: function(options) {
 			var self = this;
-
-			// use specified sort order 
-			//
-			if (options.sortList) {
-				this.sorting.sortList = options.sortList;
-			}
 			
 			// set attributes
 			//
@@ -96,9 +75,7 @@ define([
 			
 			// call superclass method
 			//
-			SortableTableListView.prototype.initialize.call(this, _.extend(options, {
-				showSortingColumn: true
-			}));
+			GroupableTableListView.prototype.initialize.call(this);
 		},
 
 		//
@@ -229,7 +206,6 @@ define([
 			return {
 				collection: this.collection,
 				showProjects: this.options.showProjects,
-				showNumbering: this.options.showNumbering,
 				showGrouping: this.options.showGrouping,
 				showDelete: this.options.showDelete
 			};
@@ -248,7 +224,6 @@ define([
 			return {
 				index: this.collection.indexOf(model),
 				showProjects: this.options.showProjects,
-				showNumbering: this.options.showNumbering,
 				showGrouping: this.options.showGrouping,
 				showDelete: this.options.showDelete,
 				project: this.options.project,
@@ -261,7 +236,7 @@ define([
 
 			// call superclass method
 			//
-			SortableTableListView.prototype.onRender.call(this);
+			GroupableTableListView.prototype.onRender.call(this);
 
 			// mark selected assessments
 			//

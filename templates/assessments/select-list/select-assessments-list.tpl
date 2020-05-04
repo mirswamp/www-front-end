@@ -1,19 +1,15 @@
 <thead>
-	<tr>
-		<% if (showNumbering) { %>
-		<th class="prepend number"></th>
-		<% } %>
-		
-		<th class="prepend select-group">
+	<tr>	
+		<th class="select-group">
 		</th>
 
-		<th class="prepend select">
+		<th class="select">
 			<div data-toggle="popover" title="Select All" data-content="Click to select or deselect all items." data-placement="top">
 				<input type="checkbox" class="select-all" />
 			</div>
 		</th>
 
-		<th class="package first">
+		<th class="package">
 			<i class="fa fa-gift"></i>
 			<span class="hidden-xxs">Package</span>
 		</th>
@@ -35,13 +31,13 @@
 		</th>
 		<% } %>
 
-		<th class="results last">
+		<th class="results">
 			<i class="fa fa-check"></i>
 			<span class="hidden-xxs">Results</span>
 		</th>
 
 		<% if (showDelete) { %>
-		<th class="append delete hidden-xs"></th>
+		<th class="delete hidden-xs"></th>
 		<% } %>
 	</tr>
 </thead>

@@ -12,7 +12,7 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2019 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2020 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 define([
@@ -39,7 +39,6 @@ define([
 		events: {
 			'click #refresh': 'onClickRefresh',
 			'click #auto-refresh': 'onClickAutoRefresh',
-			'click #ok': 'onClickOk',
 			'click #kill': 'onClickKill',
 			'click #delete': 'onClickDelete'
 		},
@@ -117,7 +116,6 @@ define([
 				},
 
 				error: function() {
-					self.model = null;
 
 					// update view
 					//
@@ -216,26 +214,6 @@ define([
 			}
 		},
 
-		onClickOk: function() {
-			var queryString = this.options.queryString;
-
-			if (!application.session.user.isAdmin()) {
-
-				// go to assessment results view
-				//
-				Backbone.history.navigate('#results' + (queryString && queryString != ''? '?' + queryString : ''), {
-					trigger: true
-				});
-			} else {
-
-				// go to results overview view
-				//
-				Backbone.history.navigate('#results/review' + (queryString && queryString != ''? '?' + queryString : ''), {
-					trigger: true
-				});		
-			}
-		},
-
 		onClickKill: function() {
 			var self = this;
 
@@ -253,7 +231,7 @@ define([
 						// callbacks
 						//
 						success: function() {
-							self.update();
+							self.onClickOk();
 						},
 
 						error: function() {
@@ -287,8 +265,7 @@ define([
 						// callbacks
 						//
 						success: function() {
-							self.model = copy;
-							self.update();
+							self.onClickOk();
 						},
 
 						error: function() {

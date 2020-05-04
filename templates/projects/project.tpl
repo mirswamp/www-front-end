@@ -3,7 +3,7 @@
 <ol class="breadcrumb">
 	<li><a href="#home"><i class="fa fa-home"></i>Home</a></li>
 	<li><a href="#projects"><i class="fa fa-folder-open"></i>Projects</a></li>
-	<li><i class="fa fa-folder-open"></i>Project <%- model.get('full_name') %></li>
+	<li><i class="fa fa-folder-open"></i>Project <%- full_name %></li>
 </ol>
 
 <% if (!isDeactivated) { %>
@@ -28,11 +28,14 @@
 <p>The following SWAMP users are members of project <%- full_name %>.</p>
 
 <div id="members-list">
-	<div align="center"><i class="fa fa-spinner fa-spin fa-2x"></i><br/>Loading project members...</div>
+	<div class="loading">
+		<i class="fa fa-spinner fa-spin"></i>
+		<div class="message">Loading project members...</div>
+	</div>
 </div>
 
 <label>
-	<input type="checkbox" id="show-numbering" <% if (showNumbering) { %>checked<% } %>>
+	<input type="checkbox" id="show-numbering" <% if (application.options.showNumbering) { %>checked<% } %>>
 	Show numbering
 </label>
 <% } %>
@@ -46,5 +49,4 @@
 	<% if (isProjectAdmin && !isTrialProject) { %>
 	<button id="save-changes" class="btn btn-lg" disabled><i class="fa fa-save"></i>Save Changes</button>
 	<% } %>
-	<button id="cancel" class="btn btn-lg"><i class="fa fa-times"></i>Cancel</button>
 </div>

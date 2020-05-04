@@ -12,7 +12,7 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2019 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2020 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 define([
@@ -36,20 +36,9 @@ define([
 			template: _.template("No package platforms.")
 		}),
 
-		sorting: {
-
-			// disable sorting on delete column
-			//
-			headers: {
-				4: { 
-					sorter: false 
-				}
-			},
-
-			// sort on name column in ascending order 
-			//
-			sortList: [[0, 0]]
-		},
+		// sort by platform column in ascending order 
+		//
+		sortBy: ['platform', 'ascending'],
 
 		//
 		// rendering methods
@@ -58,8 +47,7 @@ define([
 		templateContext: function() {
 			return {
 				collection: this.collection,
-				showDelete: this.options.showDelete,
-				showNumbering: this.options.showNumbering
+				showDelete: this.options.showDelete
 			};
 		},
 
@@ -75,8 +63,7 @@ define([
 			//
 			return {
 				index: this.collection.indexOf(model),
-				showDelete: this.options.showDelete,
-				showNumbering: this.options.showNumbering
+				showDelete: this.options.showDelete
 			};
 		}
 	});

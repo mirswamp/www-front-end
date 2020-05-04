@@ -8,7 +8,7 @@
 <p>The following system settings are used to configure SWAMP system wide behavior.</p>
 
 <ul class="nav nav-tabs">
-	<% if (config['email_enabled']) { %>
+	<% if (application.config.email_enabled) { %>
 	<li id="domains" class="active">
 		<a><i class="fa fa-lock"></i>Restricted Domains</a>
 	</li>
@@ -18,7 +18,7 @@
 		<a><i class="fa fa-user"></i>System Administrators</a>
 	</li>
 
-	<% if (config['email_enabled']) { %>
+	<% if (application.config.email_enabled) { %>
 	<li id="email">
 		<a><i class="fa fa-envelope"></i>System Email</a>
 	</li>

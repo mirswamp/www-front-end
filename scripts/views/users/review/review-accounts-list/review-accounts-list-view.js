@@ -13,7 +13,7 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2019 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2020 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 define([
@@ -43,6 +43,12 @@ define([
 			'click .hibernate .select-all': 'onClickHibernateSelectAll'
 		},
 
+		// sort by create date column in descending order 
+		//
+		sortBy: ['create-date', 'descending'],
+		unsorted: SortableTableListView.prototype.unsorted.concat(
+			['force-password-reset', 'hibernate']),
+
 		//
 		// constructor
 		//
@@ -54,72 +60,10 @@ define([
 			SortableTableListView.prototype.initialize.call(this, _.extend(options, {
 				sorting: this.getSorting()
 			}));
-		},
 
-		//
-		// querying methods
-		//
-
-		getSorting: function() {
-			return {
-
-				// disable sorting on select columns
-				//
-				headers: this.getHeaders(),
-
-				// sort on date column in descending order 
-				//
-				sortList: this.getSortList()
-			}
-		},
-
-		getHeaders: function() {
-			var headers = {};
-			var column = 4;
-
-			// disable sorting on select columns
+			// count of user stats fetched
 			//
-			if (this.options.showForcePasswordReset) {
-				headers[column] = {
-					sorter: false
-				};
-				column++;
-			}
-			if (this.options.showHibernate) {
-				headers[column] = {
-					sorter: false
-				};
-				column++;
-			}
-			if (this.options.showLinkedAccount) {
-				headers[column++] = {
-					sorter: false
-				};
-				column++;
-			}
-
-			return headers;
-		},
-
-		getSortList: function() {
-
-			// sort on date column in descending order 
-			//
-			return [[this.getDateColumn(), 1]];
-		},
-
-		getDateColumn: function() {
-			var dateColumn = 4;
-			if (this.options.showForcePasswordReset) {
-				dateColumn++;
-			}
-			if (this.options.showHibernate) {
-				dateColumn++;
-			}
-			if (this.options.showLinkedAccount) {
-				dateColumn++;
-			}
-			return dateColumn;
+			this.count = 0;
 		},
 
 		//
@@ -129,11 +73,19 @@ define([
 		templateContext: function() {
 			return {
 				collection: this.collection,
-				config: application.config,
+
+				// options
+				//
+				showType: this.options.showType,
 				showForcePasswordReset: this.options.showForcePasswordReset,
 				showHibernate: this.options.showHibernate,
 				showLinkedAccount: this.options.showLinkedAccount,
-				showNumbering: this.options.showNumbering
+				showStats: this.options.showStats,
+				showNumPackages: this.options.showNumPackages,
+				showNumProjects: this.options.showNumProjects,
+				showNumRuns: this.options.showNumRuns,
+				showNumResults: this.options.showNumResults,
+				showSuccessRate: this.options.showSuccessRate
 			};
 		},
 
@@ -149,10 +101,23 @@ define([
 			//
 			return {
 				index: this.collection.indexOf(model),
-				showNumbering: this.options.showNumbering,
+				parent: this,
+
+				// options
+				//
+				showType: this.options.showType,
 				showForcePasswordReset: this.options.showForcePasswordReset,
 				showHibernate: this.options.showHibernate,
 				showLinkedAccount: this.options.showLinkedAccount,
+				showStats: this.options.showStats,
+				showNumPackages: this.options.showNumPackages,
+				showNumProjects: this.options.showNumProjects,
+				showNumRuns: this.options.showNumRuns,
+				showNumResults: this.options.showNumResults,
+				showSuccessRate: this.options.showSuccessRate,
+
+				// callbacks
+				//
 				onChange: this.options.onChange
 			}; 
 		},
@@ -161,6 +126,7 @@ define([
 
 			// remove broken rows and shout out the indicies
 			//
+			/*
 			this.$el.find('table').find('tbody tr').each( 
 				function(index){
 					if ($(this).children().length === 0) {
@@ -169,16 +135,26 @@ define([
 					}
 				} 
 			);
+			*/
+		},
 
-			// display popovers on hover
-			//
-			this.$el.find('[data-toggle="popover"]').popover({
-				trigger: 'hover'
-			});
+		onAttach: function() {
+			if (!this.options.showStats) {
+				this.update();
+			}
+		},
+
+		update: function() {
 
 			// call superclass method
 			//
 			SortableTableListView.prototype.onRender.call(this);
+
+			// add tooltip triggers
+			//
+			this.addTooltips({
+				container: 'body'
+			});
 		},
 
 		//

@@ -1,18 +1,14 @@
 /******************************************************************************\
 |                                                                              |
-|                            sign-up-dialog-view.js                            |
+|                             sign-in-dialog-view.js                           |
 |                                                                              |
 |******************************************************************************|
 |                                                                              |
-|        This defines dialog that is used to register a new user.              |
-|                                                                              |
-|        Author(s): Abe Megahed                                                |
-|                                                                              |
-|        This file is subject to the terms and conditions defined in           |
-|        'LICENSE.txt', which is part of this source code distribution.        |
+|        This defines an notification dialog that is used to show a            |
+|        modal sign in dialog box.                                             |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2019 Software Assurance Marketplace (SWAMP)        |
+|          Copyright (C) 2012 - 2020, Morgridge Institute for Research         |
 \******************************************************************************/
 
 define([
@@ -20,9 +16,11 @@ define([
 	'underscore',
 	'bootstrap/popover',
 	'text!templates/users/registration/dialogs/sign-up-dialog.tpl',
-	'views/dialogs/dialog-view',
-	'views/users/registration/forms/sign-up-form-view'
-], function($, _, Popover, Template, DialogView, SignUpFormView) {
+	'config',
+	'views/dialogs/dialog-view'
+], function($, _, Popover, Template, Config, DialogView) {
+	'use strict';
+
 	return DialogView.extend({
 
 		//
@@ -31,36 +29,110 @@ define([
 
 		template: _.template(Template),
 
-		regions: {
-			form: ".modal-body"
+		events: {
+			'click #google-sign-up': 'onClickGoogleSignUp',
+			'click #github-sign-up': 'onClickGitHubSignUp',
+			'click #other-sign-up': 'onClickOtherSignUp',
+			'click #sign-up': 'onClickSignUp',
+			'keypress': 'onKeyPress'
+		},
+
+		//
+		// constructor
+		//
+
+		initialize: function() {
+			this.constructor.dialog = this;
 		},
 
 		//
 		// rendering methods
 		//
 
-		onRender: function() {
+		templateContext: function() {
+			return {
+				show_google: application.config.google_authentication_enabled,
+				show_github: application.config.github_authentication_enabled,
+				show_other: application.config.ci_logon_authentication_enabled
+			};
+		},
+
+		showSignInWithDialog: function() {
 			var self = this;
+			require([
+				'collections/users/user-classes',
+				'views/users/registration/linked-accounts/dialogs/sign-up-with-dialog-view'
+			], function(UserClasses, SignUpWithDialogView) {
 
-			// show subviews
-			//
-			this.showChildView('form', new SignUpFormView({
-
-				// callbacks
+				// fetch user classes
 				//
-				onClick: function() {
+				new UserClasses().fetch({
 
-					// close dialog 
+					// callbacks
 					//
-					self.hide();
-				}
-			}));
+					success: function(collection) {
 
-			// display popovers on hover
-			//
-			this.$el.find('[data-toggle="popover"]').popover({
-				trigger: 'hover'
+						// show add sign in with dialog
+						//
+						application.show(new SignUpWithDialogView({
+							collection: self.collection,
+							classes: collection
+						}));
+					},
+
+					error: function() {
+
+						// show error message
+						//
+						application.error({
+							message: "Could not fetch user classes."
+						});
+					}
+				});
 			});
+		},
+
+		//
+		// mouse event handling methods
+		//
+
+		onClickGoogleSignUp: function() {
+			Backbone.history.navigate('#providers/google/register', {
+				trigger: true
+			});
+		},
+
+		onClickGitHubSignUp: function() {
+			Backbone.history.navigate('#providers/github/register', {
+				trigger: true
+			});
+		},
+
+		onClickOtherSignUp: function() {
+			this.showSignInWithDialog();
+		},
+
+		onClickSignUp: function() {
+			Backbone.history.navigate('#register', {
+				trigger: true
+			});
+		},
+
+		onKeyPress: function(event) {
+
+			// respond to enter key press
+			//
+			if (event.keyCode === 13) {
+				this.onClickOk();
+			}
+		},
+
+		//
+		// cleanup methods
+		//
+
+		onBeforeDestroy: function() {
+			this.constructor.dialog = undefined;
 		}
 	});
 });

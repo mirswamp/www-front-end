@@ -7,7 +7,7 @@
 |        This defines a model of a base time stamped base model.               |
 |                                                                              |
 |        Author(s): Abe Megahed                                                |
-|        Copyright (C) 2012-2019 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2020 Software Assurance Marketplace (SWAMP)        |
 |                                                                              |
 |******************************************************************************|
 |                           Do It Early. Do It Often.                          |
@@ -22,44 +22,8 @@ define([
 	return BaseModel.extend({
 
 		//
-		// methods
+		// date conversion methods
 		//
-
-		getCreateDate: function() {
-			if (this.has('created_at')) {
-				return this.get('created_at');
-			} else if (this.has('create_date')) {
-				return this.get('create_date');
-			}
-		},
-
-		getUpdateDate: function() {
-			if (this.has('updated_at')) {
-				return this.get('updated_at');
-			} else if (this.has('update_date')) {
-				return this.get('update_date');
-			}
-		},
-
-		getDeleteDate: function() {
-			if (this.has('deleted_at')) {
-				return this.get('deleted_at');
-			} else if (this.has('delete_date')) {
-				return this.get('delete_date');
-			}
-		},
-
-		hasCreateDate: function() {
-			return this.has('created_at') || this.has('create_date');
-		},
-
-		hasUpdateDate: function() {
-			return this.has('updated_at') || this.has('update_date');
-		},
-
-		hasDeleteDate: function() {
-			return this.has('deleted_at') || this.has('delete_date');
-		},
 
 		toDate: function(date) {
 
@@ -95,19 +59,7 @@ define([
 
 		parse: function(response) {
 
-			// convert laravel/rails dates
-			//
-			if (response.created_at) {
-				response.created_at = this.toDate(response.created_at);
-			}
-			if (response.updated_at) {
-				response.updated_at = this.toDate(response.updated_at);
-			}
-			if (response.deleted_at) {
-				response.deleted_at = this.toDate(response.deleted_at);
-			}
-
-			// convert other dates
+			// convert dates
 			//
 			if (response.create_date) {
 				response.create_date = this.toDate(response.create_date);

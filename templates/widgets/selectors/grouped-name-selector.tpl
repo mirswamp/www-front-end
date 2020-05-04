@@ -1,3 +1,7 @@
+<% if (selected === null) { %>
+<option class="empty"></option>
+<% } %>
+
 <% for (var i = 0; i < items.length; i++) { %>
 <% if (!items[i].group) { %>
 <option<% if (selected && items[i].name == selected.name) { %> selected<% } %>><%- items[i].name %></option>

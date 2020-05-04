@@ -13,11 +13,14 @@
 <div style="clear:both"></div>
 
 <div id="package-versions-list">
-	<div align="center"><i class="fa fa-spinner fa-spin fa-2x"></i><br/>Loading package versions...</div>
+	<div class="loading">
+		<i class="fa fa-spinner fa-spin"></i>
+		<div class="message">Loading package versions...</div>
+	</div>
 </div>
 
 <label>
-	<input type="checkbox" id="show-numbering" <% if (showNumbering) { %>checked<% } %>>
+	<input type="checkbox" id="show-numbering" <% if (application.options.showNumbering) { %>checked<% } %>>
 	Show numbering
 </label>
 

@@ -13,7 +13,7 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2019 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2020 Software Assurance Marketplace (SWAMP)        |
 \******************************************************************************/
 
 define([
@@ -44,6 +44,7 @@ define([
 			'click #cancel': 'onClickCancel',
 			'click #show-signed-in-accounts': 'onClickShowSignedInAccounts',
 			'click #show-disabled-accounts': 'onClickShowDisabledAccounts',
+			'click #show-stats': 'onClickShowStats',
 			'click #show-numbering': 'onClickShowNumbering'
 		},
 
@@ -66,6 +67,10 @@ define([
 		getShowDisabledAccounts: function() {
 			return this.$el.find('#show-disabled-accounts').is(':checked');
 		},
+
+		getShowStats: function() {
+			return this.$el.find('#show-stats').is(':checked');
+		},
 		
 		getQueryString: function() {
 			return this.getChildView('filters').getQueryString();
@@ -83,7 +88,7 @@ define([
 
 			// fetch user accounts
 			//
-			this.collection.fetchAll({
+			this.request = this.collection.fetchAll({
 				data: this.getChildView('filters')? this.getChildView('filters').getAttrs() : null,
 
 				// callbacks
@@ -107,7 +112,7 @@ define([
 
 			// fetch user accounts
 			//
-			this.collection.fetchEnabled({
+			this.request = this.collection.fetchEnabled({
 				data: this.getChildView('filters')? this.getChildView('filters').getAttrs() : null,
 
 				// callbacks
@@ -131,7 +136,7 @@ define([
 
 			// fetch user accounts
 			//
-			this.collection.fetchSignedIn({
+			this.request = this.collection.fetchSignedIn({
 				data: this.getChildView('filters')? this.getChildView('filters').getAttrs() : null,
 
 				// callbacks
@@ -196,10 +201,10 @@ define([
 
 		templateContext: function() {
 			return {
-				userType: this.options.data['type']? this.options.data['type'].replace('-', ' ').toTitleCase() : undefined,
+				userType: this.options.data.type? this.options.data.type.replace('-', ' ').toTitleCase() : undefined,
 				showSignedInAccounts: this.options.showSignedInAccounts ? true : false,	
 				showDisabledAccounts: this.options.showDisabledAccounts ? true : false,
-				showNumbering: application.options.showNumbering
+				showStats: this.options.showStats ? true : false
 			};
 		},
 
@@ -257,15 +262,31 @@ define([
 		showList: function() {
 			var self = this;
 
+			// preserve existing sorting column and order
+			//
+			if (this.hasChildView('list') && this.collection.length > 0) {
+				this.options.sortBy = this.getChildView('list').getSorting();
+			}
+
 			// show review user accounts list
 			//
 			this.showChildView('list', new ReviewAccountsListView({
 				collection: this.collection,
-				showNumbering: application.options.showNumbering,
-				showForcePasswordReset: application.config['email_enabled'],
-				showHibernate: application.config['email_enabled'],
-				showLinkedAccount: application.config['linked_accounts_enabled'],
 
+				// options
+				//
+				sortBy: this.options.sortBy,
+				showType: true,
+				showForcePasswordReset: application.config.email_enabled,
+				showHibernate: application.config.email_enabled,
+				showLinkedAccount: application.config.linked_accounts_enabled,
+				showStats: this.options.showStats,
+				showNumPackages: true,
+				showNumProjects: true,
+				showNumRuns: true,
+				showNumResults: true,
+				showSuccessRate: true,
+				
 				// callbacks
 				//
 				onChange: function() {
@@ -310,9 +331,7 @@ define([
 
 			// return to overview
 			//
-			Backbone.history.navigate('#overview', {
-				trigger: true
-			});
+			application.navigate('#overview');
 		},
 
 		onClickShowSignedInAccounts: function() {
@@ -323,9 +342,26 @@ define([
 			this.fetchAndShowList();
 		},
 
+		onClickShowStats: function() {
+			this.options.showStats = this.getShowStats();
+			this.showList();
+		},
+
 		onClickShowNumbering: function(event) {
 			application.setShowNumbering($(event.target).is(':checked'));
-			this.showList();
+		},
+
+		//
+		// cleanup methods
+		//
+
+		onBeforeDestroy: function() {
+
+			// clear pending requests
+			//
+			if (this.request && this.request.state() == 'pending') {
+				this.request.abort();
+			}
 		}
 	});
 });
