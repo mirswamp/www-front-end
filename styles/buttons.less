@@ -19,10 +19,11 @@
 // button colors
 //
 
-@buttonLabelColor: @brand-secondary;
-@buttonLabelHoverColor: @brand-secondary;
-@primaryButtonColor: @brand-primary;
-@primaryButtonHoverColor: @brand-primary-hover;
+@button-label-color: @brand-secondary;
+@button-label-hover-color: @brand-secondary;
+@primary-button-color: @brand-primary;
+@primary-button-hover-color: @brand-primary-hover;
+@primary-button-active-color: @primary-button-hover-color;
 
 //
 // buttons
@@ -30,7 +31,7 @@
 
 .btn {
 	font-size: 16px;
-	color: @buttonLabelColor;
+	color: @button-label-color;
 	.vertical-gradient(white, @very-very-very-light-grey);
 	border: 1px solid @very-very-very-light-grey;
 	padding: 5px 10px;
@@ -47,7 +48,7 @@
 }
 
 .btn:hover {
-	color: @buttonLabelHoverColor;
+	color: @button-label-hover-color;
 	.vertical-gradient(white, @very-very-light-grey);
 
 	i {
@@ -57,7 +58,18 @@
 
 .btn.disabled, .btn[disabled] {
 	border: 1px solid @very-light-grey;
-	color: @primaryButtonColor;
+	color: @primary-button-color;
+}
+
+// remove Bootstrap focus outline
+//
+.btn:focus, 
+.btn:active:focus, 
+.btn.active:focus, 
+.btn.focus, 
+.btn:active.focus, 
+.btn.active.focus {
+	outline: none;
 }
 
 //
@@ -90,7 +102,7 @@
 //
 
 .btn-primary, .btn-primary:focus, .btn-primary[disabled] {
-	background-color: @primaryButtonColor; 
+	background-color: @primary-button-color; 
 	.vertical-gradient(@brand-primary-highlight, @brand-primary);
 	border: 1px solid @brand-primary;
 	color: white !important;
@@ -112,6 +124,11 @@
 	i {
 		color: white;
 	}
+}
+
+.btn-primary:not([disabled]):active {
+	background: @primary-button-active-color; 
+	border-color: @primary-button-active-color;
 }
 
 //

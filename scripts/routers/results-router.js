@@ -63,28 +63,49 @@ define([
 		showReviewResults: function(queryString) {
 			require([
 				'routers/query-string-parser',
+				'collections/viewers/viewers',
 				'views/results/assessment-runs/review/review-results-view'
-			], function (QueryStringParser, ReviewResultsView) {
-				
-				// show content view
+			], function (QueryStringParser, Viewers, ReviewResultsView) {
+
+				// fetch viewers
 				//
-				application.showContent({
-					'nav1': 'home',
-					'nav2': 'overview', 
+				new Viewers().fetchAll({
 
 					// callbacks
 					//
-					done: function(view) {
-						QueryStringParser.fetch(QueryStringParser.parse(queryString, view.model), function(data) {
+					success: function(collection) {
 
-							// show review results view
+						// show content view
+						//
+						application.showContent({
+							'nav1': 'home',
+							'nav2': 'overview', 
+
+							// callbacks
 							//
-							view.showChildView('content', new ReviewResultsView({
-								data: data
-							}));
+							done: function(view) {
+								QueryStringParser.fetch(QueryStringParser.parse(queryString, view.model), function(data) {
+
+									// show review results view
+									//
+									view.showChildView('content', new ReviewResultsView({
+										data: data,
+										viewers: collection
+									}));
+								});
+							}
+						});
+					},
+
+					error: function() {
+
+						// show error message
+						//
+						application.error({
+							message: "Could not fetch project viewers."
 						});
 					}
-				});
+				});	
 			});
 		},
 
@@ -110,11 +131,79 @@ define([
 		},
 
 		//
+		// ajax methods
+		//
+
+		fetchAndShowWarnings: function(assessmentResultUuid, viewerUuid, projectUuid, options) {
+			var self = this;
+			this.fetchAssessmentResultsData(assessmentResultUuid, viewerUuid, projectUuid, {
+				type: 'warnings',
+
+				// callbacks
+				//
+				success: function(results, data) {
+					self.showJsonWarnings(data.results);
+				},
+
+				error: function(results, data) {
+
+					// show error dialog
+					//
+					application.error({
+						message: 'Could not fetch warnings.'
+					});
+				}
+			});
+		},
+
+		fetchAndShowErrors: function(assessmentResultUuid, viewerUuid, projectUuid, options) {
+			var self = this;
+			this.fetchAssessmentResultsData(assessmentResultUuid, viewerUuid, projectUuid, {
+				type: 'errors',
+
+				// callbacks
+				//
+				success: function(results, data) {
+					self.showJsonErrors(data.results);
+				},
+
+				error: function(results, data) {
+
+					// show error dialog
+					//
+					application.error({
+						message: 'Could not fetch errors.'
+					});
+				}
+			});
+		},
+
+		fetchAndShowResults: function(assessmentResultUuid, viewerUuid, projectUuid, options) {
+			var self = this;
+			this.fetchAssessmentResultsData(assessmentResultUuid, viewerUuid, projectUuid, _.extend({}, options, {
+
+				// callbacks
+				//
+				success: function(results, data) {
+					self.showResultsData(assessmentResultUuid, results, data, viewerUuid, projectUuid, options);
+				},
+
+				error: function(results, data) {
+
+					// show error dialog
+					//
+					application.error({
+						message: 'Could not fetch assessment results.'
+					});
+				}
+			}));
+		},
+
+		//
 		// assessment results route handlers
 		//
 
 		showAssessmentResultsViewer: function(assessmentResultUuid, viewerUuid, projectUuid) {
-			var self = this;
 			var options = queryStringToData(getQueryString());
 
 			// strip query string
@@ -125,20 +214,26 @@ define([
 				options = queryStringToData(pair[1]);
 			}
 
-			// fetch results
-			//
-			this.fetchAssessmentResultsData(assessmentResultUuid, viewerUuid, projectUuid, _.extend({}, options, {
+			switch (options.type) {
 
-				// callbacks
+				// fetch warnings
 				//
-				success: function(results, data) {
-					self.showResultsData(assessmentResultUuid, results, data, viewerUuid, projectUuid, options);
-				},
+				case 'warnings':
+					this.fetchAndShowWarnings(assessmentResultUuid, viewerUuid, projectUuid);
+					break;
 
-				error: function(results, data) {
-					self.showJsonErrors(data.results);
-				}
-			}));
+				// fetch errors
+				//
+				case 'errors':
+					this.fetchAndShowErrors(assessmentResultUuid, viewerUuid, projectUuid);
+					break;
+
+				// fetch results
+				//
+				default:
+					this.fetchAndShowResults(assessmentResultUuid, viewerUuid, projectUuid, options);
+					break;
+			}
 		},
 
 		showResultsData: function(assessmentResultUuid, results, data, viewerUuid, projectUuid, options) {
@@ -164,11 +259,26 @@ define([
 				// show native viewer
 				//
 				application.showMain(new NativeViewerView({
+					model: new Backbone.Model(json),
 					assessmentResultUuid: assessmentResultUuid,
 					results: results,
-					json: json,
 					viewerUuid: viewerUuid,
 					projectUuid: projectUuid
+				}), {
+					nav2: 'results'
+				});
+			});
+		},
+
+		showJsonWarnings: function(json) {
+			require([
+				'views/results/warning-report/warning-report-view'
+			], function (WarningReportView) {
+
+				// show error report
+				//
+				application.showMain(new WarningReportView({
+					model: new Backbone.Model(json)
 				}), {
 					nav2: 'results'
 				});
@@ -576,7 +686,7 @@ define([
 				'views/error-page-view'
 			], function (PackageVersion, AssessmentResults, SourceCodeView, ErrorPageView) {
 				var packageVersion = new PackageVersion({
-					package_version_uuid: data.results.AnalyzerReport.package.package_version_uuid
+					package_version_uuid: data.results.package.package_version_uuid
 				});
 
 				// fetch source code
@@ -770,27 +880,34 @@ define([
 				// call stored procedure
 				//
 				var getResults = function() {
-					var data = null;
+					var data = {};
 
-					// set filter data
+					// add filter parameters
 					//
 					if (options.include) {
-						data = {
-							include: options.include
-						};
+						data.include = options.include;
 					} else if (options.exclude) {
-						data = {
-							exclude: options.exclude
-						};
+						data.exclude = options.exclude;
+					}
+
+					// add optional parameters
+					//
+					if (options.from) {
+						data.from = options.from;
+					}
+					if (options.to) {
+						data.to = options.to;
+					}
+					if (options.file) {
+						data.file = options.file;
+					}
+					if (options.type) {
+						data.type = options.type;
 					}
 
 					results.fetchResults(viewerUuid, projectUuid, {
 						timeout: 0,
-						data: _.extend({
-							from: options.from,
-							to: options.to,
-							file: options.file? options.file : null
-						}, data),
+						data: data,
 
 						// callbacks
 						//
@@ -828,7 +945,11 @@ define([
 
 									// could not find results
 									//
-									options.error(results, data);
+									if (options.type == 'errors' || options.type == 'warnings') {
+										options.success(results, data);
+									} else {
+										options.error(results, data);
+									}
 									break;
 
 								case 'TRYAGAIN':

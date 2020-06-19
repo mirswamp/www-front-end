@@ -65,7 +65,9 @@
 <% } %>
 
 <td class="date hidden-xs<% if (!showStatus) { %> last<% } %>">
+	<% if (typeof create_date !== 'undefined') { %>
 	<%= dateToSortableHTML(create_date) %>
+	<% } %>
 </td>
 
 <% if (showStatus) { %>
@@ -77,9 +79,15 @@
 <td class="results">
 	<% if (isComplete) { %>
 
-	<% if (showErrors && hasErrors && errorUrl) { %>
-	<a id="errors" class="warning btn btn-sm" data-toggle="tooltip" data-content="Click to view error report" data-placement="top" href="<%- errorUrl %>" target="_blank">
-		<i class="warning fa fa-exclamation" style="margin:4px"></i>Error
+	<% if (showErrors && hasErrors && errorsUrl) { %>
+	<a id="errors" class="warning btn btn-sm" data-toggle="tooltip" data-content="Click to view error report" data-placement="top" href="<%- errorsUrl %>" target="_blank">
+		<i class="warning fa fa-exclamation"></i>Error
+	</a>
+	<% } %>
+
+	<% if (showErrors && hasWarnings && warningsUrl) { %>
+	<a id="errors" class="warning btn btn-sm" data-toggle="tooltip" data-content="Click to view warnings report" data-placement="top" href="<%- warningsUrl %>" target="_blank">
+		<i class="caution fa fa-warning"></i>Warning
 	</a>
 	<% } %>
 

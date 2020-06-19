@@ -94,6 +94,7 @@ define([
 			this.showChildView('form', new NewPackageVersionProfileFormView({
 				model: this.options.packageVersion,
 				package: this.model,
+				focusable: false,
 				parent:	this
 			}));
 

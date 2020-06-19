@@ -19,11 +19,13 @@
 define([
 	'jquery',
 	'underscore',
+	'select2',
 	'text!templates/packages/info/versions/info/source/source-profile/package-version-source-profile-form.tpl',
+	'defaults',
 	'utilities/scripting/file-utils',
 	'models/packages/package',
 	'views/forms/form-view',
-], function($, _, Template, FileUtils, Package, FormView) {
+], function($, _, Select2, Template, Defaults, FileUtils, Package, FormView) {
 	return FormView.extend({
 
 		//
@@ -47,8 +49,36 @@ define([
 			return this.$el.find('#package-path').val();
 		},
 
+		getSelectedLanguageVersion: function() {
+			var selected = this.$el.find('select[name=language-version]').val();
+			if (selected != 'default') {
+				return selected;
+			}
+		},
+
+		getOtherLanguageVersion: function() {
+			return this.$el.find('.other-language-version input').val();
+		},
+
 		getLanguageVersion: function() {
-			return this.$el.find('select[name=language-version]').val();
+			var languageVersion = this.getSelectedLanguageVersion();
+			return languageVersion != 'other'? languageVersion : this.getOtherLanguageVersion();
+		},
+
+		isOther: function(languageVersion) {
+			if (languageVersion) {
+				var languageType = this.options.package.getLanguageType();
+				if (languageType) {
+					var langaugeTypeInfo = Defaults['package-types'][languageType.toLowerCase()];
+					if (langaugeTypeInfo) {
+						var languageVersions = langaugeTypeInfo.versions;
+						if (languageVersions) {
+							return !languageVersions.contains(languageVersion);
+						}
+					}
+				}
+			}
+			return false;
 		},
 		
 		//
@@ -58,6 +88,8 @@ define([
 		templateContext: function() {
 			return {
 				isAtomic: this.model.isAtomic(),
+				isOther: this.isOther(this.model.get('language_version')),
+				languageVersions: Defaults['package-types'].ruby.versions,
 				hasLanguageVersion: this.options.package.hasLanguageVersion()
 			};
 		},
@@ -86,6 +118,10 @@ define([
 					this.setDefaultPackagePath();
 				}
 			}
+
+			// use select2 for language version selector
+			//
+			this.$el.find('select[name="language-version"]').select2();
 
 			// call superclass method
 			//
@@ -246,7 +282,18 @@ define([
 		},
 
 		onChangeLanguageVersion: function() {
+			var languageVersion = this.getSelectedLanguageVersion();
+
+			// hide / show other language version input
+			//
+			if (languageVersion == 'other') {
+				this.$el.find('.other-language-version').show();
+			} else {
+				this.$el.find('.other-language-version').hide();
+			}
+
 			this.checkLanguageVersion(this.getLanguageVersion());
+			this.onChange();
 		},
 
 		onClickShowGemInfo: function(event) {

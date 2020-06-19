@@ -257,7 +257,7 @@ define([
 		onClickResetPassword: function() {
 			var self = this;
 			require([
-				'views/users/authentication/dialogs/reset-password-dialog-view'
+				'views/users/authentication/reset-password/dialogs/reset-password-dialog-view'
 			], function (ResetPasswordDialogView) {
 
 				// show reset password dialog

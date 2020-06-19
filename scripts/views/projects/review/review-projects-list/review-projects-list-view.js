@@ -73,26 +73,6 @@ define([
 				onChange: this.options.onChange,
 				parent: this
 			};
-		},
-
-		/*
-		onRender: function() {
-
-			// remove broken rows and shout out the indicies
-			//
-			this.$el.find('table').find('tbody tr').each( 
-				function(index){
-					if ($(this).children().length === 0) {
-						// console.log(index);
-						$(this).remove(); 
-					}
-				} 
-			);
-
-			// call superclass method
-			//
-			ProjectsListView.prototype.onRender.call(this);
 		}
-		*/
 	});
 });

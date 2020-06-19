@@ -102,58 +102,76 @@ define([
 
 		getRunUrl: function() {
 			if (this.model.has('execution_record_uuid')) {
-				return application.getURL() + '#runs/' + this.model.get('execution_record_uuid') + '/status' + (this.options.queryString != ''? '?' + this.options.queryString : '');
+				return application.getURL() + 
+					'#runs/' + this.model.get('execution_record_uuid') + 
+					'/status' + (this.options.queryString != ''? '?' + this.options.queryString : '');
 			}
 		},
 
 		getProjectUrl: function() {
 			if (this.model.has('project') && this.model.get('project').project_uuid) {
-				return application.getURL() + '#projects/' + this.model.get('project').project_uuid;
+				return application.getURL() + 
+					'#projects/' + this.model.get('project').project_uuid;
 			}
 		},
 
 		getPackageUrl: function() {
 			if (this.model.has('package') && this.model.get('package').package_uuid) {
-				return application.getURL() + '#packages/' + this.model.get('package').package_uuid;
+				return application.getURL() + 
+					'#packages/' + this.model.get('package').package_uuid;
 			}
 		},
 
 		getPackageVersionUrl: function() {
 			if (this.model.has('package') && this.model.get('package').package_version_uuid) {
-				return application.getURL() + '#packages/versions/' + this.model.get('package').package_version_uuid;
+				return application.getURL() + 
+					'#packages/versions/' + this.model.get('package').package_version_uuid;
 			}
 		},
 
 		getToolUrl: function() {
 			if (this.model.has('tool') && this.model.get('tool').tool_uuid) {
-				return application.getURL() + '#tools/' + this.model.get('tool').tool_uuid;
+				return application.getURL() + 
+				'#tools/' + this.model.get('tool').tool_uuid;
 			}
 		},
 
 		getToolVersionUrl: function() {
 			if (this.model.has('tool') && this.model.get('tool').tool_version_uuid) {
-				return application.getURL() + '#tools/versions/' + this.model.get('tool').tool_version_uuid;
+				return application.getURL() + 
+					'#tools/versions/' + this.model.get('tool').tool_version_uuid;
 			}
 		},
 
 		getPlatformUrl: function() {
 			if (this.model.has('platform') && this.model.get('platform').platform_uuid) {
-				return application.getURL() + '#platforms/' + this.model.get('platform').platform_uuid;
+				return application.getURL() + 
+					'#platforms/' + this.model.get('platform').platform_uuid;
 			}
 		},
 
 		getPlatformVersionUrl: function(data) {
 			if (this.model.has('platform') && this.model.get('platform').platform_version_uuid) {
-				return application.getURL() + '#platforms/versions/' + this.model.get('platform').platform_version_uuid;
+				return application.getURL() + 
+					'#platforms/versions/' + this.model.get('platform').platform_version_uuid;
 			}
 		},
 
-		getErrorUrl: function() {
-			if (this.model.has('assessment_result_uuid') && this.model.has('project_uuid')) {
-				var assessmentResultUuid = this.model.get('assessment_result_uuid');
-				var viewer = this.options.errorViewer;
-				var projectUuid = this.model.get('project_uuid');
-				return application.getURL() + '#results/' + assessmentResultUuid + '/viewer/' + viewer.get('viewer_uuid') + '/project/' + projectUuid;
+		getWarningsUrl: function() {
+			if (this.model.has('assessment_result_uuid') && this.model.has('project_uuid') && this.options.errorViewer) {
+				return application.getURL() + 
+					'#results/' + this.model.get('assessment_result_uuid') + 
+					'/viewer/' + this.options.errorViewer.get('viewer_uuid') + 
+					'/project/' + this.model.get('project_uuid') + '?type=warnings';
+			}
+		},
+
+		getErrorsUrl: function() {
+			if (this.model.has('assessment_result_uuid') && this.model.has('project_uuid') && this.options.errorViewer) {
+				return application.getURL() + 
+					'#results/' + this.model.get('assessment_result_uuid') + 
+					'/viewer/' + this.options.errorViewer.get('viewer_uuid') + 
+					'/project/' + this.model.get('project_uuid') + '?type=errors';
 			}
 		},
 
@@ -171,6 +189,7 @@ define([
 			return {
 				isComplete: this.model.isComplete(),
 				hasResults: this.model.hasResults(),
+				hasWarnings: this.model.hasWarnings(),
 				hasErrors: this.model.hasErrors(),
 
 				// urls
@@ -184,7 +203,8 @@ define([
 				platformUrl: this.getPlatformUrl(),
 				platformVersionUrl: this.getPlatformVersionUrl(),
 				resultsUrl: this.getResultsUrl(),
-				errorUrl: this.options.showErrors? this.getErrorUrl() : undefined,
+				warningsUrl: this.getWarningsUrl(),
+				errorsUrl: this.options.showErrors? this.getErrorsUrl() : undefined,
 	
 				// options
 				//			

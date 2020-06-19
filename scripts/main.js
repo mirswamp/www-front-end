@@ -28,7 +28,7 @@ require.config({
 
 	// cache busting
 	//
-	urlArgs: 'version=1.34',
+	urlArgs: 'version=1.35',
 
 	// paths
 	//

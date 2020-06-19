@@ -57,7 +57,8 @@ define([
 			//
 			this.showChildView('form', new NewPackageVersionProfileFormView({
 				model: this.model,
-				package: this.options.package
+				package: this.options.package,
+				focusable: false
 			}));
 
 			// add popover

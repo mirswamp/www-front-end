@@ -21,7 +21,9 @@
 </td>
 
 <td class="date">
+	<% if (typeof create_date !== 'undefined') { %>
 	<%= dateToSortableHTML(create_date) %>
+	<% } %>
 </td>
 
 <% if (showDelete) { %>

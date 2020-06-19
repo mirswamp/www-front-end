@@ -59,6 +59,13 @@ define([
 		},
 
 		update: function() {
+
+			// call superclass method
+			//
+			TableListView.prototype.update.call(this);
+
+			// update models
+			//
 			for (var i = 0; i < this.children.length; i++) {
 				var child = this.children.findByIndex(i);
 				child.model.set(child.getValues());

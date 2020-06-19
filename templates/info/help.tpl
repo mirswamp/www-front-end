@@ -24,10 +24,10 @@ To report a security incident, click <a href="#contact/security">here</a>.
 <p><a href="http://www.youtube.com/channel/UCuQybvosn2J5CC1mAChXDQQ" target="_blank">The SWAMP Channel on YouTube</a></p>
 
 <h2><i class="fa fa-book"></i>User Manual</h2>
-<p><a href="https://www.swampinabox.org/doc/SWAMP-User-Manual.pdf" target="_blank">SWAMP User Manual (PDF)</a></p>
+<p><a href="documentation/SWAMP-User-Manual.pdf" target="_blank">SWAMP User Manual (PDF)</a></p>
 
 <h2><i class="fa fa-bug"></i>Debugging Help</h2>
-<p><a href="https://www.swampinabox.org/doc/statusout.pdf" target="_blank">Status.out and Debugging SWAMP Failures FAQ (PDF)</a></p>
-
-<h2><i class="fa fa-compass"></i>API Explorer</h2> 
-<p><a href="http://www.mir-swamp.org/api">Explore the SWAMP Application Programmer Interface (REST API)</a></p>
+<ul>
+	<li><a href="documentation/swamp_output_and_debugging.html" target="_blank">Status.out and Debugging SWAMP Failures FAQ (HTML)</a></li>
+	<li><a href="documentation/swamp_output_and_debugging.pdf" target="_blank">Status.out and Debugging SWAMP Failures FAQ (PDF)</a></li>
+</ul>

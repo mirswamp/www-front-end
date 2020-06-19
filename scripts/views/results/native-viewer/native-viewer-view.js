@@ -28,7 +28,7 @@ define([
 	'views/results/native-viewer/list/weaknesses-list-view',
 	'views/files/directory-tree/directory-tree-view',
 	'views/results/native-viewer/directory-tree/package-version-directory-tree-view',
-	'views/results/native-viewer/button-bars/nav-button-bar-view',
+	'views/layout/nav-button-bar-view',
 	'views/keyboard/keycodes',
 	'utilities/web/url-strings',
 	'utilities/web/query-strings',
@@ -44,9 +44,9 @@ define([
 		template: _.template(Template),
 
 		regions: {
-			list: '#weakness-list',
-			nav: '#nav-button-bar',
-			tree: '#source-tree'
+			list: '.weakness-list',
+			nav: '.nav-button-bar',
+			tree: '.source-tree'
 		},
 
 		events: {
@@ -102,7 +102,7 @@ define([
 		//
 
 		numItems: function() {
-			return this.options.json.AnalyzerReport.BugCount;
+			return this.model.get('AnalyzerReport').BugCount;
 		},
 
 		pageOf: function(itemIndex) {
@@ -139,33 +139,65 @@ define([
 		},
 
 		//
+		// url querying methods
+		//
+
+		getPackageUrl: function() {
+			if (this.model.has('package')) {
+				return application.getURL() + '#packages/' + this.model.get('package').package_uuid;
+			}
+		},
+
+		getPackageVersionUrl: function() {
+			if (this.model.has('package')) {
+				return application.getURL() + '#packages/' + this.model.get('package').package_version_uuid;
+			}
+		},
+
+		getToolUrl: function() {
+			if (this.model.has('tool')) {
+				return application.getURL() + '#tools/' + this.model.get('tool').tool_uuid;
+			}
+		},
+
+		getToolVersionUrl: function() {
+			if (this.model.has('tool')) {
+				return application.getURL() + '#tools/' + this.model.get('tool').tool_version_uuid;
+			}
+		},
+
+		getPlatformUrl: function() {
+			if (this.model.has('platform')) {
+				return application.getURL() + '#platforms/' + this.model.get('platform').platform_uuid;
+			}
+		},
+
+		getPlatformVersionUrl: function() {
+			if (this.model.has('platform')) {
+				return application.getURL() + '#platforms/' + this.model.get('platform').platform_version_uuid;
+			}
+		},
+
+		//
 		// rendering methods
 		//
 
 		templateContext: function() {
-			var report = this.options.json.AnalyzerReport;
-
 			return {
-				report: report,
+				report: this.model.get('AnalyzerReport'),
 				// pageNumber: this.pageOf(this.from || 1),
 				// numPages: this.numPages(),
 
 				// urls
 				//
-				packageUrl: report.package && report.package.package_uuid?
-					application.getURL() + '#packages/' + report.package.package_uuid : '',
-				packageVersionUrl: report.package && report.package.package_version_uuid?
-					application.getURL() + '#packages/versions/' + report.package.package_version_uuid : '',
-			
-				toolUrl: report.tool && report.tool.tool_uuid?
-					application.getURL() + '#tools/' + report.tool.tool_uuid : '',
-				toolVersionUrl: report.tool && report.tool.tool_version_uuid?
-					application.getURL() + '#tools/versions/' + report.tool.tool_version_uuid : '',
+				package_url: this.getPackageUrl(),
+				package_version_url: this.getPackageVersionUrl(),
 
-				platformUrl: report.platform && report.platform.platform_uuid?
-					application.getURL() + '#platforms/' + report.platform.platform_uuid : '',
-				platformVersionUrl: report.platform && report.platform.platform_version_uuid?
-					application.getURL() + '#platforms/versions/' + report.platform.platform_version_uuid : '',
+				tool_url: this.getToolUrl(),
+				tool_version_url: this.getToolVersionUrl(),
+				
+				platform_url: this.getPlatformUrl(),
+				platform_version_url: this.getPlatformVersionUrl(),
 	
 				// options
 				//
@@ -174,14 +206,13 @@ define([
 		},
 
 		onRender: function() {
-			var report = this.options.json.AnalyzerReport;
 
 			// show subviews
 			//
 			this.showList();
 			this.showNavButtonBar();
 			this.fetchAndShowSourceTree(new PackageVersion({
-				package_version_uuid: report.package.package_version_uuid
+				package_version_uuid: this.model.get('package').package_version_uuid
 			}));
 		},
 
@@ -194,7 +225,7 @@ define([
 			}
 
 			this.showChildView('list', new WeaknessesListView({
-				collection: new Weaknesses(this.options.json.AnalyzerReport.BugInstances),
+				collection: new Weaknesses(this.model.get('AnalyzerReport').BugInstances),
 				
 				// options
 				//
@@ -265,7 +296,7 @@ define([
 					}),
 					packageVersion: packageVersion,
 					assessmentResultUuid: this.options.assessmentResultUuid,
-					bugInstances: this.options.json.AnalyzerReport.BugInstances,
+					bugInstances: this.model.get('AnalyzerReport').BugInstances,
 					results: this.options.results,
 					projectUuid: this.options.projectUuid,
 					filter_type: this.filter_type,
@@ -282,7 +313,7 @@ define([
 					}),
 					packageVersion: packageVersion,
 					assessmentResultUuid: this.options.assessmentResultUuid,
-					bugInstances: this.options.json.AnalyzerReport.BugInstances,
+					bugInstances: this.model.get('AnalyzerReport').BugInstances,
 					results: this.options.results,
 					projectUuid: this.options.projectUuid,
 					filter_type: this.filter_type,
@@ -301,7 +332,7 @@ define([
 					}),
 					packageVersion: packageVersion,
 					assessmentResultUuid: this.options.assessmentResultUuid,
-					bugInstances: this.options.json.AnalyzerReport.BugInstances,
+					bugInstances: this.model.get('AnalyzerReport').BugInstances,
 					results: this.options.results,
 					projectUuid: this.options.projectUuid,
 					filter_type: this.filter_type,
@@ -335,7 +366,7 @@ define([
 				// callbacks
 				//
 				success: function(data) {
-					self.options.json = data.results;
+					self.model = new Backbone.Model(data.results);
 					self.render();
 				},
 

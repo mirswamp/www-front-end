@@ -74,6 +74,7 @@ define([
 			return {
 				isComplete: this.model.isComplete(),
 				hasResults: this.model.hasResults(),
+				hasWarnings: this.model.hasWarnings(),
 				hasErrors: this.model.hasErrors(),
 				
 				// urls
@@ -87,7 +88,8 @@ define([
 				platformUrl: this.getPlatformUrl(),
 				platformVersionUrl: this.getPlatformVersionUrl(),
 				resultsUrl: this.getResultsUrl(),
-				errorUrl: this.options.showErrors? this.getErrorUrl() : undefined,
+				warningsUrl: this.getWarningsUrl(),
+				errorsUrl: this.options.showErrors? this.getErrorsUrl() : undefined,
 				
 				// options
 				//

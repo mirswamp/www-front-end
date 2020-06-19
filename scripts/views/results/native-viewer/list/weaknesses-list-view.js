@@ -53,6 +53,17 @@ define([
 			return this.collection && this.collection.length > 0? this.collection.at(0).attributes : null;
 		},
 
+		onRender: function() {
+
+			// call superclass method
+			//
+			GroupableTableListView.prototype.onRender.call(this);
+
+			// set starting line number
+			//
+			this.$el.css('counter-reset', 'row-number ' + this.options.start);
+		},
+
 		childViewOptions: function(model) {
 
 			// check if empty view

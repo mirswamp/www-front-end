@@ -17,23 +17,21 @@
 	<div class="form-group">
 		<label class="form-label">Package</label>
 		<div class="controls">
-			<% var packageName = ((report.package && report.package.name)? report.package.name : report.package_name); %>
-			<% var packageVersion = ((report.package && report.package.version_string)? report.package.version_string : report.package_version); %>
 
-			<% if (packageName) { %>
-			<% if (packageUrl) { %>
-			<a href="<%= packageUrl %>"><%= packageName %></a>
+			<% if (typeof package !== 'undefined') { %>
+			<% if (package_url) { %>
+			<a href="<%= package_url %>" target="_blank"><%= package.name %></a>
 			<% } else { %>
-			<%= packageName %>
+			<%= package.name %>
 			<% } %>
 			<% } %>
 
-			<% if (packageVersion) { %>
+			<% if (typeof package !== 'undefined') { %>
 			<b>version</b>
-			<% if (packageVersionUrl) { %>
-			<a href="<%= packageVersionUrl %>"><b class="version"><%= packageVersion %></b></a>
+			<% if (typeof package_version_url !== 'undefined') { %>
+			<a href="<%= package_version_url %>" target="_blank"><b class="version"><%= package.version_string%></b></a>
 			<% } else { %>
-			<b class="version"><%= packageVersion %></b>
+			<b class="version"><%= package.version_string %></b>
 			<% } %>
 			<% } %>
 		</div>
@@ -42,23 +40,21 @@
 	<div class="form-group">
 		<label class="form-label">Tool</label>
 		<div class="controls">
-			<% var toolName = ((report.tool && report.tool.name)? report.tool.name : report.tool_name); %>
-			<% var toolVersion = ((report.tool && report.tool.version_string)? report.tool.version_string : report.tool_version); %>
 
-			<% if (toolName) { %>
-			<% if (toolUrl) { %>
-			<a href="<%= toolUrl %>"><%= toolName %></a>
+			<% if (typeof tool !== 'undefined') { %>
+			<% if (typeof tool_url !== 'undefined') { %>
+			<a href="<%= tool_url %>" target="_blank"><%= tool.name %></a>
 			<% } else { %>
-			<%= toolName %>
+			<%= tool.name %>
 			<% } %>
 			<% } %>
 
-			<% if (toolVersion) { %>
+			<% if (typeof tool !== 'undefined') { %>
 			<b>version</b>
-			<% if (toolVersionUrl) { %>
-			<a href="<%= toolVersionUrl %>"><b class="version"><%= toolVersion %></b></a>
+			<% if (typeof tool_version_url !== 'undefined') { %>
+			<a href="<%= tool_version_url %>" target="_blank"><b class="version"><%= tool.version_string %></b></a>
 			<% } else { %>
-			<b class="version"><%= toolVersion %></b>
+			<b class="version"><%= tool.version_string %></b>
 			<% } %>
 			<% } %>
 		</div>
@@ -67,23 +63,21 @@
 	<div class="form-group">
 		<label class="form-label">Platform</label>
 		<div class="controls">
-			<% var platformName = ((report.platform && report.platform.name)? report.platform.name : report.platform_name); %>
-			<% var platformVersion = ((report.platform && report.platform.version_string)? report.platform.version_string : report.platform_version); %>
 
-			<% if (platformName) { %>
-			<% if (platformUrl) { %>
-			<a href="<%= platformUrl %>"><%= platformName %></a>
+			<% if (typeof platform !== 'undefined') { %>
+			<% if (typeof platform_url !== 'undefined') { %>
+			<a href="<%= platform_url %>" target="_blank"><%= platform.name %></a>
 			<% } else { %>
-			<%= platformName %>
+			<%= platform_name %>
 			<% } %>
 			<% } %>
 
-			<% if (platformVersion) { %>
+			<% if (typeof platform !== 'undefined') { %>
 			<b>version</b>
-			<% if (platformVersionUrl) { %>
-			<a href="<%= platformVersionUrl %>"><b class="version"><%= platformVersion %></b></a>
+			<% if (typeof platform_version_url !== 'undefined') { %>
+			<a href="<%= platform_version_url %>" target="_blank"><b class="version"><%= platform.version_string %></b></a>
 			<% } else { %>
-			<b class="version"><%= platformVersion %></b>
+			<b class="version"><%= platform.version_string %></b>
 			<% } %>
 			<% } %>
 		</div>
@@ -122,7 +116,7 @@
 
 <div class="tab-content">
 	<div id="list-panel" role="tabpanel" class="tab-pane active">
-		<div id="weakness-list"></div>
+		<div class="weakness-list"></div>
 
 		<label>
 			<input type="checkbox" id="show-numbering" <% if (application.options.showNumbering) { %>checked<% } %>>
@@ -134,10 +128,10 @@
 			Show grouping
 		</label>
 
-		<div id="nav-button-bar" class="pull-right" style="margin-top:15px"></div>
+		<div class="nav-button-bar"></div>
 	</div>
 
 	<div id="tree-panel" role="tabpanel" class="tab-pane">
-		<div id="source-tree"></div>
+		<div class="source-tree"></div>
 	</div>
 </div>

@@ -170,7 +170,7 @@ define([
 					// show error message
 					//
 					application.error({
-						message: "Could not kill all selected assessment runs."
+						message: "Could not kill all selected runs."
 					});
 				}
 			}, options));

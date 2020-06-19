@@ -20,7 +20,7 @@
 
 <td class="join-date hidden-xs datetime">
 	<%/* projectMembership is for the current row, while currentProjectMembership is for the current user. */%>
-	<% if (create_date) { %>
+	<% if (typeof create_date !== 'undefined') { %>
 	<%= dateToSortableHTML(create_date) %>
 	<% } %>
 </td>

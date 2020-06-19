@@ -4,7 +4,7 @@
 |                                                                              |
 |******************************************************************************|
 |                                                                              |
-|        This defines the native viewer for displaying assessment results.     |
+|        This defines a view for displaying assessment errors.                 |
 |                                                                              |
 |        Author(s): Abe Megahed                                                |
 |                                                                              |
@@ -19,9 +19,10 @@ define([
 	'jquery',
 	'underscore',
 	'text!templates/results/error-report/error-report.tpl',
+	'widgets/accordions',
 	'views/base-view',
 	'utilities/web/html-utils'
-], function($, _, Template, BaseView) {
+], function($, _, Template, Accordions, BaseView) {
 	return BaseView.extend({
 
 		//
@@ -31,37 +32,67 @@ define([
 		template: _.template(Template),
 
 		//
+		// querying methods
+		//
+
+		getPackageUrl: function() {
+			if (this.model.has('package')) {
+				return application.getURL() + '#packages/' + this.model.get('package').package_uuid;
+			}
+		},
+
+		getPackageVersionUrl: function() {
+			if (this.model.has('package')) {
+				return application.getURL() + '#packages/versions/' + this.model.get('package').package_version_uuid;
+			}
+		},
+
+		getToolUrl: function() {
+			if (this.model.has('tool')) {
+				return application.getURL() + '#tools/' + this.model.get('tool').tool_uuid;
+			}
+		},
+
+		getToolVersionUrl: function() {
+			if (this.model.has('tool')) {
+				return application.getURL() + '#tools/versions/' + this.model.get('tool').tool_version_uuid;
+			}
+		},
+
+		getPlatformUrl: function() {
+			if (this.model.has('platform')) {
+				return application.getURL() + '#platforms/' + this.model.get('platform').platform_uuid;
+			}
+		},
+
+		getPlatformVersionUrl: function() {
+			if (this.model.has('platform')) {
+				return application.getURL() + '#platforms/versions/' + this.model.get('platform').platform_version_uuid;
+			}
+		},
+
+		//
 		// rendering methods
 		//
 
 		templateContext: function() {
 			return {
-				package_url: undefined,
-				package_version_url: undefined,
+				package_url: this.getPackageUrl(),
+				package_version_url: this.getPackageVersionUrl(),
 
-				tool_url: undefined,
-				tool_version_url: undefined,
-
-				platform_url: undefined,
-				platform_version_url: undefined
-
-				/*
-				packageUrl: report.package && report.package.package_uuid?
-					application.getURL() + '#packages/' + report.package.package_uuid : '',
-				packageVersionUrl: report.package && report.package.package_version_uuid?
-					application.getURL() + '#packages/versions/' + report.package.package_version_uuid : '',
-			
-				toolUrl: report.tool && report.tool.tool_uuid?
-					application.getURL() + '#tools/' + report.tool.tool_uuid : '',
-				toolVersionUrl: report.tool && report.tool.tool_version_uuid?
-					application.getURL() + '#tools/versions/' + report.tool.tool_version_uuid : '',
-
-				platformUrl: report.platform && report.platform.platform_uuid?
-					application.getURL() + '#platforms/' + report.platform.platform_uuid : '',
-				platformVersionUrl: report.platform && report.platform.platform_version_uuid?
-					application.getURL() + '#platforms/versions/' + report.platform.platform_version_uuid : '',
-				*/
+				tool_url: this.getToolUrl(),
+				tool_version_url: this.getToolVersionUrl(),
+				
+				platform_url: this.getPlatformUrl(),
+				platform_version_url: this.getPlatformVersionUrl(),
 			};
+		},
+
+		onRender: function() {
+
+			// change collapse icons
+			//
+			new Accordions(this.$el.find('.form-group'));
 		}
 	});
 });

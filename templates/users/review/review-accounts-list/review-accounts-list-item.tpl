@@ -74,11 +74,13 @@
 <% } %>
 
 <td class="create-date datetime hidden-xxs">
+	<% if (typeof create_date !== 'undefined') { %>
 	<%= dateToSortableHTML(create_date) %>
+	<% } %>
 </td>
 
 <td class="last-login-date datetime hidden-md hidden-sm hidden-xs">
-	<% if (ultimate_login_date) { %>
+	<% if (typeof ultimate_login_date !== 'undefined') { %>
 	<%= dateToSortableHTML(ultimate_login_date) %>
 	<% } %>
 </td>

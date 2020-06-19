@@ -13,7 +13,9 @@
 <% } %>
 
 <td class="date hidden-xs" style="border-right:none">
+	<% if (typeof create_date !== 'undefined') { %>
 	<%= dateToSortableHTML(create_date) %>
+	<% } %>
 </td>
 
 <td class="status">

@@ -32,10 +32,6 @@ define([
 
 		template: _.template(Template),
 
-		events: {
-			'click .project-type': 'onClickProjectType'
-		},
-
 		//
 		// form attributes
 		//
@@ -120,17 +116,6 @@ define([
 				'viewer_uuid': viewer,
 				'exclude_public_tools_flag': usePublicTools? 0 : 1
 			};
-		},
-
-		//
-		// event handling methods
-		//
-
-		onClickProjectType: function(event) {
-			var projectTypeCode = $(event.currentTarget).attr('id');
-			this.model.set({
-				'project_type_code': projectTypeCode
-			});
 		}
 	});
 });

@@ -122,22 +122,6 @@ define([
 			}; 
 		},
 
-		onRender: function() {
-
-			// remove broken rows and shout out the indicies
-			//
-			/*
-			this.$el.find('table').find('tbody tr').each( 
-				function(index){
-					if ($(this).children().length === 0) {
-						// console.log(index);
-						$(this).remove(); 
-					}
-				} 
-			);
-			*/
-		},
-
 		onAttach: function() {
 			if (!this.options.showStats) {
 				this.update();

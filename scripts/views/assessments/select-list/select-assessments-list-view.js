@@ -252,7 +252,7 @@ define([
 		},
 
 		//
-		// event handling methods
+		// mouse event handling methods
 		//
 
 		onSelect: function() {
@@ -279,6 +279,10 @@ define([
 			
 			this.onSelect();
 		},
+
+		//
+		// keyboard event handling methods
+		//
 
 		onKeyDown: function(event) {
 

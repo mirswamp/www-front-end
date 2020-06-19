@@ -203,6 +203,8 @@ define([
 				//
 				sortBy: this.options.sortBy,
 				viewers: this.options.viewers,
+				viewer: this.options.viewers.getNative(),
+				errorViewer: this.options.viewers.getNative(),
 				checked: this.checked,
 				queryString: this.getQueryString(),
 				showGrouping: application.options.showGrouping,

@@ -47,6 +47,10 @@ define([
 		initialize: function() {
 			var self = this;
 
+			// call superclass method
+			//
+			FormView.prototype.initialize.call(this);
+
 			// add external url validation rule
 			//
 			$.validator.addMethod('archive', function(value) {

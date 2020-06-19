@@ -194,25 +194,24 @@ define([
 
 			// if return key is pressed, then trigger primary button
 			//
-			} else if (event.keyCode == 13 && $('button:focus').length == 0) {
-				var button;
+			} else if (event.keyCode == 13 && event.target.type != 'textarea') {
 
 				// find primary button
 				//
 				if (this.getChildView('content')) {
-					button = this.getChildView('content').$el.find('.btn-primary')[0];
-				}
+					var button = this.getChildView('content').$el.find('.btn-primary')[0];
 
-				if (button) {
+					if (button) {
 
-					// activate primary button
-					//
-					$(button).trigger('click');
+						// activate primary button
+						//
+						$(button).trigger('click');
 
-					// prevent further handling of event
-					//
-					event.stopPropagation();
-					event.preventDefault();		
+						// prevent further handling of event
+						//
+						event.stopPropagation();
+						event.preventDefault();		
+					}
 				}
 			}
 		},

@@ -96,11 +96,36 @@ define([
 			return selector.options[index].value;
 		},
 
-		getLanguageVersion: function() {
-			if (this.getLanguageType() == 'ruby') {
-				var version = this.$el.find('select[name=language-version]').val();
-				return version != "default"? version : undefined;
+		getSelectedLanguageVersion: function() {
+			var selected = this.$el.find('select[name=language-version]').val();
+			if (selected != 'default') {
+				return selected;
 			}
+		},
+
+		getOtherLanguageVersion: function() {
+			return this.$el.find('.other-language-version input').val();
+		},
+
+		getLanguageVersion: function() {
+			var languageVersion = this.getSelectedLanguageVersion();
+			return languageVersion != 'other'? languageVersion : this.getOtherLanguageVersion();
+		},
+
+		isOther: function(languageVersion) {
+			if (languageVersion) {
+				var languageType = this.options.package.getLanguageType();
+				if (languageType) {
+					var langaugeTypeInfo = Defaults['package-types'][languageType.toLowerCase()];
+					if (langaugeTypeInfo) {
+						var languageVersions = langaugeTypeInfo.versions;
+						if (languageVersions) {
+							return !languageVersions.contains(languageVersion);
+						}
+					}
+				}
+			}
+			return false;
 		},
 
 		getJavaType: function() {
@@ -319,9 +344,17 @@ define([
 		},
 
 		setLanguageVersion: function(languageVersion) {
-			this.$el.find('#language-version option').each(function() {
-				this.selected = (this.text == languageVersion);
-			});	
+			if (languageVersion) {
+				if (this.isOther(languageVersion)) {
+					this.$el.find('#language-version select').select2('val', 'other');
+					this.$el.find('#other-language-version').show();
+					this.$el.find('#other-language-version input').val(languageVersion);
+				} else {
+					this.$el.find('#language-version select').select2('val', languageVersion);
+				}
+			} else {
+				this.$el.find('#language-version select').select2('val', 'default');
+			}
 		},
 
 		setWebScriptingTypes: function(fileTypes) {
@@ -353,7 +386,8 @@ define([
 			return {
 				isAtomic: this.model.isAtomic(),
 				packageType: this.options.package.getPackageType(),
-				rubyVersions: Defaults['package-types'].ruby.versions
+				languageVersions: Defaults['package-types'].ruby.versions,
+				hasLanguageVersion: this.options.package.hasLanguageVersion()
 			};
 		},
 
@@ -371,6 +405,10 @@ define([
 			if (this.model.getFilename().endsWith('whl')) {
 				this.$el.find('#show-wheel-info').show();
 			}
+
+			// use select2 for language version selector
+			//
+			this.$el.find('select[name="language-version"]').select2();
 
 			// call superclass method
 			//
@@ -960,6 +998,7 @@ define([
 			//
 			if (this.getLanguageType() == 'ruby') {
 				this.$el.find('#language-version').show();
+				this.setLanguageVersion(this.defaultLanguageVersion);
 			} else {
 				this.$el.find('#language-version').hide();
 			}
@@ -1005,10 +1044,20 @@ define([
 		},
 
 		onChangeLanguageVersion: function() {
+			var languageVersion = this.getSelectedLanguageVersion();
+
+			// hide / show other language version input
+			//
+			if (languageVersion == 'other') {
+				this.$el.find('.other-language-version').show();
+			} else {
+				this.$el.find('.other-language-version').hide();
+			}
 
 			// check selected language version against the default
 			//
 			this.checkLanguageVersion(this.getLanguageVersion());
+			this.onChange();
 		},
 
 		onClickShowGemInfo: function(event) {

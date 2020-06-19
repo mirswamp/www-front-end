@@ -37,9 +37,13 @@ define([
 			template: _.template("No emails.")
 		}),
 
+		events: {
+			'click .select-all': 'onClickSelectAll'
+		},
+
 		// sort by date column in ascending order 
 		//
-		sortBy: ['username', 'ascending'],
+		// sortBy: ['email', 'ascending'],
 
 		//
 		// constructor
@@ -49,6 +53,9 @@ define([
 
 			// set optional parameter defaults
 			//
+			if (this.options.start == undefined) {
+				this.options.start = 0;
+			}
 			if (this.options.showHibernate == undefined) {
 				this.options.showHibernate = true;
 			}
@@ -61,16 +68,79 @@ define([
 		},
 
 		//
+		// querying methods
+		//
+
+		getSelectedElementIndex: function(element) {
+			var elements = this.$el.find('input[name="select"]');
+			for (var i = 0; i < elements.length; i++) {
+				if (element == elements[i]) {
+					return i;
+				}
+			}
+		},
+
+		//
+		// setting methods
+		//
+
+		/*
+		setSelectedRange: function(index1, index2, checked) {
+
+			// swap indices
+			//
+			if (index1 > index2) {
+				var temp = index1;
+				index1 = index2;
+				index2 = temp;
+			}
+
+			// set range of checkboxes
+			//
+			var rows = this.$el.find('tbody').find('tr');
+			for (var i = index1; i < index2; i++) {
+				var select = $(rows[i]).find('input[name="select"]')[0];
+				if (select && !$(select).hasClass('unselectable')) {
+					$(select).prop('checked', checked);
+				}
+			}
+		},
+
+		setSelectedContiguous: function(index, checked) {
+			var rows = this.$el.find('tbody').find('tr');
+			var i = this.getFirstGroupIndex(index, checked);
+			var done = false;
+			var parity = $(rows[i]).hasClass('odd');
+
+			while (i < rows.length && !done) {
+				var $row = $(rows[i]);
+				var rowParity = $row.hasClass('odd');
+
+				if (rowParity == parity) {
+					var select = $row.find('input[name="select"]')[0];
+					if (select && !$(select).hasClass('unselectable')) {
+						$(select).prop('checked', checked);
+					}
+				} else {
+					done = true;
+				}
+
+				i++;
+			}
+		},
+		*/
+
+		//
 		// rendering methods
 		//
 
 		templateContext: function() {
 			return {
-				collection: this.collection,
+				groupSelected: this.options.groupSelected,
 				showHibernate: this.options.showHibernate
 			};
 		},
-
+		
 		onRender: function() {
 
 			// call superclass method
@@ -82,22 +152,45 @@ define([
 			this.$el.find('[data-toggle="popover"]').popover({
 				trigger: 'hover'
 			});
-		},
 
-		childViewOptions: function(model) {
-
-			// check if empty view
+			// set starting line number
 			//
-			if (!model) {
-				return {};
-			}
+			this.$el.css('counter-reset', 'row-number ' + this.options.start);
+		},
+		
+		childViewOptions: function(model) {
+			var index = this.collection.indexOf(model);
 
 			// return view options
 			//
 			return {
-				index: this.collection.indexOf(model),
-				showHibernate: this.options.showHibernate
+				index: this.options.start + index,
+				showHibernate: this.options.showHibernate,
+				parent: this,
+
+				// callbacks
+				//
+				onClick: this.options.onClick
 			};
+		},
+
+		//
+		// mouse event handling methods
+		//
+
+		onClickSelectAll: function(event) {
+			var checked = $(event.target).prop('checked');
+			if (checked) {
+
+				// select all
+				//
+				this.options.parent.selectAll();
+			} else {
+				
+				// deselect all
+				//
+				this.options.parent.deselectAll();
+			}
 		}
 	});
 });

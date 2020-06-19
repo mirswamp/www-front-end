@@ -19,18 +19,12 @@
 	<div class="form-group" id="language-version">
 		<label class="required control-label">Language version</label>
 		<div class="controls">
-			<select name="language-version" class="required">
-				<option<% if (!language_version) { %> selected<% } %>>default</option>
-				<option<% if (language_version == '2.2.2') { %> selected<% } %>>2.2.2</option>
-				<option<% if (language_version == '2.2.1') { %> selected<% } %>>2.2.1</option>
-				<option<% if (language_version == '2.1.5') { %> selected<% } %>>2.1.5</option>
-				<option<% if (language_version == '2.1.4') { %> selected<% } %>>2.1.4</option>
-				<option<% if (language_version == '2.0.0') { %> selected<% } %>>2.0.0</option>
-				<option<% if (language_version == '1.9.3') { %> selected<% } %>>1.9.3</option>
-				<option<% if (language_version == '1.9.2') { %> selected<% } %>>1.9.2</option>
-				<option<% if (language_version == '1.9.1') { %> selected<% } %>>1.9.1</option>
-				<option<% if (language_version == '1.8.7') { %> selected<% } %>>1.8.7</option>
-				<option<% if (language_version == '1.8.6') { %> selected<% } %>>1.8.6</option>
+			<select name="language-version" style="margin-right:15px">
+				<option value="default"<% if (!language_version) { %> selected<% } %>>default</option>
+				<option value="other"<% if (language_version && isOther) { %> selected<% } %>>other</option>
+				<% for (var i = 0; i < languageVersions.length; i++) { %>
+				<option value="<%= languageVersions[i] %>"<% if (language_version == languageVersions[i]) { %> selected<% } %>><%= languageVersions[i] %></option>
+				<% } %>
 			</select>
 			<div class="options">
 				<button id="show-gem-info" class="btn"><i class="fa fa-diamond"></i>Show Gem Info</button>
@@ -42,4 +36,16 @@
 	<p>No package source information may be specified for this type of package.</p>
 	<% } %>
 	<% } %>
+
+	<div class="other-language-version form-group"<% if (!language_version || !isOther) { %> style="display:none"<% } %>>
+		<label class="control-label">Other language version</label>
+		<div class="controls" style="width:150px">
+			<div class="input-group">
+				<input type="text" class="form-control" value="<%= language_version %>" />
+				<div class="input-group-addon">
+					<i class="active fa fa-question-circle" data-toggle="popover" data-placement="top" data-container="body" title="Other language version" data-content="This is a version string for the language in case the version is not provided by the selector. "></i>
+				</div>
+			</div>
+		</div>
+	</div>
 </form>

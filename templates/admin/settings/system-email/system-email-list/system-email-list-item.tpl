@@ -1,5 +1,5 @@
 <td class="select">
-	<input type="checkbox" name="select" value="<%- email %>" />
+	<input type="checkbox" name="select"<% if (selected) { %> checked<% } %> />
 </td>
 
 <td class="username">

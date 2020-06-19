@@ -68,6 +68,10 @@ define([
 			return this.get('complete_flag') == true;
 		},
 
+		hasWarnings: function() {
+			return this.has('status') && this.get('status').toLowerCase().indexOf('warnings') != -1;
+		},
+
 		hasErrors: function() {
 			return this.has('status') && this.get('status').toLowerCase().indexOf('errors') != -1;
 		},

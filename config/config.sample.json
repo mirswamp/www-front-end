@@ -3,14 +3,6 @@
 		"web": "https://SED_HOSTNAME/swamp-web-server/public"
 	},
 
-	"cookie": {
-		"name": "swamp_layout",
-		"domain": null,
-                "expires": 7,
-		"path": "/",
-		"secure": true
-	},
-
 	"options": {
 		"assessments": {
 			"allow_multiple_tool_selection": true,

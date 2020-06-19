@@ -47,6 +47,10 @@ define([
 
 		initialize: function() {
 
+			// call superclass method
+			//
+			ListView.prototype.initialize.call(this);
+
 			// update view on collection change
 			//
 			this.listenTo(this.collection, 'remove', this.update, this);
@@ -174,7 +178,14 @@ define([
 
 		onAttach: function() {
 			this.update();
-			
+		},
+
+		update: function() {
+
+			// call superclass method
+			//
+			ListView.prototype.update.call(this);
+
 			// We shouldn't need to do this, but since the table
 			// head structure is being added even for empty tables, 
 			// we must hide it if the table is empty.

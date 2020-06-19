@@ -1,0 +1,3528 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Asciidoctor 2.0.10">
+<meta name="author" content="James A. Kupsch">
+<title>SWAMP Output Files and Debugging Failures</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
+<style>
+/* Asciidoctor default stylesheet | MIT License | https://asciidoctor.org */
+/* Uncomment @import statement to use as custom stylesheet */
+/*@import "https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700";*/
+article,aside,details,figcaption,figure,footer,header,hgroup,main,nav,section{display:block}
+audio,video{display:inline-block}
+audio:not([controls]){display:none;height:0}
+html{font-family:sans-serif;-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%}
+a{background:none}
+a:focus{outline:thin dotted}
+a:active,a:hover{outline:0}
+h1{font-size:2em;margin:.67em 0}
+abbr[title]{border-bottom:1px dotted}
+b,strong{font-weight:bold}
+dfn{font-style:italic}
+hr{-moz-box-sizing:content-box;box-sizing:content-box;height:0}
+mark{background:#ff0;color:#000}
+code,kbd,pre,samp{font-family:monospace;font-size:1em}
+pre{white-space:pre-wrap}
+q{quotes:"\201C" "\201D" "\2018" "\2019"}
+small{font-size:80%}
+sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}
+sup{top:-.5em}
+sub{bottom:-.25em}
+img{border:0}
+svg:not(:root){overflow:hidden}
+figure{margin:0}
+fieldset{border:1px solid silver;margin:0 2px;padding:.35em .625em .75em}
+legend{border:0;padding:0}
+button,input,select,textarea{font-family:inherit;font-size:100%;margin:0}
+button,input{line-height:normal}
+button,select{text-transform:none}
+button,html input[type="button"],input[type="reset"],input[type="submit"]{-webkit-appearance:button;cursor:pointer}
+button[disabled],html input[disabled]{cursor:default}
+input[type="checkbox"],input[type="radio"]{box-sizing:border-box;padding:0}
+button::-moz-focus-inner,input::-moz-focus-inner{border:0;padding:0}
+textarea{overflow:auto;vertical-align:top}
+table{border-collapse:collapse;border-spacing:0}
+*,*::before,*::after{-moz-box-sizing:border-box;-webkit-box-sizing:border-box;box-sizing:border-box}
+html,body{font-size:100%}
+body{background:#fff;color:rgba(0,0,0,.8);padding:0;margin:0;font-family:"Noto Serif","DejaVu Serif",serif;font-weight:400;font-style:normal;line-height:1;position:relative;cursor:auto;tab-size:4;-moz-osx-font-smoothing:grayscale;-webkit-font-smoothing:antialiased}
+a:hover{cursor:pointer}
+img,object,embed{max-width:100%;height:auto}
+object,embed{height:100%}
+img{-ms-interpolation-mode:bicubic}
+.left{float:left!important}
+.right{float:right!important}
+.text-left{text-align:left!important}
+.text-right{text-align:right!important}
+.text-center{text-align:center!important}
+.text-justify{text-align:justify!important}
+.hide{display:none}
+img,object,svg{display:inline-block;vertical-align:middle}
+textarea{height:auto;min-height:50px}
+select{width:100%}
+.center{margin-left:auto;margin-right:auto}
+.stretch{width:100%}
+.subheader,.admonitionblock td.content>.title,.audioblock>.title,.exampleblock>.title,.imageblock>.title,.listingblock>.title,.literalblock>.title,.stemblock>.title,.openblock>.title,.paragraph>.title,.quoteblock>.title,table.tableblock>.title,.verseblock>.title,.videoblock>.title,.dlist>.title,.olist>.title,.ulist>.title,.qlist>.title,.hdlist>.title{line-height:1.45;color:#7a2518;font-weight:400;margin-top:0;margin-bottom:.25em}
+div,dl,dt,dd,ul,ol,li,h1,h2,h3,#toctitle,.sidebarblock>.content>.title,h4,h5,h6,pre,form,p,blockquote,th,td{margin:0;padding:0;direction:ltr}
+a{color:#2156a5;text-decoration:underline;line-height:inherit}
+a:hover,a:focus{color:#1d4b8f}
+a img{border:0}
+p{font-family:inherit;font-weight:400;font-size:1em;line-height:1.6;margin-bottom:1.25em;text-rendering:optimizeLegibility}
+p aside{font-size:.875em;line-height:1.35;font-style:italic}
+h1,h2,h3,#toctitle,.sidebarblock>.content>.title,h4,h5,h6{font-family:"Open Sans","DejaVu Sans",sans-serif;font-weight:300;font-style:normal;color:#ba3925;text-rendering:optimizeLegibility;margin-top:1em;margin-bottom:.5em;line-height:1.0125em}
+h1 small,h2 small,h3 small,#toctitle small,.sidebarblock>.content>.title small,h4 small,h5 small,h6 small{font-size:60%;color:#e99b8f;line-height:0}
+h1{font-size:2.125em}
+h2{font-size:1.6875em}
+h3,#toctitle,.sidebarblock>.content>.title{font-size:1.375em}
+h4,h5{font-size:1.125em}
+h6{font-size:1em}
+hr{border:solid #dddddf;border-width:1px 0 0;clear:both;margin:1.25em 0 1.1875em;height:0}
+em,i{font-style:italic;line-height:inherit}
+strong,b{font-weight:bold;line-height:inherit}
+small{font-size:60%;line-height:inherit}
+code{font-family:"Droid Sans Mono","DejaVu Sans Mono",monospace;font-weight:400;color:rgba(0,0,0,.9)}
+ul,ol,dl{font-size:1em;line-height:1.6;margin-bottom:1.25em;list-style-position:outside;font-family:inherit}
+ul,ol{margin-left:1.5em}
+ul li ul,ul li ol{margin-left:1.25em;margin-bottom:0;font-size:1em}
+ul.square li ul,ul.circle li ul,ul.disc li ul{list-style:inherit}
+ul.square{list-style-type:square}
+ul.circle{list-style-type:circle}
+ul.disc{list-style-type:disc}
+ol li ul,ol li ol{margin-left:1.25em;margin-bottom:0}
+dl dt{margin-bottom:.3125em;font-weight:bold}
+dl dd{margin-bottom:1.25em}
+abbr,acronym{text-transform:uppercase;font-size:90%;color:rgba(0,0,0,.8);border-bottom:1px dotted #ddd;cursor:help}
+abbr{text-transform:none}
+blockquote{margin:0 0 1.25em;padding:.5625em 1.25em 0 1.1875em;border-left:1px solid #ddd}
+blockquote cite{display:block;font-size:.9375em;color:rgba(0,0,0,.6)}
+blockquote cite::before{content:"\2014 \0020"}
+blockquote cite a,blockquote cite a:visited{color:rgba(0,0,0,.6)}
+blockquote,blockquote p{line-height:1.6;color:rgba(0,0,0,.85)}
+@media screen and (min-width:768px){h1,h2,h3,#toctitle,.sidebarblock>.content>.title,h4,h5,h6{line-height:1.2}
+h1{font-size:2.75em}
+h2{font-size:2.3125em}
+h3,#toctitle,.sidebarblock>.content>.title{font-size:1.6875em}
+h4{font-size:1.4375em}}
+table{background:#fff;margin-bottom:1.25em;border:solid 1px #dedede}
+table thead,table tfoot{background:#f7f8f7}
+table thead tr th,table thead tr td,table tfoot tr th,table tfoot tr td{padding:.5em .625em .625em;font-size:inherit;color:rgba(0,0,0,.8);text-align:left}
+table tr th,table tr td{padding:.5625em .625em;font-size:inherit;color:rgba(0,0,0,.8)}
+table tr.even,table tr.alt{background:#f8f8f7}
+table thead tr th,table tfoot tr th,table tbody tr td,table tr td,table tfoot tr td{display:table-cell;line-height:1.6}
+h1,h2,h3,#toctitle,.sidebarblock>.content>.title,h4,h5,h6{line-height:1.2;word-spacing:-.05em}
+h1 strong,h2 strong,h3 strong,#toctitle strong,.sidebarblock>.content>.title strong,h4 strong,h5 strong,h6 strong{font-weight:400}
+.clearfix::before,.clearfix::after,.float-group::before,.float-group::after{content:" ";display:table}
+.clearfix::after,.float-group::after{clear:both}
+:not(pre):not([class^=L])>code{font-size:.9375em;font-style:normal!important;letter-spacing:0;padding:.1em .5ex;word-spacing:-.15em;background:#f7f7f8;-webkit-border-radius:4px;border-radius:4px;line-height:1.45;text-rendering:optimizeSpeed;word-wrap:break-word}
+:not(pre)>code.nobreak{word-wrap:normal}
+:not(pre)>code.nowrap{white-space:nowrap}
+pre{color:rgba(0,0,0,.9);font-family:"Droid Sans Mono","DejaVu Sans Mono",monospace;line-height:1.45;text-rendering:optimizeSpeed}
+pre code,pre pre{color:inherit;font-size:inherit;line-height:inherit}
+pre>code{display:block}
+pre.nowrap,pre.nowrap pre{white-space:pre;word-wrap:normal}
+em em{font-style:normal}
+strong strong{font-weight:400}
+.keyseq{color:rgba(51,51,51,.8)}
+kbd{font-family:"Droid Sans Mono","DejaVu Sans Mono",monospace;display:inline-block;color:rgba(0,0,0,.8);font-size:.65em;line-height:1.45;background:#f7f7f7;border:1px solid #ccc;-webkit-border-radius:3px;border-radius:3px;-webkit-box-shadow:0 1px 0 rgba(0,0,0,.2),0 0 0 .1em white inset;box-shadow:0 1px 0 rgba(0,0,0,.2),0 0 0 .1em #fff inset;margin:0 .15em;padding:.2em .5em;vertical-align:middle;position:relative;top:-.1em;white-space:nowrap}
+.keyseq kbd:first-child{margin-left:0}
+.keyseq kbd:last-child{margin-right:0}
+.menuseq,.menuref{color:#000}
+.menuseq b:not(.caret),.menuref{font-weight:inherit}
+.menuseq{word-spacing:-.02em}
+.menuseq b.caret{font-size:1.25em;line-height:.8}
+.menuseq i.caret{font-weight:bold;text-align:center;width:.45em}
+b.button::before,b.button::after{position:relative;top:-1px;font-weight:400}
+b.button::before{content:"[";padding:0 3px 0 2px}
+b.button::after{content:"]";padding:0 2px 0 3px}
+p a>code:hover{color:rgba(0,0,0,.9)}
+#header,#content,#footnotes,#footer{width:100%;margin-left:auto;margin-right:auto;margin-top:0;margin-bottom:0;max-width:62.5em;*zoom:1;position:relative;padding-left:.9375em;padding-right:.9375em}
+#header::before,#header::after,#content::before,#content::after,#footnotes::before,#footnotes::after,#footer::before,#footer::after{content:" ";display:table}
+#header::after,#content::after,#footnotes::after,#footer::after{clear:both}
+#content{margin-top:1.25em}
+#content::before{content:none}
+#header>h1:first-child{color:rgba(0,0,0,.85);margin-top:2.25rem;margin-bottom:0}
+#header>h1:first-child+#toc{margin-top:8px;border-top:1px solid #dddddf}
+#header>h1:only-child,body.toc2 #header>h1:nth-last-child(2){border-bottom:1px solid #dddddf;padding-bottom:8px}
+#header .details{border-bottom:1px solid #dddddf;line-height:1.45;padding-top:.25em;padding-bottom:.25em;padding-left:.25em;color:rgba(0,0,0,.6);display:-ms-flexbox;display:-webkit-flex;display:flex;-ms-flex-flow:row wrap;-webkit-flex-flow:row wrap;flex-flow:row wrap}
+#header .details span:first-child{margin-left:-.125em}
+#header .details span.email a{color:rgba(0,0,0,.85)}
+#header .details br{display:none}
+#header .details br+span::before{content:"\00a0\2013\00a0"}
+#header .details br+span.author::before{content:"\00a0\22c5\00a0";color:rgba(0,0,0,.85)}
+#header .details br+span#revremark::before{content:"\00a0|\00a0"}
+#header #revnumber{text-transform:capitalize}
+#header #revnumber::after{content:"\00a0"}
+#content>h1:first-child:not([class]){color:rgba(0,0,0,.85);border-bottom:1px solid #dddddf;padding-bottom:8px;margin-top:0;padding-top:1rem;margin-bottom:1.25rem}
+#toc{border-bottom:1px solid #e7e7e9;padding-bottom:.5em}
+#toc>ul{margin-left:.125em}
+#toc ul.sectlevel0>li>a{font-style:italic}
+#toc ul.sectlevel0 ul.sectlevel1{margin:.5em 0}
+#toc ul{font-family:"Open Sans","DejaVu Sans",sans-serif;list-style-type:none}
+#toc li{line-height:1.3334;margin-top:.3334em}
+#toc a{text-decoration:none}
+#toc a:active{text-decoration:underline}
+#toctitle{color:#7a2518;font-size:1.2em}
+@media screen and (min-width:768px){#toctitle{font-size:1.375em}
+body.toc2{padding-left:15em;padding-right:0}
+#toc.toc2{margin-top:0!important;background:#f8f8f7;position:fixed;width:15em;left:0;top:0;border-right:1px solid #e7e7e9;border-top-width:0!important;border-bottom-width:0!important;z-index:1000;padding:1.25em 1em;height:100%;overflow:auto}
+#toc.toc2 #toctitle{margin-top:0;margin-bottom:.8rem;font-size:1.2em}
+#toc.toc2>ul{font-size:.9em;margin-bottom:0}
+#toc.toc2 ul ul{margin-left:0;padding-left:1em}
+#toc.toc2 ul.sectlevel0 ul.sectlevel1{padding-left:0;margin-top:.5em;margin-bottom:.5em}
+body.toc2.toc-right{padding-left:0;padding-right:15em}
+body.toc2.toc-right #toc.toc2{border-right-width:0;border-left:1px solid #e7e7e9;left:auto;right:0}}
+@media screen and (min-width:1280px){body.toc2{padding-left:20em;padding-right:0}
+#toc.toc2{width:20em}
+#toc.toc2 #toctitle{font-size:1.375em}
+#toc.toc2>ul{font-size:.95em}
+#toc.toc2 ul ul{padding-left:1.25em}
+body.toc2.toc-right{padding-left:0;padding-right:20em}}
+#content #toc{border-style:solid;border-width:1px;border-color:#e0e0dc;margin-bottom:1.25em;padding:1.25em;background:#f8f8f7;-webkit-border-radius:4px;border-radius:4px}
+#content #toc>:first-child{margin-top:0}
+#content #toc>:last-child{margin-bottom:0}
+#footer{max-width:100%;background:rgba(0,0,0,.8);padding:1.25em}
+#footer-text{color:rgba(255,255,255,.8);line-height:1.44}
+#content{margin-bottom:.625em}
+.sect1{padding-bottom:.625em}
+@media screen and (min-width:768px){#content{margin-bottom:1.25em}
+.sect1{padding-bottom:1.25em}}
+.sect1:last-child{padding-bottom:0}
+.sect1+.sect1{border-top:1px solid #e7e7e9}
+#content h1>a.anchor,h2>a.anchor,h3>a.anchor,#toctitle>a.anchor,.sidebarblock>.content>.title>a.anchor,h4>a.anchor,h5>a.anchor,h6>a.anchor{position:absolute;z-index:1001;width:1.5ex;margin-left:-1.5ex;display:block;text-decoration:none!important;visibility:hidden;text-align:center;font-weight:400}
+#content h1>a.anchor::before,h2>a.anchor::before,h3>a.anchor::before,#toctitle>a.anchor::before,.sidebarblock>.content>.title>a.anchor::before,h4>a.anchor::before,h5>a.anchor::before,h6>a.anchor::before{content:"\00A7";font-size:.85em;display:block;padding-top:.1em}
+#content h1:hover>a.anchor,#content h1>a.anchor:hover,h2:hover>a.anchor,h2>a.anchor:hover,h3:hover>a.anchor,#toctitle:hover>a.anchor,.sidebarblock>.content>.title:hover>a.anchor,h3>a.anchor:hover,#toctitle>a.anchor:hover,.sidebarblock>.content>.title>a.anchor:hover,h4:hover>a.anchor,h4>a.anchor:hover,h5:hover>a.anchor,h5>a.anchor:hover,h6:hover>a.anchor,h6>a.anchor:hover{visibility:visible}
+#content h1>a.link,h2>a.link,h3>a.link,#toctitle>a.link,.sidebarblock>.content>.title>a.link,h4>a.link,h5>a.link,h6>a.link{color:#ba3925;text-decoration:none}
+#content h1>a.link:hover,h2>a.link:hover,h3>a.link:hover,#toctitle>a.link:hover,.sidebarblock>.content>.title>a.link:hover,h4>a.link:hover,h5>a.link:hover,h6>a.link:hover{color:#a53221}
+details,.audioblock,.imageblock,.literalblock,.listingblock,.stemblock,.videoblock{margin-bottom:1.25em}
+details>summary:first-of-type{cursor:pointer;display:list-item;outline:none;margin-bottom:.75em}
+.admonitionblock td.content>.title,.audioblock>.title,.exampleblock>.title,.imageblock>.title,.listingblock>.title,.literalblock>.title,.stemblock>.title,.openblock>.title,.paragraph>.title,.quoteblock>.title,table.tableblock>.title,.verseblock>.title,.videoblock>.title,.dlist>.title,.olist>.title,.ulist>.title,.qlist>.title,.hdlist>.title{text-rendering:optimizeLegibility;text-align:left;font-family:"Noto Serif","DejaVu Serif",serif;font-size:1rem;font-style:italic}
+table.tableblock.fit-content>caption.title{white-space:nowrap;width:0}
+.paragraph.lead>p,#preamble>.sectionbody>[class="paragraph"]:first-of-type p{font-size:1.21875em;line-height:1.6;color:rgba(0,0,0,.85)}
+table.tableblock #preamble>.sectionbody>[class="paragraph"]:first-of-type p{font-size:inherit}
+.admonitionblock>table{border-collapse:separate;border:0;background:none;width:100%}
+.admonitionblock>table td.icon{text-align:center;width:80px}
+.admonitionblock>table td.icon img{max-width:none}
+.admonitionblock>table td.icon .title{font-weight:bold;font-family:"Open Sans","DejaVu Sans",sans-serif;text-transform:uppercase}
+.admonitionblock>table td.content{padding-left:1.125em;padding-right:1.25em;border-left:1px solid #dddddf;color:rgba(0,0,0,.6)}
+.admonitionblock>table td.content>:last-child>:last-child{margin-bottom:0}
+.exampleblock>.content{border-style:solid;border-width:1px;border-color:#e6e6e6;margin-bottom:1.25em;padding:1.25em;background:#fff;-webkit-border-radius:4px;border-radius:4px}
+.exampleblock>.content>:first-child{margin-top:0}
+.exampleblock>.content>:last-child{margin-bottom:0}
+.sidebarblock{border-style:solid;border-width:1px;border-color:#dbdbd6;margin-bottom:1.25em;padding:1.25em;background:#f3f3f2;-webkit-border-radius:4px;border-radius:4px}
+.sidebarblock>:first-child{margin-top:0}
+.sidebarblock>:last-child{margin-bottom:0}
+.sidebarblock>.content>.title{color:#7a2518;margin-top:0;text-align:center}
+.exampleblock>.content>:last-child>:last-child,.exampleblock>.content .olist>ol>li:last-child>:last-child,.exampleblock>.content .ulist>ul>li:last-child>:last-child,.exampleblock>.content .qlist>ol>li:last-child>:last-child,.sidebarblock>.content>:last-child>:last-child,.sidebarblock>.content .olist>ol>li:last-child>:last-child,.sidebarblock>.content .ulist>ul>li:last-child>:last-child,.sidebarblock>.content .qlist>ol>li:last-child>:last-child{margin-bottom:0}
+.literalblock pre,.listingblock>.content>pre{-webkit-border-radius:4px;border-radius:4px;word-wrap:break-word;overflow-x:auto;padding:1em;font-size:.8125em}
+@media screen and (min-width:768px){.literalblock pre,.listingblock>.content>pre{font-size:.90625em}}
+@media screen and (min-width:1280px){.literalblock pre,.listingblock>.content>pre{font-size:1em}}
+.literalblock pre,.listingblock>.content>pre:not(.highlight),.listingblock>.content>pre[class="highlight"],.listingblock>.content>pre[class^="highlight "]{background:#f7f7f8}
+.literalblock.output pre{color:#f7f7f8;background:rgba(0,0,0,.9)}
+.listingblock>.content{position:relative}
+.listingblock code[data-lang]::before{display:none;content:attr(data-lang);position:absolute;font-size:.75em;top:.425rem;right:.5rem;line-height:1;text-transform:uppercase;color:inherit;opacity:.5}
+.listingblock:hover code[data-lang]::before{display:block}
+.listingblock.terminal pre .command::before{content:attr(data-prompt);padding-right:.5em;color:inherit;opacity:.5}
+.listingblock.terminal pre .command:not([data-prompt])::before{content:"$"}
+.listingblock pre.highlightjs{padding:0}
+.listingblock pre.highlightjs>code{padding:1em;-webkit-border-radius:4px;border-radius:4px}
+.listingblock pre.prettyprint{border-width:0}
+.prettyprint{background:#f7f7f8}
+pre.prettyprint .linenums{line-height:1.45;margin-left:2em}
+pre.prettyprint li{background:none;list-style-type:inherit;padding-left:0}
+pre.prettyprint li code[data-lang]::before{opacity:1}
+pre.prettyprint li:not(:first-child) code[data-lang]::before{display:none}
+table.linenotable{border-collapse:separate;border:0;margin-bottom:0;background:none}
+table.linenotable td[class]{color:inherit;vertical-align:top;padding:0;line-height:inherit;white-space:normal}
+table.linenotable td.code{padding-left:.75em}
+table.linenotable td.linenos{border-right:1px solid currentColor;opacity:.35;padding-right:.5em}
+pre.pygments .lineno{border-right:1px solid currentColor;opacity:.35;display:inline-block;margin-right:.75em}
+pre.pygments .lineno::before{content:"";margin-right:-.125em}
+.quoteblock{margin:0 1em 1.25em 1.5em;display:table}
+.quoteblock:not(.excerpt)>.title{margin-left:-1.5em;margin-bottom:.75em}
+.quoteblock blockquote,.quoteblock p{color:rgba(0,0,0,.85);font-size:1.15rem;line-height:1.75;word-spacing:.1em;letter-spacing:0;font-style:italic;text-align:justify}
+.quoteblock blockquote{margin:0;padding:0;border:0}
+.quoteblock blockquote::before{content:"\201c";float:left;font-size:2.75em;font-weight:bold;line-height:.6em;margin-left:-.6em;color:#7a2518;text-shadow:0 1px 2px rgba(0,0,0,.1)}
+.quoteblock blockquote>.paragraph:last-child p{margin-bottom:0}
+.quoteblock .attribution{margin-top:.75em;margin-right:.5ex;text-align:right}
+.verseblock{margin:0 1em 1.25em}
+.verseblock pre{font-family:"Open Sans","DejaVu Sans",sans;font-size:1.15rem;color:rgba(0,0,0,.85);font-weight:300;text-rendering:optimizeLegibility}
+.verseblock pre strong{font-weight:400}
+.verseblock .attribution{margin-top:1.25rem;margin-left:.5ex}
+.quoteblock .attribution,.verseblock .attribution{font-size:.9375em;line-height:1.45;font-style:italic}
+.quoteblock .attribution br,.verseblock .attribution br{display:none}
+.quoteblock .attribution cite,.verseblock .attribution cite{display:block;letter-spacing:-.025em;color:rgba(0,0,0,.6)}
+.quoteblock.abstract blockquote::before,.quoteblock.excerpt blockquote::before,.quoteblock .quoteblock blockquote::before{display:none}
+.quoteblock.abstract blockquote,.quoteblock.abstract p,.quoteblock.excerpt blockquote,.quoteblock.excerpt p,.quoteblock .quoteblock blockquote,.quoteblock .quoteblock p{line-height:1.6;word-spacing:0}
+.quoteblock.abstract{margin:0 1em 1.25em;display:block}
+.quoteblock.abstract>.title{margin:0 0 .375em;font-size:1.15em;text-align:center}
+.quoteblock.excerpt>blockquote,.quoteblock .quoteblock{padding:0 0 .25em 1em;border-left:.25em solid #dddddf}
+.quoteblock.excerpt,.quoteblock .quoteblock{margin-left:0}
+.quoteblock.excerpt blockquote,.quoteblock.excerpt p,.quoteblock .quoteblock blockquote,.quoteblock .quoteblock p{color:inherit;font-size:1.0625rem}
+.quoteblock.excerpt .attribution,.quoteblock .quoteblock .attribution{color:inherit;text-align:left;margin-right:0}
+table.tableblock{max-width:100%;border-collapse:separate}
+p.tableblock:last-child{margin-bottom:0}
+td.tableblock>.content>:last-child{margin-bottom:-1.25em}
+td.tableblock>.content>:last-child.sidebarblock{margin-bottom:0}
+table.tableblock,th.tableblock,td.tableblock{border:0 solid #dedede}
+table.grid-all>thead>tr>.tableblock,table.grid-all>tbody>tr>.tableblock{border-width:0 1px 1px 0}
+table.grid-all>tfoot>tr>.tableblock{border-width:1px 1px 0 0}
+table.grid-cols>*>tr>.tableblock{border-width:0 1px 0 0}
+table.grid-rows>thead>tr>.tableblock,table.grid-rows>tbody>tr>.tableblock{border-width:0 0 1px}
+table.grid-rows>tfoot>tr>.tableblock{border-width:1px 0 0}
+table.grid-all>*>tr>.tableblock:last-child,table.grid-cols>*>tr>.tableblock:last-child{border-right-width:0}
+table.grid-all>tbody>tr:last-child>.tableblock,table.grid-all>thead:last-child>tr>.tableblock,table.grid-rows>tbody>tr:last-child>.tableblock,table.grid-rows>thead:last-child>tr>.tableblock{border-bottom-width:0}
+table.frame-all{border-width:1px}
+table.frame-sides{border-width:0 1px}
+table.frame-topbot,table.frame-ends{border-width:1px 0}
+table.stripes-all tr,table.stripes-odd tr:nth-of-type(odd),table.stripes-even tr:nth-of-type(even),table.stripes-hover tr:hover{background:#f8f8f7}
+th.halign-left,td.halign-left{text-align:left}
+th.halign-right,td.halign-right{text-align:right}
+th.halign-center,td.halign-center{text-align:center}
+th.valign-top,td.valign-top{vertical-align:top}
+th.valign-bottom,td.valign-bottom{vertical-align:bottom}
+th.valign-middle,td.valign-middle{vertical-align:middle}
+table thead th,table tfoot th{font-weight:bold}
+tbody tr th{display:table-cell;line-height:1.6;background:#f7f8f7}
+tbody tr th,tbody tr th p,tfoot tr th,tfoot tr th p{color:rgba(0,0,0,.8);font-weight:bold}
+p.tableblock>code:only-child{background:none;padding:0}
+p.tableblock{font-size:1em}
+ol{margin-left:1.75em}
+ul li ol{margin-left:1.5em}
+dl dd{margin-left:1.125em}
+dl dd:last-child,dl dd:last-child>:last-child{margin-bottom:0}
+ol>li p,ul>li p,ul dd,ol dd,.olist .olist,.ulist .ulist,.ulist .olist,.olist .ulist{margin-bottom:.625em}
+ul.checklist,ul.none,ol.none,ul.no-bullet,ol.no-bullet,ol.unnumbered,ul.unstyled,ol.unstyled{list-style-type:none}
+ul.no-bullet,ol.no-bullet,ol.unnumbered{margin-left:.625em}
+ul.unstyled,ol.unstyled{margin-left:0}
+ul.checklist{margin-left:.625em}
+ul.checklist li>p:first-child>.fa-square-o:first-child,ul.checklist li>p:first-child>.fa-check-square-o:first-child{width:1.25em;font-size:.8em;position:relative;bottom:.125em}
+ul.checklist li>p:first-child>input[type="checkbox"]:first-child{margin-right:.25em}
+ul.inline{display:-ms-flexbox;display:-webkit-box;display:flex;-ms-flex-flow:row wrap;-webkit-flex-flow:row wrap;flex-flow:row wrap;list-style:none;margin:0 0 .625em -1.25em}
+ul.inline>li{margin-left:1.25em}
+.unstyled dl dt{font-weight:400;font-style:normal}
+ol.arabic{list-style-type:decimal}
+ol.decimal{list-style-type:decimal-leading-zero}
+ol.loweralpha{list-style-type:lower-alpha}
+ol.upperalpha{list-style-type:upper-alpha}
+ol.lowerroman{list-style-type:lower-roman}
+ol.upperroman{list-style-type:upper-roman}
+ol.lowergreek{list-style-type:lower-greek}
+.hdlist>table,.colist>table{border:0;background:none}
+.hdlist>table>tbody>tr,.colist>table>tbody>tr{background:none}
+td.hdlist1,td.hdlist2{vertical-align:top;padding:0 .625em}
+td.hdlist1{font-weight:bold;padding-bottom:1.25em}
+.literalblock+.colist,.listingblock+.colist{margin-top:-.5em}
+.colist td:not([class]):first-child{padding:.4em .75em 0;line-height:1;vertical-align:top}
+.colist td:not([class]):first-child img{max-width:none}
+.colist td:not([class]):last-child{padding:.25em 0}
+.thumb,.th{line-height:0;display:inline-block;border:solid 4px #fff;-webkit-box-shadow:0 0 0 1px #ddd;box-shadow:0 0 0 1px #ddd}
+.imageblock.left{margin:.25em .625em 1.25em 0}
+.imageblock.right{margin:.25em 0 1.25em .625em}
+.imageblock>.title{margin-bottom:0}
+.imageblock.thumb,.imageblock.th{border-width:6px}
+.imageblock.thumb>.title,.imageblock.th>.title{padding:0 .125em}
+.image.left,.image.right{margin-top:.25em;margin-bottom:.25em;display:inline-block;line-height:0}
+.image.left{margin-right:.625em}
+.image.right{margin-left:.625em}
+a.image{text-decoration:none;display:inline-block}
+a.image object{pointer-events:none}
+sup.footnote,sup.footnoteref{font-size:.875em;position:static;vertical-align:super}
+sup.footnote a,sup.footnoteref a{text-decoration:none}
+sup.footnote a:active,sup.footnoteref a:active{text-decoration:underline}
+#footnotes{padding-top:.75em;padding-bottom:.75em;margin-bottom:.625em}
+#footnotes hr{width:20%;min-width:6.25em;margin:-.25em 0 .75em;border-width:1px 0 0}
+#footnotes .footnote{padding:0 .375em 0 .225em;line-height:1.3334;font-size:.875em;margin-left:1.2em;margin-bottom:.2em}
+#footnotes .footnote a:first-of-type{font-weight:bold;text-decoration:none;margin-left:-1.05em}
+#footnotes .footnote:last-of-type{margin-bottom:0}
+#content #footnotes{margin-top:-.625em;margin-bottom:0;padding:.75em 0}
+.gist .file-data>table{border:0;background:#fff;width:100%;margin-bottom:0}
+.gist .file-data>table td.line-data{width:99%}
+div.unbreakable{page-break-inside:avoid}
+.big{font-size:larger}
+.small{font-size:smaller}
+.underline{text-decoration:underline}
+.overline{text-decoration:overline}
+.line-through{text-decoration:line-through}
+.aqua{color:#00bfbf}
+.aqua-background{background:#00fafa}
+.black{color:#000}
+.black-background{background:#000}
+.blue{color:#0000bf}
+.blue-background{background:#0000fa}
+.fuchsia{color:#bf00bf}
+.fuchsia-background{background:#fa00fa}
+.gray{color:#606060}
+.gray-background{background:#7d7d7d}
+.green{color:#006000}
+.green-background{background:#007d00}
+.lime{color:#00bf00}
+.lime-background{background:#00fa00}
+.maroon{color:#600000}
+.maroon-background{background:#7d0000}
+.navy{color:#000060}
+.navy-background{background:#00007d}
+.olive{color:#606000}
+.olive-background{background:#7d7d00}
+.purple{color:#600060}
+.purple-background{background:#7d007d}
+.red{color:#bf0000}
+.red-background{background:#fa0000}
+.silver{color:#909090}
+.silver-background{background:#bcbcbc}
+.teal{color:#006060}
+.teal-background{background:#007d7d}
+.white{color:#bfbfbf}
+.white-background{background:#fafafa}
+.yellow{color:#bfbf00}
+.yellow-background{background:#fafa00}
+span.icon>.fa{cursor:default}
+a span.icon>.fa{cursor:inherit}
+.admonitionblock td.icon [class^="fa icon-"]{font-size:2.5em;text-shadow:1px 1px 2px rgba(0,0,0,.5);cursor:default}
+.admonitionblock td.icon .icon-note::before{content:"\f05a";color:#19407c}
+.admonitionblock td.icon .icon-tip::before{content:"\f0eb";text-shadow:1px 1px 2px rgba(155,155,0,.8);color:#111}
+.admonitionblock td.icon .icon-warning::before{content:"\f071";color:#bf6900}
+.admonitionblock td.icon .icon-caution::before{content:"\f06d";color:#bf3400}
+.admonitionblock td.icon .icon-important::before{content:"\f06a";color:#bf0000}
+.conum[data-value]{display:inline-block;color:#fff!important;background:rgba(0,0,0,.8);-webkit-border-radius:100px;border-radius:100px;text-align:center;font-size:.75em;width:1.67em;height:1.67em;line-height:1.67em;font-family:"Open Sans","DejaVu Sans",sans-serif;font-style:normal;font-weight:bold}
+.conum[data-value] *{color:#fff!important}
+.conum[data-value]+b{display:none}
+.conum[data-value]::after{content:attr(data-value)}
+pre .conum[data-value]{position:relative;top:-.125em}
+b.conum *{color:inherit!important}
+.conum:not([data-value]):empty{display:none}
+dt,th.tableblock,td.content,div.footnote{text-rendering:optimizeLegibility}
+h1,h2,p,td.content,span.alt{letter-spacing:-.01em}
+p strong,td.content strong,div.footnote strong{letter-spacing:-.005em}
+p,blockquote,dt,td.content,span.alt{font-size:1.0625rem}
+p{margin-bottom:1.25rem}
+.sidebarblock p,.sidebarblock dt,.sidebarblock td.content,p.tableblock{font-size:1em}
+.exampleblock>.content{background:#fffef7;border-color:#e0e0dc;-webkit-box-shadow:0 1px 4px #e0e0dc;box-shadow:0 1px 4px #e0e0dc}
+.print-only{display:none!important}
+@page{margin:1.25cm .75cm}
+@media print{*{-webkit-box-shadow:none!important;box-shadow:none!important;text-shadow:none!important}
+html{font-size:80%}
+a{color:inherit!important;text-decoration:underline!important}
+a.bare,a[href^="#"],a[href^="mailto:"]{text-decoration:none!important}
+a[href^="http:"]:not(.bare)::after,a[href^="https:"]:not(.bare)::after{content:"(" attr(href) ")";display:inline-block;font-size:.875em;padding-left:.25em}
+abbr[title]::after{content:" (" attr(title) ")"}
+pre,blockquote,tr,img,object,svg{page-break-inside:avoid}
+thead{display:table-header-group}
+svg{max-width:100%}
+p,blockquote,dt,td.content{font-size:1em;orphans:3;widows:3}
+h2,h3,#toctitle,.sidebarblock>.content>.title{page-break-after:avoid}
+#toc,.sidebarblock,.exampleblock>.content{background:none!important}
+#toc{border-bottom:1px solid #dddddf!important;padding-bottom:0!important}
+body.book #header{text-align:center}
+body.book #header>h1:first-child{border:0!important;margin:2.5em 0 1em}
+body.book #header .details{border:0!important;display:block;padding:0!important}
+body.book #header .details span:first-child{margin-left:0!important}
+body.book #header .details br{display:block}
+body.book #header .details br+span::before{content:none!important}
+body.book #toc{border:0!important;text-align:left!important;padding:0!important;margin:0!important}
+body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-break-before:always}
+.listingblock code[data-lang]::before{display:block}
+#footer{padding:0 .9375em}
+.hide-on-print{display:none!important}
+.print-only{display:block!important}
+.hide-for-print{display:none!important}
+.show-for-print{display:inherit!important}}
+@media print,amzn-kf8{#header>h1:first-child{margin-top:1.25rem}
+.sect1{padding:0!important}
+.sect1+.sect1{border:0}
+#footer{background:none}
+#footer-text{color:rgba(0,0,0,.6);font-size:.9em}}
+@media amzn-kf8{#header,#content,#footnotes,#footer{padding:0}}
+</style>
+</head>
+<body class="article">
+<div id="header">
+<h1>SWAMP Output Files and Debugging Failures</h1>
+<div class="details">
+<span id="author" class="author">James A. Kupsch</span><br>
+<span id="revnumber">version 1.2.1,</span>
+<span id="revdate">2020-05-20 09:30:24 -0500</span>
+</div>
+<div id="toc" class="toc">
+<div id="toctitle">Table of Contents</div>
+<ul class="sectlevel1">
+<li><a href="#_introduction">1. Introduction</a></li>
+<li><a href="#_overview-of-files-and-how-to-interpreting-results">2. Overview of Files and How to Interpreting Results</a></li>
+<li><a href="#output-files-sec">3. output_files.conf</a></li>
+<li><a href="#status-out-sec">4. status.out</a>
+<ul class="sectlevel2">
+<li><a href="#_file-format">4.1. File Format</a>
+<ul class="sectlevel3">
+<li><a href="#_task">4.1.1. Task</a></li>
+<li><a href="#_status">4.1.2. Status</a></li>
+<li><a href="#_duration">4.1.3. Duration</a></li>
+<li><a href="#_short-message">4.1.4. Short Message</a></li>
+<li><a href="#_long-message">4.1.5. Long Message</a></li>
+</ul>
+</li>
+<li><a href="#status-out-defs">4.2. Valid <em>status.out</em> and Successful Run Definitions</a></li>
+<li><a href="#task-defs">4.3. Task Definitions</a>
+<ul class="sectlevel3">
+<li><a href="#task-def-all">all</a></li>
+<li><a href="#task-def-android-update">android-update</a></li>
+<li><a href="#task-def-assess">assess</a></li>
+<li><a href="#task-def-assess-acquire-license">assess-acquire-license</a></li>
+<li><a href="#task-def-begin">begin</a></li>
+<li><a href="#task-def-build">build</a></li>
+<li><a href="#task-def-build-archive">build-archive</a></li>
+<li><a href="#task-def-build-trace-decode">build-trace-decode</a></li>
+<li><a href="#task-def-build-unarchive">build-unarchive</a></li>
+<li><a href="#task-def-buildbug">buildbug</a></li>
+<li><a href="#task-def-chdir-build-dir">chdir-build-dir</a></li>
+<li><a href="#task-def-chdir-config-dir">chdir-config-dir</a></li>
+<li><a href="#task-def-chdir-package-dir">chdir-package-dir</a></li>
+<li><a href="#task-def-configure">configure</a></li>
+<li><a href="#task-def-end">end</a></li>
+<li><a href="#task-def-fetch-pkg-dependencies">fetch-pkg-dependencies</a></li>
+<li><a href="#task-def-flow-typed">flow-typed</a></li>
+<li><a href="#task-def-gem-install">gem-install</a></li>
+<li><a href="#task-def-gem-unpack">gem-unpack</a></li>
+<li><a href="#task-def-generator">generator</a></li>
+<li><a href="#task-def-install-os-dependencies">install-os-dependencies</a></li>
+<li><a href="#task-def-install-pip-dependencies">install-pip-dependencies</a></li>
+<li><a href="#task-def-install-strace">install-strace</a></li>
+<li><a href="#task-def-network">network</a></li>
+<li><a href="#task-def-no-build-setup">no-build-setup</a></li>
+<li><a href="#task-def-package-checksum">package-checksum</a></li>
+<li><a href="#task-def-package-unarchive">package-unarchive</a></li>
+<li><a href="#task-def-parse-results">parse-results</a></li>
+<li><a href="#task-def-parsed-results-archive">parsed-results-archive</a></li>
+<li><a href="#task-def-python2-install">python2-install</a></li>
+<li><a href="#task-def-python3-install">python3-install</a></li>
+<li><a href="#task-def-read-gem-spec">read-gem-spec</a></li>
+<li><a href="#task-def-resultparser-unarchive">resultparser-unarchive</a></li>
+<li><a href="#task-def-results-archive">results-archive</a></li>
+<li><a href="#task-def-results-unarchive">results-unarchive</a></li>
+<li><a href="#task-def-retry">retry</a></li>
+<li><a href="#task-def-setup">setup</a></li>
+<li><a href="#task-def-swamp-maven-plugin-install">swamp-maven-plugin-install</a></li>
+<li><a href="#task-def-tool-configure">tool-configure</a></li>
+<li><a href="#task-def-tool-install">tool-install</a></li>
+<li><a href="#task-def-tool-package-compatibility">tool-package-compatibility</a></li>
+<li><a href="#task-def-tool-runtime-compatibility">tool-runtime-compatibility</a></li>
+<li><a href="#task-def-tool-unarchive">tool-unarchive</a></li>
+<li><a href="#task-def-validate-package">validate-package</a></li>
+</ul>
+</li>
+<li><a href="#_debugging-task-failures">4.4. Debugging Task Failures</a>
+<ul class="sectlevel3">
+<li><a href="#_missing-or-invalid-status-out-file">4.4.1. Missing or Invalid status.out File</a></li>
+<li><a href="#debug-task-failures">4.4.2. Debugging Specific Task Failures</a>
+<ul class="sectlevel4">
+<li><a href="#task-debug-all">all</a></li>
+<li><a href="#task-debug-android-update">android-update</a></li>
+<li><a href="#task-debug-assess">assess</a></li>
+<li><a href="#task-debug-assess-acquire-license">assess-acquire-license</a></li>
+<li><a href="#task-debug-begin">begin</a></li>
+<li><a href="#task-debug-build">build</a></li>
+<li><a href="#task-debug-build-archive">build-archive</a></li>
+<li><a href="#task-debug-build-trace-decode">build-trace-decode</a></li>
+<li><a href="#task-debug-build-unarchive">build-unarchive</a></li>
+<li><a href="#task-debug-buildbug">buildbug</a></li>
+<li><a href="#task-debug-chdir-build-dir">chdir-build-dir</a></li>
+<li><a href="#task-debug-chdir-config-dir">chdir-config-dir</a></li>
+<li><a href="#task-debug-chdir-package-dir">chdir-package-dir</a></li>
+<li><a href="#task-debug-configure">configure</a></li>
+<li><a href="#task-debug-end">end</a></li>
+<li><a href="#task-debug-fetch-pkg-dependencies">fetch-pkg-dependencies</a></li>
+<li><a href="#task-debug-flow-typed">flow-typed</a></li>
+<li><a href="#task-debug-gem-install">gem-install</a></li>
+<li><a href="#task-debug-gem-unpack">gem-unpack</a></li>
+<li><a href="#task-debug-generator">generator</a></li>
+<li><a href="#task-debug-install-os-dependencies">install-os-dependencies</a></li>
+<li><a href="#task-debug-install-pip-dependencies">install-pip-dependencies</a></li>
+<li><a href="#task-debug-install-strace">install-strace</a></li>
+<li><a href="#task-debug-network">network</a></li>
+<li><a href="#task-debug-no-build-setup">no-build-setup</a></li>
+<li><a href="#task-debug-package-checksum">package-checksum</a></li>
+<li><a href="#task-debug-package-unarchive">package-unarchive</a></li>
+<li><a href="#task-debug-parse-results">parse-results</a></li>
+<li><a href="#task-debug-parsed-results-archive">parsed-results-archive</a></li>
+<li><a href="#task-debug-python2-install">python2-install</a></li>
+<li><a href="#task-debug-python3-install">python3-install</a></li>
+<li><a href="#task-debug-read-gem-spec">read-gem-spec</a></li>
+<li><a href="#task-debug-resultparser-unarchive">resultparser-unarchive</a></li>
+<li><a href="#task-debug-results-archive">results-archive</a></li>
+<li><a href="#task-debug-results-unarchive">results-unarchive</a></li>
+<li><a href="#task-debug-retry">retry</a></li>
+<li><a href="#task-debug-setup">setup</a></li>
+<li><a href="#task-debug-swamp-maven-plugin-install">swamp-maven-plugin-install</a></li>
+<li><a href="#task-debug-tool-configure">tool-configure</a></li>
+<li><a href="#task-debug-tool-install">tool-install</a></li>
+<li><a href="#task-debug-tool-package-compatibility">tool-package-compatibility</a></li>
+<li><a href="#task-debug-tool-runtime-compatibility">tool-runtime-compatibility</a></li>
+<li><a href="#task-debug-tool-unarchive">tool-unarchive</a></li>
+<li><a href="#task-debug-validate-package">validate-package</a></li>
+</ul>
+</li>
+<li><a href="#success-issues">4.4.3. Potential Issues In Successful Runs</a>
+<ul class="sectlevel4">
+<li><a href="#task-warn-assess-skip">4.4.3.1. Status of <em>assess</em> task is SKIP</a></li>
+<li><a href="#task-warn-no-build-setup-pass">4.4.3.2. <em>no-build-setup</em> task exists and not all source files were compilable</a></li>
+</ul>
+</li>
+<li><a href="#_known-issues-with-tools">4.4.4. Known Issues with Tools</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#build-files-sec">5. Build Related Files</a>
+<ul class="sectlevel2">
+<li><a href="#_build-conf">5.1. build.conf</a></li>
+<li><a href="#build-summary">5.2. build_summary.xml</a></li>
+<li><a href="#source-compiles">5.3. source-compiles.xml</a></li>
+</ul>
+</li>
+<li><a href="#assess-files-sec">6. Assessment Related Files</a>
+<ul class="sectlevel2">
+<li><a href="#_results-conf">6.1. results.conf</a></li>
+<li><a href="#_assessment_summary-xml">6.2. assessment_summary.xml</a></li>
+</ul>
+</li>
+<li><a href="#parsed-results-sec">7. Parsed Results Related Files</a></li>
+<li><a href="#run-out-sec">8. run.out</a></li>
+<li><a href="#build-assess-sec">9. build_assess.out</a></li>
+<li><a href="#swamp-conf-format-sec">10. SWAMP Conf File Format</a></li>
+</ul>
+</div>
+</div>
+<div id="content">
+<div class="sect1">
+<h2 id="_introduction"><a class="link" href="#_introduction">1. Introduction</a></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>This document describes the output of using the SWAMP frameworks to build a
+software package, assess it with a static analysis tool, and convert the raw
+results into parsed results in either SCARF or SARIF format.
+It also describes determining the success of this process and how to proceed to
+get the results or what files to inspect to aid with diagnosing the cause of
+failure.</p>
+</div>
+<div class="paragraph">
+<p>The SWAMP uses Virtual Machines or Docker to perform a run: build, assessment and
+parsing of results.
+It is possible that only a subset of the steps occur.
+When the VM or Docker container exits, a set of files are left in the
+output directory.
+The contents of these files describe what occurred, or the output of commands
+and tools used to perform each step, or contain the artifacts of each step.</p>
+</div>
+<div class="paragraph">
+<p>First this document gives an overview of the files typically produced.
+Then it describes how to inspect the files to determine a successful
+outcome, and how to proceed based on success or failure.
+Finally the output files are described and guidance is given on how to interpret
+them.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_overview-of-files-and-how-to-interpreting-results"><a class="link" href="#_overview-of-files-and-how-to-interpreting-results">2. Overview of Files and How to Interpreting Results</a></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>After the SWAMP has run a VM or Docker container, a set of files is produced
+in the output directory.
+The common set of files produced is shown in <a href="#file-table">Table 1</a>.
+Not every run may produce every file, the files produced depend on the type of
+run performed and if it was successful.</p>
+</div>
+<table id="file-table" class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 1. Common output files produced during an assessment.  From indicates the configuration file containing the actual filename (b: build.conf, o: output_files.conf, p: parsed_results.conf, r: results.conf, -: hard coded).</caption>
+<colgroup>
+<col style="width: 22%;">
+<col style="width: 8%;">
+<col style="width: 70%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Common Filename</th>
+<th class="tableblock halign-center valign-top">From</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">build.conf</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">o</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">SWAMP conf file describing build files</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">build.tar.gz</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">b</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">archive containing build output and artifacts</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">build_assess.out</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">o</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">output of assessment framework</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">capture.tar.gz</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">o</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">files captured at end of a run (for debugging)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">env.sh</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">o</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">environment variable values (for debugging)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">output_files.conf</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">-</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">paths of other output files</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">parsed_results.conf</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">o</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">SWAMP conf file describing parsed results files</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">parsed_results.tar.gz</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">p</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">archive containing result parser output, SCARF and SARIF results</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">results.conf</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">o</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">SWAMP conf file describing assessment result files</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">results.tar.gz</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">r</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">archive containing assessment output and raw results</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">run.out</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">o</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">output of framework&#8217;s low-level provisioning and control commands</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">status.out</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">o</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">list of tasks performed with timing and status information</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>The file <em>output_files.conf</em> is the only file that has a fixed hard-code name,
+the other filenames and paths are determined by examining the contents of
+other files.
+<strong>NOTE:</strong> The rest of this document uses the common names of files and paths, but
+the actual names must be determined using the process described in
+<a href="#output-files-sec">Section 3</a>, <a href="#build-files-sec">Section 5</a>, <a href="#assess-files-sec">Section 6</a>, and
+<a href="#parsed-results-sec">Section 7</a>.</p>
+</div>
+<div class="paragraph">
+<p>The first step to working with the SWAMP output files is to determine the actual
+names of the top level files.
+<a href="#output-files-sec">Section 3</a> describes how to determine these using <em>output_files.conf</em>.</p>
+</div>
+<div class="paragraph">
+<p>Once the filenames are determined, the next step is to inspect <em>status.out</em> to
+determine if the run was successful or not as explained in <a href="#status-out-sec">Section 4</a>.
+If the run is successful, obtain the parsed result files in SCARF or SARIF
+format, as described in <a href="#parsed-results-sec">Section 7</a>.
+If the run is unsuccessful, <a href="#status-out-sec">Section 4</a> explains how to diagnose the
+failure including other files to inspect.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="output-files-sec"><a class="link" href="#output-files-sec">3. output_files.conf</a></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The file <em>output_files.conf</em> in the output directory is a SWAMP Conf formatted
+file (see <a href="#swamp-conf-format-sec">Section 10</a>) that contains key, value pairs with the
+paths to other files.
+These paths are relative to the directory containing this file.
+<a href="#output-files-conf-table">Table 2</a> lists the keys and their common values.</p>
+</div>
+<table id="output-files-conf-table" class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 2. output_files.conf attribute names and common values.  Values are paths relative to the location of this file.  If the attribute name is not present then unless otherwise noted, the content was not produced.</caption>
+<colgroup>
+<col style="width: 30%;">
+<col style="width: 30%;">
+<col style="width: 40%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Attribute Name</th>
+<th class="tableblock halign-left valign-top">Common Value</th>
+<th class="tableblock halign-left valign-top">Attribute Missing Note</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">buildAssessOut</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">build_assess.out</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">content is in-line in run.out</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">buildConf</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">build.conf</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">use the Common Value</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">captureArchive</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">capture.tar.gz</p></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">envSh</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">env.sh</p></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">parsedResultsConf</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">parsed_results.conf</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">use the Common Value</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">resultsConf</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">results.conf</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">use the Common Value</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">runOut</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">run.out</p></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">statusOut</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">status.out</p></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>If <em>output_files.conf</em> exists, and an attribute does not exist in it, then
+that file was not produced unless otherwise noted.
+If <em>output_files.conf</em> does not exists, then proceed as if a synthesized
+<em>output_files.conf</em> was created in the output directory.
+The synthesized file contains an entry with each Attribute Name and Common
+Value pair shown in <a href="#output-files-conf-table">Table 2</a> if and only if a filename with
+the Common Value exists in the output directory, otherwise the entry is ommitted.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="status-out-sec"><a class="link" href="#status-out-sec">4. status.out</a></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>This section describes the <em>status.out</em> file produced when running a build,
+assessment, and/or parsing of results, and using it to debug failures.
+The <em>status.out</em> file is a summary of the tasks performed.
+The tasks appear in chronological order of completion.
+From the <em>status.out</em> file, you can quickly determine if the assessment
+succeeded, how long it took to run, where the time was spent, and in the case
+of failure, what task in the process caused the failure.
+<a href="#sample-status-out">Listing 1</a> shows a <em>status.out</em> file.</p>
+</div>
+<div id="sample-status-out" class="listingblock">
+<div class="title">Listing 1. Example <em>status.out</em> file of an assessment of a program written in C.</div>
+<div class="content">
+<pre>NOTE: begin
+PASS: install-os-dependencies                                         18.683063s
+PASS: install-strace (/opt/strace-4.10/bin/strace)                     0.090283s
+PASS: tool-unarchive                                                   0.300803s
+PASS: package-unarchive                                                0.243168s
+PASS: configure                                                       14.911602s
+PASS: build                                                           64.587349s
+PASS: build-trace-decode                                              21.838286s
+PASS: assess (pass: 104, fail: 0)                                     83.294354s
+PASS: buildbug                                                       171.294004s
+PASS: build-archive                                                    1.455068s
+PASS: results-archive                                                  0.029203s
+PASS: resultparser-unarchive                                           0.016161s
+PASS: parse-results (weaknesses: 214)                                  4.561078s
+PASS: parsed_results-archive                                           0.006893s
+PASS: all                                                            211.602487s
+NOTE: end</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Three main types of tasks occur in <em>status.out</em> files produced in the SWAMP:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p><strong>informational</strong>&#8201;&#8212;&#8201;provide information such as the <em>begin</em> and <em>end</em> tasks,
+and do not correspond to an activity (all of these have a status of NOTE),</p>
+</li>
+<li>
+<p><strong>activity</strong>&#8201;&#8212;&#8201;correspond to tasks or events that occurred as part of the
+build, assessment or result parsing, such as the <em>build</em> or <em>assess</em> tasks, and</p>
+</li>
+<li>
+<p><strong>aggregate</strong>&#8201;&#8212;&#8201;tasks that aggregate a sequence of preceding subtasks such as
+the <em>all</em> or <em>buildbug</em> tasks; the status (PASS or FAIL) depends on the status
+of the subtasks, and the duration is the total time from the first subtask
+starting to the end of the last subtask.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>The rest of this document describes the status.out file format, the definitions
+of a valid status.out and successful run, the current tasks, and debugging task
+failures.</p>
+</div>
+<div class="sect2">
+<h3 id="_file-format"><a class="link" href="#_file-format">4.1. File Format</a></h3>
+<div class="paragraph">
+<p>A <em>status.out</em> file consists of a chronologically ordered sequence of task
+records.
+Each task record conveys the status of a single task, and consists of two to
+six components.
+The task name and its status are required components.
+The duration and duration unit of the task, a short single line message, and a
+long multi-line message are optional.
+The remainder of this section shows the physical format, and then
+explains each component.</p>
+</div>
+<div class="paragraph">
+<p><a href="#sample-task-no-long">Listing 2</a> is a diagrammed status.out task without a long message.</p>
+</div>
+<div id="sample-task-no-long" class="listingblock">
+<div class="title">Listing 2. Single status.out task with components labeled and no long message component.</div>
+<div class="content">
+<pre>PASS: task-name (short-message)                                       89.123456s
+|     |          |                                                    |        |
+|     task       shortMsg                                             dur      |
+status                                                                   durUnit</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Each task may optionally have a multi-line message.
+<a href="#sample-task-with-long">Listing 3</a> adds a long message to the task shown in <a href="#sample-task-no-long">Listing 2</a>.</p>
+</div>
+<div id="sample-task-with-long" class="listingblock">
+<div class="title">Listing 3. Single status.out task with a two line long message.</div>
+<div class="content">
+<pre>PASS: task-name (short-message)                                       89.123456s
+  ----------
+  long message line 1
+  long message line 2
+  ----------</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The individual components of a task record are described next.</p>
+</div>
+<div class="sect3">
+<h4 id="_task"><a class="link" href="#_task">4.1.1. Task</a></h4>
+<div class="paragraph">
+<p>The task is a string that is a sequence of letters, numbers, the
+hyphen, and underscore characters.
+The task is separated from the status by a colon.
+Each task record requires a task, and each task in the file should be unique.</p>
+</div>
+<div class="paragraph">
+<p>The currently defined tasks along with their description are found in
+<a href="#task-defs">Section 4.3</a>.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_status"><a class="link" href="#_status">4.1.2. Status</a></h4>
+<div class="paragraph">
+<p>The status of a task is a string that is a sequence of letters, numbers,
+hyphen, and underscore characters.
+Each task record requires a status.</p>
+</div>
+<div class="paragraph">
+<p>The currently defined status values are:</p>
+</div>
+<div class="hdlist">
+<table>
+<tr>
+<td class="hdlist1">
+PASS
+</td>
+<td class="hdlist2">
+<p>indicates a successful task.</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+FAIL
+</td>
+<td class="hdlist2">
+<p>indicates an unsuccessful task.</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+SKIP
+</td>
+<td class="hdlist2">
+<p>indicates a task that was not run.</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+NOTE
+</td>
+<td class="hdlist2">
+<p>indicates a task that is informational.
+Two tasks with this status are the <em>begin</em> and <em>end</em> tasks that by
+convention are the first and last tasks.</p>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>A successful run is one where none of the tasks have a status of FAIL.</p>
+</div>
+<div class="paragraph">
+<p>Current practice is for status values to be four uppercase characters.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_duration"><a class="link" href="#_duration">4.1.3. Duration</a></h4>
+<div class="paragraph">
+<p>The duration of a task is how long it took to complete.
+The duration is optional, and is not included for tasks that indicate
+a point in time.
+It consists of a decimal number (consisting of numbers and single optional
+period (decimal point) to separate the fraction part of the value), and a unit
+(consisting of alphabetic characters).
+Current units are listed in <a href="#duration-units-table">Table 3</a>.</p>
+</div>
+<table id="duration-units-table" class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 3. Duration Units</caption>
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Unit</th>
+<th class="tableblock halign-left valign-top">Definition</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">s</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">seconds</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><em>none</em></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">seconds</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ms</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">milliseconds</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ns</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">microseconds</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>Current practice is to use a unit of <em>s</em> with a resolution of microseconds,
+have at least one digit to the left of the decimal point, all six digits after
+the decimal point, and the last character of unit appearing in column 80 if
+possible.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_short-message"><a class="link" href="#_short-message">4.1.4. Short Message</a></h4>
+<div class="paragraph">
+<p>The short message is used to provide additional information about the task,
+and is optional.
+If present, it is enclosed in parenthesis and appears immediately after the
+task.
+It consists of sequence of characters that does not include the new line
+character or a left parenthesis.</p>
+</div>
+<div class="paragraph">
+<p>The main function of the short message is to provide counts for a few tasks,
+or to convey the reason a task failed or was skipped.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_long-message"><a class="link" href="#_long-message">4.1.5. Long Message</a></h4>
+<div class="paragraph">
+<p>The long message is used to provide additional multi-line information about the
+task, and is optional.
+The main function of the long message is to provide additional information
+about failed tasks.</p>
+</div>
+<div class="paragraph">
+<p>The long message may contain multiple lines.
+A long message for a task starts is indicated by the line following the task
+being a delimiter consisting of a sequence of one or more spaces and then a
+sequence of one or more hyphen characters.
+The long message is placed in subsequent lines each prefixed with the number of
+spaces in the delimiter.
+Finally a new line is added and the delimiter is repeated to indicate the end
+of the long message.
+Processors must remove the prepended spaces of each line and final new line
+character to form the original data.</p>
+</div>
+<div class="paragraph">
+<p>Current practice is to use two spaces and ten hyphens for the delimiter.</p>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="status-out-defs"><a class="link" href="#status-out-defs">4.2. Valid <em>status.out</em> and Successful Run Definitions</a></h3>
+<div class="paragraph">
+<p>A <strong>valid <em>status.out</em></strong> file is syntactically correct, and in addition meets the
+following requirements:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p><em>status.out</em> file exists in the output directory</p>
+</li>
+<li>
+<p>no duplicate tasks</p>
+</li>
+<li>
+<p><em>begin</em> is the first task and has a status of NOTE</p>
+</li>
+<li>
+<p><em>all</em> task exists</p>
+</li>
+<li>
+<p><em>end</em> is the last task and has a status of NOTE</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>All <em>status.out</em> files produced during SWAMP build, assessment and/or parsing
+should be valid.
+If not, the assessment or host it is running failed in an unexpected way.</p>
+</div>
+<div class="paragraph">
+<p>A <strong>successful run</strong> produces a valid status.out, and also meets the additional
+requirements:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic" start="6">
+<li>
+<p><em>all</em> task has a status of PASS</p>
+</li>
+<li>
+<p>no task has a status of FAIL</p>
+</li>
+</ol>
+</div>
+</div>
+<div class="sect2">
+<h3 id="task-defs"><a class="link" href="#task-defs">4.3. Task Definitions</a></h3>
+<div class="paragraph">
+<p>This section documents the currently defined tasks.
+Each task includes a description and descriptions of the short message values
+defined for the task.</p>
+</div>
+<div class="sect3">
+<h4 id="task-def-all"><a class="link" href="#task-def-all">all</a></h4>
+<div class="paragraph">
+<p>is the aggregate task that covers all other subtasks.  Its status indicates the
+overall status of the entire run and its duration is the duration of the entire
+run.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="task-def-android-update"><a class="link" href="#task-def-android-update">android-update</a></h4>
+<div class="paragraph">
+<p>is the task of updating an Android package to work with the Android SDK
+installed on the machine or VM.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="task-def-assess"><a class="link" href="#task-def-assess">assess</a></h4>
+<div class="paragraph">
+<p>is the task of running the assessment tools.
+Additional information is provide in the short message indicating the
+number of invocations of the assessment tool and their success, failure
+or number of assessments skipped (due to missing files or other valid
+reasons not to run the assessment tool on a source file).
+Each assessment processes one or files.
+An example short message for <em>assess</em> is</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>    (pass: 93, fail: 0, skip: 3)</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The status is FAIL if any of the assessments failed, SKIP if no
+files were found to assess (see <a href="#task-warn-assess-skip">Section 4.4.3.1</a>), or PASS otherwise.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="task-def-assess-acquire-license"><a class="link" href="#task-def-assess-acquire-license">assess-acquire-license</a></h4>
+<div class="paragraph">
+<p>is the task of acquiring the license to operate a tool that uses a
+license manager.  If the status is FAIL, acquiring the license failed
+and the long message may contain more details about the reason for
+failure.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="task-def-begin"><a class="link" href="#task-def-begin">begin</a></h4>
+<div class="paragraph">
+<p>is an informational task.
+This record is written upon start up.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="task-def-build"><a class="link" href="#task-def-build">build</a></h4>
+<div class="paragraph">
+<p>is the task of building the software package with build monitoring.
+The build duration includes the added time to monitor the build process.</p>
+</div>
+<div class="paragraph">
+<p>In the case of failure the long message has information on the non-zero
+exit status or signal that caused the failure.
+Additional information may be available in the long message.
+The <em>build_stdout.out</em> and <em>build_stderr.out</em> files found in the build archive
+for more information about the cause of the failure (see <a href="#build-files-sec">Section 5</a>).</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="task-def-build-archive"><a class="link" href="#task-def-build-archive">build-archive</a></h4>
+<div class="paragraph">
+<p>is the task of archiving the build directory.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="task-def-build-trace-decode"><a class="link" href="#task-def-build-trace-decode">build-trace-decode</a></h4>
+<div class="paragraph">
+<p>is the task of decoding the build monitoring for C and C&#43;&#43; builds.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="task-def-build-unarchive"><a class="link" href="#task-def-build-unarchive">build-unarchive</a></h4>
+<div class="paragraph">
+<p>is the task of unarchiving the build directory.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="task-def-buildbug"><a class="link" href="#task-def-buildbug">buildbug</a></h4>
+<div class="paragraph">
+<p>is the aggregate task covering all the build and assess tasks including <em>build</em>,
+<em>build-trace-decode</em>, and <em>assess</em>.
+If any of those fail, <em>buildbug</em> status is also failed.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="task-def-chdir-build-dir"><a class="link" href="#task-def-chdir-build-dir">chdir-build-dir</a></h4>
+<div class="paragraph">
+<p>is the task of changing to the build directory after changing to the package
+directory.
+Only present on failure with the long message containing the name of the
+directory and the reason for the failure.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="task-def-chdir-config-dir"><a class="link" href="#task-def-chdir-config-dir">chdir-config-dir</a></h4>
+<div class="paragraph">
+<p>is the task of changing to the config directory after changing to the package
+directory.
+Only present on failure with the long message containing the name of the
+directory and the reason for the failure.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="task-def-chdir-package-dir"><a class="link" href="#task-def-chdir-package-dir">chdir-package-dir</a></h4>
+<div class="paragraph">
+<p>is the task of changing to the package directory.
+Only present on failure with the long message containing the name of the
+directory and the reason for the failure.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="task-def-configure"><a class="link" href="#task-def-configure">configure</a></h4>
+<div class="paragraph">
+<p>is the task of configuring the software package.</p>
+</div>
+<div class="paragraph">
+<p>In the case of failure the long message has information on the non-zero
+exit status or signal that caused the failure.
+Additional information may be available in the long message.
+The <em>config_stdout.out</em> and <em>config_stderr.out</em> files found in the build
+archive for more information about the cause of the failure (see
+<a href="#build-files-sec">Section 5</a>).</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="task-def-end"><a class="link" href="#task-def-end">end</a></h4>
+<div class="paragraph">
+<p>is an informational task.
+This record is written as the framework is ending.
+If it is not present, the framework or VM likely crashed.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="task-def-fetch-pkg-dependencies"><a class="link" href="#task-def-fetch-pkg-dependencies">fetch-pkg-dependencies</a></h4>
+<div class="paragraph">
+<p>is the task to fetch the dependencies using a non operating system package
+manager.
+This task may be a task that is always included in the task list such as with
+pip packages, or done as part of the build task and is only included if the
+build fails due to the package manager&#8217;s failure to fetch dependencies.
+The short message contains the package manager (currently <code>gradle</code>, <code>maven</code>,
+<code>ant+ivy</code> or <code>pip</code>).
+The long message contains details about the failure.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="task-def-flow-typed"><a class="link" href="#task-def-flow-typed">flow-typed</a></h4>
+<div class="paragraph">
+<p>is the task of running the flow-typed tool that fetches flow description
+files of JavaScript modules to improve the operation of the <code>flow</code> tool.
+This task may have a status of SKIP if the tools is not run; the short message
+contains the reason the tool was not run:</p>
+</div>
+<div class="hdlist">
+<table>
+<tr>
+<td class="hdlist1">
+(internet inaccessible)
+</td>
+<td class="hdlist2">
+<p>assessment run is configured to indicate that the VM is in an environment where
+the internet is inaccessible (<em>run.conf</em> file contains <code>internet-inaccessible =
+true</code>)</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+(disabled)
+</td>
+<td class="hdlist2">
+<p>configuration file setting has disabled the use of flow-typed</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+(not configured)
+</td>
+<td class="hdlist2">
+<p>flow-typed configuration options not found (old tool version)</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+(package.json missing)
+</td>
+<td class="hdlist2">
+<p>package.json file is missing and required to use flow-typed</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+(node_modules missing)
+</td>
+<td class="hdlist2">
+<p>node_modules directory is missing and required to use flow-typed</p>
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect3">
+<h4 id="task-def-gem-install"><a class="link" href="#task-def-gem-install">gem-install</a></h4>
+<div class="paragraph">
+<p>is the task of installing the user’s Ruby gem file (user’s package) along with
+the gem dependencies downloaded from the network into the local Ruby user
+install directory</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="task-def-gem-unpack"><a class="link" href="#task-def-gem-unpack">gem-unpack</a></h4>
+<div class="paragraph">
+<p>is the task that unpacks the user&#8217;s Ruby gem file to make the source files
+accessible from the file system (similar to the package-unarchive but with the
+command: <code>gem unpack &lt;gem-file-path&gt; —target &lt;package-dir&gt;</code>).</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="task-def-generator"><a class="link" href="#task-def-generator">generator</a></h4>
+<div class="paragraph">
+<p>is an informational task.
+Is included if the <em>status.out</em> file was created outside the assessment
+framework code.
+The short message contains the program that produced the <em>status.out</em> file.
+Typically there are subsequent tasks with details on why the framework did not
+run.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="task-def-install-os-dependencies"><a class="link" href="#task-def-install-os-dependencies">install-os-dependencies</a></h4>
+<div class="paragraph">
+<p>is the task of installing OS dependencies for the run using the OS&#8217;s
+package manager such as <code>yum</code> or <code>apt-get</code>.</p>
+</div>
+<div class="paragraph">
+<p>A status of PASS and FAIL are based on the success or failure of the OS&#8217;s
+package management system.
+A status of SKIP can occur from two sources indicated by the task&#8217;s short
+message:</p>
+</div>
+<div class="hdlist">
+<table>
+<tr>
+<td class="hdlist1">
+<em>none</em>
+</td>
+<td class="hdlist2">
+<p>no OS packages to install</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+(internet inaccessible)
+</td>
+<td class="hdlist2">
+<p>assessment run is configured to indicate that the VM is in an environment where
+the internet is inaccessible (<em>run.conf</em> file contains <code>internet-inaccessible =
+true</code>)</p>
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect3">
+<h4 id="task-def-install-pip-dependencies"><a class="link" href="#task-def-install-pip-dependencies">install-pip-dependencies</a></h4>
+<div class="paragraph">
+<p>is the task to install PIP dependencies for Python packages.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="task-def-install-strace"><a class="link" href="#task-def-install-strace">install-strace</a></h4>
+<div class="paragraph">
+<p>is the task to install the strace command packaged with c-assess.
+If an strace was packaged c-assess the short message is the location
+of strace binary.
+If no strace was packaged, the status is SKIP, the short message
+gives the reason, and the system strace binary found in the PATH is used.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="task-def-network"><a class="link" href="#task-def-network">network</a></h4>
+<div class="paragraph">
+<p>is the task that that indicates a properly functioning network in the VM.
+It is only present on failure.
+The short message indicates the type of failure (the only currently defined
+value is <em>no-ipv4-address</em>).</p>
+</div>
+<div class="paragraph">
+<p>As this is a temporary failure, a <em>retry</em> task is also included indicating
+the VM should be run again.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="task-def-no-build-setup"><a class="link" href="#task-def-no-build-setup">no-build-setup</a></h4>
+<div class="paragraph">
+<p>is the task to find and validate source files to assess for C, C&#43;&#43; or Java
+packages with a build system of <em>no-build</em>.
+The number of source files found with valid extensions and the number of files
+that actually compile are specified in the short message in the format shown
+in the following example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>(source-files: 1, compilable: 1)</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The status is FAIL if no source files are found or none are compilable.
+The short message can be used to distinguish the specific type of failure.
+If compilable is less than source-files, a warning should be issued
+(see <a href="#task-warn-no-build-setup-pass">Section 4.4.3.2</a>).</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="task-def-package-checksum"><a class="link" href="#task-def-package-checksum">package-checksum</a></h4>
+<div class="paragraph">
+<p>is the task of validating the package&#8217;s checksum against the value found in
+package.conf.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="task-def-package-unarchive"><a class="link" href="#task-def-package-unarchive">package-unarchive</a></h4>
+<div class="paragraph">
+<p>is the task of unarchiving the package.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="task-def-parse-results"><a class="link" href="#task-def-parse-results">parse-results</a></h4>
+<div class="paragraph">
+<p>is the task of running the result parser on the assessment results to produce
+parsed results in SCARF (SWAMP Common Assessment Results Format).
+The short message contains the number of weaknesses found as in the following
+example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>(weaknesses: 214)</pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="task-def-parsed-results-archive"><a class="link" href="#task-def-parsed-results-archive">parsed-results-archive</a></h4>
+<div class="paragraph">
+<p>is the task of archiving the parsed results directory.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="task-def-python2-install"><a class="link" href="#task-def-python2-install">python2-install</a></h4>
+<div class="paragraph">
+<p>is the task of installing the Python 2.x language.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="task-def-python3-install"><a class="link" href="#task-def-python3-install">python3-install</a></h4>
+<div class="paragraph">
+<p>is the task of installing the Python 3.x language.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="task-def-read-gem-spec"><a class="link" href="#task-def-read-gem-spec">read-gem-spec</a></h4>
+<div class="paragraph">
+<p>is the task of reading a Ruby package&#8217;s gem file to determine what files to
+assess</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="task-def-resultparser-unarchive"><a class="link" href="#task-def-resultparser-unarchive">resultparser-unarchive</a></h4>
+<div class="paragraph">
+<p>is the task of unarchiving the result parser.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="task-def-results-archive"><a class="link" href="#task-def-results-archive">results-archive</a></h4>
+<div class="paragraph">
+<p>is the task of archiving the results directory.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="task-def-results-unarchive"><a class="link" href="#task-def-results-unarchive">results-unarchive</a></h4>
+<div class="paragraph">
+<p>is the task of unarchiving the results.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="task-def-retry"><a class="link" href="#task-def-retry">retry</a></h4>
+<div class="paragraph">
+<p>is an informational task that indicates the VM should be recreated and
+restarted as a temporary condition was detected that caused the run
+to fail.
+The first failed task is the reason for the retry.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="task-def-setup"><a class="link" href="#task-def-setup">setup</a></h4>
+<div class="paragraph">
+<p>is the task that is the low-level provisioning code that runs before or after
+the assessment framework.</p>
+</div>
+<div class="paragraph">
+<p>The long message contains more details about the failure, and the short message
+The short message contains the more specific type of error.
+The long message contains more details.
+Currently defined short messages and their meanings are as follows:</p>
+</div>
+<div class="hdlist">
+<table>
+<tr>
+<td class="hdlist1">
+(command-failed)
+</td>
+<td class="hdlist2">
+<p>A command exited with a non-0 exit code.</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+(command-not-executable)
+</td>
+<td class="hdlist2">
+<p>Command to be executed is missing or not executable.</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+(conf-file)
+</td>
+<td class="hdlist2">
+<p>Error reading, processing or interpreting <em>run-params.conf</em>.</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+(conf-file-missing)
+</td>
+<td class="hdlist2">
+<p><em>run-params.conf</em> configuration file is missing.</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+(get-ip-addr)
+</td>
+<td class="hdlist2">
+<p>Error getting IP address used to route to outside hosts.</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+(no-home-dir)
+</td>
+<td class="hdlist2">
+<p>User&#8217;s home directory does not exist.</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+(invalid-arg)
+</td>
+<td class="hdlist2">
+<p>Invalid function argument or wrong number.</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+(invalid-env-var)
+</td>
+<td class="hdlist2">
+<p>Environment variable is invalid or missing.</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+(invalid-run-params-var)
+</td>
+<td class="hdlist2">
+<p>Configuration file variable is invalid or missing.</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+(log-open)
+</td>
+<td class="hdlist2">
+<p>Error opening the output log file (<em>run.out</em>).</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+(redirect)
+</td>
+<td class="hdlist2">
+<p>Error opening a file for stdout or stderr redirection.</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+(signal)
+</td>
+<td class="hdlist2">
+<p>A signal caused an early exit.</p>
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect3">
+<h4 id="task-def-swamp-maven-plugin-install"><a class="link" href="#task-def-swamp-maven-plugin-install">swamp-maven-plugin-install</a></h4>
+<div class="paragraph">
+<p>is the task to setup the Java framework&#8217;s plug-in to monitor Maven builds.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="task-def-tool-configure"><a class="link" href="#task-def-tool-configure">tool-configure</a></h4>
+<div class="paragraph">
+<p>is the task of configuring the tool.
+The long message may contain more details about the configuration.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="task-def-tool-install"><a class="link" href="#task-def-tool-install">tool-install</a></h4>
+<div class="paragraph">
+<p>is the task of installing the tool.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="task-def-tool-package-compatibility"><a class="link" href="#task-def-tool-package-compatibility">tool-package-compatibility</a></h4>
+<div class="paragraph">
+<p>is the task to check compatibility of the tool for use with the
+software package being assessed.
+For instance there are tools that require Java 1.6 or above and fail
+if they are used on Java 1.4 or 1.5 packages.</p>
+</div>
+<div class="paragraph">
+<p>The short message contains the type of error.
+The long message contains more details about the incompatibility.
+Currently defined short messages and their meanings are as follows:</p>
+</div>
+<div class="hdlist">
+<table>
+<tr>
+<td class="hdlist1">
+(android+maven)
+</td>
+<td class="hdlist2">
+<p>The android-lint tool is not configured properly for a Maven project.</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+(gcc version)
+</td>
+<td class="hdlist2">
+<p>The version of <code>gcc</code> used during the build is incompatible with the tool.</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+(Java language version)
+</td>
+<td class="hdlist2">
+<p>The Java source language used during the build is incompatible with the tool.</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+(known tool bug)
+</td>
+<td class="hdlist2">
+<p>The tool failed assessing the source code due to a known bug with the tool.</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+(ruby version)
+</td>
+<td class="hdlist2">
+<p>The version of <code>ruby</code> used during the build is incompatible with the tool.</p>
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect3">
+<h4 id="task-def-tool-runtime-compatibility"><a class="link" href="#task-def-tool-runtime-compatibility">tool-runtime-compatibility</a></h4>
+<div class="paragraph">
+<p>is the task to check compatibility of the tool for use in the runtime
+environment.</p>
+</div>
+<div class="paragraph">
+<p>The short message contains the type of error.
+The long message contains more information about the incompatibility.
+Currently defined short messages and their meanings are as follows:</p>
+</div>
+<div class="hdlist">
+<table>
+<tr>
+<td class="hdlist1">
+(JVM version)
+</td>
+<td class="hdlist2">
+<p>The version of the JVM is incompatible with the tool.</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+(internet inaccessible)
+</td>
+<td class="hdlist2">
+<p>This tools as configured required access to the internet and can not be
+run in an environment where <em>internet-inaccessible</em> is set.
+Currently the tools <em>OWASP Dependency Check</em>, <em>Retire.js</em>, and <em>Sonatype AHC</em>
+by default require access to the internet.
+Either repackage the tools to contain a static version of the data (see
+the documentation inside the tool archive), or allow access to the internet.</p>
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect3">
+<h4 id="task-def-tool-unarchive"><a class="link" href="#task-def-tool-unarchive">tool-unarchive</a></h4>
+<div class="paragraph">
+<p>is the task of unarchiving the results.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="task-def-validate-package"><a class="link" href="#task-def-validate-package">validate-package</a></h4>
+<div class="paragraph">
+<p>is the task to validate that the Java Bytecode files specified to assess
+are valid in the package.</p>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_debugging-task-failures"><a class="link" href="#_debugging-task-failures">4.4. Debugging Task Failures</a></h3>
+<div class="paragraph">
+<p>If the run is successful (see <a href="#status-out-defs">Section 4.2</a>), there is nothing to debug,
+but there may be useful information to report to the user as described in
+<a href="#success-issues">Section 4.4.3</a>.
+The rest of this Section describes how to debug <em>status.out</em> files that
+are invalid, valid but unsuccessful, and finally issues that should
+be brought to the attention for runs that are successful.</p>
+</div>
+<div class="sect3">
+<h4 id="_missing-or-invalid-status-out-file"><a class="link" href="#_missing-or-invalid-status-out-file">4.4.1. Missing or Invalid status.out File</a></h4>
+<div class="paragraph">
+<p>A status of FAIL for the <em>all</em> task and at least one other task indicates
+a normal failure of some aspect of the run.
+Debugging these types of errors are explained in <a href="#debug-task-failures">Section 4.4.2</a>.</p>
+</div>
+<div class="paragraph">
+<p>Other abnormal types of failures are indicated by a missing or invalid
+<em>status.out</em> file.
+Explanations for these failures are</p>
+</div>
+<div class="hdlist">
+<table>
+<tr>
+<td class="hdlist1">
+status.out missing
+</td>
+<td class="hdlist2">
+<p>Internal problem starting the VM, such as /mnt/in or /mnt/out not
+being mounted.</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+duplicate tasks
+</td>
+<td class="hdlist2">
+<p>The assessment framework was run multiple times, or a bug in the
+framework.
+Possibly the VM was started multiple times.</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+first task not <em>begin</em>
+</td>
+<td class="hdlist2">
+<p>The VM or framework crashed or exited before the framework was run or early
+in the framework code.</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<em>all</em> task missing
+</td>
+<td class="hdlist2">
+<p>VM exited or crashed before the framework completed.
+A previous failure in <em>status.out</em> may indicate the cause, and inspecting
+<em>build_assess.out</em> (see <a href="#build-assess-sec">Section 9</a>) and <em>run.out</em> (see
+<a href="#run-out-sec">Section 8</a>) may contain additional information.</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+last task not <em>end</em>
+</td>
+<td class="hdlist2">
+<p>VM exited or crashed before the framework completed.
+A previous failure in <em>status.out</em> may indicate the cause, and inspecting
+<em>build_assess.out</em> (see <a href="#build-assess-sec">Section 9</a>) and <em>run.out</em> (see
+<a href="#run-out-sec">Section 8</a>) may contain additional information.
+Data from the run could be OK if the <em>all</em> task has a status of PASS,
+but should be treated with suspicion.</p>
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect3">
+<h4 id="debug-task-failures"><a class="link" href="#debug-task-failures">4.4.2. Debugging Specific Task Failures</a></h4>
+<div class="paragraph">
+<p>If the <em>status.out</em> file is valid, but the <em>all</em> task has a status of FAIL,
+then the run has failed.
+The first step to debug a failed, but valid status.out is to create a list of
+all the tasks that have a status of FAIL, and to determine if there is a
+<em>retry</em> task.</p>
+</div>
+<div class="paragraph">
+<p>If there is a <em>retry</em> task, the VM should be recreated and rerun as this
+indicates a likely temporary failure.
+Retrying should be attempted a small fixed number of times, such as three times
+total, until <em>retry</em> is no longer a task or the count is reached.
+If the retries were not successful, there is a persistent problem with the
+infrastructure and the diagnosis should proceed with the next step.</p>
+</div>
+<div class="paragraph">
+<p>The next step is to locate the first task with a status of FAIL in the list
+below and use the advice in its section.
+If this task is not in the list below report it to the developers,
+and continue with subsequent elements until a failed task is in the list (there
+should be at least one since the <em>all</em> task must be in the list).
+Subsequent failed tasks should be ignored as they are likely caused by the
+first failure.</p>
+</div>
+<div class="paragraph">
+<p>In the list below, if the task is marked as an <em>internal error</em>, this is
+is a problem with frameworks, VM hypervisors, or the environment.
+An internal error is not generally something that a user can fix by making
+changes to their package and how it is configured.
+Internal errors should be reported to the operator SWAMP or developers of the
+SWAMP software.</p>
+</div>
+<div class="paragraph">
+<p>Unless otherwise noted in the advice, the files to inspect for additional
+information about the failure are files listed in the advice, then
+<em>build_assess.out</em>, and finally <em>run.out</em>.
+Generally <em>run.out</em> is only relevant for <em>setup</em> task failures.
+These files should be made available for inspection by the user.</p>
+</div>
+<div class="paragraph">
+<p>Below are the list of tasks and advice on how to proceed if they fail.</p>
+</div>
+<div class="sect4">
+<h5 id="task-debug-all"><a class="link" href="#task-debug-all">all</a></h5>
+<div class="paragraph">
+<p>Internal error.
+As an aggregate task some other task should have failed earlier in the list.</p>
+</div>
+</div>
+<div class="sect4">
+<h5 id="task-debug-android-update"><a class="link" href="#task-debug-android-update">android-update</a></h5>
+<div class="paragraph">
+<p>This failure indicates that the  user&#8217;s Android package does not conform to the
+convention Google uses to configure Android packages.
+This can be caused by copying an Android configuration file from an older
+Android SDK and modifying it instead of configure the package correctly to
+Google&#8217;s convention.</p>
+</div>
+<div class="paragraph">
+<p>A possible solution is to modify the package&#8217;s SWAMP build options to
+enable the <em>Android Redo Build</em> option.
+This erases the existing Android build file and the Android SDK recreates the
+file from the metadata found in the package.
+This may not work if the user made changes that package depends on to the
+configuration file they copied as it is replaced.</p>
+</div>
+<div class="paragraph">
+<p>The other option a developer has is to update their package to follow Google&#8217;s
+build conventions using the latest Android SDK.</p>
+</div>
+</div>
+<div class="sect4">
+<h5 id="task-debug-assess"><a class="link" href="#task-debug-assess">assess</a></h5>
+<div class="paragraph">
+<p>Internal error.
+This is a failure of the assessment tool to run successfully.
+This may be caused by the tool not properly interpreting the input files due to
+deficiencies in the tool, a bug in the tool, or a misconfiguration of the tool.</p>
+</div>
+<div class="paragraph">
+<p>Additional information about this failure may be found in the assessment
+results files (see <a href="#assess-files-sec">Section 6</a>) or in <em>build_assess.out</em>.</p>
+</div>
+</div>
+<div class="sect4">
+<h5 id="task-debug-assess-acquire-license"><a class="link" href="#task-debug-assess-acquire-license">assess-acquire-license</a></h5>
+<div class="paragraph">
+<p>Internal error.
+This may be due to networking issues between the VM running the tool, or
+an issue with the license server.
+The long message may contain more details on the failure.</p>
+</div>
+<div class="hdlist">
+<table>
+<tr>
+<td class="hdlist1">
+(concurrency limit)
+</td>
+<td class="hdlist2">
+<p>If the number of VMs running concurrently trying to use the licensed
+tool exceeds the maximum number of concurrent licenses allowed,
+recreating and rerunning the VM may solve the problem.
+This should not occur if the concurrency limits are properly enforced.</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+(network connection)
+</td>
+<td class="hdlist2">
+<p>The host must be able to connect with the license server on the port
+it is listening for requests.
+It may not be able to due to the VM or network firewall blocking the
+connection, the license server host (or VM) is not up, or the license
+server is not running on the license server host.</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+(license expired)
+</td>
+<td class="hdlist2">
+<p>Licenses have limited lifetimes and need to renewed periodically.</p>
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect4">
+<h5 id="task-debug-begin"><a class="link" href="#task-debug-begin">begin</a></h5>
+<div class="paragraph">
+<p>Internal error.
+This task is informational and should always have a status of NOTE.</p>
+</div>
+</div>
+<div class="sect4">
+<h5 id="task-debug-build"><a class="link" href="#task-debug-build">build</a></h5>
+<div class="paragraph">
+<p>The build for the user&#8217;s package failed.
+This can be caused by the user selecting the wrong build system,
+missing libraries, the package not being compatible with the environment
+of the selected platform (operating system), or the package containing
+code that is not syntactically valid.</p>
+</div>
+<div class="paragraph">
+<p>Some packages download resources from the internet as part of the <em>build</em> task
+such as the use of a build system with an integrated package manager, or
+the tools like <code>wget</code> or <code>curl</code> during the build.
+For these packages, a <em>build</em> task status of FAIL can be caused by the remote
+resource being moved or removed, an incorrect specification for the remote
+resource, an off-line or malfunctioning remote server, the assessment host is
+in an isolated environment that prevents remote connections, or a network
+issue such as an incorrectly configured firewall or router.
+The user can remove the need for the remote resource, or correct the problem
+and try again at a later time.
+If the failure is due to the network the SWAMP administrator needs to
+correct the problem, or the user can try again at a later time as the problem
+could be transient.</p>
+</div>
+<div class="paragraph">
+<p>The long message of the task contains the exact command that failed
+to run successfully, and how it failed.
+Debugging this failure is accomplished by inspecting the output of the build.
+The output and error output for the build step is found in the
+<em>build_stdout.out</em> and <em>build_stderr.out</em> files found in the build archive
+(See <a href="#build-files-sec">Section 5</a>).</p>
+</div>
+<div class="paragraph">
+<p>The long message and the two output files should be provided for users to
+inspect if the <em>build</em> task fails, so they can determine what failed, and how
+to update the package archive or build parameters.</p>
+</div>
+<div class="paragraph">
+<p>Users should be directed to try building the package on their own computer.</p>
+</div>
+</div>
+<div class="sect4">
+<h5 id="task-debug-build-archive"><a class="link" href="#task-debug-build-archive">build-archive</a></h5>
+<div class="paragraph">
+<p>Internal error.
+Error creating the build archive.
+A possible cause is that /mnt/out is full.
+The <em>build_assess.out</em> (see <a href="#build-assess-sec">Section 9</a>) may contain additional
+information.</p>
+</div>
+</div>
+<div class="sect4">
+<h5 id="task-debug-build-trace-decode"><a class="link" href="#task-debug-build-trace-decode">build-trace-decode</a></h5>
+<div class="paragraph">
+<p>Internal error.
+This indicates that the format of strace data produced by the build monitoring
+of C and C&#43;&#43; packages was not formatted as expected.</p>
+</div>
+</div>
+<div class="sect4">
+<h5 id="task-debug-build-unarchive"><a class="link" href="#task-debug-build-unarchive">build-unarchive</a></h5>
+<div class="paragraph">
+<p>Internal error.
+The build archive is corrupt or missing, or the file system is full.</p>
+</div>
+</div>
+<div class="sect4">
+<h5 id="task-debug-buildbug"><a class="link" href="#task-debug-buildbug">buildbug</a></h5>
+<div class="paragraph">
+<p>Internal error.
+As an aggregate task some other task should have failed earlier in the list.</p>
+</div>
+</div>
+<div class="sect4">
+<h5 id="task-debug-chdir-build-dir"><a class="link" href="#task-debug-chdir-build-dir">chdir-build-dir</a></h5>
+<div class="paragraph">
+<p>The <em>build directory</em> (relative to the <em>package directory</em>) specified by the
+user is invalid for the user&#8217;s package; the directory may not exist or may have
+invalid permissions.
+The long message contains more details about the directory and type of problem.
+The user should be directed to update the build directory setting or to add the
+directory to package archive.
+This directory must exist in the user&#8217;s package archive, if there is not a
+<em>configure command</em>.
+If there is a configure command, it may create the directory.</p>
+</div>
+<div class="paragraph">
+<p>Users should be directed to build the package on their own computer using the
+paths specified.</p>
+</div>
+</div>
+<div class="sect4">
+<h5 id="task-debug-chdir-config-dir"><a class="link" href="#task-debug-chdir-config-dir">chdir-config-dir</a></h5>
+<div class="paragraph">
+<p>The <em>config directory</em> (relative to the <em>package directory</em>) specified by the
+user is invalid for the user&#8217;s package; the directory may not exist or may have
+invalid permissions.
+The long message contains more details about the directory and type of problem.
+The user should be directed to update the <em>configure directory</em> setting or to add
+the directory to the package archive.
+This directory must exist in the user&#8217;s package archive if there is a
+<em>configure command</em>.</p>
+</div>
+<div class="paragraph">
+<p>Users should be directed to build the package on their own computer using the
+paths specified.</p>
+</div>
+</div>
+<div class="sect4">
+<h5 id="task-debug-chdir-package-dir"><a class="link" href="#task-debug-chdir-package-dir">chdir-package-dir</a></h5>
+<div class="paragraph">
+<p>The <em>package directory</em> specified by the user is invalid for the user&#8217;s
+package; the directory may not exist or may have invalid permissions.
+The long message contains more details about the directory and type of problem.
+The user should be directed to update the package directory setting or to add
+the missing directory to the package archive.
+This directory must exist in the user&#8217;s package archive.</p>
+</div>
+<div class="paragraph">
+<p>Users should be directed to build the package on their own computer using the
+path specified.</p>
+</div>
+</div>
+<div class="sect4">
+<h5 id="task-debug-configure"><a class="link" href="#task-debug-configure">configure</a></h5>
+<div class="paragraph">
+<p>The configure task for the user&#8217;s package failed (non-0 exit status).
+This can be caused by the user selecting the wrong build system,
+missing libraries, the package not being compatible with the environment
+of the selected platform (operating system), or configure command
+not existing.</p>
+</div>
+<div class="paragraph">
+<p>Some packages download resources from the internet as part of the <em>configure</em>
+task such as the use of tools like <code>wget</code> or <code>curl</code> during configure.
+For these packages, a <em>configure</em> task status of FAIL can be caused by the
+remote resource being moved or removed, an incorrect specification for the
+resource, an off-line or malfunctioning remote server, the assessment host is
+in an isolated environment that prevents remote connections, or a network
+issue such as an incorrectly configured firewall or router.
+The user can remove the need for the remote resource, or correct the problem
+and try again at a later time.
+If the failure is due to the network the SWAMP administrator needs to correct
+the problem, or the user can try again at a later time as the problem could be
+transient.</p>
+</div>
+<div class="paragraph">
+<p>The long message of the task contains the exact command that failed
+to run successfully, and how it failed.
+Debugging this task can be accomplished by inspecting the output of the
+configure task.
+The output and error output of the configure task is found in the
+<em>config_stdout.out</em> and <em>config_stderr.out</em> files found in the build archive
+(see <a href="#build-files-sec">Section 5</a>).</p>
+</div>
+<div class="paragraph">
+<p>The long message, and the two files should be provided for users to inspect if
+the <em>configure</em> task fails, so they can determine what failed, and how to
+update the package archive or build parameters.</p>
+</div>
+<div class="paragraph">
+<p>Users should be directed to try building the package on their own computer.</p>
+</div>
+</div>
+<div class="sect4">
+<h5 id="task-debug-end"><a class="link" href="#task-debug-end">end</a></h5>
+<div class="paragraph">
+<p>Internal error.
+This task is informational and should always have a status of NOTE.</p>
+</div>
+</div>
+<div class="sect4">
+<h5 id="task-debug-fetch-pkg-dependencies"><a class="link" href="#task-debug-fetch-pkg-dependencies">fetch-pkg-dependencies</a></h5>
+<div class="paragraph">
+<p>Fetching the dependencies of the package using the build system&#8217;s mechanism to
+fetch dependencies from the internet failed.
+This could be caused by the dependencies in the package&#8217;s build settings
+file no longer existing (or being incorrect), a networking issue such as an
+incorrectly configured firewall, or the remote package manager server not being
+up or functioning incorrectly.
+The short message contains the name of the build system being used, and current
+is either <code>gradle</code>, <code>maven</code>, <code>ant+ivy</code> or <code>pip</code>.
+The long message contains more information about the dependencies that failed
+to download.
+Users should be shown the long message to communicate what failed.</p>
+</div>
+<div class="paragraph">
+<p>If it is due to the dependencies in the package&#8217;s settings no longer
+existing or being incorrect, the user needs to fix the package&#8217;s dependencies,
+and upload an updated package archive.
+It is not atypical for old versions of dependencies to be removed from
+repositories.</p>
+</div>
+<div class="paragraph">
+<p>If the failure is due to the network the SWAMP administrator needs to correct
+the problem, or the user can try again at a later time.</p>
+</div>
+<div class="paragraph">
+<p>Occasionally a repository does not function correctly.  The only recourse
+is to try again at a later time.</p>
+</div>
+</div>
+<div class="sect4">
+<h5 id="task-debug-flow-typed"><a class="link" href="#task-debug-flow-typed">flow-typed</a></h5>
+<div class="paragraph">
+<p>Internal error.
+The <em>flow-typed</em> command run as part of the flow tool failed.
+The stdout and stderr from flow-typed may have more details and can be found
+in the <em>results</em> directory in the results archive:  <em>flow_typed_stdout1.out</em>
+and <em>flow_typed_stderr1.out</em>.</p>
+</div>
+</div>
+<div class="sect4">
+<h5 id="task-debug-gem-install"><a class="link" href="#task-debug-gem-install">gem-install</a></h5>
+<div class="paragraph">
+<p>Installing the user’s gem package file failed.
+The output and error output of the gem install task is in gem_install.out and
+gem_install.err files found in the build archive.
+These files should be inspected for more information.</p>
+</div>
+</div>
+<div class="sect4">
+<h5 id="task-debug-gem-unpack"><a class="link" href="#task-debug-gem-unpack">gem-unpack</a></h5>
+<div class="paragraph">
+<p>Unarchiving the user&#8217;s gem package file failed.
+The output and error output of the gem unpack task is in gem_unpack.out and
+gem_unpack.err files found in the build archive.
+These files should be inspected for more information.</p>
+</div>
+</div>
+<div class="sect4">
+<h5 id="task-debug-generator"><a class="link" href="#task-debug-generator">generator</a></h5>
+<div class="paragraph">
+<p>Internal error.
+This task is informational and should always have a status of NOTE.</p>
+</div>
+</div>
+<div class="sect4">
+<h5 id="task-debug-install-os-dependencies"><a class="link" href="#task-debug-install-os-dependencies">install-os-dependencies</a></h5>
+<div class="paragraph">
+<p>This is a failure to install OS dependencies using the OS package manager.
+This could be caused by the package name specified by the user being incorrect
+for the selected platform, a networking issue such as an incorrectly configured
+firewall, or the remote OS package manager server not being up or functioning
+incorrectly.</p>
+</div>
+<div class="paragraph">
+<p>Users should be allowed to inspect <em>build_assess.out</em> (see
+<a href="#build-assess-sec">Section 9</a>) to determine the cause of the failure.
+If it is due to an incorrect OS package name, the user can correct this.
+If the failure is due to remote OS package manager server not functioning
+correctly, the run may succeed at a later time.
+If the failure is due to a networking issue the administrator of the SWAMP
+needs to correct the issue.</p>
+</div>
+</div>
+<div class="sect4">
+<h5 id="task-debug-install-pip-dependencies"><a class="link" href="#task-debug-install-pip-dependencies">install-pip-dependencies</a></h5>
+<div class="paragraph">
+<p>Installation of the PIP dependencies specified by the user failed.
+The output and error output of the PIP install task is in pip_install.out and
+pip_install.err files found in the build archive.
+These files should be inspected for more information.</p>
+</div>
+</div>
+<div class="sect4">
+<h5 id="task-debug-install-strace"><a class="link" href="#task-debug-install-strace">install-strace</a></h5>
+<div class="paragraph">
+<p>Internal error.
+The strace archive in c-assess is corrupt or missing, or the file system is
+full.</p>
+</div>
+</div>
+<div class="sect4">
+<h5 id="task-debug-network"><a class="link" href="#task-debug-network">network</a></h5>
+<div class="paragraph">
+<p>The VM&#8217;s network is not functioning correctly.
+This is usually caused by an temporary issue on the hypervisor, and will likely
+work if tried again (a <em>retry</em> task is included to indicate this).
+If this issue persists, other parts of the infrastructure are having
+issues that the system administrator needs to correct.</p>
+</div>
+</div>
+<div class="sect4">
+<h5 id="task-debug-no-build-setup"><a class="link" href="#task-debug-no-build-setup">no-build-setup</a></h5>
+<div class="paragraph">
+<p>A build system type of <em>no build</em> was selected for C, C&#43;&#43; or Java source
+code.
+This fails for three reasons.
+The first is that no source files of the selected type (C/C&#43;&#43; or Java) were
+found in the <em>build directory</em> selected by the user.
+The second is that none of the source files found compiled without errors.
+The third is an internal error.</p>
+</div>
+<div class="paragraph">
+<p>The short message of the task contains data to determine the type of error.
+If missing, an internal error occurred.
+If no files of the appropriate type were discovered in the package directory,
+the compilable and source-files are both 0.
+If compilable is 0, source files were found, but none compiled without error.</p>
+</div>
+<div class="paragraph">
+<p>The <em>source-compiles.xml</em> file in the build archive (see <a href="#build-files-sec">Section 5</a>)
+contains the complete list of source files discovered, compilation success, how
+compiled, and the compiler output.
+The contents of this file (see <a href="#source-compiles">Section 5.3</a>) should be parsed and
+presented to the user to show the user the actual files discovered and if they
+were compilable.</p>
+</div>
+</div>
+<div class="sect4">
+<h5 id="task-debug-package-checksum"><a class="link" href="#task-debug-package-checksum">package-checksum</a></h5>
+<div class="paragraph">
+<p>The checksum of the package archive in the package.conf does not match
+the checksum of the package archive file.
+The package archive or package.conf is corrupt, or the checksum is invalid.</p>
+</div>
+</div>
+<div class="sect4">
+<h5 id="task-debug-package-unarchive"><a class="link" href="#task-debug-package-unarchive">package-unarchive</a></h5>
+<div class="paragraph">
+<p>The user&#8217;s package archive is corrupt, the archive is missing, the archive
+is of an unknown format, or the file system is full.
+The long message of the task contains more information about command that was
+run, and why the failure occurred.</p>
+</div>
+<div class="paragraph">
+<p>The user should be shown the long message of task, and <em>build_assess.out</em> (see
+<a href="#build-assess-sec">Section 9</a>) to determine the problem with the archive.
+The user should then replace the archive with a valid version.</p>
+</div>
+<div class="paragraph">
+<p>Users should be directed to try unarchiving the package archive on their
+own computer.</p>
+</div>
+</div>
+<div class="sect4">
+<h5 id="task-debug-parse-results"><a class="link" href="#task-debug-parse-results">parse-results</a></h5>
+<div class="paragraph">
+<p>Internal error.
+Error creating the parsed results archive.
+The result parser failed to convert output to SCARF.
+This can be caused by an unexpected format of result file, the result file
+being corrupted, or a bug in the result parser.
+The stdout and stderr of the result parser (see <a href="#parsed-results-sec">Section 7</a>) may
+help diagnose the problem.</p>
+</div>
+</div>
+<div class="sect4">
+<h5 id="task-debug-parsed-results-archive"><a class="link" href="#task-debug-parsed-results-archive">parsed-results-archive</a></h5>
+<div class="paragraph">
+<p>Internal error.
+A possible cause is that /mnt/out is full.</p>
+</div>
+</div>
+<div class="sect4">
+<h5 id="task-debug-python2-install"><a class="link" href="#task-debug-python2-install">python2-install</a></h5>
+<div class="paragraph">
+<p>Internal error.
+This task is indicates that the Python 2.x installation failed.
+Either the framework is configured incorrectly, is corrupt, or the disk is
+full.</p>
+</div>
+</div>
+<div class="sect4">
+<h5 id="task-debug-python3-install"><a class="link" href="#task-debug-python3-install">python3-install</a></h5>
+<div class="paragraph">
+<p>Internal error.
+This task is indicates that the Python 3.x installation failed.
+Either the framework is configured incorrectly, is corrupt, or the disk is
+full.</p>
+</div>
+</div>
+<div class="sect4">
+<h5 id="task-debug-read-gem-spec"><a class="link" href="#task-debug-read-gem-spec">read-gem-spec</a></h5>
+<div class="paragraph">
+<p>Failed to read the gem specification file from the user&#8217;s gem package file.
+The output and error output of this task is in <em>gem-name</em>-err.spec file
+files found in the build archive.
+This file should be inspected for more information.</p>
+</div>
+</div>
+<div class="sect4">
+<h5 id="task-debug-resultparser-unarchive"><a class="link" href="#task-debug-resultparser-unarchive">resultparser-unarchive</a></h5>
+<div class="paragraph">
+<p>Internal error.
+The result parser archive is corrupt or missing, or the file system is full.</p>
+</div>
+</div>
+<div class="sect4">
+<h5 id="task-debug-results-archive"><a class="link" href="#task-debug-results-archive">results-archive</a></h5>
+<div class="paragraph">
+<p>Internal error.
+Error creating the results archive.
+A possible cause is that /mnt/out is full.</p>
+</div>
+</div>
+<div class="sect4">
+<h5 id="task-debug-results-unarchive"><a class="link" href="#task-debug-results-unarchive">results-unarchive</a></h5>
+<div class="paragraph">
+<p>Internal error.
+The results archive is corrupt or missing, or the file system is full.</p>
+</div>
+</div>
+<div class="sect4">
+<h5 id="task-debug-retry"><a class="link" href="#task-debug-retry">retry</a></h5>
+<div class="paragraph">
+<p>Internal error.
+This task is informational and should always have a status of NOTE.
+If the status is NOTE, the VM should be recreated and rerun.</p>
+</div>
+</div>
+<div class="sect4">
+<h5 id="task-debug-setup"><a class="link" href="#task-debug-setup">setup</a></h5>
+<div class="paragraph">
+<p>Internal error.
+A failure occurred in the low-level provisioning code that runs before or after
+the assessment framework.
+The short and long messages provide more details on the error.</p>
+</div>
+</div>
+<div class="sect4">
+<h5 id="task-debug-swamp-maven-plugin-install"><a class="link" href="#task-debug-swamp-maven-plugin-install">swamp-maven-plugin-install</a></h5>
+<div class="paragraph">
+<p>Installation of SWAMP maven plugin failed.
+The main reason this task fails is due to networking issues or Maven Central
+unavailability.
+The long message of the task contains more information about the failure.
+Rerunning this in the future may succeed if the issue is a temporary problem
+with the network or Maven Central.</p>
+</div>
+</div>
+<div class="sect4">
+<h5 id="task-debug-tool-configure"><a class="link" href="#task-debug-tool-configure">tool-configure</a></h5>
+<div class="paragraph">
+<p>Internal error.
+The tool configuration failed.</p>
+</div>
+</div>
+<div class="sect4">
+<h5 id="task-debug-tool-install"><a class="link" href="#task-debug-tool-install">tool-install</a></h5>
+<div class="paragraph">
+<p>Internal error.
+This task is indicates that the tool installation failed.
+Either the tool is configured incorrectly, the tool is corrupt, or the disk is
+full.</p>
+</div>
+</div>
+<div class="sect4">
+<h5 id="task-debug-tool-package-compatibility"><a class="link" href="#task-debug-tool-package-compatibility">tool-package-compatibility</a></h5>
+<div class="paragraph">
+<p>The tool is incompatible with the version of the language of package&#8217;s
+source code.
+The short message is the type of error, and the long message contains additional
+details about the incompatibility.
+If possible, the user interface should not allow such an assessment to run,
+but in practice it may be difficult to determine the package&#8217;s language
+version.
+The user can select a different tool or version of the tool that is compatible.
+The short and long messages should be displayed to the user.
+Currently defined short messages and how to resolve them are as follows:</p>
+</div>
+<div class="hdlist">
+<table>
+<tr>
+<td class="hdlist1">
+(android+maven)
+</td>
+<td class="hdlist2">
+<p>The android-lint tool is usually not configured properly for a Maven project.
+The user should update their project to use Maven or Gradle as a build system.</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+(gcc version)
+</td>
+<td class="hdlist2">
+<p>The version of <code>gcc</code> used during the build is incompatible with the tool.
+This occurs when using the <em>Parasoft C/C&#43;&#43;test</em> tool (versions 9.5.4, 9.5.6 and
+9.6.1) and a platform with a version of <code>gcc</code> of 5.0 or newer.
+Platforms with a <code>gcc</code> version of 5.0 or newer include <em>Fedora 22</em> and newer,
+and <em>Ubuntu 16.04</em> and newer.
+The user can use another platform with an older version of <code>gcc</code> or try to
+install, and use an older version of <code>gcc</code>.</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+(Java language version)
+</td>
+<td class="hdlist2">
+<p>The Java source language used during the build is incompatible with the tool
+<em>error-prone</em> version 2.0 and later does not support Java 1.5 sources.
+The user can try to modify the package to build using a newer version of Java,
+or they can use a different version of the tool (<em>error-prone</em> version 1.x
+supports Java 1.5 sources).</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+(known tool bug)
+</td>
+<td class="hdlist2">
+<p>A known bug with the tool was triggered by the package.
+Until the tool is updated to fix the bug, users will not be able to get
+results using this tool with their package.</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+(ruby version)
+</td>
+<td class="hdlist2">
+<p>The version of ruby used during the build is incompatible with the tool.
+The <code>reek</code> tool requires a minimum version of the ruby interpreter.
+The user can try an older version of the tool, or update the package
+to use a newer version of ruby.</p>
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect4">
+<h5 id="task-debug-tool-runtime-compatibility"><a class="link" href="#task-debug-tool-runtime-compatibility">tool-runtime-compatibility</a></h5>
+<div class="paragraph">
+<p>The tool is incompatible with the platform&#8217;s runtime environment such
+as the JVM or operating system.
+The short message is the type of error, and the long message contains
+more information about the incompatibility.
+The user interface should not allow such an assessment to run.
+The user can select a different tool, version of tool, or platform that
+is compatible.
+The short and long messages should be displayed to the user.</p>
+</div>
+</div>
+<div class="sect4">
+<h5 id="task-debug-tool-unarchive"><a class="link" href="#task-debug-tool-unarchive">tool-unarchive</a></h5>
+<div class="paragraph">
+<p>Internal error.
+The tool archive is corrupt or missing, or the file system is full.</p>
+</div>
+</div>
+<div class="sect4">
+<h5 id="task-debug-validate-package"><a class="link" href="#task-debug-validate-package">validate-package</a></h5>
+<div class="paragraph">
+<p>The <em>package classpath</em> specified for the Java Bytecode package is not valid.
+Jar files or directories listed in the classpath are not present in the
+package.
+The long message contains more information about the failure.
+Correct the <em>package classpath</em> option, or use a new archive that contains
+the missing files or directories.</p>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="success-issues"><a class="link" href="#success-issues">4.4.3. Potential Issues In Successful Runs</a></h4>
+<div class="paragraph">
+<p>This section describes conditions where the run did not fail, but where
+user&#8217;s should be alerted to potential issues with the package&#8217;s configuration.</p>
+</div>
+<div class="sect4">
+<h5 id="task-warn-assess-skip"><a class="link" href="#task-warn-assess-skip">4.4.3.1. Status of <em>assess</em> task is SKIP</a></h5>
+<div class="paragraph">
+<p>An <em>assess</em> task with a status of SKIP indicates that no files were found
+to assess.</p>
+</div>
+<div class="paragraph">
+<p>This may be intentional as the user submitted the packages as a web
+package and ran all web tools, but the package did not contain all
+files types such as CSS.
+In this case, the use of tool such as csslint would have a status of SKIP
+for the <em>assess</em> task.</p>
+</div>
+<div class="paragraph">
+<p>If the package is a C/C&#43;&#43;, Java, Ruby, Android, or Python package, the user&#8217;s
+package archive or package settings are almost certainly incorrect.
+Possible causes include:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>The user built the software on their computer, and then archived the already
+built package.
+When the software is built as part of an assessment, the build system
+detects that it is already built and does compile any of the source files.
+Since the SWAMP assesses only those files compiled during the build task, no
+files are assessed.
+The user should upload a freshly checked out version of their software, (or
+run their build system&#8217;s <em>clean</em> target), archive the unbuilt package, and
+upload it again.</p>
+</li>
+<li>
+<p>The package contains no source files.</p>
+</li>
+<li>
+<p>The package&#8217;s <em>build</em> or <em>configure</em> task settings are incorrect.</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect4">
+<h5 id="task-warn-no-build-setup-pass"><a class="link" href="#task-warn-no-build-setup-pass">4.4.3.2. <em>no-build-setup</em> task exists and not all source files were compilable</a></h5>
+<div class="paragraph">
+<p>For C/C&#43;&#43; and Java builds with a build system of <em>no-build</em>, the system first
+determines candidate source files in the build directory based on file
+extensions.
+Then it assesses only those files that build successfully using default
+compiler options.
+If at least one source file compiles then this is task is successful.
+If the number of compilable source files is less than the number of
+candidate source files, then there were files with an appropriate file
+extension that were not assessed; user&#8217;s should be warned of this condition.
+See <a href="#task-def-no-build-setup">no-build-setup</a> in <a href="#task-defs">Section 4.3</a> for details on how to determine
+these counts.
+The details of which source files were discovered and which compiled
+successfully can be found in the file <em>source-compiles.xml</em> described in
+<a href="#source-compiles">Section 5.3</a>.</p>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_known-issues-with-tools"><a class="link" href="#_known-issues-with-tools">4.4.4. Known Issues with Tools</a></h4>
+<div class="paragraph">
+<p>This section documents known issues with tools.
+The issues are mainly do to tools being incompatible with the package&#8217;s source
+language or the runtime environment used to run the tool.</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Android Lint</dt>
+<dd>
+<p>Most Android Java packages that use the Maven build system do not properly
+setup the environment for Android Lint to run correctly, causing the tool to
+fail.
+When an Android package is not configured correctly to use the android-lint
+tool, the <em>tool-package-compatibility</em> task FAILs with a short message of
+<em>android+maven</em>.</p>
+</dd>
+<dt class="hdlist1">dawnscanner</dt>
+<dd>
+<p>There is a known bug in dawnscanner that causes it to fail on some source code.
+In this case, the <em>tool-package-compatibility</em> task FAILs with a short message
+of <em>known tool bug</em>.</p>
+</dd>
+<dt class="hdlist1">error-prone</dt>
+<dd>
+<p>Version 2.0.0 and later of error-prone only requires the use of a Java source
+language 1.6 (Java 6) or later.
+When a package that uses an incompatible version of the Java language is used,
+the <em>tool-package-compatibility</em> task FAILs with a short message of <em>Java
+language version</em>.</p>
+</dd>
+<dt class="hdlist1">Parasoft C/C&#43;&#43;test</dt>
+<dd>
+<p>Versions 9.5.x and 9.6.x of Parasoft C/C&#43;&#43;test do not recognize <code>gcc</code> compiler
+versions 5.0 and newer, and fails on platforms where the build uses such a
+version.
+Platforms with a <code>gcc</code> version of 5.0 or newer include <em>Fedora 22</em>
+and newer, and <em>Ubuntu 16.04</em> and newer.
+When a package that uses an incompatible version of the <code>gcc</code> is used, the
+<em>tool-package-compatibility</em> task FAILs with a short message of <em>gcc version</em>.</p>
+</dd>
+<dt class="hdlist1">PHPMD</dt>
+<dd>
+<p>PHPMD has a bug that causes it to crash when analyzing certain types of PHP
+code.
+When this known failure occurs, the <em>tool-package-compatibility</em> task FAILs
+with a short message of <em>known tool bug</em>.</p>
+</dd>
+<dt class="hdlist1">reek</dt>
+<dd>
+<p>The <code>reek</code> tool requires a minimum version of ruby.
+If the version of ruby used by the package is too old for <code>reek</code>, the
+<em>tool-package-compatibility</em> task FAILs with a short message of <em>ruby version</em>.
+There is also a known bug that causes <code>reek</code> to fail on some source code.
+In this case, the <em>tool-package-compatibility</em> task FAILs with a short message
+of <em>known tool bug</em>.</p>
+</dd>
+</dl>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="build-files-sec"><a class="link" href="#build-files-sec">5. Build Related Files</a></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The build related files are the files of the software package, the output of
+the configure and build tasks, and the build artifacts such as source code,
+libraries and executables created.
+If the configure or build tasks fail, these output files may be
+useful in diagnosing the cause of the failure.</p>
+</div>
+<div class="paragraph">
+<p>The path of the file <em>build.conf</em> is determined by <a href="#output-files-sec">Section 3</a>.
+All other names/paths are determined by the contents of the <em>build.conf</em>.
+The rest of this section will refer to files using their Common Value shown in
+<a href="#build-conf-table">Table 4</a>.
+All files besides <em>build.conf</em> and <em>build.tar.gz</em> are members with the given
+path of the <em>build.tar.gz</em> archive.</p>
+</div>
+<div class="paragraph">
+<p>The rest of this section details the structure of the files <em>build.conf</em>,
+<em>build_summary.xml</em>, and <em>source-compiles.xml</em>.
+The <em>build</em> directory contains the source code of the package and all artifacts
+generated during the <em>configure</em> and <em>build</em> tasks.
+The other files are unstructured and contain the stdout and stderr of the
+<em>build</em> and <em>configure</em> tasks.</p>
+</div>
+<div class="sect2">
+<h3 id="_build-conf"><a class="link" href="#_build-conf">5.1. build.conf</a></h3>
+<div class="paragraph">
+<p>The file <em>build.conf</em> in the output directory is a SWAMP Conf formatted
+file (see <a href="#swamp-conf-format-sec">Section 10</a>) that contains key, value pairs with the
+paths to other files.
+The key, value pairs are documented in <a href="#build-conf-table">Table 4</a>.
+The <em>build-archive</em> attribute is the path (relative to the directory containing
+<em>build.conf</em>) to the archive containing the build related files, and the
+remaining attributes are paths within the archive.</p>
+</div>
+<table id="build-conf-table" class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 4. build.conf attribute names and common values.  Unless otherwise noted, the value is the path relative to the <em>build-dir</em> path inside the <em>build-archive</em> archive.</caption>
+<colgroup>
+<col style="width: 30%;">
+<col style="width: 30%;">
+<col style="width: 40%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Attribute Name</th>
+<th class="tableblock halign-left valign-top">Common Value</th>
+<th class="tableblock halign-left valign-top">Note</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">build-archive</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">build.tar.gz</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">path of build archive relative to this file</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">build-dir</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">build</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">path of directory within the archive containing build data</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">build-stderr-file</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">build_stderr.out</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">stderr of the build task (if run)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">build-stdout-file</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">build_stdout.out</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">stdout of the build task (if run)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">build-summary-file</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">build_summary.xml</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">build information file</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">config-stderr-file</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">config_stderr.out</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">stderr of the config task (if run)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">config-stdout-file</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">config_stdout.out</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">stdout of the config task (if run)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">source-compiles</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">source-compiles.xml</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">data about source files discovered for no-build C/C&#43;&#43; and Java builds</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>If an archive member exists in the <em>build.tar.gz</em> archive with a directory of
+<em>build</em> and a filename of the Common Value, then contents of <em>build.conf</em>
+should be treated as if the file contained the Attribute Name with the Common
+Value.
+This provides backwards compatibility for <em>build.conf</em> that did not include
+stdout and stderr values.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="build-summary"><a class="link" href="#build-summary">5.2. build_summary.xml</a></h3>
+<div class="paragraph">
+<p><em>build_summary.xml</em> is an XML file that contains information about the build.
+The format varies between frameworks and will be documented in the future.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="source-compiles"><a class="link" href="#source-compiles">5.3. source-compiles.xml</a></h3>
+<div class="paragraph">
+<p>The file <em>source-compiles.xml</em> is an XML file that describes the files assessed
+when the <em>no-build</em> build type is used with C/C&#43;&#43; and Java.
+When <em>no-build</em> is selected the specified build directory is scanned for
+potential source files based on file extensions and language:  C (.c), C&#43;&#43; (.C,
+.cc, .cp, .cpp, .CPP, .cxx, or .c&#43;&#43;), and Java (.java).
+These potential source files are then compiled individually using default
+compiler flags based on the langage:  C (<code>gcc -c <em>source</em></code>), C&#43;&#43; (<code>g&#43;&#43; -c <em>source</em></code>), and Java (<code>javac -g -implicit:class <em>source</em></code>).
+If the potential source file successfully compiles it becomes a build source file
+and is assessed, otherwise it is not assessed.
+For each potential source file (based on file extension) found in directly in
+the build directory, the following information is represented: filename, file
+type, command used to compile, exit code, exit signal, and compiler output.</p>
+</div>
+<div class="paragraph">
+<p>The structure and description of <em>source_compiles.xml</em> is show in
+<a href="#source-compiles-desc">Listing 4</a>.
+As an XML file, the order of element is within another element is not significant
+and should not be relied on, except for the <code>&lt;arg&gt;</code> elements which are ordered.
+Also elements are allowed to be missing and indicate that there is no value.</p>
+</div>
+<div id="source-compiles-desc" class="listingblock">
+<div class="title">Listing 4. Structure and description of <em>source-compiles.xml</em> XML file and its elements. <code>&#8230;&#8203;</code> represents a text value.</div>
+<div class="content">
+<pre>XML Elements                                         Description
+
+&lt;source-compiles&gt;
+  &lt;package-short-name&gt;...&lt;/package-short-name&gt;       package name
+  &lt;package-version&gt;...&lt;/package-version&gt;             package version
+  &lt;platform&gt;...&lt;/platform&gt;                           platform name
+  &lt;source-compiles-uuid&gt;...&lt;/source-compiles-uuid&gt;   UUID of this file
+  &lt;package-root-dir&gt;...&lt;/package-root-dir&gt;           package root directory
+  &lt;build-root-dir&gt;...&lt;/build-root-dir&gt;               build root directory
+  &lt;no-build-version&gt;...&lt;/no-build-version&gt;           no-build version
+  &lt;build-sys&gt;...&lt;/build-sys&gt;                         build-sys type
+  &lt;source-compile&gt;                                   per source candidate info
+    &lt;source-file&gt;...&lt;/source-file&gt;                     filename
+    &lt;source-type&gt;...&lt;/source-type&gt;                     type C, C++, or Java
+    &lt;command&gt;                                          compilation command info
+      &lt;executable&gt;...&lt;/executable&gt;                       name of executable
+      &lt;args&gt;                                             arguments
+        &lt;arg&gt;...&lt;/arg&gt;                                     arguments of command
+      &lt;/args&gt;
+      &lt;environment&gt;                                      environment variables
+        &lt;env&gt;...&lt;/env&gt;                                     format: name=value
+      &lt;/environment&gt;
+      &lt;cwd&gt;...&lt;/cwd&gt;                                     working directory
+    &lt;/command&gt;
+    &lt;execution-successful&gt;...&lt;/execution-successful&gt;   success: 'true' or 'false'
+    &lt;exit-code&gt;...&lt;/exit-code&gt;                         exit code of command
+    &lt;exit-signal&gt;...&lt;/exit-signal&gt;                     exit signal of command
+    &lt;output&gt;...&lt;/output&gt;                               stdout/err of command
+  &lt;/source-compile&gt;
+&lt;/source-compiles&gt;</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This file will include one <code>&lt;source-compile&gt;</code> for each source file candidate.
+To determine if a source file was compilable first check if the element
+<code>&lt;execution-successful&gt;</code> exists, if it does then the contained text <code>true</code>
+indicates a compilable file and <code>false</code> indicates a non-compilable file.
+If the <code>&lt;execution-successful&gt;</code> element does not exist, then check if the
+compilation command exited normally (<code>&lt;exit-code&gt;</code> element exists) and without
+error (<code>&lt;exit-code&gt;</code> containing text is <code>0</code>).
+A non-compilable source file will either have exited by a signal
+(<code>&lt;exit-signal&gt;</code> element exists) or with a non-0 exit code (<code>&lt;exit-code&gt;</code>
+containing text is not <code>0</code>).</p>
+</div>
+<div class="paragraph">
+<p>The text of the <code>&lt;output&gt;</code> element contains the combined compilation stdout and
+stderr.
+For non-compilable source, it will contain the error message as
+to why it failed.
+For compilable source it will generally by empty, but may contain compiler
+warnings.</p>
+</div>
+<div class="paragraph">
+<p>The <code>&lt;arg&gt;</code> element in <em>no-build-version</em> of 2.0 or earlier does not include
+<code>argv[0]</code>;  <code>argv[0]</code> should be assigned the value of the <code>&lt;executable&gt;</code>
+element&#8217;s text.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="assess-files-sec"><a class="link" href="#assess-files-sec">6. Assessment Related Files</a></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The assessment related files are the raw (native) tool result files from
+running the assessment tool on the software package, and the output from
+running the tools.
+If the assess task fails, these output files may be useful in
+diagnosing the cause of the failure.</p>
+</div>
+<div class="paragraph">
+<p>The name/path of the file results.conf_ is determined by <a href="#output-files-sec">Section 3</a>.
+All other names/paths are determined by the contents of the <em>results.conf</em>.
+The rest of this section will refer to files using their Common Value shown in
+<a href="#results-conf-table">Table 5</a>.
+All files besides results.conf_ and <em>results.tar.gz</em> are members with the given
+path of the <em>results.tar.gz</em> archive.</p>
+</div>
+<div class="paragraph">
+<p>The rest of this section details the structure of the files <em>results.conf</em>,
+and <em>assessment_summary.xml</em>.
+The other files are dependent on the tool run and contain the native tool
+results, the tool&#8217;s stdout or stderr, or other tool generated files.</p>
+</div>
+<div class="sect2">
+<h3 id="_results-conf"><a class="link" href="#_results-conf">6.1. results.conf</a></h3>
+<div class="paragraph">
+<p>The file <em>results.conf</em> in the output directory is a SWAMP Conf formatted
+file (see <a href="#swamp-conf-format-sec">Section 10</a>) containing key, value pairs with the
+paths to other files.
+The key, value pairs are documented in <a href="#results-conf-table">Table 5</a>.
+The <em>results-archive</em> attribute is a path to the archive of the assessment
+related files, and the remaining attributes are paths within the archive.</p>
+</div>
+<table id="results-conf-table" class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 5. results.conf attribute names and common values.  Unless otherwise noted, the value is the path relative to the <em>results-dir</em> path inside the <em>results-archive</em> archive.</caption>
+<colgroup>
+<col style="width: 30%;">
+<col style="width: 30%;">
+<col style="width: 40%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Attribute Name</th>
+<th class="tableblock halign-left valign-top">Common Value</th>
+<th class="tableblock halign-left valign-top">Note</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">results-archive</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">results.tar.gz</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">path of results archive relative to this file</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">results-dir</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">results</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">path of directory within archive containing results data</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">assessment-summary-file</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">assessment_summary.xml</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">path of directory within archive relative to <em>results-dir</em> of build summary data</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="_assessment_summary-xml"><a class="link" href="#_assessment_summary-xml">6.2. assessment_summary.xml</a></h3>
+<div class="paragraph">
+<p>The file <em>assessment_summary.xml</em> is an XML file the contains information about
+the <em>assessment</em> task.
+Its structure and description is show in <a href="#assessment-summary-desc">Listing 5</a>.
+As an XML file, the order of element is within another element is not significant
+and should not be relied on, except for the <code>&lt;arg&gt;</code> elements which are ordered.
+Also elements are allowed to be missing and indicate that there is no value.</p>
+</div>
+<div id="assessment-summary-desc" class="listingblock">
+<div class="title">Listing 5. Structure and description of <em>assessment_summary.xml</em> XML file and its elements. <code>&#8230;&#8203;</code> represents a text value.</div>
+<div class="content">
+<pre>XML Elements                                              Description
+
+&lt;assessment-summary&gt;
+  &lt;assessment-summary-uuid&gt;...&lt;/assessment-summary-uuid&gt;  assessment UUID
+  &lt;build-root-dir&gt;...&lt;/build-root-dir&gt;                    build root directory
+  &lt;package-root-dir&gt;...&lt;/package-root-dir&gt;                package root within build
+  &lt;package-name&gt;...&lt;/package-name&gt;                        package name
+  &lt;package-version&gt;...&lt;/package-version&gt;                  package version
+  &lt;assess-fw&gt;...&lt;/assess-fw&gt;                              assessment framework
+  &lt;assess-fw-version&gt;...&lt;/assess-fw-version&gt;              framework version
+  &lt;tool-type&gt;...&lt;/tool-type&gt;                              tool name
+  &lt;tool-version&gt;...&lt;/tool-version&gt;                        tool version
+  &lt;platform-name&gt;...&lt;/platform-name&gt;                      platform name/version
+  &lt;start-ts&gt;...&lt;/start-ts&gt;                                start time since Epoch
+  &lt;stop-ts&gt;...&lt;/stop-ts&gt;                                  end time since Epoch
+  &lt;assessment-artifacts&gt;                                  assessment(s) info
+    &lt;assessment&gt;                                            assessment info
+      &lt;build-artifact-id&gt;...&lt;/build-artifact-id&gt;              build id
+      &lt;report&gt;...&lt;/report&gt;                                    file/dir of tool output
+      &lt;stdout&gt;...&lt;/stdout&gt;                                    assessment stdout
+      &lt;stderr&gt;...&lt;/stderr&gt;                                    assessment stderr
+      &lt;execution-successful&gt;...&lt;/execution-successful&gt;
+      &lt;exit-code&gt;...&lt;/exit-code&gt;                              assessment exit code
+      &lt;exit-signal&gt;...&lt;/exit-signal&gt;                          assessment exit signal
+      &lt;start-ts&gt;...&lt;/start-ts&gt;                                assessment start time
+      &lt;stop-ts&gt;...&lt;/stop-ts&gt;                                  assessment stop time
+      &lt;command&gt;                                               assessment command
+        &lt;cwd&gt;...&lt;/cwd&gt;                                          command cwd
+        &lt;environment&gt;                                           command environment
+          &lt;env&gt;...&lt;/env&gt;                                          format:  name=value
+        &lt;/environment&gt;
+        &lt;executable&gt;...&lt;/executable&gt;                            command executable
+        &lt;args&gt;                                                  command args
+          &lt;arg&gt;...&lt;/arg&gt;                                          arg value
+        &lt;/args&gt;
+      &lt;/command&gt;
+    &lt;/assessment&gt;
+  &lt;/assessment-artifacts&gt;
+&lt;/assessment-summary&gt;</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>An assessment consists of one or more invocations as an assessment tool along with
+setup step (these are not accounted for in <em>assessment_summary.xml</em>).
+The <em>assessment_summary.xml</em> contains the sequence of commands executed and their
+individual output files with one <code>&lt;asseessment&gt;</code> element for each instance of
+the tool execution.
+To locate assessments that failed, inspect each <code>&lt;assessment&gt;</code> element in
+<em>assessment_summary.xml</em> for failure.
+To determine if an <code>&lt;assessment&gt;</code> was a failure, first check if the element
+<code>&lt;execution-successful&gt;</code> exists, if it does then the contained text <code>false</code>
+indicates a failure while the text <code>true</code> indicates a successful assessment.
+If the <code>&lt;execution-successful&gt;</code> element does not exist, then check if the
+assessment command exited normally (<code>&lt;exit-code&gt;</code> element exists) and without
+error (<code>&lt;exit-code&gt;</code> containing text is <code>0</code>).
+A failed assessment will either have exited by a signal (<code>&lt;exit-signal&gt;</code>
+element exists) or with a non-0 exit code (<code>&lt;exit-code&gt;</code> containing text is not
+<code>0</code>).</p>
+</div>
+<div class="paragraph">
+<p>In the event of a failure, details of the error may be found in the stdout, stderr, and/or report files.
+The report path may be a directory in which case the information may be contained
+in file within this directory.
+Additional information may be found in <em>build_assess.out</em> (or <em>run.out</em>).</p>
+</div>
+<div class="paragraph">
+<p>For assessment tools that have a setup phase and a failure occurs in the setup phase, the <em>assessment</em> task will have a status of FAIL, and additional information about the failure may be found in <em>build_assess.out</em> (or <em>run.out</em>).</p>
+</div>
+<div class="paragraph">
+<p>For some older frameworks, the <code>&lt;arg&gt;</code> element may not include <code>argv[0]</code>.
+In this case <code>&lt;executable&gt;</code> should be used for <code>argv[0]</code>.
+Note that some versions of some frameworks use <code>&lt;end-ts&gt;</code> instead of
+<code>&lt;stop-ts&gt;</code> so if <code>&lt;stop-ts&gt;</code> does not exist use the value of <code>&lt;end-ts&gt;</code>.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="parsed-results-sec"><a class="link" href="#parsed-results-sec">7. Parsed Results Related Files</a></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The parsed results related files are assessment results in a common format
+and the output from running results parser.
+The SWAMP result parser translate the raw (native) tool result files into
+a common format:  SCARF (SWAMP Common Assessment Result Format, <a href="https://github.com/mirswamp/swamp-scarf-io" class="bare">https://github.com/mirswamp/swamp-scarf-io</a>) or SARIF
+(Static Assessment Result Interchange Format,
+<a href="https://www.oasis-open.org/committees/tc_home.php?wg_abbrev=sarif" class="bare">https://www.oasis-open.org/committees/tc_home.php?wg_abbrev=sarif</a> and
+<a href="https://github.com/oasis-tcs/sarif-spec/" class="bare">https://github.com/oasis-tcs/sarif-spec/</a>).</p>
+</div>
+<div class="paragraph">
+<p>The file <em>parsed_results.conf</em> in the output directory is a SWAMP Conf
+formatted file (see <a href="#swamp-conf-format-sec">Section 10</a>) containing key, value pairs with
+the paths to other files.
+The key, value pairs are documented in <a href="#parsed-results-conf-table">Table 6</a>.
+The <em>results-archive</em> attribute is a path to the archive of the assessment
+related files relative to this conf file.
+The <em>parsed-results-dir</em> is a path within the archive, and the remaining
+attributes are paths relative to the <em>parsed-results-dir</em> within the archive or
+informational values.
+If the <em>parsed-results</em> task fails, these output files may
+be useful in diagnosing the cause of the failure.</p>
+</div>
+<table id="parsed-results-conf-table" class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 6. parsed_results.conf attribute names and common values.  Unless otherwise noted, the value is the path relative to the <em>results-dir</em> path inside the <em>results-archive</em> archive.</caption>
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 33.3333%;">
+<col style="width: 41.6667%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Attribute Name</th>
+<th class="tableblock halign-left valign-top">Common Value</th>
+<th class="tableblock halign-left valign-top">Note</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">metrics</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>number of metrics in the SCARF file (SARIF does not support metrics at this time</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">parsed-results-archive</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">parsed_results.tar.gz</p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>path of parsed results archive relative to this file</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">parsed-results-dir</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">parsed_results</p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>path of parsed results directory within the parsed results archive</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">parsed-results-file</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">parsed_results.xml</p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>SCARF file (<strong>DEPRECATED:</strong> use scarf-file)</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">resultparser-stderr-file</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">resultparser_stderr.out</p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>stderr of the result parser</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">resultparser-stdout-file</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">resultparser_stdout.out</p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>stdout of the result parser</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">sarif-file</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">parsed_results.sarif.json</p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>SARIF file (if missing no SARIF file was produced)</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">sarif-<code><strong>TYPE</strong></code>-file</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">parsed_results-<code><strong>TYPE</strong></code>.sarif-external-properties.json</p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Where <code><strong>TYPE</strong></code> is one of the following:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>addresses</p>
+</li>
+<li>
+<p>artifacts</p>
+</li>
+<li>
+<p>graphs</p>
+</li>
+<li>
+<p>invocations</p>
+</li>
+<li>
+<p>logicalLocations</p>
+</li>
+<li>
+<p>policies</p>
+</li>
+<li>
+<p>webRequests</p>
+</li>
+<li>
+<p>webResponses</p>
+</li>
+<li>
+<p>results</p>
+</li>
+<li>
+<p>taxonomies</p>
+</li>
+<li>
+<p>threadFlowLocations</p>
+</li>
+<li>
+<p>translations</p>
+</li>
+</ul>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">sarif-<code><strong>TYPE</strong></code>-<code><strong>N</strong></code>-file</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">parsed_results-<code><strong>TYPE</strong></code>-<code><strong>N</strong></code>.sarif-external-properties.json</p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Where <code><strong>TYPE</strong></code> is as above and <code><strong>N</strong></code> is a non-negative integer</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">scarf-file</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">parsed_results.xml</p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>SCARF file (if missing use deprecated parsed-results-file attribute, if also missing, no SCARF file was generated)</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">status</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><em>PASS</em> or <em>FAIL</em> indicating success or failure of the result parser respectively (status of the <em>parse-results</em> task)</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">weaknesses</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>number of weaknesses in the output files</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>The <em>metrics</em>, <em>status</em>, and <em>weaknesses</em> attributes are informational.
+In the event the <em>result-parser</em> task failed the <em>resultparser-stdout-file</em> and
+<em>resultparser-stderr-file</em> files may provide additional information on why the
+<em>result-parser</em> failed.
+All other attributes are files for one common formats.</p>
+</div>
+<div class="paragraph">
+<p>Based on SWAMP settings, SCARF, SARIF or both output formats may be produced; and
+SARIF output may consist of a single or multiple files (SCARF is always a
+single XML formatted file).
+For efficiency, SARIF files may be split into multiple JSON formatted files.
+The main SARIF file is denoted by the attribute <em>sarif-file</em> and sub-files
+are denoted by the <em>sarif-&lt;SUBTYPE&gt;-file</em> (where <em>&lt;SUBTYPE&gt;</em> is an arbitrary
+string) attributes as shown in <a href="#parsed-results-conf-table">Table 6</a>.
+If SARIF is generated, then the files denoted by the attribute keys
+<em>sarif-file</em> and <em>sarif-&lt;SUBTYPE&gt;-file</em> are the complete collection of files
+required to process the SARIF output.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="run-out-sec"><a class="link" href="#run-out-sec">8. run.out</a></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The <em>run.out</em> file contains the output of provisioning the VM or Docker
+container and properties of the environment before and after the assessment
+framework is run.
+The output of the assessment framework is also contained in this file in older
+versions of the framework.</p>
+</div>
+<div class="paragraph">
+<p>This file may provide additional information if the <em>setup</em> task fails.</p>
+</div>
+<div class="paragraph">
+<p>In older versions of the SWAMP frameworks this file is unstructured.
+In current versions of the frameworks, the file is structured.
+Lines starting with ========================= are control lines while other
+lines are data related to the prior control line.
+Common control files and their format are:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Information message of &lt;MSG&gt;.</p>
+<div class="listingblock">
+<div class="content">
+<pre>========================= === &lt;MSG&gt;</pre>
+</div>
+</div>
+</li>
+<li>
+<p>Shows variable &lt;VAR&gt; has the value &lt;VALUE&gt;.</p>
+<div class="listingblock">
+<div class="content">
+<pre>========================= === $&lt;VAR&gt;: &lt;VALUE&gt;</pre>
+</div>
+</div>
+</li>
+<li>
+<p>For subsequent commands that are run, redirect stdout, stderr or both (&lt;TYPE&gt;
+being <em>stdout</em>, <em>stderr</em> or <em>stdout and stderr</em> respectively) to the file
+&lt;FILE&gt;.  &lt;APPEND&gt; may be empty (file overwritten) or <em>append</em> (file
+appended).</p>
+<div class="listingblock">
+<div class="content">
+<pre>========================= === Redirect &lt;APPEND&gt; &lt;TYPE&gt; to &lt;FILE&gt;</pre>
+</div>
+</div>
+</li>
+<li>
+<p>End redirection of stdout or stderr for commands (&lt;TYPE&gt; being <em>stdout</em> or
+<em>stderr</em> respectively.</p>
+<div class="listingblock">
+<div class="content">
+<pre>========================= === End &lt;TYPE&gt; redirect</pre>
+</div>
+</div>
+</li>
+<li>
+<p>Execute &lt;CMD&gt; and wait for it to complete.
+&lt;CMD&gt; is escaped using Bash escaping.
+The stdout and stderr of the command are located in &lt;OUTPUT&gt; and span as many
+lines as necessary (unless the stdout and stderr were redirected to a file.
+After the command completes a new-line character is written to the output.
+If the command exits with a non-zero exit code, an &lt;ERROR_MSG&gt; control line
+is produced with the exit code.</p>
+<div class="listingblock">
+<div class="content">
+<pre>========================= + &lt;CMD&gt;
+&lt;OUTPUT&gt;</pre>
+</div>
+</div>
+</li>
+<li>
+<p>Execute &lt;BACKGROUND_CMD&gt; in the background.
+&lt;BACKGROUND_CMD&gt; is escaped using Bash escaping.</p>
+<div class="listingblock">
+<div class="content">
+<pre>========================= +&amp; &lt;BACKGROUND_CMD&gt;</pre>
+</div>
+</div>
+</li>
+<li>
+<p>Informational error message of &lt;ERROR_MSG&gt;.
+Typically this relates to the previous command being run.</p>
+<div class="listingblock">
+<div class="content">
+<pre>========================= ### ##### &lt;ERROR_MSG&gt;</pre>
+</div>
+</div>
+</li>
+<li>
+<p>Timing data for a command with &lt;TIMING_DATA&gt; being the command, the start
+time, stop time, or duration.</p>
+<div class="listingblock">
+<div class="content">
+<pre>=========================     | &lt;TIMING_DATA&gt;</pre>
+</div>
+</div>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="build-assess-sec"><a class="link" href="#build-assess-sec">9. build_assess.out</a></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The <em>build_assess.out</em> file contains the output of the framework that is not
+placed in other files.
+This file is unstructured and is dependent on the framework run.
+This file may be useful to diagnose errors in tasks where the output of the
+task is not in other files.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="swamp-conf-format-sec"><a class="link" href="#swamp-conf-format-sec">10. SWAMP Conf File Format</a></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Several SWAMP files use the SWAMP Conf file format described in this section.
+These are text files containing a set of key, value pairs.
+Keys are a sequence of characters that do not include whitespace characters,
+':' or '=' characters.
+The value can be any arbitrary sequence of character.</p>
+</div>
+<div class="paragraph">
+<p>The SWAMP Conf file has six types of constructs.
+Two of them are lines that are ignored and the other four are different
+mechanism to express the key that trade-off readability for expressibility.</p>
+</div>
+<div class="paragraph">
+<p>For non-ignored lines, the key is determined by first skipping any initial
+whitespace.
+Then all characters up to the next whitespace character, ':' or '=' are the key
+(it is an error is the key string is empty).  Next all non-newline whitespace
+characters are skipped to determine the type of line as described below.
+It is an error if the next character is not a ':' or '='.</p>
+</div>
+<div class="paragraph">
+<p>The six type of constructs are:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>Blank Lines</strong> consisting of only whitespace characters are ignored.</p>
+<div class="listingblock">
+<div class="content">
+<pre></pre>
+</div>
+</div>
+</li>
+<li>
+<p><strong>Comments</strong> have a '#' as the first non-whitespace character and are ignored.</p>
+<div class="listingblock">
+<div class="content">
+<pre># comment
+      # another comment</pre>
+</div>
+</div>
+</li>
+<li>
+<p><strong>Trimmed Value Assignment</strong> has an '=' as the next non-whitespace character
+after the key.
+The value is the characters after the '=' to the end of the line with leading
+and trailing whitespace removed.
+In the example below k1 has the value &#8216;<code>v1</code>&#8217; and k2 has the value &#8216;<code>v2 = 7</code>&#8217;.</p>
+<div class="listingblock">
+<div class="content">
+<pre>k1=v1
+   k2  =   v2 = 7</pre>
+</div>
+</div>
+</li>
+<li>
+<p><strong>Literal Value Assignment</strong>  has ':=' as the next non-whitespace characters
+after the key.
+The value is the characters after the ':=' to the end of the line retaining
+all whitespace except the terminating newline character.
+In the example below k3 has the value &#8216;<code>v1</code>&#8217; and k4 has the value &#8216;<code>&#160;&#160;&#160;v2&#160;=&#160;7</code>&#8217;.</p>
+<div class="listingblock">
+<div class="content">
+<pre>k3:=v1
+   k4  :=   v2 = 7</pre>
+</div>
+</div>
+</li>
+<li>
+<p><strong>Multiple Line Value Assignment</strong> has ':&lt;N&gt;L=' (where &lt;N&gt; is a positive
+integer) as the next non-whitespace characters after the key.
+The value is characters after the ':&lt;N&gt;L=' and the next &lt;N&gt; - 1 lines retaining
+all whitespace except the final terminating newline character.
+In the example below k5 has the value &#8216;<code>&#160;&#160;line 1\n&#160;line 2</code>&#8217; and k6 has the value &#8216;<code>&#160;&#160;line 1\n&#160;line 2\n&#160;x=7</code>&#8217;.</p>
+<div class="listingblock">
+<div class="content">
+<pre>k5:2L=  line 1
+ line 2
+   k6 :3L=  line 1
+ line 2
+ x=7</pre>
+</div>
+</div>
+</li>
+<li>
+<p><strong>Multiple Character Value Assignment</strong> has ':&lt;N&gt;C=' (where &lt;N&gt; is a positive
+integer) as the next non-whitespace characters after the key.
+The value is the next &lt;N&gt; characters after the ':&lt;N&gt;C=' retaining all characters
+include newlines as-is.
+Processing of the next key, value pair are started as if the character after
+the value is the first character of a line.
+In the example below k7 has the value &#8216;<code>12\n4</code>&#8217; and k8 has the value &#8216;<code>12345</code>&#8217;.</p>
+<div class="listingblock">
+<div class="content">
+<pre>k7:4C=12
+4     k8 :5C=12345</pre>
+</div>
+</div>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>For greatest readability, producers should use start the key in the first
+column and put a space after the key.
+They should also prefer Trimmed Value Assignments with space before the value.
+If the key has leading or trailing whitespace Literal Value Assignment should
+be used and Multiple Line Value Assignment should be used only if the value
+contains multiple lines.
+Multiple Character Value Assignment should be avoided, but if used a new-line
+should follow the value.</p>
+</div>
+<div class="paragraph">
+<p><a href="#ParseSwampConfFile">Listing 6</a> shows pseudocode to parse a SWAMP Conf File into an
+associative array.</p>
+</div>
+<div id="ParseSwampConfFile" class="listingblock">
+<div class="title">Listing 6. Pseudo code to parse SWAMP Conf files. $&lt;N&gt; represents the N<sup>th</sup> group matched `$&lt;N&gt; matched' is a boolean value of the N<sup>th</sup> group matching at all.</div>
+<div class="content">
+<pre>KeyValuePairs ParseSwampConfFile(filename)
+{
+    file = open(filename)
+    keyValuePairs = ()
+    buffer = ''
+    while (true) {
+        if (buffer == '') {
+            if (eof(file))  {
+                return keyValuePairs
+            }
+            buffer = ReadLine(file)
+        }
+        if (buffer =~ /^\s*$/)  {
+            # Blank Line, ignore
+            buffer = ''
+        }  elsif (buffer =~ /^\s*#/)  {
+            # Comment, ignore
+            buffer = ''
+        }  elsif (buffer =~ /(^[^:=]*)(:[^=]*)?=(.*)$/)  {
+            k = TrimWhiteSpaceBothEnds($1)
+            if (k == '')  {
+                return ERROR('key name contains no characters')
+            }
+            afterEquals = $3
+            if ($2 matched)  {
+                lengthModifier = $2
+                if ($lengthModifier = ':')  {
+                    # Literal Value Assignment
+                    count = '1'
+                    type = 'L'
+                }
+                if ($lengthModifier =~ /:([0-9]+)([LC])/)  {
+                    count = StringToInt($1)
+                    type = $2
+                    v = afterEquals
+                    if (type == 'L')  {
+                        # Multiple Line Value Assignment
+                        for (i = 2; i &lt;= count; ++i)  {
+                            if (eof(file))  {
+                                return ERROR('unexpected end of file');
+                            }
+                            v += ReadLine(file)
+                        }
+                        v = RemoveFinalNewLine(v)
+                        buffer = ''
+                    }  elsif (type == 'C')  {
+                        # Multiple Character Value Assignment
+                        v = afterEquals
+                        while (length(v) &lt; count)  {
+                            if (eof(file))  {
+                                return ERROR('unexpected end of file');
+                            }
+                            v += ReadLine(file)
+                        }
+                        buffer = CharsAfterPos(v, count)
+                        v = CharsUptoAndIncluding(v, count)
+                    }
+                }  else  {
+                    return ERROR('invalid length modifier')
+                }
+            }  else  {
+                # Trimmed Value Assignment
+                v = TrimWhiteSpaceBothEnds(afterEquals)
+                buffer = ''
+            }
+            keyValuePairs[k] = v
+        }  else  {
+            return ERROR("bad line, no = found")
+        }
+    }
+}</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div id="footer">
+<div id="footer-text">
+Version 1.2.1<br>
+Last updated 2020-05-20 09:30:24 -0500
+</div>
+</div>
+</body>
+</html>

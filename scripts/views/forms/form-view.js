@@ -68,9 +68,6 @@ define([
 			if (this.options.focusable !== undefined) {
 				this.focusable = this.options.focuable;
 			}
-			if (this.options.focused == undefined) {
-				this.options.focused = true;
-			}
 		},
 
 		//
@@ -101,9 +98,7 @@ define([
 		},
 
 		onAttach: function() {
-			if (this.options.focused && !Browser.isTouchEnabled()) {
-				this.focus();
-			}
+			this.focus();
 
 			// add popover triggers
 			//

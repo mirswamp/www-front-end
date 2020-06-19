@@ -273,7 +273,7 @@ define([
 		},
 
 		getSelectedQueryString: function() {
-			var queryString = '';
+			var queryString = this.getProjectQueryString();
 			var selectedAssessments = this.getChildView('list').getSelected();
 
 			if (selectedAssessments.length > 0) {

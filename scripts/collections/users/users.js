@@ -77,17 +77,21 @@ define([
 			}));
 		},
 
-		sendEmail: function( subject, body, options ){
-			var recipients = this.map(function( model ){
-				return model.get('email');
-			});
-			$.ajax(_.extend(options, {
+		fetchEmail: function(options) {
+			return this.fetch(_.extend(options, {
+				url: Config.servers.web + '/admin/users/email' + (options && options.show_inactive? '?show_inactive=true' : '')
+			}));
+		},
+
+		sendEmail: function(subject, body, options) {
+			return $.ajax(_.extend(options, {
 				type: 'POST',
-				url: Config.servers.web + '/admins_email',
+				url: Config.servers.web + '/admin/users/email',
 				data: {
 					subject: subject,
 					body: body,
-					recipients: recipients
+					include: options? options.include : undefined,
+					exclude: options? options.exclude : undefined
 				}
 			}));
 		},

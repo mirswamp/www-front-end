@@ -15,20 +15,20 @@
 		<label class="form-label">Package</label>
 		<div class="controls">
 
-			<% if (typeof package_name !== 'undefined') { %>
+			<% if (typeof package !== 'undefined') { %>
 			<% if (package_url) { %>
-			<a href="<%= package_url %>"><%= package_name %></a>
+			<a href="<%= package_url %>" target="_blank"><%= package.name %></a>
 			<% } else { %>
-			<%= package_name %>
+			<%= package.name %>
 			<% } %>
 			<% } %>
 
-			<% if (typeof package_version !== 'undefined') { %>
+			<% if (typeof package !== 'undefined') { %>
 			<b>version</b>
 			<% if (typeof package_version_url !== 'undefined') { %>
-			<a href="<%= package_version_url %>"><b class="version"><%= package_version %></b></a>
+			<a href="<%= package_version_url %>" target="_blank"><b class="version"><%= package.version_string%></b></a>
 			<% } else { %>
-			<b class="version"><%= package_version %></b>
+			<b class="version"><%= package.version_string %></b>
 			<% } %>
 			<% } %>
 		</div>
@@ -38,20 +38,20 @@
 		<label class="form-label">Tool</label>
 		<div class="controls">
 
-			<% if (typeof tool_name !== 'undefined') { %>
+			<% if (typeof tool !== 'undefined') { %>
 			<% if (typeof tool_url !== 'undefined') { %>
-			<a href="<%= tool_url %>"><%= tool_name %></a>
+			<a href="<%= tool_url %>" target="_blank"><%= tool.name %></a>
 			<% } else { %>
-			<%= tool_name %>
+			<%= tool.name %>
 			<% } %>
 			<% } %>
 
-			<% if (typeof tool_version !== 'undefined') { %>
+			<% if (typeof tool !== 'undefined') { %>
 			<b>version</b>
 			<% if (typeof tool_version_url !== 'undefined') { %>
-			<a href="<%= tool_version_url %>"><b class="version"><%= tool_version %></b></a>
+			<a href="<%= tool_version_url %>" target="_blank"><b class="version"><%= tool.version_string %></b></a>
 			<% } else { %>
-			<b class="version"><%= tool_version %></b>
+			<b class="version"><%= tool.version_string %></b>
 			<% } %>
 			<% } %>
 		</div>
@@ -61,51 +61,50 @@
 		<label class="form-label">Platform</label>
 		<div class="controls">
 
-			<% if (typeof platform_name !== 'undefined') { %>
+			<% if (typeof platform !== 'undefined') { %>
 			<% if (typeof platform_url !== 'undefined') { %>
-			<a href="<%= platform_url %>"><%= platform_name %></a>
+			<a href="<%= platform_url %>" target="_blank"><%= platform.name %></a>
 			<% } else { %>
 			<%= platform_name %>
 			<% } %>
 			<% } %>
 
-			<% if (typeof platform_version !== 'undefined') { %>
+			<% if (typeof platform !== 'undefined') { %>
 			<b>version</b>
 			<% if (typeof platform_version_url !== 'undefined') { %>
-			<a href="<%= platform_version_url %>"><b class="version"><%= platform_version %></b></a>
+			<a href="<%= platform_version_url %>" target="_blank"><b class="version"><%= platform.version_string %></b></a>
 			<% } else { %>
-			<b class="version"><%= platform_version %></b>
+			<b class="version"><%= platform.version_string %></b>
 			<% } %>
 			<% } %>
 		</div>
 	</div>
 
+	<% if (typeof assessment_start_ts !== 'undefined') { %>
 	<div class="form-group">
-		<label class="form-label">Assessment Time</label>
+		<label class="form-label">Assessment Start Time</label>
 		<div class="controls">
-			<% if (typeof assessment_start_ts !== 'undefined') { %>
 			<%= assessment_start_ts %>
-			<% } %>
-			<% if (typeof assessment_end_ts !== 'undefined') { %>
-			to <%= assessment_end_ts %>
-			<% } %>
 		</div>
 	</div>
+	<% } %>
 
+	<% if (typeof assessment_end_ts !== 'undefined') { %>
 	<div class="form-group">
-		<label class="form-label">Assessment Info</label>
+		<label class="form-label">Assessment End Time</label>
 		<div class="controls">
-			<% if (typeof version_information !== 'undefined') { %>
-			<%= version_information %>
-			<% } %>
+			<%= assessment_end_ts %>
 		</div>
 	</div>
+	<% } %>
+
 </div>
 
 <h2>Links</h2>
 <div class="well">
 	<ul>
-		<li><a href="https://www.swampinabox.org/doc/statusout.pdf" target="_blank">Status.out and Debugging SWAMP Failures FAQ (PDF)</a></li>
+		<li><a href="https:documentation/swamp_output_and_debugging.pdf" target="_blank">Status.out and Debugging SWAMP Failures FAQ (PDF)</a></li>
+		<li><a href="https:documentation/swamp_output_and_debugging.html" target="_blank">Status.out and Debugging SWAMP Failures FAQ (HTML)</a></li>
 		<% if (typeof url !== 'undefined' && url && url != '') { %>
 		<li><a href="<%= url %>" target="_blank">Download all failed results as a single file</a></li>
 		<% } %>
@@ -124,38 +123,143 @@
 	</div>
 	<% } %>
 
-	<% if (typeof error_message !== 'undefined') { %>
-	<div class="form-group">
-		<% if (typeof error_message == 'string') { %>
-		<%= error_message %>
-		<% } else if (error_message.length > 0) { %>
-		<% for (var i = 0; i < error_message.length; i++) { %>
-		<% var error = error_message[i]; %>
-		<label class="form-label"><%= error[0].toTitleCase() %></label>
-		<pre class="form-controls"><%= error[1] %></pre>
+	<% if (typeof status !== 'undefined') { %>
+	<% for (var i = 0; i < status.length; i++) { %>
+	<% var attribute = status[i]; %>
+	<% if (attribute.content) { %>
+	<% if (typeof attribute.collapsed !== 'undefined') { %>
+
+	<div class="form-group" id="collapsable-group<%= i %>">
+
+		<% if (typeof attribute.anchor !== 'undefined') { %>
+       		 <label class="form-label">Error <a href="https:documentation/swamp_output_and_debugging.html#<%= attribute.anchor %>" target="_blank"><%= attribute.name %></a>
+		<% } else { %>
+        		<label class="form-label"><%= attribute.name %>
 		<% } %>
+
+		<a data-toggle="collapse" data-target="#collapsable-group<%= i %> .collapse" data-parent="#collapsable-group<%= i %>">
+			<% if (attribute.collapsed) { %>
+			<i class="fa fa-plus-circle" style="float:right; margin-top:5px; margin-right:-15px"></i>
+			<% } else { %>
+			<i class="fa fa-minus-circle" style="float:right; margin-top:5px; margin-right:-15px"></i>
+			<% } %>
+		</a>
+		</label>
+
+		<div class="collapse<% if (!attribute.collapsed) { %> in<% } %>">
+			<% if (attribute.content.content) { %>
+			<pre><%= attribute.content.content %></pre>
+			<% } else if (typeof attribute.content == 'string') { %>
+			<pre><%= attribute.content %></pre>
+			<% } else { %>
+			<div class="pre code">
+
+			<% if (Array.isArray(attribute.content)) { %>
+
+			<ol>
+			<% for (var j = 0; j < attribute.content.length; j++) { %>
+			<% var value2 = attribute.content[j]; %>
+			<li>
+			<% if (typeof value2 == 'string') { %>
+			<%= value2 %>
+			<% } else { %>
+			<ol>
+			<% var keys3 = Object.keys(value2); %>
+			<% for (var k = 0; k < keys3.length; k++) { %>
+			<li><%= value2[keys3[k]] %></li>
+			<% } %>
+			</ol>
+			<% } %>
+			</li>
+			<% } %>
+			</ol>
+
+			<% } else { %>
+
+			<ul>
+			<% var keys2 = Object.keys(attribute.content); %>
+			<% for (var j = 0; j < keys2.length; j++) { %>
+			<% var key2 = keys2[j]; %>
+			<% var value2 = attribute.content[key2]; %>
+			<li><%= key2 %>:
+			<% if (typeof value2 == 'string') { %>
+			<%= value2 %>
+			<% } else { %>
+			<ol>
+			<% var keys3 = Object.keys(value2); %>
+			<% for (var k = 0; k < keys3.length; k++) { %>
+			<li><%= value2[keys3[k]] %></li>
+			<% } %>
+			</ol>
+			<% } %>
+			</li>
+			<% } %>
+			</ul>
+
+			<% } %>
+			</div>
+			<% } %>
+		</div>
+	</div>
+
+	<% } else { %>
+	<div class="form-group">
+		<label class="form-label"><%= attribute.name %></label>
+		<% if (attribute.content.content) { %>
+		<pre><%= attribute.content.content %></pre>
+		<% } else if (typeof attribute.content == 'string') { %>
+		<pre><%= attribute.content %></pre>
+		<% } else { %>
+		<div class="pre code">
+
+		<% if (Array.isArray(attribute.content)) { %>
+
+		<ol>
+		<% for (var j = 0; j < attribute.content.length; j++) { %>
+		<% var value2 = attribute.content[j]; %>
+		<li>
+		<% if (typeof value2 == 'string') { %>
+		<%= value2 %>
+		<% } else { %>
+		<ol>
+		<% var keys3 = Object.keys(value2); %>
+		<% for (var k = 0; k < keys3.length; k++) { %>
+		<li><%= value2[keys3[k]] %></li>
+		<% } %>
+		</ol>
+		<% } %>
+		</li>
+		<% } %>
+		</ol>
+
+		<% } else { %>
+
+		<ul>
+		<% var keys2 = Object.keys(attribute.content); %>
+		<% for (var j = 0; j < keys2.length; j++) { %>
+		<% var key2 = keys2[j]; %>
+		<% var value2 = attribute.content[key2]; %>
+		<li><%= key2 %>:
+		<% if (typeof value2 == 'string') { %>
+		<%= value2 %>
+		<% } else { %>
+		<ol>
+		<% var keys3 = Object.keys(value2); %>
+		<% for (var k = 0; k < keys3.length; k++) { %>
+		<li><%= value2[keys3[k]] %></li>
+		<% } %>
+		</ol>
+		<% } %>
+		</li>
+		<% } %>
+		</ul>
+
+		<% } %>
+		</div>
 		<% } %>
 	</div>
 	<% } %>
-
-	<% if (typeof status_out !== 'undefined') { %>
-	<div class="form-group">
-		<label class="form-label">Contents of status.out</label>
-		<pre><%= status_out %></pre>
-	</div>
 	<% } %>
-
-	<% if (typeof stderr !== 'undefined') { %>
-	<div class="form-group">
-		<label class="form-label">Contents of stderr</label>
-		<pre><%= stderr %></pre>
-	</div>
 	<% } %>
-
-	<% if (typeof stdout !== 'undefined') { %>
-	<div class="form-group">
-		<label class="form-label">Contents of stdout</label>
-		<pre><%= stdout %></pre>
-	</div>
 	<% } %>
 </div>

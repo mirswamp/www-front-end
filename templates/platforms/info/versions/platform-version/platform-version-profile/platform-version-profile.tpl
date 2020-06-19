@@ -12,7 +12,7 @@
 	</div>
 	<% } %>
 
-	<% if (typeof update_date !== undefined) { %>
+	<% if (typeof update_date != undefined) { %>
 	<div class="form-group" style="display:none">
 		<label class="form-label">Last modified</label>
 		<div class="controls"><%= datetimeToHTML(update_date) %></div>

@@ -167,12 +167,18 @@ input.required:after {
 		padding-left: 15px;
 		margin: 0;
 	}
-
+	
 	/*
 	i {
 		color: @dark-grey;
 	}
 	*/
+}
+
+.well .form-group {
+	&:last-child {
+		margin-bottom: 0;	
+	}
 }
 
 .form-horizontal .form-group {
@@ -369,4 +375,12 @@ input[type="time"] {
 
 .select2-hidden-accessible {
 	visibility: hidden;
+}
+
+.select2-search {
+	padding-top: 4px;
+}
+
+.select2-drop {
+	border: 1px solid #5897fb;
 }

@@ -2,6 +2,7 @@ wc -l `find . \
 -path \
 -prune -o -path ./.git \
 -prune -o -path ./build \
+-prune -o -path ./documentation \
 -prune -o -path ./fonts \
 -prune -o -path ./images \
 -prune -o -path ./library \

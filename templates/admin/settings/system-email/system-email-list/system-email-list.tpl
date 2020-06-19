@@ -1,7 +1,7 @@
 <thead>
 	<tr>
 		<th class="select">
-			<input type="checkbox" id="select-all" class="select-all" />
+			<input type="checkbox" id="select-all" class="select-all"<% if (groupSelected) { %> checked<% } %> />
 		</th>
 
 		<th class="username">

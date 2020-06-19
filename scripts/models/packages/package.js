@@ -109,7 +109,7 @@ define([
 		},
 
 		hasLanguageVersion: function() {
-			return this.getPackageType() == 'ruby';
+			return this.getLanguageType() == 'Ruby';
 		},
 
 		isBuildable: function() {

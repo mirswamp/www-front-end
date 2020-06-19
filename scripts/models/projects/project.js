@@ -87,7 +87,7 @@ define([
 		},
 
 		isDeactivated: function() {
-			return (typeof deactivation_date != 'undefined' || typeof delete_date != 'undefined');
+			return this.has('deactivation_date');
 		},
 
 		isTrialProject: function() {

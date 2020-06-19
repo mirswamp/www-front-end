@@ -54,7 +54,7 @@
 				button.close {
 					color: white;
 					font-weight: bold;
-					background-color: @primaryButtonColor;
+					background-color: @primary-button-color;
 					.vertical-gradient(@brand-primary-highlight, @brand-primary);
 					border: 1px solid @brand-primary-border;
 					border-radius: 5px;
@@ -63,14 +63,21 @@
 					padding-bottom: 4px;
 					padding-left: 8px;
 					padding-right: 8px;
+					outline: none;
 					opacity: 1;
+
+					&:hover {
+						.vertical-gradient(@brand-primary-hover, @brand-primary);
+						color: white;
+						opacity: 1;		
+					}
+
+					&:active {
+						background: @primary-button-active-color; 
+						border-color: @primary-button-active-color;
+					}
 				}
 
-				button.close:hover {
-					.vertical-gradient(@brand-primary-hover, @brand-primary);
-					color: white;
-					opacity: 1;
-				}
 
 				i.close, i.close:hover {
 					color: @brand-primary;

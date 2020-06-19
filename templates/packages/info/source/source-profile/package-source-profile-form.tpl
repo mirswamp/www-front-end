@@ -23,19 +23,20 @@
 				<option value="none"></option>
 				<% } %>
 			</select>
-			<br /><br />
 			<div class="options">
 				<button id="show-file-types" class="btn"><i class="fa fa-file"></i>Show File Types</button>
 			</div>
 		</div>
 	</div>
 
-	<div class="form-group" id="language-version" <% if (packageType != 'ruby') {%>style="display:none"<% } %>>
+	<div class="form-group" id="language-version"<% if (!hasLanguageVersion) { %> style="display:none"<% } %>>
 		<label class="required control-label">Language version</label>
 		<div class="controls">
-			<select name="language-version" class="required">
-				<% for (var i = 0; i < rubyVersions.length; i++) { %>
-				<option><%= rubyVersions[i] %></option>
+			<select name="language-version" style="margin-right:15px">
+				<option value="default"<% if (!language_version) { %> selected<% } %>>default</option>
+				<option value="other"<% if (language_version && isOther) { %> selected<% } %>>other</option>
+				<% for (var i = 0; i < languageVersions.length; i++) { %>
+				<option value="<%= languageVersions[i] %>"<% if (language_version == languageVersions[i]) { %> selected<% } %>><%= languageVersions[i] %></option>
 				<% } %>
 			</select>
 			<div class="options">
@@ -43,6 +44,19 @@
 			</div>
 		</div>
 	</div>
+
+	<div class="other-language-version form-group"<% if (!language_version || !isOther) { %> style="display:none"<% } %>>
+		<label class="control-label">Other language version</label>
+		<div class="controls" style="width:150px">
+			<div class="input-group">
+				<input type="text" class="form-control" value="<%= language_version %>" />
+				<div class="input-group-addon">
+					<i class="active fa fa-question-circle" data-toggle="popover" data-placement="top" data-container="body" title="Other language version" data-content="This is a version string for the language in case the version is not provided by the selector. "></i>
+				</div>
+			</div>
+		</div>
+	</div>
+
 	<br />
 
 	<!-- java types -->

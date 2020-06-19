@@ -330,33 +330,33 @@ define([
 
 		saveOptions: function() {
 
-			// save options for later use
+			// save options to local storage
 			//
-			$.cookie(Config.cookie.name, JSON.stringify({
-				layout: this.options.layout,
-				showNumbering: this.options.showNumbering,
-				showGrouping: this.options.showGrouping,
-				autoRefresh: this.options.autoRefresh,
-				authProvider: this.options.authProvider
-			}), {
-
-				// if not specified, the layout cookie will persist for 7 days
-				//
-				expires: Config.cookie.expires != 'undefined'? Config.cookie.expires : 7, 
-				domain: Config.cookie.domain, 
-				path: Config.cookie.path, 
-				secure: Config.cookie.secure 
-			});
+			localStorage.setItem('layout', this.options.layout);
+			localStorage.setItem('showNumbering', this.options.showNumbering);
+			localStorage.setItem('showGrouping', this.options.showGrouping);
+			localStorage.setItem('autoRefresh', this.options.autoRefresh);
+			localStorage.setItem('authProvider', this.options.authProvider);
 		},
 
 		loadOptions: function() {
 
-			// load options from cookie
+			// load options from local storage
 			//
-			var cookie = $.cookie(Config.cookie.name);
-			if (cookie) {
-				var options = JSON.parse(cookie);
-				this.options = _.extend(this.options, options);
+			if (localStorage.hasOwnProperty('layout')) {
+				this.options.layout = localStorage.getItem('layout');
+			}
+			if (localStorage.hasOwnProperty('showNumbering')) {
+				this.options.showNumbering = JSON.parse(localStorage.getItem('showNumbering'));
+			}
+			if (localStorage.hasOwnProperty('showGrouping')) {
+				this.options.showGrouping = JSON.parse(localStorage.getItem('showGrouping'));
+			}
+			if (localStorage.hasOwnProperty('autoRefresh')) {
+				this.options.autoRefresh = JSON.parse(localStorage.getItem('autoRefresh'));
+			}
+			if (localStorage.hasOwnProperty('authProvider')) {
+				this.options.authProvider = localStorage.getItem('authProvider');
 			}
 		},
 

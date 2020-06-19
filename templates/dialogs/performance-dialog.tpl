@@ -58,7 +58,7 @@
 						<label class="control-label">Client IP address</label>
 						<div class="controls">
 							<p class="form-control-static">
-								<%= config.client_ip %>
+								<%= application.config.client_ip %>
 							</p>
 						</div>
 					</div>

@@ -76,10 +76,6 @@ define([
 
 		logout: function(options) {
 
-			// delete session information
-			//
-			$.removeCookie(Config.cookie.name, { path: '/', domain: Config.cookie.domain });
-
 			// delete local user info
 			//
 			this.user = null;

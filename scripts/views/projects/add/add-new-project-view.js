@@ -60,11 +60,18 @@ define([
 		//
 
 		onRender: function() {
-
+			var self = this;
+			
 			// display project profile form
 			//
 			this.showChildView('profile', new ProjectProfileFormView({
-				model: this.model
+				model: this.model,
+
+				// callbacks
+				//
+				onValidate: function(valid) {
+					self.$el.find('#save').prop('disabled', !valid);
+				}
 			}));
 		},
 
@@ -79,13 +86,6 @@ define([
 		//
 		// event handling methods
 		//
-
-		onChangeInput: function() {
-
-			// enable save button
-			//
-			this.$el.find('#save').prop('disabled', false);
-		},
 
 		onClickAlertClose: function() {
 			this.hideWarning();

@@ -46,6 +46,12 @@ a:hover, a:focus {
 	color: @linkColorHover;
 }
 
+.form-group, .well {
+	a {
+		text-decoration: underline;
+	}
+}
+
 //
 // general navigation
 //
@@ -106,6 +112,32 @@ a:hover, a:focus {
 	//
 	display: table-cell;
 	width: 1%;
+}
+
+.nav-button-bar {
+	float: right;
+	margin-top: 15px;
+
+	.items-per-page {
+		float: left; 
+	}
+
+	.btn-group {
+		margin-left: 50px;
+
+		.page-info {
+			display: inline-block; 
+			float: left; 
+			margin: 0 5px; 
+			border: none
+		}
+	}
+
+	input {
+		text-align: right;
+		line-height: 1em;
+		padding: 3px 5px;
+	}
 }
 
 //

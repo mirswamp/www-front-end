@@ -7,5 +7,5 @@
 </div>
 
 <td class="date">
-	<%= typeof event_date != 'undefined'? dateToSortableHTML(event_date) : '' %>
+	<%= typeof event_date !== 'undefined'? dateToSortableHTML(event_date) : '' %>
 </td>

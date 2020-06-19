@@ -29,17 +29,50 @@ define([
 
 		template: _.template(Template),
 
+		events: {
+			'click .select input': 'onClickSelectInput'
+		},
+
 		//
 		// rendering methods
 		//
 
 		templateContext: function() {
 			return {
+				selected: this.model.selected,
 				name: this.model.getFullName(),
 				url: this.model.getAppUrl(),
 				is_hibernating: this.model.isHibernating(),
 				showHibernate: this.options.showHibernate
 			};
+		},
+
+		//
+		// event handling methods
+		//
+
+		onClickSelectInput: function(event) {
+			var checked = $(event.target).prop('checked');
+			var parent = this.options.parent.options.parent;
+
+			// check for shift clicking
+			//
+			if (event.shiftKey && parent.previousIndex != undefined) {
+
+				// select / deselect range
+				//
+				parent.setSelectedRange(parent.previousIndex, this.options.index, checked);
+			}
+
+			// save index for shift clicking
+			//
+			parent.previousIndex = this.options.index;
+
+			// perform callback
+			//
+			if (!event.shiftKey && this.options.onClick) {
+				this.options.onClick(this.options.index);
+			}
 		}
 	});
 });

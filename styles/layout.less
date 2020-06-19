@@ -353,6 +353,39 @@ hr {
 	*/
 }
 
+.pre {
+	display: block;
+	font-family: Menlo, Monaco, Consolas, "Courier New", monospace;
+	font-size: 13px;
+	padding: ((@line-height-computed - 1) / 2);
+	margin: 0 0 (@line-height-computed / 2);
+	line-height: @line-height-base;
+	word-break: break-all;
+	word-wrap: break-word;
+	color: @pre-color;
+	background-color: @pre-bg;
+	border: 1px solid @pre-border-color;
+	border-radius: @border-radius-base;
+
+	li {
+		margin-left: 10px;
+	}
+}
+
+.well {
+	pre, .pre {
+		background: white;
+		margin-bottom: 0;
+	}
+}
+
+.form-group {
+	.pre {
+		display: inline-block;
+		width: calc(~"75% - 25px");
+	}
+}
+
 //
 // panel styles
 //
