@@ -25,7 +25,7 @@
 <div class="top buttons">
 	<button id="invite" class="btn"><i class="fa fa-envelope"></i>Invite New Members</button>
 </div>
-<p>The following SWAMP users are members of project <%- full_name %>.</p>
+<p>The following users are members of project <%- full_name %>.</p>
 
 <div id="members-list">
 	<div class="loading">

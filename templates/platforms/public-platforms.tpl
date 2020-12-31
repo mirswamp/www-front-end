@@ -8,7 +8,7 @@
 
 <p>Platforms are underlying operating systems and support files that are used to build and run software packages. </p>
 
-<p>The following platforms are available to all SWAMP users. <% if (!loggedIn) { %>To see more detailed information about each of the platfoms listed in this view, log in to the SWAMP. <% } %> </p>
+<p>The following platforms are available to all users. <% if (!loggedIn) { %>To see more detailed information about each of the platfoms listed in this view, log in to the application. <% } %> </p>
 
 <div id="platforms-list">
 	<div class="loading">

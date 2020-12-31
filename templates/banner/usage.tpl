@@ -11,12 +11,15 @@ function numberWithCommas(number) {
 	<thead>
 		<tr>
 			<th>
+				<i class="fa fa-upload"></i>
 				<span>Package uploads</span>
 			</th>
 			<th>
+				<i class="fa fa-check"></i>
 				<span>Assessments</span>
 			</th>
 			<th>
+				<i class="fa fa-list"></i>
 				<span>Lines of code</span>
 			</th>
 		</tr>

@@ -1,7 +1,8 @@
 <div class="modal-header">
 	<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
 	<h1 id="modal-header-text">
-		<i class="fa fa-plus"></i>Add New Class
+		<i class="fa fa-plus"></i>
+		Add New Class
 	</h1>
 </div>
 
@@ -18,7 +19,7 @@
 
 	<br />
 	<div class="alert alert-info" style="display:none">
-		<label>Note: </label><span class="message">By enrolling in this class, you agree to sharing your activity and account information in the SWAMP with your instructor. At the end of the class, you may unenroll yourself from the class through your account profile. Access your account profile by clicking on your username.</span>
+		<label>Note: </label><span class="message">By enrolling in this class, you agree to sharing your activity and account information in the application with your instructor. At the end of the class, you may unenroll yourself from the class through your account profile. Access your account profile by clicking on your username.</span>
 	</div>
 </div>
 

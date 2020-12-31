@@ -1,6 +1,9 @@
 <div class="modal-header">
 	<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-	<h1 id="modal-header-text">Email Verification Error</h1>
+	<h1 id="modal-header-text">
+		<i class="fa fa-envelope"></i>
+		Email Verification Error
+	</h1>
 </div>
 
 <div class="modal-body">

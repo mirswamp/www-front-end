@@ -8,7 +8,7 @@
 |        deal with strings used for URLs.                                      |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2020 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2020 Morgridge Institute for Research (MIR)        |
 \******************************************************************************/
 
 function urlEncode(string) {

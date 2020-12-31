@@ -12,7 +12,7 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2020 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2020 Morgridge Institute for Research (MIR)        |
 \******************************************************************************/
 /* 
  * sortable table styles
@@ -21,6 +21,9 @@
 @import "jquery/datepicker.css";
 @import "select2/select2.css";
 @import "select2/select2-bootstrap.css";
+@import "../fonts/trade-gothic/styles.css";
+@import "../fonts/trade-gothic-bold/styles.css";
+@import "../fonts/optima/styles.css";
 table.tablesorter thead tr .header {
   background-image: url(../images/tablesorter/bg.gif);
   background-repeat: no-repeat;
@@ -53,7 +56,7 @@ table.tablesorter thead tr .headerSortUp {
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2020 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2020 Morgridge Institute for Research (MIR)        |
 \******************************************************************************/
 /******************************************************************************\
 |                                                                              |
@@ -69,31 +72,57 @@ table.tablesorter thead tr .headerSortUp {
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2020 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2020 Morgridge Institute for Research (MIR)        |
 \******************************************************************************/
-/******************************************************************************\
-|                                                                              |
-|                                  fonts.less                                  |
-|                                                                              |
-|******************************************************************************|
-|                                                                              |
-|        This defines various CSS styles used in this application.             |
-|                                                                              |
-|        Author(s): Abe Megahed                                                |
-|                                                                              |
-|        This file is subject to the terms and conditions defined in           |
-|        'LICENSE.txt', which is part of this source code distribution.        |
-|                                                                              |
-|******************************************************************************|
-|        Copyright (C) 2012-2020 Software Assurance Marketplace (SWAMP)        |
-\******************************************************************************/
-@font-face {
-  font-family: 'TradeGothic';
-  src: url('../fonts/trade-gothic/TradeGothic.eot?') format('eot'), url('../fonts/trade-gothic/TradeGothic.otf') format('otf'), url('../fonts/trade-gothic/TradeGothic.woff') format('woff'), url('../fonts/trade-gothic/TradeGothic.ttf') format('truetype');
+.brand {
+  font-family: 'Optima', sans-serif !important;
+  font-weight: normal !important;
+  text-transform: uppercase;
 }
-@font-face {
-  font-family: 'TradeGothicBold';
-  src: url('../fonts/trade-gothic-bold/TradeGothic-Bold.eot?') format('eot'), url('../fonts/trade-gothic-bold/TradeGothic-Bold.otf') format('otf'), url('../fonts/trade-gothic-bold/TradeGothic-Bold.woff') format('woff'), url('../fonts/trade-gothic-bold/TradeGothic-Bold.ttf') format('truetype');
+.banner {
+  text-align: center;
+  padding: 20px;
+}
+.banner #logo {
+  height: 125px;
+  margin: auto;
+  filter: drop-shadow(5px 5px 5px rgba(0, 0, 0, 0.25));
+}
+.banner h1,
+.banner h3 {
+  margin: 0;
+}
+.banner h1 {
+  color: #B90014;
+  border-bottom: none;
+}
+.banner h3 {
+  font-size: 1.75em;
+  color: black;
+}
+#header #brand {
+  font-family: 'Optima', sans-serif;
+  text-transform: uppercase;
+}
+#header #brand img {
+  height: 20px;
+  margin-right: 10px;
+  float: left;
+}
+#footer .branding i {
+  color: #B90014;
+  margin: 0 5px;
+}
+@media (min-width: 480px) {
+  .banner h1.title {
+    text-align: left;
+    font-size: 300%;
+  }
+}
+@media (max-width: 480px) {
+  .banner h1.title {
+    text-align: center;
+  }
 }
 /******************************************************************************\
 |                                                                              |
@@ -109,8 +138,13 @@ table.tablesorter thead tr .headerSortUp {
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2020 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2020 Morgridge Institute for Research (MIR)        |
 \******************************************************************************/
+h1,
+h2,
+h3 {
+  font-family: 'TradeGothicBold', sans-serif;
+}
 body,
 input,
 button,
@@ -165,9 +199,9 @@ p {
   color: #d00030;
 }
 .highlighted {
-  color: #8f7935;
-  background-color: #dbcb9c;
-  border: 1px solid #bfa452;
+  color: #6d000c;
+  background-color: #ff2038;
+  border: 1px solid #B90014;
   padding-left: 2px;
   padding-right: 2px;
   border-radius: 5px;
@@ -209,7 +243,6 @@ label i {
   font-size: small;
 }
 .tagline {
-  color: #a2893c;
   font-style: italic;
   font-size: 125%;
 }
@@ -218,7 +251,7 @@ label i {
 }
 .select2-results li.select2-result-with-children > .select2-result-label {
   font-family: 'TradeGothicBold', sans-serif;
-  color: #a2893c;
+  color: #B90014;
 }
 .separator {
   text-align: center;
@@ -240,8 +273,8 @@ label i {
   content: ".";
 }
 code {
-  background-color: #f4e6ba;
-  border: 1px solid #bfa452;
+  background-color: #ff5366;
+  border: 1px solid #B90014;
   border-radius: 10px;
 }
 pre {
@@ -261,14 +294,8 @@ pre {
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2020 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2020 Morgridge Institute for Research (MIR)        |
 \******************************************************************************/
-h1,
-h2,
-h3 {
-  font-family: 'TradeGothicBold', sans-serif;
-  font-weight: normal;
-}
 h1,
 h2,
 h3 {
@@ -279,22 +306,22 @@ h1 {
   color: #4c4c4c;
   font-size: 250%;
   padding-bottom: 5px;
-  border-bottom: 2px solid #bfa452;
+  border-bottom: 2px solid #B90014;
   margin-bottom: 20px;
 }
 h1 i {
-  color: #bfa452;
+  color: #B90014;
   float: left;
   margin-top: 5px;
   margin-right: 15px;
 }
 h1 .name {
-  color: #a2893c;
+  color: #B90014;
 }
 h2 {
   font-size: 150%;
   margin-top: 20px;
-  color: #a2893c;
+  color: #B90014;
 }
 h2 i {
   color: #666666;
@@ -311,7 +338,7 @@ h3 {
 }
 h3 {
   font-size: 100%;
-  color: #a2893c;
+  color: #B90014;
 }
 h3 i {
   margin-right: 10px;
@@ -341,7 +368,7 @@ h3 i {
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2020 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2020 Morgridge Institute for Research (MIR)        |
 \******************************************************************************/
 div.datetime {
   /*
@@ -410,7 +437,7 @@ div.datetime .year::after {
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2020 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2020 Morgridge Institute for Research (MIR)        |
 \******************************************************************************/
 body {
   background-color: #f9f9f9;
@@ -581,18 +608,17 @@ body {
 }
 #footer .container {
   color: black;
-  border-top: 5px solid #bfa452;
+  border-top: 5px solid #B90014;
   padding-top: 15px;
   padding-bottom: 15px;
 }
 #footer .logo {
-  float: right;
-  margin-left: 20px;
+  margin: 0 5px;
 }
 hr {
   border: 0;
   width: 100%;
-  background-color: #bfa452;
+  background-color: #B90014;
   height: 2px;
 }
 .spacing {
@@ -613,12 +639,12 @@ hr {
 }
 .well.selected,
 .well.selected:hover {
-  background-color: #e5c563;
-  background: -webkit-gradient(linear, left top, left bottom, from(#e5c563), to(#bfa452));
-  background: -webkit-linear-gradient(top, #e5c563, #bfa452);
-  background: -moz-linear-gradient(top, #e5c563, #bfa452);
-  background: -ms-linear-gradient(top, #e5c563, #bfa452);
-  background: -o-linear-gradient(top, #e5c563, #bfa452);
+  background-color: #B90014;
+  background: -webkit-gradient(linear, left top, left bottom, from(#B90014), to(#B90014));
+  background: -webkit-linear-gradient(top, #B90014, #B90014);
+  background: -moz-linear-gradient(top, #B90014, #B90014);
+  background: -ms-linear-gradient(top, #B90014, #B90014);
+  background: -o-linear-gradient(top, #B90014, #B90014);
   color: white;
 }
 .well.selected h3,
@@ -682,7 +708,7 @@ hr {
   box-shadow: 10px 10px 20px #7f7f7f;
 }
 a .photo {
-  border: 1px solid #bfa452;
+  border: 1px solid #B90014;
 }
 .figure.left {
   float: left;
@@ -717,7 +743,7 @@ a .photo {
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2020 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2020 Morgridge Institute for Research (MIR)        |
 \******************************************************************************/
 .splitter .root.directory {
   padding: 10px;
@@ -762,19 +788,14 @@ a .photo {
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2020 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2020 Morgridge Institute for Research (MIR)        |
 \******************************************************************************/
 .btn {
   font-size: 16px;
-  color: #a2893c;
-  background-color: white;
-  background: -webkit-gradient(linear, left top, left bottom, from(white), to(#e5e5e5));
-  background: -webkit-linear-gradient(top, white, #e5e5e5);
-  background: -moz-linear-gradient(top, white, #e5e5e5);
-  background: -ms-linear-gradient(top, white, #e5e5e5);
-  background: -o-linear-gradient(top, white, #e5e5e5);
+  color: black;
+  background-color: #e5e5e5;
   border: 1px solid #e5e5e5;
-  padding: 5px 10px;
+  padding: 3px 10px;
   border-radius: 5px;
   min-width: 25px;
 }
@@ -783,24 +804,20 @@ a .photo {
   margin-top: 4px;
   margin-bottom: 4px;
   margin-right: 5px;
-  color: #666666;
+  color: #B90014;
 }
 .btn:hover {
-  color: #a2893c;
-  background-color: white;
-  background: -webkit-gradient(linear, left top, left bottom, from(white), to(#cccccc));
-  background: -webkit-linear-gradient(top, white, #cccccc);
-  background: -moz-linear-gradient(top, white, #cccccc);
-  background: -ms-linear-gradient(top, white, #cccccc);
-  background: -o-linear-gradient(top, white, #cccccc);
+  color: black;
+  background-color: #cccccc;
+  border-color: #cccccc;
 }
 .btn:hover i {
-  color: #bfa452;
+  color: #B90014;
 }
 .btn.disabled,
 .btn[disabled] {
   border: 1px solid #b2b2b2;
-  color: #bfa452;
+  color: #B90014;
 }
 .btn:focus,
 .btn:active:focus,
@@ -828,51 +845,90 @@ a .photo {
   }
 }
 .btn-primary,
-.btn-primary:focus,
-.btn-primary[disabled] {
-  background-color: #bfa452;
-  background-color: #e5c563;
-  background: -webkit-gradient(linear, left top, left bottom, from(#e5c563), to(#bfa452));
-  background: -webkit-linear-gradient(top, #e5c563, #bfa452);
-  background: -moz-linear-gradient(top, #e5c563, #bfa452);
-  background: -ms-linear-gradient(top, #e5c563, #bfa452);
-  background: -o-linear-gradient(top, #e5c563, #bfa452);
-  border: 1px solid #bfa452;
-  color: white !important;
+.btn-primary:focus {
+  background-color: #B90014;
+  background: -webkit-gradient(linear, left top, left bottom, from(#B90014), to(#B90014));
+  background: -webkit-linear-gradient(top, #B90014, #B90014);
+  background: -moz-linear-gradient(top, #B90014, #B90014);
+  background: -ms-linear-gradient(top, #B90014, #B90014);
+  background: -o-linear-gradient(top, #B90014, #B90014);
+  border-color: #B90014;
+  color: white;
   text-shadow: none;
 }
 .btn-primary i,
-.btn-primary:focus i,
-.btn-primary[disabled] i {
+.btn-primary:focus i {
   color: white;
 }
-.btn-primary:disabled:hover {
-  border: 1px solid #bfa452;
-}
-.btn-primary:not([disabled]):hover {
-  background-color: #a2893c;
-  background: -webkit-gradient(linear, left top, left bottom, from(#a2893c), to(#bfa452));
-  background: -webkit-linear-gradient(top, #a2893c, #bfa452);
-  background: -moz-linear-gradient(top, #a2893c, #bfa452);
-  background: -ms-linear-gradient(top, #a2893c, #bfa452);
-  background: -o-linear-gradient(top, #a2893c, #bfa452);
-  border: 1px solid #bfa452;
-}
-.btn-primary:not([disabled]):hover i {
+.btn-primary:hover,
+.btn-primary:focus:hover {
+  background-color: #86000e;
+  background: -webkit-gradient(linear, left top, left bottom, from(#86000e), to(#86000e));
+  background: -webkit-linear-gradient(top, #86000e, #86000e);
+  background: -moz-linear-gradient(top, #86000e, #86000e);
+  background: -ms-linear-gradient(top, #86000e, #86000e);
+  background: -o-linear-gradient(top, #86000e, #86000e);
+  border-color: #86000e;
   color: white;
 }
-.btn-primary:not([disabled]):active {
-  background: #a2893c;
-  border-color: #a2893c;
+.btn-primary:hover i,
+.btn-primary:focus:hover i {
+  color: white;
 }
-.btn-sm {
+.btn-primary:active,
+.btn-primary:focus:active {
+  background-color: #530009;
+  background: -webkit-gradient(linear, left top, left bottom, from(#530009), to(#530009));
+  background: -webkit-linear-gradient(top, #530009, #530009);
+  background: -moz-linear-gradient(top, #530009, #530009);
+  background: -ms-linear-gradient(top, #530009, #530009);
+  background: -o-linear-gradient(top, #530009, #530009);
+  border-color: #530009;
+}
+.btn-primary.disabled,
+.btn-primary:focus.disabled,
+.btn-primary[disabled],
+.btn-primary:focus[disabled] {
+  background-color: #B90014;
+  background: -webkit-gradient(linear, left top, left bottom, from(#B90014), to(#B90014));
+  background: -webkit-linear-gradient(top, #B90014, #B90014);
+  background: -moz-linear-gradient(top, #B90014, #B90014);
+  background: -ms-linear-gradient(top, #B90014, #B90014);
+  background: -o-linear-gradient(top, #B90014, #B90014);
+  border-color: #B90014;
+  color: white;
+}
+.btn-primary.disabled i,
+.btn-primary:focus.disabled i,
+.btn-primary[disabled] i,
+.btn-primary:focus[disabled] i {
+  color: white;
+}
+.btn-primary.disabled:hover,
+.btn-primary:focus.disabled:hover,
+.btn-primary[disabled]:hover,
+.btn-primary:focus[disabled]:hover,
+.btn-primary.disabled:active,
+.btn-primary:focus.disabled:active,
+.btn-primary[disabled]:active,
+.btn-primary:focus[disabled]:active {
+  background-color: #86000e;
+  background: -webkit-gradient(linear, left top, left bottom, from(#86000e), to(#86000e));
+  background: -webkit-linear-gradient(top, #86000e, #86000e);
+  background: -moz-linear-gradient(top, #86000e, #86000e);
+  background: -ms-linear-gradient(top, #86000e, #86000e);
+  background: -o-linear-gradient(top, #86000e, #86000e);
+  border-color: #86000e;
+}
+.btn-sm,
+button.close {
   padding: 1px 6px;
   -webkit-border-radius: 6px;
   -moz-border-radius: 6px;
   border-radius: 6px;
 }
 .btn-lg {
-  padding: 10px 15px;
+  padding: 5px 10px;
   font-size: 18px;
   border-width: 1px;
   -webkit-border-radius: 8px;
@@ -881,7 +937,6 @@ a .photo {
 }
 .btn-lg i {
   position: relative;
-  margin-left: -5px;
   margin-right: 10px;
 }
 .navbar .btn,
@@ -930,7 +985,7 @@ button.ssh {
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2020 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2020 Morgridge Institute for Research (MIR)        |
 \******************************************************************************/
 .primary i {
   color: white;
@@ -949,7 +1004,7 @@ button.ssh {
   background: -moz-linear-gradient(top, white, #e5e5e5);
   background: -ms-linear-gradient(top, white, #e5e5e5);
   background: -o-linear-gradient(top, white, #e5e5e5);
-  border: 4px solid #bfa452;
+  border: 4px solid #B90014;
   text-align: center;
 }
 .content h1 .icon i,
@@ -980,7 +1035,7 @@ button.ssh {
     background: -moz-linear-gradient(top, white, #e5e5e5);
     background: -ms-linear-gradient(top, white, #e5e5e5);
     background: -o-linear-gradient(top, white, #e5e5e5);
-    border: 4px solid #bfa452;
+    border: 4px solid #B90014;
     text-align: center;
   }
   .content h1 .icon i,
@@ -1011,7 +1066,7 @@ button.ssh {
     background: -moz-linear-gradient(top, white, #b2b2b2);
     background: -ms-linear-gradient(top, white, #b2b2b2);
     background: -o-linear-gradient(top, white, #b2b2b2);
-    border: 4px solid #bfa452;
+    border: 4px solid #B90014;
     text-align: center;
   }
   .content h1 .icon i,
@@ -1041,7 +1096,7 @@ button.ssh {
   }
 }
 i.active:hover {
-  color: #bfa452;
+  color: #B90014;
 }
 i.active.selected:hover {
   color: white;
@@ -1080,7 +1135,7 @@ i.success {
   color: #209040;
 }
 i.normal {
-  color: #bfa452;
+  color: #B90014;
 }
 /******************************************************************************\
 |                                                                              |
@@ -1096,7 +1151,7 @@ i.normal {
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2020 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2020 Morgridge Institute for Research (MIR)        |
 \******************************************************************************/
 ::-webkit-scrollbar {
   width: 14px;
@@ -1110,7 +1165,7 @@ i.normal {
   background: #999999;
 }
 ::-webkit-scrollbar-thumb:active {
-  background: #bfa452;
+  background: #B90014;
 }
 ::-webkit-scrollbar-track {
   background: #e5e5e5;
@@ -1129,15 +1184,15 @@ i.normal {
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2020 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2020 Morgridge Institute for Research (MIR)        |
 \******************************************************************************/
 a {
-  color: #a2893c;
+  color: #B90014;
   cursor: pointer;
 }
 a:hover,
 a:focus {
-  color: #bfa452;
+  color: #B90014;
 }
 .form-group a,
 .well a {
@@ -1163,9 +1218,10 @@ a:focus {
 .nav li {
   min-width: 35px;
   text-align: center;
+  color: #B90014;
 }
 .nav li i {
-  color: #bfa452;
+  color: #B90014;
 }
 .nav li.selected a i,
 .nav li.active a i,
@@ -1197,77 +1253,110 @@ a:focus {
   line-height: 1em;
   padding: 3px 5px;
 }
-.navbar,
-.navbar-inverse {
+#header .navbar,
+#header .navbar-inverse {
+  background-color: #B90014;
   background-image: none;
   border: none;
-  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.25), inset 0 -1px 0 rgba(0, 0, 0, 0.1);
 }
-.navbar .container,
-.navbar-inverse .container {
+#header .navbar .container,
+#header .navbar-inverse .container {
   padding-left: 10px;
   padding-right: 10px;
 }
-.navbar .navbar-brand,
-.navbar-inverse .navbar-brand {
+#header .navbar .navbar-brand,
+#header .navbar-inverse .navbar-brand {
   color: white;
   margin-left: 0px;
   text-shadow: none;
   cursor: pointer;
 }
-.navbar .navbar-brand:hover,
-.navbar-inverse .navbar-brand:hover {
-  color: #e5c563;
+#header .navbar .navbar-brand:hover,
+#header .navbar-inverse .navbar-brand:hover {
+  color: white;
 }
-.navbar .navbar-form,
-.navbar-inverse .navbar-form {
+#header .navbar .navbar-form,
+#header .navbar-inverse .navbar-form {
   padding: 0;
   margin: 0;
 }
-.navbar .navbar-text,
-.navbar-inverse .navbar-text {
+#header .navbar .navbar-text,
+#header .navbar-inverse .navbar-text {
   padding: 0;
   margin-left: 0;
   margin-right: 0;
   margin-top: 4px;
   margin-bottom: 0;
 }
-.navbar .btn,
-.navbar-inverse .btn {
+#header .navbar .btn,
+#header .navbar-inverse .btn {
+  padding: 5px 10px;
   margin-top: 7px;
   margin-bottom: 5px;
   margin-left: 5px;
   margin-right: 5px;
 }
-.navbar .nav > li,
-.navbar-inverse .nav > li {
+#header .navbar .nav > li,
+#header .navbar-inverse .nav > li {
   cursor: pointer;
 }
-.navbar .nav > li label,
-.navbar-inverse .nav > li label {
+#header .navbar .nav > li label,
+#header .navbar-inverse .nav > li label {
   margin: 0;
   margin-left: 5px;
   cursor: pointer;
 }
-.navbar .username,
-.navbar-inverse .username {
+#header .navbar .nav > li i,
+#header .navbar-inverse .nav > li i {
   color: white;
 }
-.navbar .username .visible-sm,
-.navbar-inverse .username .visible-sm {
+#header .navbar .username,
+#header .navbar-inverse .username {
+  color: white;
+}
+#header .navbar .username .visible-sm,
+#header .navbar-inverse .username .visible-sm {
   max-width: 75px;
   height: 20px;
   overflow: hidden;
 }
-.navbar-inverse .navbar-nav > a:hover,
-.navbar-inverse .navbar-nav > .active > a {
-  background-color: white;
-  background-color: #e5c563;
-  background: -webkit-gradient(linear, left top, left bottom, from(#e5c563), to(#bfa452));
-  background: -webkit-linear-gradient(top, #e5c563, #bfa452);
-  background: -moz-linear-gradient(top, #e5c563, #bfa452);
-  background: -ms-linear-gradient(top, #e5c563, #bfa452);
-  background: -o-linear-gradient(top, #e5c563, #bfa452);
+#header .navbar #navbar .nav-pills > li > a,
+#header .navbar-inverse #navbar .nav-pills > li > a {
+  padding: 8px 10px;
+  color: white;
+}
+#header .navbar #navbar .nav-pills > li > a i,
+#header .navbar-inverse #navbar .nav-pills > li > a i {
+  color: white;
+}
+#header .navbar #navbar .nav-pills > li:hover > a,
+#header .navbar-inverse #navbar .nav-pills > li:hover > a,
+#header .navbar #navbar .nav-pills > li.active > a,
+#header .navbar-inverse #navbar .nav-pills > li.active > a,
+#header .navbar #navbar .nav-pills > li:hover > a:focus,
+#header .navbar-inverse #navbar .nav-pills > li:hover > a:focus,
+#header .navbar #navbar .nav-pills > li.active > a:focus,
+#header .navbar-inverse #navbar .nav-pills > li.active > a:focus,
+#header .navbar #navbar .nav-pills > li:hover > a:hover,
+#header .navbar-inverse #navbar .nav-pills > li:hover > a:hover,
+#header .navbar #navbar .nav-pills > li.active > a:hover,
+#header .navbar-inverse #navbar .nav-pills > li.active > a:hover {
+  color: white;
+  background-color: #333333;
+}
+#header .navbar #navbar .nav-pills > li:hover > a i,
+#header .navbar-inverse #navbar .nav-pills > li:hover > a i,
+#header .navbar #navbar .nav-pills > li.active > a i,
+#header .navbar-inverse #navbar .nav-pills > li.active > a i,
+#header .navbar #navbar .nav-pills > li:hover > a:focus i,
+#header .navbar-inverse #navbar .nav-pills > li:hover > a:focus i,
+#header .navbar #navbar .nav-pills > li.active > a:focus i,
+#header .navbar-inverse #navbar .nav-pills > li.active > a:focus i,
+#header .navbar #navbar .nav-pills > li:hover > a:hover i,
+#header .navbar-inverse #navbar .nav-pills > li:hover > a:hover i,
+#header .navbar #navbar .nav-pills > li.active > a:hover i,
+#header .navbar-inverse #navbar .nav-pills > li.active > a:hover i {
+  color: white;
 }
 .navbar-fixed-top .navbar-collapse,
 .navbar-fixed-bottom .navbar-collapse {
@@ -1285,27 +1374,16 @@ a:focus {
   padding-left: 5px;
 }
 .nav > li > a {
-  color: #a2893c;
+  color: white;
   text-shadow: none;
 }
 .nav > li > a label {
   margin-left: 5px;
 }
-.nav > li.active > a {
-  color: white;
-}
-.nav > li.active > a label {
-  color: white;
-}
 .nav > li > a:hover,
 .nav > li > a:focus {
   color: white;
-  background-color: #a2893c;
-  background: -webkit-gradient(linear, left top, left bottom, from(#a2893c), to(#bfa452));
-  background: -webkit-linear-gradient(top, #a2893c, #bfa452);
-  background: -moz-linear-gradient(top, #a2893c, #bfa452);
-  background: -ms-linear-gradient(top, #a2893c, #bfa452);
-  background: -o-linear-gradient(top, #a2893c, #bfa452);
+  background-color: #86000e;
 }
 .nav > li > a:hover label,
 .nav > li > a:focus label {
@@ -1317,12 +1395,13 @@ a:focus {
 }
 */
 #header .nav > li > a {
-  color: #bfa452;
+  color: white;
   text-shadow: none;
 }
-#header .nav > li > a:focus {
+#header .nav > li > a:hover,
+#header .nav > li > a:active {
   color: white;
-  background-color: #a2893c;
+  background: #333333;
 }
 .tile {
   cursor: pointer;
@@ -1334,12 +1413,12 @@ a:focus {
   color: #666666;
 }
 .well.tile li a:hover {
-  background-color: #e5c563;
-  background: -webkit-gradient(linear, left top, left bottom, from(#e5c563), to(#bfa452));
-  background: -webkit-linear-gradient(top, #e5c563, #bfa452);
-  background: -moz-linear-gradient(top, #e5c563, #bfa452);
-  background: -ms-linear-gradient(top, #e5c563, #bfa452);
-  background: -o-linear-gradient(top, #e5c563, #bfa452);
+  background-color: #B90014;
+  background: -webkit-gradient(linear, left top, left bottom, from(#B90014), to(#B90014));
+  background: -webkit-linear-gradient(top, #B90014, #B90014);
+  background: -moz-linear-gradient(top, #B90014, #B90014);
+  background: -ms-linear-gradient(top, #B90014, #B90014);
+  background: -o-linear-gradient(top, #B90014, #B90014);
   color: white !important;
 }
 .well.tile li a {
@@ -1349,7 +1428,7 @@ a:focus {
   color: white;
 }
 .well.tile:hover {
-  color: #bfa452;
+  color: #B90014;
 }
 .well.tile.selected:hover {
   color: white;
@@ -1366,16 +1445,15 @@ a:focus {
 .dropdown-submenu:focus > a {
   text-decoration: none;
   color: white;
-  background-color: #a2893c;
-  background-image: none;
+  background: #86000e;
 }
 .nav .dropdown-toggle .caret {
-  border-top-color: #a2893c;
-  border-bottom-color: #a2893c;
+  border-top-color: #B90014;
+  border-bottom-color: #B90014;
 }
 .nav .dropdown-toggle:hover .caret,
 .nav .dropdown-toggle:focus .caret {
-  border-top-color: #bfa452;
+  border-top-color: #B90014;
 }
 ul.nav li.dropdown:hover > ul.dropdown-menu {
   display: block;
@@ -1405,7 +1483,7 @@ ul.nav li.dropdown:hover > ul.dropdown-menu {
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2020 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2020 Morgridge Institute for Research (MIR)        |
 \******************************************************************************/
 .dashboard {
   margin-top: 20px;
@@ -1485,7 +1563,7 @@ ul.nav li.dropdown:hover > ul.dropdown-menu {
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2020 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2020 Morgridge Institute for Research (MIR)        |
 \******************************************************************************/
 #main .navbar.container {
   background-color: transparent;
@@ -1544,11 +1622,11 @@ ul.nav li.dropdown:hover > ul.dropdown-menu {
 .bottom #sidebar .icons i {
   padding: 5px;
   margin: 2px;
-  color: #a2893c;
+  color: #B90014;
 }
 .top #sidebar .icons i:hover,
 .bottom #sidebar .icons i:hover {
-  color: #bfa452;
+  color: #d00030;
 }
 .top #sidebar .well {
   border-top-left-radius: 0;
@@ -1575,7 +1653,7 @@ ul.nav li.dropdown:hover > ul.dropdown-menu {
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2020 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2020 Morgridge Institute for Research (MIR)        |
 \******************************************************************************/
 .sidebar {
   background-color: #f9f9f9;
@@ -1616,13 +1694,13 @@ ul.nav li.dropdown:hover > ul.dropdown-menu {
   margin-bottom: 0;
 }
 .sidebar .tile.selected {
-  background-color: #e5c563;
-  background: -webkit-gradient(linear, left top, left bottom, from(#e5c563), to(#bfa452));
-  background: -webkit-linear-gradient(top, #e5c563, #bfa452);
-  background: -moz-linear-gradient(top, #e5c563, #bfa452);
-  background: -ms-linear-gradient(top, #e5c563, #bfa452);
-  background: -o-linear-gradient(top, #e5c563, #bfa452);
-  border: 2px solid #bfa452;
+  background-color: #B90014;
+  background: -webkit-gradient(linear, left top, left bottom, from(#B90014), to(#B90014));
+  background: -webkit-linear-gradient(top, #B90014, #B90014);
+  background: -moz-linear-gradient(top, #B90014, #B90014);
+  background: -ms-linear-gradient(top, #B90014, #B90014);
+  background: -o-linear-gradient(top, #B90014, #B90014);
+  border: 2px solid #B90014;
 }
 .sidebar .tile.selected label {
   color: white;
@@ -1630,10 +1708,10 @@ ul.nav li.dropdown:hover > ul.dropdown-menu {
 .sidebar .icons i {
   margin-left: 3px;
   margin-right: 3px;
-  color: #a2893c;
+  color: #B90014;
 }
 .sidebar .icons i:hover {
-  color: #bfa452;
+  color: #d00030;
 }
 .large.sidebar .tile {
   width: 95px;
@@ -1666,12 +1744,12 @@ ul.nav li.dropdown:hover > ul.dropdown-menu {
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2020 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2020 Morgridge Institute for Research (MIR)        |
 \******************************************************************************/
 .nav-tabs {
   margin-top: 10px;
   margin-bottom: 15px;
-  border-bottom: 2px solid #bfa452;
+  border-bottom: 2px solid #B90014;
 }
 .nav-tabs > li,
 .nav-tabs li.active {
@@ -1681,6 +1759,7 @@ ul.nav li.dropdown:hover > ul.dropdown-menu {
 }
 .nav-tabs > li > a,
 .nav-tabs li.active > a {
+  padding: 5px;
   border-top-left-radius: 10px;
   border-top-right-radius: 10px;
   border-bottom-right-radius: 0;
@@ -1697,7 +1776,7 @@ ul.nav li.dropdown:hover > ul.dropdown-menu {
 }
 .nav-tabs > li:not(.active) > a,
 .nav-tabs li:not(.active) > a:focus {
-  color: #a2893c;
+  color: #B90014;
   background-color: white;
   background: -webkit-gradient(linear, left top, left bottom, from(white), to(#e5e5e5));
   background: -webkit-linear-gradient(top, white, #e5e5e5);
@@ -1711,37 +1790,37 @@ ul.nav li.dropdown:hover > ul.dropdown-menu {
 .nav-tabs > li.active > a,
 .nav-tabs li.active > a:focus {
   color: white;
-  background-color: #e5c563;
-  background: -webkit-gradient(linear, left top, left bottom, from(#e5c563), to(#bfa452));
-  background: -webkit-linear-gradient(top, #e5c563, #bfa452);
-  background: -moz-linear-gradient(top, #e5c563, #bfa452);
-  background: -ms-linear-gradient(top, #e5c563, #bfa452);
-  background: -o-linear-gradient(top, #e5c563, #bfa452);
-  border: 1px solid #bfa452;
+  background-color: #B90014;
+  background: -webkit-gradient(linear, left top, left bottom, from(#B90014), to(#B90014));
+  background: -webkit-linear-gradient(top, #B90014, #B90014);
+  background: -moz-linear-gradient(top, #B90014, #B90014);
+  background: -ms-linear-gradient(top, #B90014, #B90014);
+  background: -o-linear-gradient(top, #B90014, #B90014);
+  border: 1px solid #B90014;
   border-bottom: 0;
 }
 .nav-tabs > li:hover > a,
 .nav-tabs li:hover > a:focus {
   color: white;
-  background-color: #a2893c;
-  background: -webkit-gradient(linear, left top, left bottom, from(#a2893c), to(#bfa452));
-  background: -webkit-linear-gradient(top, #a2893c, #bfa452);
-  background: -moz-linear-gradient(top, #a2893c, #bfa452);
-  background: -ms-linear-gradient(top, #a2893c, #bfa452);
-  background: -o-linear-gradient(top, #a2893c, #bfa452);
-  border: 1px solid #bfa452;
+  background-color: #86000e;
+  background: -webkit-gradient(linear, left top, left bottom, from(#86000e), to(#B90014));
+  background: -webkit-linear-gradient(top, #86000e, #B90014);
+  background: -moz-linear-gradient(top, #86000e, #B90014);
+  background: -ms-linear-gradient(top, #86000e, #B90014);
+  background: -o-linear-gradient(top, #86000e, #B90014);
+  border: 1px solid #B90014;
   border-bottom: 0;
 }
 .nav-tabs > li.active:hover > a,
 .nav-tabs li.active:hover > a:focus {
   color: white;
-  background-color: #cdb877;
-  background: -webkit-gradient(linear, left top, left bottom, from(#cdb877), to(#bfa452));
-  background: -webkit-linear-gradient(top, #cdb877, #bfa452);
-  background: -moz-linear-gradient(top, #cdb877, #bfa452);
-  background: -ms-linear-gradient(top, #cdb877, #bfa452);
-  background: -o-linear-gradient(top, #cdb877, #bfa452);
-  border: 1px solid #bfa452;
+  background-color: #B90014;
+  background: -webkit-gradient(linear, left top, left bottom, from(#B90014), to(#B90014));
+  background: -webkit-linear-gradient(top, #B90014, #B90014);
+  background: -moz-linear-gradient(top, #B90014, #B90014);
+  background: -ms-linear-gradient(top, #B90014, #B90014);
+  background: -o-linear-gradient(top, #B90014, #B90014);
+  border: 1px solid #B90014;
   border-bottom: 0;
 }
 .nav-tabs > li {
@@ -1764,7 +1843,7 @@ ul.nav li.dropdown:hover > ul.dropdown-menu {
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2020 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2020 Morgridge Institute for Research (MIR)        |
 \******************************************************************************/
 .tag {
   border-radius: 5px;
@@ -1779,7 +1858,7 @@ ul.nav li.dropdown:hover > ul.dropdown-menu {
   background: -o-linear-gradient(top, white, #e5e5e5);
   border: 1px solid #e5e5e5;
 }
-.tag {
+.tag + .tag {
   margin-left: 5px;
 }
 .tag.accordion-toggle {
@@ -1788,13 +1867,13 @@ ul.nav li.dropdown:hover > ul.dropdown-menu {
 .toggle.tag,
 .primary.tag {
   color: white;
-  background-color: #e5c563;
-  background: -webkit-gradient(linear, left top, left bottom, from(#e5c563), to(#bfa452));
-  background: -webkit-linear-gradient(top, #e5c563, #bfa452);
-  background: -moz-linear-gradient(top, #e5c563, #bfa452);
-  background: -ms-linear-gradient(top, #e5c563, #bfa452);
-  background: -o-linear-gradient(top, #e5c563, #bfa452);
-  border: 1px solid #bfa452;
+  background-color: #B90014;
+  background: -webkit-gradient(linear, left top, left bottom, from(#B90014), to(#B90014));
+  background: -webkit-linear-gradient(top, #B90014, #B90014);
+  background: -moz-linear-gradient(top, #B90014, #B90014);
+  background: -ms-linear-gradient(top, #B90014, #B90014);
+  background: -o-linear-gradient(top, #B90014, #B90014);
+  border: 1px solid #B90014;
 }
 .toggle.tag.collapsed {
   color: #666666;
@@ -1808,12 +1887,12 @@ ul.nav li.dropdown:hover > ul.dropdown-menu {
 }
 .primary.tag:hover {
   color: white;
-  background-color: #a2893c;
-  background: -webkit-gradient(linear, left top, left bottom, from(#a2893c), to(#bfa452));
-  background: -webkit-linear-gradient(top, #a2893c, #bfa452);
-  background: -moz-linear-gradient(top, #a2893c, #bfa452);
-  background: -ms-linear-gradient(top, #a2893c, #bfa452);
-  background: -o-linear-gradient(top, #a2893c, #bfa452);
+  background-color: #86000e;
+  background: -webkit-gradient(linear, left top, left bottom, from(#86000e), to(#B90014));
+  background: -webkit-linear-gradient(top, #86000e, #B90014);
+  background: -moz-linear-gradient(top, #86000e, #B90014);
+  background: -ms-linear-gradient(top, #86000e, #B90014);
+  background: -o-linear-gradient(top, #86000e, #B90014);
 }
 .tags {
   margin-left: 10px;
@@ -1832,21 +1911,21 @@ ul.nav li.dropdown:hover > ul.dropdown-menu {
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2020 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2020 Morgridge Institute for Research (MIR)        |
 \******************************************************************************/
 .badge {
-  font-family: "Gill Sans MT", "Gill Sans", Calibri, sans-serif;
+  font-family: sans-serif;
   font-weight: bold;
   padding-top: 2px;
   padding-bottom: 2px;
   margin-top: -4px;
   vertical-align: middle;
-  background-color: #e5c563;
-  background: -webkit-gradient(linear, left top, left bottom, from(#e5c563), to(#bfa452));
-  background: -webkit-linear-gradient(top, #e5c563, #bfa452);
-  background: -moz-linear-gradient(top, #e5c563, #bfa452);
-  background: -ms-linear-gradient(top, #e5c563, #bfa452);
-  background: -o-linear-gradient(top, #e5c563, #bfa452);
+  background-color: #B90014;
+  background: -webkit-gradient(linear, left top, left bottom, from(#B90014), to(#B90014));
+  background: -webkit-linear-gradient(top, #B90014, #B90014);
+  background: -moz-linear-gradient(top, #B90014, #B90014);
+  background: -ms-linear-gradient(top, #B90014, #B90014);
+  background: -o-linear-gradient(top, #B90014, #B90014);
   border: 2px solid white;
   box-shadow: 2px 2px 5px -2px rgba(0, 0, 0, 0.5);
 }
@@ -1867,7 +1946,7 @@ ul.nav li.dropdown:hover > ul.dropdown-menu {
   color: #666666;
 }
 .badge-group a:hover i {
-  color: #bfa452;
+  color: #B90014;
 }
 #header .badge {
   position: relative;
@@ -1897,7 +1976,7 @@ ul.nav li.dropdown:hover > ul.dropdown-menu {
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2020 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2020 Morgridge Institute for Research (MIR)        |
 \******************************************************************************/
 /*
 .well.nav-pills:not(.progressive) {
@@ -1910,7 +1989,7 @@ ul.nav li.dropdown:hover > ul.dropdown-menu {
   margin-top: 7px;
 }
 .nav-pills li a {
-  padding: 8px;
+  padding: 5px 10px;
 }
 #header .nav-pills li {
   margin-right: 0;
@@ -1932,27 +2011,37 @@ ul.nav li.dropdown:hover > ul.dropdown-menu {
     width: 100%;
   }
 }
+.nav-pills > li.active > a,
+.nav-pills > li.active > a:focus {
+  color: white;
+  background-color: #B90014;
+}
+.nav-pills > li.active > a:hover,
+.nav-pills > li.active > a:focus:hover,
+.nav-pills > li.active > a:active,
+.nav-pills > li.active > a:focus:active {
+  color: white;
+  background-color: #B90014;
+}
 .nav-pills.well {
+  color: #B90014;
   background-color: transparent;
   box-shadow: none;
 }
 .nav-pills.well li a {
+  color: #B90014;
   background-color: #f9f9f9;
 }
-.nav-pills > .active > a,
-.nav-pills > .active > a:hover,
-.nav-pills > .active > a:focus {
-  background-color: #bfa452;
-  background-color: #e5c563;
-  background: -webkit-gradient(linear, left top, left bottom, from(#e5c563), to(#bfa452));
-  background: -webkit-linear-gradient(top, #e5c563, #bfa452);
-  background: -moz-linear-gradient(top, #e5c563, #bfa452);
-  background: -ms-linear-gradient(top, #e5c563, #bfa452);
-  background: -o-linear-gradient(top, #e5c563, #bfa452);
+.nav-pills.well li a i {
+  color: #B90014;
+}
+.nav-pills.well li a:hover,
+.nav-pills.well li a:active {
+  color: white;
+  background-color: #B90014;
 }
 .progressive.nav-pills {
   margin-bottom: 10px;
-  cursor: default;
 }
 .progressive.nav-pills > li {
   margin-top: 0;
@@ -1965,31 +2054,47 @@ ul.nav li.dropdown:hover > ul.dropdown-menu {
   border-bottom-right-radius: 20px;
   border-bottom-left-radius: 0;
   border: 0;
-  padding: 10px;
+  padding: 5px 10px;
 }
 .progressive.nav-pills > li > a i {
   margin-right: 5px;
 }
-.progressive.nav-pills > li:hover > a {
-  color: #a2893c;
+.progressive.nav-pills > li > a,
+.progressive.nav-pills > li:hover > a,
+.progressive.nav-pills > li:active > a,
+.progressive.nav-pills > li > a:hover,
+.progressive.nav-pills > li:hover > a:hover,
+.progressive.nav-pills > li:active > a:hover,
+.progressive.nav-pills > li > a:active,
+.progressive.nav-pills > li:hover > a:active,
+.progressive.nav-pills > li:active > a:active {
+  color: #B90014;
+  background-color: transparent;
   background-image: none;
 }
-.progressive.nav-pills > li:hover > a i {
-  color: #a2893c;
+.progressive.nav-pills > li > a i,
+.progressive.nav-pills > li:hover > a i,
+.progressive.nav-pills > li:active > a i,
+.progressive.nav-pills > li > a:hover i,
+.progressive.nav-pills > li:hover > a:hover i,
+.progressive.nav-pills > li:active > a:hover i,
+.progressive.nav-pills > li > a:active i,
+.progressive.nav-pills > li:hover > a:active i,
+.progressive.nav-pills > li:active > a:active i {
+  color: #B90014;
 }
-.progressive.nav-pills > li.active:hover > a {
+.progressive.nav-pills > li.active > a,
+.progressive.nav-pills > li.active > a:hover,
+.progressive.nav-pills > li.active > a:active {
   color: white;
-  background-color: #e5c563;
-  background: -webkit-gradient(linear, left top, left bottom, from(#e5c563), to(#bfa452));
-  background: -webkit-linear-gradient(top, #e5c563, #bfa452);
-  background: -moz-linear-gradient(top, #e5c563, #bfa452);
-  background: -ms-linear-gradient(top, #e5c563, #bfa452);
-  background: -o-linear-gradient(top, #e5c563, #bfa452);
+  background-color: #B90014;
 }
-.progressive.nav-pills > li.active:hover > a i {
+.progressive.nav-pills > li.active > a i,
+.progressive.nav-pills > li.active > a:hover i,
+.progressive.nav-pills > li.active > a:active i {
   color: white;
 }
-.progressive.nav-pills li.active {
+.progressive.nav-pills > li a {
   cursor: default;
 }
 /******************************************************************************\
@@ -2006,18 +2111,18 @@ ul.nav li.dropdown:hover > ul.dropdown-menu {
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2020 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2020 Morgridge Institute for Research (MIR)        |
 \******************************************************************************/
 .alert-error label {
   color: #d00030;
 }
 .alert-info {
-  color: #a2893c;
+  color: #B90014;
   background-color: #f9f9f9;
   border-color: #e5e5e5;
 }
 .alert-icon {
-  color: #bfa452;
+  color: #B90014;
 }
 .error-icon {
   color: #d00030;
@@ -2039,7 +2144,7 @@ ul.nav li.dropdown:hover > ul.dropdown-menu {
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2020 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2020 Morgridge Institute for Research (MIR)        |
 \******************************************************************************/
 textarea,
 input[type="text"],
@@ -2137,7 +2242,7 @@ select {
   display: inline-block;
 }
 label {
-  margin-right: 25px;
+  margin-right: 10px;
 }
 label input[type="checkbox"] {
   margin-right: 5px;
@@ -2311,7 +2416,7 @@ input[type="time"] {
 .dropdown-menu > .active > a,
 .dropdown-menu > .active > a:hover,
 .dropdown-menu > .active > a:focus {
-  background: #bfa452;
+  background: #B90014;
 }
 .select2-drop {
   min-width: 125px;
@@ -2340,7 +2445,7 @@ input[type="time"] {
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2020 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2020 Morgridge Institute for Research (MIR)        |
 \******************************************************************************/
 label.error {
   font-weight: bold;
@@ -2391,7 +2496,7 @@ label.error.valid {
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2020 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2020 Morgridge Institute for Research (MIR)        |
 \******************************************************************************/
 legend {
   width: auto;
@@ -2427,7 +2532,7 @@ legend + .form-group {
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2020 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2020 Morgridge Institute for Research (MIR)        |
 \******************************************************************************/
 table {
   width: 100%;
@@ -2441,12 +2546,7 @@ table {
 }
 table thead tr th,
 table thead tr.tablesorter th {
-  background-color: #e5c563;
-  background: -webkit-gradient(linear, left top, left bottom, from(#e5c563), to(#bfa452));
-  background: -webkit-linear-gradient(top, #e5c563, #bfa452);
-  background: -moz-linear-gradient(top, #e5c563, #bfa452);
-  background: -ms-linear-gradient(top, #e5c563, #bfa452);
-  background: -o-linear-gradient(top, #e5c563, #bfa452);
+  background-color: #666666;
   color: white;
   white-space: nowrap;
 }
@@ -2454,7 +2554,7 @@ table thead tr th.headerSortDown,
 table thead tr.tablesorter th.headerSortDown,
 table thead tr th.headerSortUp,
 table thead tr.tablesorter th.headerSortUp {
-  background-color: #bfa452;
+  background-color: #B90014;
   background-image: none;
 }
 table th {
@@ -2638,14 +2738,14 @@ table.tablesorter thead tr .tablesorter-header:not(.sorter-false) .tablesorter-h
   padding-right: 20px;
 }
 table.tablesorter thead tr .tablesorter-headerAsc:not(.sorter-false) {
-  background-color: #bfa452;
+  background-color: #B90014;
   background-image: none;
 }
 table.tablesorter thead tr .tablesorter-headerAsc:not(.sorter-false) .tablesorter-header-inner {
   background-image: url(../vendor/jquery/tablesorter/images/asc.gif);
 }
 table.tablesorter thead tr .tablesorter-headerDesc:not(.sorter-false) {
-  background-color: #bfa452;
+  background-color: #B90014;
   background-image: none;
 }
 table.tablesorter thead tr .tablesorter-headerDesc:not(.sorter-false) .tablesorter-header-inner {
@@ -2701,7 +2801,7 @@ table.numbered tbody tr::before {
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2020 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2020 Morgridge Institute for Research (MIR)        |
 \******************************************************************************/
 ul.initial li {
   display: block;
@@ -2734,12 +2834,13 @@ ol ol {
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2020 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2020 Morgridge Institute for Research (MIR)        |
 \******************************************************************************/
 .modal {
   pointer-events: none;
 }
 .modal .modal-dialog .modal-content .modal-header {
+  padding: 10px;
   background-color: #f9f9f9;
   background: -webkit-gradient(linear, left top, left bottom, from(#f9f9f9), to(#e5e5e5));
   background: -webkit-linear-gradient(top, #f9f9f9, #e5e5e5);
@@ -2763,55 +2864,46 @@ ol ol {
   border: none;
 }
 .modal .modal-dialog .modal-content .modal-header h1 i {
+  margin-right: 10px;
   margin-top: 2px;
 }
 .modal .modal-dialog .modal-content .modal-header button.close {
   color: white;
   font-weight: bold;
-  background-color: #bfa452;
-  background-color: #e5c563;
-  background: -webkit-gradient(linear, left top, left bottom, from(#e5c563), to(#bfa452));
-  background: -webkit-linear-gradient(top, #e5c563, #bfa452);
-  background: -moz-linear-gradient(top, #e5c563, #bfa452);
-  background: -ms-linear-gradient(top, #e5c563, #bfa452);
-  background: -o-linear-gradient(top, #e5c563, #bfa452);
-  border: 1px solid #bfa452;
+  background-color: #B90014;
+  border: 1px solid #B90014;
   border-radius: 5px;
+  padding: 2px 6px;
   margin-top: 0;
-  padding-top: 3px;
-  padding-bottom: 4px;
-  padding-left: 8px;
-  padding-right: 8px;
   outline: none;
   opacity: 1;
 }
 .modal .modal-dialog .modal-content .modal-header button.close:hover {
-  background-color: #a2893c;
-  background: -webkit-gradient(linear, left top, left bottom, from(#a2893c), to(#bfa452));
-  background: -webkit-linear-gradient(top, #a2893c, #bfa452);
-  background: -moz-linear-gradient(top, #a2893c, #bfa452);
-  background: -ms-linear-gradient(top, #a2893c, #bfa452);
-  background: -o-linear-gradient(top, #a2893c, #bfa452);
+  background-color: #86000e;
+  border-color: #86000e;
   color: white;
   opacity: 1;
 }
 .modal .modal-dialog .modal-content .modal-header button.close:active {
-  background: #a2893c;
-  border-color: #a2893c;
+  background-color: #530009;
+  border-color: #530009;
 }
 .modal .modal-dialog .modal-content .modal-header i.close,
 .modal .modal-dialog .modal-content .modal-header i.close:hover {
-  color: #bfa452;
+  color: #B90014;
   float: right;
   margin: 0;
   opacity: 1;
 }
 .modal .modal-dialog .modal-content .modal-header.error {
-  background: #d00030;
+  background: #9d0024;
   border-top-left-radius: 5px;
   border-top-right-radius: 5px;
 }
 .modal .modal-dialog .modal-content .modal-header.error #modal-header-text {
+  color: white;
+}
+.modal .modal-dialog .modal-content .modal-header.error #modal-header-text i {
   color: white;
 }
 .modal .modal-dialog .modal-content .modal-body {
@@ -2829,7 +2921,8 @@ ol ol {
   float: right;
 }
 .modal .modal-dialog .modal-content .modal-footer {
-  border-top: 5px solid #bfa452;
+  padding: 10px;
+  border-top: 5px solid #B90014;
 }
 @media (min-width: 768px) and (max-height: 550px) {
   .modal {
@@ -2947,7 +3040,7 @@ body[device="desktop"] .modal.in .modal-dialog {
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2020 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2020 Morgridge Institute for Research (MIR)        |
 \******************************************************************************/
 .modal.opening {
   -webkit-animation: opening 0.5s;
@@ -3049,7 +3142,7 @@ body[device="desktop"] .modal.in .modal-dialog {
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2020 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2020 Morgridge Institute for Research (MIR)        |
 \******************************************************************************/
 .directory .expander {
   width: 10px;
@@ -3068,7 +3161,7 @@ body[device="desktop"] .modal.in .modal-dialog {
   margin-bottom: 8px;
 }
 .directory i {
-  color: #bfa452;
+  color: #B90014;
   position: relative;
 }
 .directory .name {
@@ -3082,7 +3175,7 @@ body[device="desktop"] .modal.in .modal-dialog {
   margin-left: 20px;
 }
 .directory .file i {
-  color: #bfa452;
+  color: #B90014;
   position: relative;
   margin-left: 5px;
   margin-right: 5px;
@@ -3091,10 +3184,10 @@ body[device="desktop"] .modal.in .modal-dialog {
   float: right;
 }
 .directory .selected.file {
-  background-color: #f4e6ba;
+  background-color: #ff5366;
 }
 .directory .build.file {
-  color: #a2893c;
+  color: #B90014;
 }
 /*
 .root.directory {
@@ -3110,7 +3203,7 @@ body[device="desktop"] .modal.in .modal-dialog {
   display: block;
 }
 .selected.directory > .info {
-  background-color: #f4e6ba;
+  background-color: #ff5366;
 }
 /******************************************************************************\
 |                                                                              |
@@ -3126,10 +3219,10 @@ body[device="desktop"] .modal.in .modal-dialog {
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2020 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2020 Morgridge Institute for Research (MIR)        |
 \******************************************************************************/
 .tooltip-inner {
-  background: #bfa452;
+  background: #B90014;
 }
 .tooltip.in {
   opacity: 1;
@@ -3141,16 +3234,16 @@ body[device="desktop"] .modal.in .modal-dialog {
   font-size: 100%;
 }
 .tooltip.top .tooltip-arrow {
-  border-top-color: #bfa452;
+  border-top-color: #B90014;
 }
 .tooltip.right .tooltip-arrow {
-  border-right-color: #bfa452;
+  border-right-color: #B90014;
 }
 .tooltip.left .tooltip-arrow {
-  border-left-color: #bfa452;
+  border-left-color: #B90014;
 }
 .tooltip.bottom .tooltip-arrow {
-  border-bottom-color: #bfa452;
+  border-bottom-color: #B90014;
 }
 /******************************************************************************\
 |                                                                              |
@@ -3166,15 +3259,15 @@ body[device="desktop"] .modal.in .modal-dialog {
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2020 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2020 Morgridge Institute for Research (MIR)        |
 \******************************************************************************/
 .popover-title {
   color: white;
   font-weight: bold;
-  background-color: #bfa452;
+  background-color: #B90014;
 }
 .popover {
-  border-color: #bfa452;
+  border-color: #B90014;
   border-width: 1px;
   max-width: 400px;
   padding: 0;
@@ -3190,25 +3283,25 @@ td.code .popover {
   white-space: pre-wrap;
 }
 .popover.right .arrow {
-  border-right-color: #bfa452;
+  border-right-color: #B90014;
 }
 .popover.right .arrow:after {
   left: 2px;
 }
 .popover.left .arrow {
-  border-left-color: #bfa452;
+  border-left-color: #B90014;
 }
 .popover.left .arrow:after {
   right: 2px;
 }
 .popover.top .arrow {
-  border-top-color: #bfa452;
+  border-top-color: #B90014;
 }
 .popover.top .arrow:after {
   bottom: 2px;
 }
 .popover.bottom .arrow {
-  border-bottom-color: #bfa452;
+  border-bottom-color: #B90014;
 }
 .popover.bottom .arrow:after {
   top: 2px;
@@ -3227,7 +3320,7 @@ td.code .popover {
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2020 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2020 Morgridge Institute for Research (MIR)        |
 \******************************************************************************/
 .panel-heading {
   background: white;
@@ -3259,13 +3352,12 @@ td.code .popover {
   margin-right: 10px;
   margin: 0;
 }
-.panel-group .panel-heading .tag:first-child {
-  margin-left: 5px;
-}
 .panel-group .panel-heading .tag {
-  padding: 2px;
-  padding-left: 6px;
+  padding: 2px 5px;
   display: inline-block;
+}
+.panel-group .panel-heading .tag i.fa-remove {
+  margin: 1px;
 }
 .panel-group .accordion-inner {
   border: 1px solid #e5e5e5;
@@ -3325,7 +3417,7 @@ form .accordion {
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2020 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2020 Morgridge Institute for Research (MIR)        |
 \******************************************************************************/
 .welcome .main {
   padding: 0px;
@@ -3339,9 +3431,17 @@ form .accordion {
   margin-top: 20px;
   padding-bottom: 20px;
 }
-.welcome .header h1 {
+.welcome .header .banner {
+  text-align: center;
+}
+.welcome .header .banner #logo {
+  height: 125px;
+  margin: auto;
+}
+.welcome .header .banner h1 {
   margin-top: 0;
-  font-size: 200%;
+  font-size: 250%;
+  text-align: center;
 }
 .welcome .header .description {
   padding-left: 10px;
@@ -3352,9 +3452,6 @@ form .accordion {
 }
 .welcome #banner table td {
   text-align: center;
-}
-.welcome .btn {
-  box-shadow: 2px 2px 10px -2px rgba(0, 0, 0, 0.5);
 }
 .welcome .rows > .row {
   margin-left: -15px;
@@ -3401,7 +3498,7 @@ form .accordion {
   background-color: white;
 }
 .welcome .rows > .row:first-child {
-  border-top: 4px solid #bfa452;
+  border-top: 4px solid #B90014;
 }
 .welcome .rows #banner td {
   background: #eeeeee;
@@ -3433,7 +3530,7 @@ form .accordion {
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2020 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2020 Morgridge Institute for Research (MIR)        |
 \******************************************************************************/
 #events-list td.info {
   padding: 20px;
@@ -3455,7 +3552,7 @@ form .accordion {
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2020 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2020 Morgridge Institute for Research (MIR)        |
 \******************************************************************************/
 .progress {
   position: relative;
@@ -3492,7 +3589,7 @@ form .accordion {
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2020 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2020 Morgridge Institute for Research (MIR)        |
 \******************************************************************************/
 /* Modified from http://codepen.io/filipekiss/pen/LrCFe for use as a SPAN */
 .loading-flash span {
@@ -3520,7 +3617,7 @@ form .accordion {
     opacity: 0;
   }
   50% {
-    opacity: 1.0;
+    opacity: 1;
   }
   100% {
     opacity: 0;
@@ -3531,7 +3628,7 @@ form .accordion {
     opacity: 0;
   }
   50% {
-    opacity: 1.0;
+    opacity: 1;
   }
   100% {
     opacity: 0;
@@ -3551,7 +3648,7 @@ form .accordion {
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2020 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2020 Morgridge Institute for Research (MIR)        |
 \******************************************************************************/
 .flag {
   width: 16px;
@@ -4331,7 +4428,7 @@ form .accordion {
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2020 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2020 Morgridge Institute for Research (MIR)        |
 \******************************************************************************/
 .gem-info .comment {
   color: #999999;
@@ -4363,8 +4460,8 @@ form .accordion {
 .gem-info .symbol .value::before {
   color: #4c4c4c;
   content: "=>";
-  margin-left: .25em;
-  margin-right: .25em;
+  margin-left: 0.25em;
+  margin-right: 0.25em;
 }
 .gem-info ul {
   margin: 0;
@@ -4384,40 +4481,40 @@ form .accordion {
   display: table;
   background: #e5e5e5;
   border-radius: 5px;
-  margin-top: .5em;
-  margin-bottom: .5em;
+  margin-top: 0.5em;
+  margin-bottom: 0.5em;
   padding: 5px;
 }
 .gem-info .source::before {
   content: "source";
   font-weight: bold;
-  margin-right: .5em;
+  margin-right: 0.5em;
 }
 .gem-info .ruby {
   display: table;
   background: #ff9db4;
   border-radius: 5px;
-  margin-top: .5em;
-  margin-bottom: .5em;
+  margin-top: 0.5em;
+  margin-bottom: 0.5em;
   padding: 5px;
 }
 .gem-info .ruby::before {
   content: "ruby";
   font-weight: bold;
-  margin-right: .5em;
+  margin-right: 0.5em;
 }
 .gem-info .gem {
   display: table;
   background: #e5e5e5;
   border-radius: 5px;
-  margin-top: .5em;
-  margin-bottom: .5em;
+  margin-top: 0.5em;
+  margin-bottom: 0.5em;
   padding: 5px;
 }
 .gem-info .gem::before {
   content: "gem";
   font-weight: bold;
-  margin-right: .5em;
+  margin-right: 0.5em;
 }
 .gem-info .require {
   display: inline;
@@ -4429,25 +4526,25 @@ form .accordion {
 .gem-info .require::before {
   content: "require =>";
   font-weight: bold;
-  margin-right: .5em;
+  margin-right: 0.5em;
 }
 .gem-info .group {
   display: table;
   background: #f9f9f9;
   border-radius: 5px;
-  margin-top: .5em;
-  margin-bottom: .5em;
+  margin-top: 0.5em;
+  margin-bottom: 0.5em;
   padding: 5px;
 }
 .gem-info .group .id::before {
   content: "group";
   font-weight: bold;
-  margin-right: .5em;
+  margin-right: 0.5em;
 }
 .gem-info .group .id::after {
   content: "do";
   font-weight: bold;
-  margin-left: .5em;
+  margin-left: 0.5em;
 }
 .gem-info .group .gem {
   margin-left: 4em;
@@ -4470,14 +4567,14 @@ form .accordion {
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2020 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2020 Morgridge Institute for Research (MIR)        |
 \******************************************************************************/
 .key-value-pair {
   display: table;
   background: #e5e5e5;
   border-radius: 5px;
-  margin-top: .5em;
-  margin-bottom: .5em;
+  margin-top: 0.5em;
+  margin-bottom: 0.5em;
   padding: 5px;
 }
 .key-value-pair .key {
@@ -4504,7 +4601,7 @@ form .accordion {
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2020 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2020 Morgridge Institute for Research (MIR)        |
 \******************************************************************************/
 table.results {
   width: 100%;

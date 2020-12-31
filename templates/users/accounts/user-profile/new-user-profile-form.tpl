@@ -115,7 +115,7 @@
 				<div class="input-group">
 					<input type="text" class="required confirm-email form-control" name="confirm-email" id="confirm-email" value="<%- email %>">
 					<div class="input-group-addon">
-						<i class="active fa fa-question-circle" data-toggle="popover" data-placement="top" data-container="body" title="Confirm email address" data-content="Please retype your previously entered email address for verification.  You may use any address if you supply a SWAMP Promotional Code."></i>
+						<i class="active fa fa-question-circle" data-toggle="popover" data-placement="top" data-container="body" title="Confirm email address" data-content="Please retype your previously entered email address for verification.  You may use any address if you supply a Promotional Code."></i>
 					</div>
 				</div>
 			</div>
@@ -134,14 +134,14 @@
 				<% } %>
 			</select>
 
-			<i class="active fa fa-question-circle" data-toggle="popover" data-placement="top" data-container="body" title="Enrolled in class" data-content="This is the name of the class that you are enrolled in that is using the SWAMP, if applicable."></i>
+			<i class="active fa fa-question-circle" data-toggle="popover" data-placement="top" data-container="body" title="Enrolled in class" data-content="This is the name of the class that you are enrolled in that is using the application, if applicable."></i>
 		</div>
 	</div>
 	<% } %>
 		
 	<br />
 	<div class="alert alert-info" style="display:none">
-		<label>Note: </label><span class="message">By enrolling in this class, you agree to sharing your activity and account information in the SWAMP with your instructor. At the end of the class, you may unenroll yourself from the class through your account profile. Access your account profile by clicking on your username.</span>
+		<label>Note: </label><span class="message">By enrolling in this class, you agree to sharing your activity and account information in the application with your instructor. At the end of the class, you may unenroll yourself from the class through your account profile. Access your account profile by clicking on your username.</span>
 	</div>
 	
 	<div align="right">

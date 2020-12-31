@@ -1,6 +1,6 @@
-Software Assurance Marketplace (SWAMP) License
+Morgridge Software Assurance License
 
-The Software Assurance Marketplace (SWAMP) is released under the open source
+The Morgridge Software Assurance application is released under the open source
 Apache License, Version 2.0, reproduced below.
 
 Additional notices for SWAMP can be found following the license.

@@ -5,20 +5,20 @@
 	<li><i class="fa fa-book"></i>Resources</li>
 </ol>
 
-<p>The SWAMP hosts a collection of community provided software assurance resources for public use and inspection.</p> 
+<p>The platform hosts a collection of community provided software assurance resources for public use and inspection.</p> 
 
 <h2><i class="fa fa-file-code-o"></i>Code</h2>
 <ul>
-	<li><a href="https://github.com/mirswamp/deployment" target="_blank">SWAMP-in-a-Box</a> - a self-contained, standalone version of SWAMP that you can run on your own hardware.</li>
+	<li><a href="https://github.com/mirswamp/deployment" target="_blank">SWAMP-in-a-Box</a> - a self-contained, standalone version of the application that you can run on your own hardware.</li>
 
-	<li><a href="https://github.com/mirswamp/create_swamp_archive" target="_blank">create_swamp_archive</a> - a script that assists developers with creating an archive of an active development directory for the SWAMP.</li>
+	<li><a href="https://github.com/mirswamp/create_swamp_archive" target="_blank">create_swamp_archive</a> - a script that assists developers with creating an archive of an active development directory.</li>
 </ul>
 
 <h2><i class="fa fa-cubes"></i>Components</h2>
 <ul>
-	<li><a href="#packages/public" target="_blank"><i class="fa fa-gift"></i> Packages</a> - a list of the curated packages that are available to all SWAMP users.</li>
-	<li><a href="#tools/public" target="_blank"><i class="fa fa-wrench"></i> Tools</a> - a list of the tools that are available to all SWAMP users.</li>
-	<li><a href="#platforms/public" target="_blank"><i class="fa fa-bars"></i> Platforms</a> - a list of the platforms that are available to all SWAMP users.</li>
+	<li><a href="#packages/public" target="_blank"><i class="fa fa-gift"></i> Packages</a> - a list of the curated packages that are available to all users.</li>
+	<li><a href="#tools/public" target="_blank"><i class="fa fa-wrench"></i> Tools</a> - a list of the tools that are available to all users.</li>
+	<li><a href="#platforms/public" target="_blank"><i class="fa fa-bars"></i> Platforms</a> - a list of the platforms that are available to all users.</li>
 </ul>
 
 <h2><i class="fa fa-file"></i>White Papers</h2>

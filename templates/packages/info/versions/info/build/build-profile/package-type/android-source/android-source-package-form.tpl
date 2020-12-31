@@ -87,7 +87,7 @@
 									<div class="input-group">
 										<input type="text" class="form-control" <% if (typeof android_lint_target !== 'undefined') {%>value="<%- android_lint_target %>"<% } %>>
 										<div class="input-group-addon">
-											<i class="active fa fa-question-circle" data-toggle="popover" data-placement="top" data-container="body" title="Android lint target" data-content="The SWAMP uses the android standard target of 'lint'. Some android builds disable this normal lint target. Others require a specific lint target per build command. If android lint fails, or you would like to see different lint target output in the SWAMP, please read the documentation and select the appropriate lint target."></i>
+											<i class="active fa fa-question-circle" data-toggle="popover" data-placement="top" data-container="body" title="Android lint target" data-content="We use the android standard target of 'lint'. Some android builds disable this normal lint target. Others require a specific lint target per build command. If android lint fails, or you would like to see different lint target output, please read the documentation and select the appropriate lint target."></i>
 										</div>
 									</div>
 								</div>

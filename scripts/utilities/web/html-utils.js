@@ -7,7 +7,7 @@
 |        This contains minor general purpose HTML formatting utilities.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2020 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2020 Morgridge Institute for Research (MIR)        |
 \******************************************************************************/
 
 function textToHtml(string) {

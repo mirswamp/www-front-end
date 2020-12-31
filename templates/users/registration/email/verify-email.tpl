@@ -2,7 +2,7 @@
 
 <p>Dear <%- user.getFullName() %>:</p>
 <% if (!verify_date) { %>
-<p>You have registered to join the SWAMP. To complete your registration, press the button below.  Once you have done this, you may log in and begin using the SWAMP.
+<p>You have registered to join the application. To complete your registration, press the button below.  Once you have done this, you may log in and begin using the application.
 </p>
 <% } else { %>
 This email verification link has already been used and is no longer valid.

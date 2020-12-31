@@ -6,7 +6,7 @@
 </div>
 
 <div class="modal-body">
-	<p>If you are registering for SWAMP as part of a class, then please select that class from the list below:</p>
+	<p>If you are registering for the application as part of a class, then please select that class from the list below:</p>
 	<div style="text-align:center">
 		<select id="class-code">
 			<option value="none">None</option>
@@ -18,7 +18,7 @@
 
 	<br />
 	<div class="alert alert-info" style="display:none">
-		<label>Note: </label><span class="message">By enrolling in this class, you agree to sharing your activity and account information in the SWAMP with your instructor.  At the end of the class, you may unenroll yourself from the class through your account profile.  Access your account profile by clicking on your username.</span>
+		<label>Note: </label><span class="message">By enrolling in this class, you agree to sharing your activity and account information in the application with your instructor.  At the end of the class, you may unenroll yourself from the class through your account profile.  Access your account profile by clicking on your username.</span>
 	</div>
 </div>
 

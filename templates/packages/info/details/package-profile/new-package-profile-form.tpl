@@ -63,7 +63,7 @@
 				<div class="input-group">
 					<input type="text" class="required form-control" name="external-url" value="<%- external_url %>"/>
 					<div class="input-group-addon">
-						<i class="active fa fa-question-circle" data-toggle="popover" data-placement="left" data-container="body" title="External URL" data-html="true" data-content="<p>This is the web address from which the SWAMP will attempt to pull files for the package." value="<%- external_url %>"></i>
+						<i class="active fa fa-question-circle" data-toggle="popover" data-placement="left" data-container="body" title="External URL" data-html="true" data-content="<p>This is the web address from which we will attempt to pull files for the package." value="<%- external_url %>"></i>
 					</div>
 				</div>
 				<p><a id="formats-supported" data-toggle="popover" title="Formats" data-content=".zip, .tar, .tar.gz, .tgz, .tar.bz2, .tar.xz, .tar.Z, .jar .war .ear .gem .whl, .apk">formats supported</a></p>
@@ -80,7 +80,7 @@
 				<div class="input-group">
 					<input type="text" class="required form-control" name="external-git-url" value="<%- external_url %>"/>
 					<div class="input-group-addon">
-						<i class="active fa fa-question-circle" data-toggle="popover" data-placement="left" data-container="body" title="External Git URL" data-html="true" data-content="<p>This is the web address from which the SWAMP will attempt to clone or pull files for the package. To find this URL, <b>go to your GitHub repository web page</b> and click the green 'Clone or download' button. </p><div style='text-align:center'><img width='143px' src='images/other/github-clone-or-download-button.png'></div><br /><b><i>Git command: </b></i><br/><pre style='word-break:keep-all'>git clone --recursive [external URL]</pre>" value="<%- external_url %>"></i>
+						<i class="active fa fa-question-circle" data-toggle="popover" data-placement="left" data-container="body" title="External Git URL" data-html="true" data-content="<p>This is the web address from which we will attempt to clone or pull files for the package. To find this URL, <b>go to your GitHub repository web page</b> and click the green 'Clone or download' button. </p><div style='text-align:center'><img width='143px' src='images/other/github-clone-or-download-button.png'></div><br /><b><i>Git command: </b></i><br/><pre style='word-break:keep-all'>git clone --recursive [external URL]</pre>" value="<%- external_url %>"></i>
 					</div>
 				</div>
 			</div>

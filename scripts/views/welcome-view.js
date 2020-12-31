@@ -12,7 +12,7 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2020 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2020 Morgridge Institute for Research (MIR)        |
 \******************************************************************************/
 
 define([
@@ -77,7 +77,7 @@ define([
 				// add fancybox to elements tagged as 'lightbox'
 				//
 				self.$el.find('.lightbox').fancybox({
-					'padding': 10,
+					'padding': 0,
 					'margin': 40,
 					'openEffect': 'elastic',
 					'closeEffect': 'elastic',

@@ -5,16 +5,16 @@
 	<li><i class="fa fa-gavel"></i>Policies</li>
 </ol>
 
-<p>Below are policy documents regarding use of the SWAMP application.</p>
+<p>Below are policy documents regarding use of the application.</p>
 
 <h2><i class="fa fa-flag"></i>Acceptable Use</h2>
-<p><a href="#policies/acceptable-use-policy">SWAMP terms and conditions for acceptable use.</a></p>
+<p><a href="#policies/acceptable-use-policy">Terms and conditions for acceptable use.</a></p>
 
 <h2><i class="fa fa-eye-slash"></i>Privacy</h2>
-<p><a href="https://www.swampinabox.org/doc/SWAMP-Privacy-Policy.pdf" target="_blank">SWAMP Privacy Policy (PDF)</a></p>
+<p><a href="https://www.swampinabox.org/doc/SWAMP-Privacy-Policy.pdf" target="_blank">Privacy Policy (PDF)</a></p>
 
-<p><a href="https://www.swampinabox.org/doc/SWAMP-WP004-Privacy.pdf" target="_blank">SWAMP Confidentiality and Privacy for User Data WP004 (PDF)</a>
+<p><a href="https://www.swampinabox.org/doc/SWAMP-WP004-Privacy.pdf" target="_blank">Confidentiality and Privacy for User Data WP004 (PDF)</a>
 </p>
 
 <h2><i class="fa fa-link"></i>Linked Account Use</h2>
-<p><a href="#policies/linked-account-policy">SWAMP terms and conditions for using linked accounts.</a></p>
+<p><a href="#policies/linked-account-policy">Terms and conditions for using linked accounts.</a></p>

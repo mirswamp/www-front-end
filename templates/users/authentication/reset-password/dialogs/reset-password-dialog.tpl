@@ -1,6 +1,9 @@
 <div class="modal-header">
 	<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-	<h1 id="modal-header-text">Reset Password</h1>
+	<h1 id="modal-header-text">
+		<i class="fa fa-repeat"></i>
+		Reset Password
+	</h1>
 </div>
 
 <div class="modal-body">

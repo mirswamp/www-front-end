@@ -5,7 +5,7 @@
 	<li><i class="fa fa-gears"></i>System Settings</li>
 </ol>
 
-<p>The following system settings are used to configure SWAMP system wide behavior.</p>
+<p>The following system settings are used to configure system wide behavior.</p>
 
 <ul class="nav nav-tabs">
 	<% if (application.config.email_enabled) { %>

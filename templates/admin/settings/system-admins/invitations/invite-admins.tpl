@@ -6,7 +6,7 @@
 	<li><i class="fa fa-envelope"></i>Invite System Admins</li>
 </ol>
 
-<p>The following SWAMP users have previously been invited to be administrators:</p>
+<p>The following users have previously been invited to be administrators:</p>
 <div id="admin-invitations-list">
 	<div class="loading">
 		<i class="fa fa-spinner fa-spin"></i>
@@ -15,7 +15,7 @@
 </div>
 <br />
 
-<p>The following SWAMP users will be invited to be administrators:</p>
+<p>The following users will be invited to be administrators:</p>
 <div id="new-admin-invitations-list"></div>
 
 <div class="bottom buttons">

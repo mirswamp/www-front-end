@@ -12,18 +12,20 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2020 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2020 Morgridge Institute for Research (MIR)        |
 \******************************************************************************/
 
 //
 // button colors
 //
 
-@button-label-color: @brand-secondary;
-@button-label-hover-color: @brand-secondary;
+@button-icon-color: @brand-primary;
+@button-label-color: black;
+@button-label-hover-color: black;
 @primary-button-color: @brand-primary;
-@primary-button-hover-color: @brand-primary-hover;
-@primary-button-active-color: @primary-button-hover-color;
+@primary-button-highlight-color: @brand-primary;
+@primary-button-hover-color: darken(@brand-primary, 10%);
+@primary-button-active-color: darken(@primary-button-hover-color, 10%);
 
 //
 // buttons
@@ -32,9 +34,9 @@
 .btn {
 	font-size: 16px;
 	color: @button-label-color;
-	.vertical-gradient(white, @very-very-very-light-grey);
+	background-color: @very-very-very-light-grey;
 	border: 1px solid @very-very-very-light-grey;
-	padding: 5px 10px;
+	padding: 3px 10px;
 	border-radius: 5px;
 	min-width: 25px;
 
@@ -43,13 +45,14 @@
 		margin-top: 4px;
 		margin-bottom: 4px;
 		margin-right: 5px;
-		color: @dark-grey;
+		color: @button-icon-color;
 	}
 }
 
 .btn:hover {
 	color: @button-label-hover-color;
-	.vertical-gradient(white, @very-very-light-grey);
+	background-color: @very-very-light-grey;
+	border-color: @very-very-light-grey;
 
 	i {
 		color: @brand-primary;
@@ -101,41 +104,52 @@
 // primary buttons
 //
 
-.btn-primary, .btn-primary:focus, .btn-primary[disabled] {
-	background-color: @primary-button-color; 
-	.vertical-gradient(@brand-primary-highlight, @brand-primary);
-	border: 1px solid @brand-primary;
-	color: white !important;
+.btn-primary, .btn-primary:focus {
+	.vertical-gradient(@primary-button-highlight-color, @primary-button-color);
+	border-color: @primary-button-color;
+	color: white;
 	text-shadow: none;
 
 	i {
 		color: white;
 	}
-}
 
-.btn-primary:disabled:hover {
-	border: 1px solid @brand-primary;
-}
-
-.btn-primary:not([disabled]):hover {
-	.vertical-gradient(@brand-primary-hover, @brand-primary);
-	border: 1px solid @brand-primary;
-
-	i {
+	&:hover {
+		.vertical-gradient(@primary-button-hover-color, @primary-button-hover-color);
+		border-color: @primary-button-hover-color;
 		color: white;
-	}
-}
 
-.btn-primary:not([disabled]):active {
-	background: @primary-button-active-color; 
-	border-color: @primary-button-active-color;
+		i {
+			color: white;
+		}
+	}
+
+	&:active {
+		.vertical-gradient(@primary-button-active-color, @primary-button-active-color);
+		border-color: @primary-button-active-color;
+	}
+
+	&.disabled, &[disabled] {
+		.vertical-gradient(@primary-button-highlight-color, @primary-button-color);
+		border-color: @primary-button-color;
+		color: white;
+
+		i {
+			color: white;
+		}
+
+		&:hover, &:active {
+			.vertical-gradient(@primary-button-hover-color, @primary-button-hover-color);
+			border-color: @primary-button-hover-color;
+		}
+	}
 }
 
 //
 // small and large buttons
 //
 
-.btn-sm {
+.btn-sm, button.close {
 	padding: 1px 6px;
 	-webkit-border-radius: 6px;
 	-moz-border-radius: 6px;
@@ -143,7 +157,7 @@
 }
 
 .btn-lg {
-	padding: 10px 15px;
+	padding: 5px 10px;
 	font-size: 18px;
 	border-width: 1px;
 	-webkit-border-radius: 8px;
@@ -152,7 +166,6 @@
 
 	i {
 		position: relative;
-		margin-left: -5px;
 		margin-right: 10px;
 	}	
 }

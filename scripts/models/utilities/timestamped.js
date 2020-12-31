@@ -7,7 +7,7 @@
 |        This defines a model of a base time stamped base model.               |
 |                                                                              |
 |        Author(s): Abe Megahed                                                |
-|        Copyright (C) 2012-2020 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2020 Morgridge Institute for Research (MIR)        |
 |                                                                              |
 |******************************************************************************|
 |                           Do It Early. Do It Often.                          |

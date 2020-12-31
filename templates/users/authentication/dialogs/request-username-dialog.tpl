@@ -1,6 +1,9 @@
 <div class="modal-header">
 	<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-	<h1 id="modal-header-text">Request Username</h1>
+	<h1 id="modal-header-text">
+		<i class="fa fa-envelope"></i>
+		Request Username
+	</h1>
 </div>
 
 <div class="modal-body">
@@ -23,7 +26,7 @@
 </div>
 
 <div class="modal-footer">
-	<button id="request-username" class="btn btn-primary" data-dismiss="modal"><i class="fa fa-plus"></i>Request Username</button>
+	<button id="request-username" class="btn btn-primary" data-dismiss="modal"><i class="fa fa-envelope"></i>Request Username</button>
 	<button id="cancel" class="btn" data-dismiss="modal"><i class="fa fa-times"></i>Cancel</button> 
 </div>
 

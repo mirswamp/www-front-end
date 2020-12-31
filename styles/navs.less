@@ -12,17 +12,21 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2020 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2020 Morgridge Institute for Research (MIR)        |
 \******************************************************************************/
 
 //
 // link colors
 //
 
-@linkColor: @brand-secondary;
-@linkColorHover: @brand-primary;
-@navLinkColor: @brand-secondary;
-@navLinkColorHover: white;
+@linkColor: @brand-primary;
+@linkHoverColor: @brand-primary;
+
+@navLinkColor: white;
+@navLinkBackground: @brand-primary;
+
+@navLinkHoverColor: white;
+@navLinkHoverBackground: @very-very-dark-grey;
 
 //
 // dropdown colors
@@ -30,8 +34,8 @@
 
 @dropdownColor: @dark-grey;
 @dropdownBackground: white;
-@dropdownLinkColorHover: white;
-@dropdownLinkBackgroundHover: @brand-primary-hover;
+@dropdownLinkHoverColor: white;
+@dropdownLinkHoverBackground: darken(@brand-primary, 10%);
 
 //
 // links
@@ -43,7 +47,7 @@ a {
 }
 
 a:hover, a:focus {
-	color: @linkColorHover;
+	color: @linkHoverColor;
 }
 
 .form-group, .well {
@@ -91,9 +95,10 @@ a:hover, a:focus {
 	li {
 		min-width: 35px;
 		text-align: center;
+		color: @linkColor;
 
 		i {
-			color: @brand-primary;
+			color: @linkColor;
 		}
 	}
 	
@@ -144,70 +149,98 @@ a:hover, a:focus {
 // top navigation bar 
 //
 
-.navbar, .navbar-inverse {
-	background-image: none;
-	border: none;
-	box-shadow: 0 5px 10px rgba(0,0,0,.25), inset 0 -1px 0 rgba(0,0,0,.1);
+#header {
+	.navbar, .navbar-inverse {
+		background-color: @brand-primary;
+		background-image: none;
+		border: none;
+		// box-shadow: 0 5px 10px rgba(0,0,0,.25), inset 0 -1px 0 rgba(0,0,0,.1);
 
-	.container {
-		padding-left: 10px;
-		padding-right: 10px;
-	}
+		.container {
+			padding-left: 10px;
+			padding-right: 10px;
+		}
 
-	.navbar-brand {
-		color: white;
-		margin-left: 0px;
-		text-shadow: none;
-		cursor: pointer;
-	}
-
-	.navbar-brand:hover {
-		color: @brand-primary-highlight;
-	}
-
-	.navbar-form {
-		padding: 0;
-		margin: 0;
-	}
-
-	.navbar-text {
-		padding: 0;
-		margin-left: 0;
-		margin-right: 0;
-		margin-top: 4px;
-		margin-bottom: 0;
-	}
-
-	.btn {
-		margin-top: 7px;
-		margin-bottom: 5px;
-		margin-left: 5px;
-		margin-right: 5px;
-	}
-
-	.nav > li {
-		cursor: pointer;
-		label {
-			margin: 0;
-			margin-left: 5px;
+		.navbar-brand {
+			color: white;
+			margin-left: 0px;
+			text-shadow: none;
 			cursor: pointer;
 		}
-	}
 
-	.username {
-		color: white;
-	}
-	.username .visible-sm {
-		max-width: 75px;
-		height: 20px;
-		overflow: hidden;
-	}
-}
+		.navbar-brand:hover {
+			color: white;
+		}
 
-.navbar-inverse .navbar-nav > a:hover,
-.navbar-inverse .navbar-nav > .active > a {
-	background-color: white;
-	.vertical-gradient(@brand-primary-highlight, @brand-primary);
+		.navbar-form {
+			padding: 0;
+			margin: 0;
+		}
+
+		.navbar-text {
+			padding: 0;
+			margin-left: 0;
+			margin-right: 0;
+			margin-top: 4px;
+			margin-bottom: 0;
+		}
+
+		.btn {
+			padding: 5px 10px;
+			margin-top: 7px;
+			margin-bottom: 5px;
+			margin-left: 5px;
+			margin-right: 5px;
+		}
+
+		.nav > li {
+			cursor: pointer;
+			label {
+				margin: 0;
+				margin-left: 5px;
+				cursor: pointer;
+			}
+
+			i {
+				color: @navLinkColor;
+			}
+		}
+
+		.username {
+			color: white;
+		}
+		.username .visible-sm {
+			max-width: 75px;
+			height: 20px;
+			overflow: hidden;
+		}
+
+		#navbar {
+			.nav-pills {
+				> li {
+					> a {
+						padding: 8px 10px;
+						color: @navLinkColor;
+
+						i {
+							color: @navLinkColor;
+						}
+					}
+
+					&:hover, &.active {
+						> a, > a:focus, > a:hover {
+							color: @navLinkHoverColor;
+							background-color: @navLinkHoverBackground;
+
+							i {
+								color: @navLinkHoverColor;
+							}
+						}
+					}
+				}
+			}
+		}
+	}
 }
 
 //
@@ -255,21 +288,13 @@ a:hover, a:focus {
 	}
 }
 
-.nav > li.active > a {
+.nav > li > a:hover,
+.nav > li > a:focus {
 	color: white;
+	background-color: @brand-primary-hover;
 
 	label {
 		color: white;
-	}
-}
-
-.nav > li > a:hover,
-.nav > li > a:focus {
-	color: @navLinkColorHover;
-	.vertical-gradient(@brand-primary-hover, @brand-primary);
-
-	label {
-		color: @navLinkColorHover;
 	}
 }
 
@@ -285,13 +310,13 @@ a:hover, a:focus {
 
 #header {
 	.nav > li > a {
-		color: @brand-primary;
+		color: @navLinkColor;
 		text-shadow: none;
-	}
 
-	.nav > li > a:focus {
-		color: @navLinkColorHover;
-		background-color: @dropdownLinkBackgroundHover;
+		&:hover, &:active {
+			color: @navLinkHoverColor;
+			background: @navLinkHoverBackground;
+		}
 	}
 }
 
@@ -353,9 +378,8 @@ a:hover, a:focus {
 .dropdown-submenu:hover > a,
 .dropdown-submenu:focus > a {
 	text-decoration: none;
-	color: @dropdownLinkColorHover;
-	background-color: @dropdownLinkBackgroundHover;
-	background-image: none;
+	color: @dropdownLinkHoverColor;
+	background: @dropdownLinkHoverBackground;
 }
 
 //
@@ -368,7 +392,7 @@ a:hover, a:focus {
 }
 .nav .dropdown-toggle:hover .caret,
 .nav .dropdown-toggle:focus .caret {
-	border-top-color: @linkColorHover;
+	border-top-color: @linkHoverColor;
  }
 
 // 

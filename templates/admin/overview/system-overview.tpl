@@ -45,7 +45,7 @@
 		</div>
 		<div class="info">
 			<h2>Tools</h2>
-			<p class="description">Review the SWAMP's suite of software analysis tools.</p>
+			<p class="description">Review the suite of software analysis tools.</p>
 		</div>
 	</a>
 

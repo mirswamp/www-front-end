@@ -1,6 +1,7 @@
 <div class="modal-header error">
 	<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
 	<h1 id="modal-header-text">
+		<i class="fa fa-bug"></i>
 		<% if (title) { %>
 		<%= title %>
 		<% } else { %>

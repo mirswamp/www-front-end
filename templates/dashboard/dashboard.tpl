@@ -5,10 +5,9 @@
 <% } %>
 
 <div class="banner">
-	<img id="logo" class="img-responsive hidden-xxs" src="images/logos/swamp-logo-large.png" alt="logo" />
-	<div class="visible-xxs" align="center">
-		<img id="icon" class="img-responsive" src="images/logos/swamp-icon-large.png" alt="icon" />				
-	</div>
+	<img id="logo" class="img-responsive" src="images/logos/helix-digits.svg" alt="icon" />
+	<h1 class="brand">Morgridge</h1>
+	<h3 class="brand">Software Assurance</h3>
 	<div class="tagline">Do It Early. Do It Often.</div>
 </div>
 
@@ -105,7 +104,7 @@
 		</div>
 		<div class="info">
 			<h2>Settings</h2>
-			<p class="description">Review and modify SWAMP system wide settings.</p>
+			<p class="description">Review and modify system wide settings.</p>
 		</div>
 	</a>
 
@@ -115,7 +114,7 @@
 		</div>
 		<div class="info">
 			<h2>Overview</h2>
-			<p class="description">Monitor SWAMP system wide activity.</p>
+			<p class="description">Monitor system wide activity.</p>
 		</div>
 	</a>
 	<% } %>

@@ -12,12 +12,24 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2020 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2020 Morgridge Institute for Research (MIR)        |
 \******************************************************************************/
+
+//
+// font imports
+//
+
+@import "../fonts/trade-gothic/styles.css";
+@import "../fonts/trade-gothic-bold/styles.css";
+@import "../fonts/optima/styles.css";
 
 //
 // main font styles
 //
+
+h1, h2, h3 {
+	font-family: 'TradeGothicBold', sans-serif;
+}
 
 body, input, button, textarea, p, .popover, .form-control, .tooltip {
 	font-family: "Gill Sans MT", "Gill Sans", Calibri, sans-serif;
@@ -143,7 +155,6 @@ label {
 }
 
 .tagline {
-	color: @brand-secondary;
 	font-style: italic;
 	font-size: 125%;
 }

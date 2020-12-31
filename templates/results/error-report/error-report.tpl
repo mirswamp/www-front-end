@@ -103,8 +103,8 @@
 <h2>Links</h2>
 <div class="well">
 	<ul>
-		<li><a href="https:documentation/swamp_output_and_debugging.pdf" target="_blank">Status.out and Debugging SWAMP Failures FAQ (PDF)</a></li>
-		<li><a href="https:documentation/swamp_output_and_debugging.html" target="_blank">Status.out and Debugging SWAMP Failures FAQ (HTML)</a></li>
+		<li><a href="https:documentation/swamp_output_and_debugging.pdf" target="_blank">Status.out and Debugging Failures FAQ (PDF)</a></li>
+		<li><a href="https:documentation/swamp_output_and_debugging.html" target="_blank">Status.out and Debugging Failures FAQ (HTML)</a></li>
 		<% if (typeof url !== 'undefined' && url && url != '') { %>
 		<li><a href="<%= url %>" target="_blank">Download all failed results as a single file</a></li>
 		<% } %>

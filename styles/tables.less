@@ -12,15 +12,15 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2020 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2020 Morgridge Institute for Research (MIR)        |
 \******************************************************************************/
 
 //
 // table colors
 //
 
-@table-header-color: @brand-primary;
-@table-header-highlight: @brand-primary-highlight;
+@table-header-color: @dark-grey;
+@table-header-highlight: @brand-primary;
 @odd-table-row-color: darken(@ultra-light-grey, 5%);
 @even-table-row-color: @ultra-light-grey;
 
@@ -39,13 +39,14 @@ table {
 		tr, tr.tablesorter {
 			
 			th {
-				.vertical-gradient(@table-header-highlight, @table-header-color);
+				background-color: @table-header-color;
+				// .vertical-gradient(@table-header-highlight, @table-header-color);
 				color: white;
 				white-space: nowrap;
 			}
 
 			th.headerSortDown, th.headerSortUp {
-				background-color: @table-header-color;
+				background-color: @table-header-highlight;
 				background-image: none;
 			}
 		}
@@ -366,7 +367,7 @@ table.tablesorter {
 		}
 
 		.tablesorter-headerAsc:not(.sorter-false) {
-			background-color: @brand-primary;
+			background-color: @table-header-highlight;
 			background-image: none;
 
 			.tablesorter-header-inner {
@@ -375,7 +376,7 @@ table.tablesorter {
 		}
 
 		.tablesorter-headerDesc:not(.sorter-false) {
-			background-color: @brand-primary;
+			background-color: @table-header-highlight;
 			background-image: none;
 
 			.tablesorter-header-inner {

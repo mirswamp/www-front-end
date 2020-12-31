@@ -6,7 +6,7 @@
 	<li><i class="fa fa-wrench"></i>Tools</li>
 </ol>
 
-<p>Tools are software programs that are used to perform static code analysis on your software source code. <% if (!loggedIn) { %>To see more detailed information about each of the tools listed in this view, log in to the SWAMP. <% } %> </p>
+<p>Tools are software programs that are used to perform static code analysis on your software source code. <% if (!loggedIn) { %>To see more detailed information about each of the tools listed in this view, log in to the application. <% } %> </p>
 
 <h2>Open tools</h2>
 <p>These tools are free for anyone to use without restrictions.</p>

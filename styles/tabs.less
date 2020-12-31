@@ -12,7 +12,7 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2020 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2020 Morgridge Institute for Research (MIR)        |
 \******************************************************************************/
 
 .nav-tabs {
@@ -30,6 +30,7 @@
 		border-bottom: 0;
 
 		> a, {
+			padding: 5px;
 			border-top-left-radius: 10px;
 			border-top-right-radius: 10px;
 			border-bottom-right-radius: 0;
@@ -74,7 +75,7 @@
 
 	> li.active:hover > a, li.active:hover > a:focus {
 		color: white;
-		.vertical-gradient(lighten(@brand-primary, 10%), @brand-primary);
+		.vertical-gradient(@brand-primary-highlight, @brand-primary);
 		border: 1px solid @brand-primary-border;
 		border-bottom: 0;
 	}

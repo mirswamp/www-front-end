@@ -8,7 +8,7 @@
 	<input type="radio" name="sharing" value="public" 
 	<% if (tool_sharing_status.toLowerCase() == "public") { %>checked<% } %> />
 	Public
-	<p class="description">This tool is public and may be seen by any SWAMP user.</p>
+	<p class="description">This tool is public and may be seen by any user.</p>
 </label>
 <label class="radio">
 	<input type="radio" name="sharing" value="protected" 

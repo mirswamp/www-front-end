@@ -1,6 +1,7 @@
 <div class="modal-header">
 	<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
 	<h1 id="modal-header-text">
+		<i class="fa fa-chevron-right"></i>
 		Sign In With
 	</h1>
 </div>

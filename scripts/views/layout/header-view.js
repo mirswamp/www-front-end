@@ -12,7 +12,7 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2020 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2020 Morgridge Institute for Research (MIR)        |
 \******************************************************************************/
 
 define([
@@ -107,7 +107,10 @@ define([
 			return {
 				nav: this.options.nav,
 				user: application.session.user,
-				showContact: Config.contact != undefined
+				show_contact: Config.contact != undefined,
+				show_resources: Config.resources != undefined,
+				show_policies: Config.policies != undefined,
+				show_help: Config.help != undefined
 			};
 		},
 

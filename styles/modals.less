@@ -12,7 +12,7 @@
 |        'LICENSE.txt', which is part of this source code distribution.        |
 |                                                                              |
 |******************************************************************************|
-|        Copyright (C) 2012-2020 Software Assurance Marketplace (SWAMP)        |
+|        Copyright (C) 2012-2020 Morgridge Institute for Research (MIR)        |
 \******************************************************************************/
 
 .modal {
@@ -24,6 +24,7 @@
 	.modal-dialog {
 		.modal-content {
 			.modal-header {
+				padding: 10px;
 				.vertical-gradient(@ultra-light-grey, @very-very-very-light-grey);
 				border-top-left-radius: 5px;
 				border-top-right-radius: 5px;
@@ -43,6 +44,7 @@
 					border: none;
 
 					i {
+						margin-right: 10px;
 						margin-top: 2px;
 					}
 				}
@@ -55,25 +57,22 @@
 					color: white;
 					font-weight: bold;
 					background-color: @primary-button-color;
-					.vertical-gradient(@brand-primary-highlight, @brand-primary);
 					border: 1px solid @brand-primary-border;
 					border-radius: 5px;
+					padding: 2px 6px;
 					margin-top: 0;
-					padding-top: 3px;
-					padding-bottom: 4px;
-					padding-left: 8px;
-					padding-right: 8px;
 					outline: none;
 					opacity: 1;
 
 					&:hover {
-						.vertical-gradient(@brand-primary-hover, @brand-primary);
+						background-color: @brand-primary-hover;
+						border-color: @brand-primary-hover;
 						color: white;
 						opacity: 1;		
 					}
 
 					&:active {
-						background: @primary-button-active-color; 
+						background-color: @primary-button-active-color; 
 						border-color: @primary-button-active-color;
 					}
 				}
@@ -88,12 +87,16 @@
 			}
 
 			.modal-header.error {
-				background: @medium-red;
+				background: @dark-red;
 				border-top-left-radius: 5px;
 				border-top-right-radius: 5px;
 
 				#modal-header-text {
 					color: white;
+
+					i {
+						color: white;
+					}
 				}
 			}
 
@@ -116,6 +119,7 @@
 			}
 
 			.modal-footer {
+				padding: 10px;
 				border-top: 5px solid @brand-primary;
 			}
 		}

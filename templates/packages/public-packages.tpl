@@ -11,7 +11,7 @@
 <div id="package-filters"></div>
 <br />
 
-<p>The following curated packages <span id="filter-description"></span> are available to all SWAMP users.  <% if (!loggedIn) { %>To see more detailed information about each of the packages listed in this view, log in to the SWAMP. <% } %></p>
+<p>The following curated packages <span id="filter-description"></span> are available to all users.  <% if (!loggedIn) { %>To see more detailed information about each of the packages listed in this view, log in to the application. <% } %></p>
 
 <div id="packages-list">
 	<div class="loading">
